@@ -1,0 +1,338 @@
+/**
+ * INTEL CONFIDENTIAL
+ * Copyright (c) 2014 Intel Corporation All Rights Reserved.
+ * The source code contained or described herein and all documents related to the source code ("Material")
+ * are owned by Intel Corporation or its suppliers or licensors. Title to the Material remains with Intel
+ * Corporation or its suppliers and licensors. The Material contains trade secrets and proprietary and
+ * confidential information of Intel or its suppliers and licensors. The Material is protected by
+ * worldwide copyright and trade secret laws and treaty provisions. No part of the Material may be used,
+ * copied, reproduced, modified, published, uploaded, posted, transmitted, distributed, or disclosed in
+ * any way without Intel's prior express written permission. No license under any patent, copyright,
+ * trade secret or other intellectual property right is granted to or conferred upon you by disclosure
+ * or delivery of the Materials, either expressly, by implication, inducement, estoppel or otherwise.
+ * Any license under such intellectual property rights must be express and approved by Intel in writing.
+ */
+
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ *  
+ *  Functional Group: Fabric Viewer Application
+ *
+ *  File Name: ConnectivitySubpageController.java
+ *
+ *  Archive Source: $Source$
+ *
+ *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.23  2015/04/03 21:06:27  jijunwan
+ *  Archive Log:    Introduced canExit to IPageController, and canPageChange to IPageListener to allow us do some checking before we switch to another page. Fixed the following bugs
+ *  Archive Log:    1) when we refresh, do not show login dialog if Admin is not the current page
+ *  Archive Log:    2) confirm abandon if we switch from admin page to other pages and there is changes on the Admin page
+ *  Archive Log:    3) confirm abandon in Admin page if we switch between Application, DeviceGroup and VirtualFabric
+ *  Archive Log:    4) added null check to handle special cases
+ *  Archive Log:
+ *  Archive Log:    Revision 1.22  2015/02/04 21:44:17  jijunwan
+ *  Archive Log:    impoved to handle unsigned values
+ *  Archive Log:     - we promote to a "bigger" data type
+ *  Archive Log:     - port numbers are now short
+ *  Archive Log:
+ *  Archive Log:    Revision 1.21  2014/10/21 16:38:29  fernande
+ *  Archive Log:    Customization of Properties display (Show Options/Apply Options)
+ *  Archive Log:
+ *  Archive Log:    Revision 1.20  2014/10/09 21:24:49  jijunwan
+ *  Archive Log:    improvement on TreeNodeType:
+ *  Archive Log:    1) Added icon to TreeNodeType
+ *  Archive Log:    2) Rename PORT to ACTIVE_PORT
+ *  Archive Log:    3) Removed NODE
+ *  Archive Log:
+ *  Archive Log:    Revision 1.19  2014/10/09 12:35:09  fernande
+ *  Archive Log:    Adding IContextAware interface to generalize context operations (setContext) and changes to the IProgressObserver interface
+ *  Archive Log:
+ *  Archive Log:    Revision 1.18  2014/09/18 21:36:50  jijunwan
+ *  Archive Log:    fixed a issue that incorrectly use portNum for rowIndex
+ *  Archive Log:
+ *  Archive Log:    Revision 1.17  2014/09/18 21:03:28  jijunwan
+ *  Archive Log:    Added link (jump to) capability to Connectivity tables and PortSummary table
+ *  Archive Log:
+ *  Archive Log:    Revision 1.16  2014/09/02 19:24:29  jijunwan
+ *  Archive Log:    renamed FVTreeBuilder to tree.FVTreeManager, moved FVResourceNode and FVTreeModel  to package tree
+ *  Archive Log:
+ *  Archive Log:    Revision 1.15  2014/08/26 15:15:27  jijunwan
+ *  Archive Log:    added refresh function to all pages
+ *  Archive Log:
+ *  Archive Log:    Revision 1.14  2014/08/05 17:57:05  jijunwan
+ *  Archive Log:    fixed issues on ConnectivityTable to update performance data properly
+ *  Archive Log:
+ *  Archive Log:    Revision 1.13  2014/07/29 15:46:04  rjtierne
+ *  Archive Log:    Scheduled periodic Connectivity table updates
+ *  Archive Log:
+ *  Archive Log:    Revision 1.12  2014/07/01 19:11:25  jijunwan
+ *  Archive Log:    Had a separate ConnectivityTableControler, so we can reuse it
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2014/06/27 22:22:22  jijunwan
+ *  Archive Log:    added running indicator to Performance Subpages
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2014/06/26 15:03:43  jijunwan
+ *  Archive Log:    added inactive link back
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2014/06/25 20:31:22  fernande
+ *  Archive Log:    Only active ports are now being queried.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2014/06/24 20:21:11  rjtierne
+ *  Archive Log:    Changed HCA to HFI
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2014/06/24 18:50:27  jijunwan
+ *  Archive Log:    improvement on connectivity subpage - applied SwingWorker to do data processing to background thread, table update on EDT
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2014/06/23 13:53:34  rjtierne
+ *  Archive Log:    Tweaked slow link test to show port and neighbor
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2014/06/19 20:13:58  fernande
+ *  Archive Log:    Added background update of database and redirected some APIs to use the database.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2014/06/17 19:23:17  rjtierne
+ *  Archive Log:    Added logic to render the Connectivity table entries with an icon when
+ *  Archive Log:    links are running slow
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2014/06/13 18:55:45  rjtierne
+ *  Archive Log:    Updated to support HFI ports and switch port 0
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2014/06/13 18:23:49  rjtierne
+ *  Archive Log:    Updated Connectivity table to support HFI nodes and switch ports
+ *  Archive Log:
+ *  Archive Log:    Revision 1.1  2014/06/12 21:35:43  rjtierne
+ *  Archive Log:    Initial Version
+ *  Archive Log:
+ *
+ *  Overview: Controller for the Connectivity subpage
+ *
+ *  @author: rjtierne
+ *
+ ******************************************************************************/
+package com.intel.stl.ui.monitor;
+
+import static com.intel.stl.ui.common.PageWeight.MEDIUM;
+
+import java.awt.Component;
+import java.util.Vector;
+
+import javax.swing.ImageIcon;
+
+import net.engio.mbassy.bus.MBassador;
+
+import com.intel.stl.ui.common.IPerfSubpageController;
+import com.intel.stl.ui.common.IProgressObserver;
+import com.intel.stl.ui.common.PageWeight;
+import com.intel.stl.ui.common.STLConstants;
+import com.intel.stl.ui.event.JumpDestination;
+import com.intel.stl.ui.event.PortSelectedEvent;
+import com.intel.stl.ui.framework.IAppEvent;
+import com.intel.stl.ui.main.Context;
+import com.intel.stl.ui.model.ConnectivityTableModel;
+import com.intel.stl.ui.monitor.tree.FVResourceNode;
+import com.intel.stl.ui.monitor.view.ConnectivitySubpageView;
+
+public class ConnectivitySubpageController implements IPerfSubpageController,
+        IPortSelectionListener {
+
+    private final ConnectivityTableController tableController;
+
+    private final ConnectivitySubpageView view;
+
+    private final MBassador<IAppEvent> eventBus;
+
+    private FVResourceNode lastNode;
+
+    private PerformanceTreeController parentController;
+
+    public ConnectivitySubpageController(
+            ConnectivityTableModel connectTableModel,
+            ConnectivitySubpageView pSubpageView, MBassador<IAppEvent> eventBus) {
+        tableController =
+                new ConnectivityTableController(connectTableModel,
+                        pSubpageView.getTable());
+        view = pSubpageView;
+        view.setPortSelectionListener(this);
+        this.eventBus = eventBus;
+    }
+
+    @Override
+    public void setContext(Context context, IProgressObserver observer) {
+        tableController.setContext(context, observer);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.common.IPageController#onRefresh(com.intel.stl.ui.common
+     * .IProgressObserver)
+     */
+    @Override
+    public void onRefresh(IProgressObserver observer) {
+        tableController.refreshConnectivity(observer);
+    }
+
+    @Override
+    public String getName() {
+        return STLConstants.K0415_CONNECTIVITY.getValue();
+    }
+
+    @Override
+    public String getDescription() {
+        return STLConstants.K0416_CONNECTIVITY_DESCRIPTION.getValue();
+    }
+
+    @Override
+    public Component getView() {
+        return view;
+    }
+
+    @Override
+    public ImageIcon getIcon() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void cleanup() {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void showNode(FVResourceNode node, IProgressObserver observer) {
+        if (!node.equals(lastNode)) {
+            clear();
+            lastNode = node;
+        }
+        switch (node.getType()) {
+            case SWITCH:
+                processSwitch(node, observer);
+                break;
+
+            case HFI:
+                processHFI(node, observer);
+                break;
+
+            case ACTIVE_PORT:
+                FVResourceNode parent = node.getParent();
+                if (parent.getType() == TreeNodeType.SWITCH
+                        && Byte.decode(node.getName()) == 0) {
+                    processSwitch(parent, observer);
+                } else {
+                    tableController.showConnectivity(node.getParent().getId(),
+                            observer, (short) node.getId());
+                }
+                break;
+
+            case INACTIVE_PORT:
+                break;
+
+            default:
+                break;
+        } // switch
+    }
+
+    @Override
+    public void setParentController(PerformanceTreeController parentController) {
+        this.parentController = parentController;
+    }
+
+    protected void processSwitch(FVResourceNode node, IProgressObserver observer) {
+        Vector<FVResourceNode> children = node.getChildren();
+        if (children.size() > 1) {
+            short[] ports = new short[children.size() - 1];
+            for (int i = 1; i < children.size(); i++) {
+                ports[i - 1] = (short) children.get(i).getId();
+            }
+            tableController.showConnectivity(node.getId(), observer, ports);
+        } else {
+            observer.onFinish();
+        }
+    }
+
+    protected void processHFI(FVResourceNode node, IProgressObserver observer) {
+        Vector<FVResourceNode> children = node.getChildren();
+        if (children.size() > 0) {
+            short[] ports = new short[children.size()];
+            for (int i = 0; i < children.size(); i++) {
+                // set local port number
+                ports[i] = (short) children.get(i).getId();
+            }
+            tableController.showConnectivity(node.getId(), observer, ports);
+        } else {
+            observer.onFinish();
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.IPageController#onEnter()
+     */
+    @Override
+    public void onEnter() {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.IPageController#onExit()
+     */
+    @Override
+    public void onExit() {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.IPageController#canExit()
+     */
+    @Override
+    public boolean canExit() {
+        return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.IPageController#clear()
+     */
+    @Override
+    public void clear() {
+        tableController.clear();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.monitor.IPortSelectionListener#onPortSelection(int)
+     */
+    @Override
+    public void onPortSelection(int rowIndex) {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.monitor.IPortSelectionListener#onJumpToPort(int,
+     * com.intel.stl.ui.event.JumpDestination)
+     */
+    @Override
+    public void onJumpToPort(int lid, short portNum, JumpDestination destination) {
+        if (eventBus != null) {
+            PortSelectedEvent pse =
+                    new PortSelectedEvent(lid, portNum, this, destination);
+            eventBus.publish(pse);
+        }
+    }
+
+    @Override
+    public PageWeight getContextSwitchWeight() {
+        return MEDIUM;
+    }
+
+    @Override
+    public PageWeight getRefreshWeight() {
+        return MEDIUM;
+    }
+}

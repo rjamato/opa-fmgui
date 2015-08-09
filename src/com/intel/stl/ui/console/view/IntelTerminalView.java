@@ -1,0 +1,428 @@
+/**
+ * INTEL CONFIDENTIAL
+ * Copyright (c) 2014 Intel Corporation All Rights Reserved.
+ * The source code contained or described herein and all documents related to the source code ("Material")
+ * are owned by Intel Corporation or its suppliers or licensors. Title to the Material remains with Intel
+ * Corporation or its suppliers and licensors. The Material contains trade secrets and proprietary and
+ * confidential information of Intel or its suppliers and licensors. The Material is protected by
+ * worldwide copyright and trade secret laws and treaty provisions. No part of the Material may be used,
+ * copied, reproduced, modified, published, uploaded, posted, transmitted, distributed, or disclosed in
+ * any way without Intel's prior express written permission. No license under any patent, copyright,
+ * trade secret or other intellectual property right is granted to or conferred upon you by disclosure
+ * or delivery of the Materials, either expressly, by implication, inducement, estoppel or otherwise.
+ * Any license under such intellectual property rights must be express and approved by Intel in writing.
+ */
+
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ *  
+ *  Functional Group: Fabric Viewer Application
+ *
+ *  File Name: IntelTerminalView.java
+ *
+ *  Archive Source: $Source$
+ *
+ *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.9  2014/12/11 18:45:15  fernande
+ *  Archive Log:    Switch from log4j to slf4j+logback
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2014/12/04 22:49:35  jijunwan
+ *  Archive Log:    use constant
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2014/10/29 19:49:10  rjtierne
+ *  Archive Log:    When shutting down a console, only close session when the threads using
+ *  Archive Log:    them have stopped
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2014/10/22 15:43:59  rjtierne
+ *  Archive Log:    Override key listener to parse commands entered on the console window to
+ *  Archive Log:    facilitate help system navigation
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2014/10/20 20:36:49  rjtierne
+ *  Archive Log:    Use new IntelTerminalPanel instead of TermPanel
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2014/10/13 14:57:44  rjtierne
+ *  Archive Log:    No longer passing "this" to IntelEmulator
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2014/10/07 19:54:34  rjtierne
+ *  Archive Log:    Changed method setCursor() to setTerminalCursor() to eliminate ambiguity with java.awt.Component.setCursor()
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2014/10/01 19:56:18  rjtierne
+ *  Archive Log:    Help topic list initialization
+ *  Archive Log:
+ *  Archive Log:    Revision 1.1  2014/09/23 19:46:17  rjtierne
+ *  Archive Log:    Initial Version
+ *  Archive Log:
+ *
+ *  Overview: This class holds the terminal panel and launches the Emulator
+ *  task thread to process input
+ *
+ *  @author: rjtierne
+ *
+ ******************************************************************************/
+package com.intel.stl.ui.console.view;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.SwingUtilities;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.intel.stl.ui.common.HelpController;
+import com.intel.stl.ui.console.IConsoleListener;
+import com.intel.stl.ui.console.ITty;
+import com.intel.stl.ui.console.IntelEmulator;
+import com.wittams.gritty.BackBuffer;
+import com.wittams.gritty.CharacterUtils;
+import com.wittams.gritty.Emulator;
+import com.wittams.gritty.RequestOrigin;
+import com.wittams.gritty.ScrollBuffer;
+import com.wittams.gritty.StyleState;
+import com.wittams.gritty.TerminalWriter;
+import com.wittams.gritty.TtyChannel;
+import com.wittams.gritty.swing.ConnectedKeyHandler;
+
+public class IntelTerminalView extends JPanel {
+
+    private static final Logger termLogger = LoggerFactory
+            .getLogger(IntelTerminalView.class);
+
+    private static final long serialVersionUID = -8213232075937432833L;
+
+    private final String reportsCommand = "iba_report -o ";
+
+    private final String reportsString = "iba_report -reporttypes ";
+
+    private final StyleState styleState;
+
+    private final BackBuffer backBuffer;
+
+    private final ScrollBuffer scrollBuffer;
+
+    private final IntelTerminalPanel termPanel;
+
+    private final JScrollBar scrollBar;
+
+    private ITty tty;
+
+    private TtyChannel ttyChannel;
+
+    private final TerminalWriter terminalWriter;
+
+    private Emulator emulator;
+
+    private Thread emuThread;
+
+    private final List<String> topicIdList;
+
+    private final AtomicBoolean sessionRunning = new AtomicBoolean();
+
+    private final IConsoleListener consoleListener;
+
+    private String command = new String("");
+
+    public static enum BufferType {
+        Back() {
+            @Override
+            String getValue(IntelTerminalView term) {
+                return term.getTermPanel().getBackBuffer().getLines();
+            }
+        },
+        BackStyle() {
+            @Override
+            String getValue(IntelTerminalView term) {
+                return term.getTermPanel().getBackBuffer().getStyleLines();
+            }
+        },
+        Damage() {
+            @Override
+            String getValue(IntelTerminalView term) {
+                return term.getTermPanel().getBackBuffer().getDamageLines();
+            }
+        },
+        Scroll() {
+            @Override
+            String getValue(IntelTerminalView term) {
+                return term.getTermPanel().getScrollBuffer().getLines();
+            }
+        };
+
+        abstract String getValue(IntelTerminalView term);
+    }
+
+    public IntelTerminalView(IConsoleListener consoleListener,
+            List<String> topicIdList) {
+
+        super(new BorderLayout());
+
+        this.consoleListener = consoleListener;
+        this.topicIdList = topicIdList;
+        styleState = new StyleState();
+        backBuffer = new BackBuffer(80, 24, styleState);
+        scrollBuffer = new ScrollBuffer();
+
+        termPanel =
+                new IntelTerminalPanel(backBuffer, scrollBuffer, styleState);
+        termPanel.setCursor(0, 0);
+        terminalWriter = new TerminalWriter(termPanel, backBuffer, styleState);
+        scrollBar = new JScrollBar();
+
+        add(termPanel, BorderLayout.CENTER);
+        add(scrollBar, BorderLayout.EAST);
+        scrollBar.setModel(termPanel.getBoundedRangeModel());
+        sessionRunning.set(false);
+    }
+
+    public void updateTermPanelDimensions(Dimension mainPanelSize) {
+
+        Dimension charSize = new Dimension();
+        charSize.width = termPanel.getPixelWidth() / termPanel.getColumnCount();
+        charSize.height = termPanel.getPixelHeight() / termPanel.getRowCount();
+        Dimension termSize = new Dimension();
+        termSize.width = (mainPanelSize.width * 2) / charSize.width;
+        termSize.height = (mainPanelSize.height * 2) / charSize.height;
+        termPanel.doResize(termSize, RequestOrigin.User);
+    }
+
+    public IntelTerminalPanel getTermPanel() {
+        return termPanel;
+    }
+
+    public JScrollBar getScrollBar() {
+        return scrollBar;
+    }
+
+    public void setTty(ITty tty) {
+        this.tty = tty;
+        ttyChannel = new TtyChannel(tty);
+
+        emulator = new IntelEmulator(terminalWriter, ttyChannel);
+        this.termPanel.setEmulator(emulator);
+    }
+
+    public void start() {
+        if (!sessionRunning.get()) {
+            emuThread = new Thread(new EmulatorTask());
+            emuThread.start();
+        } else {
+            termLogger
+                    .error("Should not try to start session again at this point... ");
+        }
+    }
+
+    public void stop() {
+        if (sessionRunning.get() && emuThread != null) {
+            emuThread.interrupt();
+        }
+    }
+
+    public boolean isSessionRunning() {
+        return sessionRunning.get();
+    }
+
+    class EmulatorTask implements Runnable {
+        @Override
+        public void run() {
+
+            try {
+                Thread.currentThread().setName(tty.getName());
+                if (tty.initialize()) {
+                    Thread.currentThread().setName(tty.getName());
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            termPanel.setKeyHandler(createKeyHandler(emulator));
+                            termPanel.requestFocusInWindow();
+                        }
+                    });
+
+                    sessionRunning.set(true);
+                    consoleListener.onConnect(sessionRunning.get());
+                    emulator.start();
+                }
+            } catch (Exception e) {
+                consoleListener.onConnectFail(e);
+            } finally {
+                sessionRunning.set(false);
+                consoleListener.terminalStopped();
+            }
+        }
+    }
+
+    protected ConnectedKeyHandler createKeyHandler(final Emulator emulator) {
+
+        // This key handler overrides the keyPressed() and keyTyped() methods
+        // to intercept each character typed on the console and send it through
+        // the command parser for processing by the help system
+        ConnectedKeyHandler keyHandler = new ConnectedKeyHandler(emulator) {
+
+            @Override
+            public void keyPressed(final KeyEvent e) {
+                try {
+                    final char keychar = e.getKeyChar();
+                    final byte[] obuffer = new byte[1];
+                    final int keycode = e.getKeyCode();
+                    final byte[] code = emulator.getCode(keycode);
+                    if (code != null) {
+                        emulator.sendBytes(code);
+                    } else {
+
+                        if ((keychar & 0xff00) == 0) {
+                            obuffer[0] = (byte) e.getKeyChar();
+                            emulator.sendBytes(obuffer);
+                        }
+                    }
+
+                    // Process the command for the help system
+                    processCommand(keychar, e.getKeyCode(), obuffer);
+
+                } catch (final IOException ex) {
+                    termLogger.error("Error sending key to emulator", ex);
+                }
+            }
+
+            @Override
+            public void keyTyped(final KeyEvent e) {
+                final char keychar = e.getKeyChar();
+                if ((keychar & 0xff00) != 0) {
+                    final char[] foo = new char[1];
+                    foo[0] = keychar;
+                    try {
+                        final byte[] bytes = new String(foo).getBytes("EUC-JP");
+                        emulator.sendBytes(bytes);
+
+                        // Process the command for the help system
+                        processCommand(keychar, e.getKeyCode(), bytes);
+
+                    } catch (final IOException ex) {
+                        termLogger.error("Error sending key to emulator", ex);
+                    }
+                }
+            }
+
+        };
+
+        return keyHandler;
+    }
+
+    protected void processCommand(char keyChar, int keyCode, byte[] buf) {
+
+        // Send the key character, code, and command buffer to the filter to
+        // handle backspacing, carriage return, etc.
+        command = filterCommand(keyChar, keyCode, buf);
+
+        // Send valid commands to the help system parser for help system
+        // navigation
+        consoleListener.getHelpController().parseCommand(command);
+
+        // Update the help system's combo box with the command without
+        // parameters
+        if (command.split(" ").length > 0) {
+            consoleListener.getHelpController().updateSelection(
+                    command.split(" ")[0]);
+        }
+    }
+
+    protected String filterCommand(char keyChar, int keyCode, byte[] buf) {
+
+        // Only append alpha-numeric and special characters to the command
+        // string
+        if ((CharacterUtils.US < keyChar) && (keyChar < CharacterUtils.DEL)) {
+            command += keyChar;
+        }
+
+        // Process control characters
+        switch (keyCode) {
+
+            case CharacterUtils.BS:
+                if (command.length() > 0) {
+
+                    // Special Case for iba_report assists in synchronizing
+                    // command string content with backspacing on the command
+                    // line
+                    if (command.startsWith(reportsString)) {
+                        command =
+                                command.replaceFirst(reportsString,
+                                        reportsCommand);
+                    }
+                    command = command.substring(0, command.length() - 1);
+                }
+
+                break;
+
+            case CharacterUtils.DEL:
+                break;
+
+            case CharacterUtils.LF:
+                // When the user presses <ENTER>, clear the command
+                // and make the help system navigate to the table of contents
+                command = "";
+                consoleListener.getHelpController().parseCommand(
+                        HelpController.TOC);
+                consoleListener.getHelpController().updateSelection(command);
+
+                break;
+
+            default:
+                break;
+        }
+
+        // Special Case for iba_report to ensure that the help system
+        // remains at the "Reports Type" section of the page
+        if (command.startsWith("iba_report -o ")) {
+            command = command.replaceFirst(reportsCommand, reportsString);
+        }
+
+        return command;
+    }
+
+    public String getBufferText(BufferType type) {
+        return type.getValue(this);
+    }
+
+    public void setTerminalCursor(Point position) {
+        termPanel.setCursor(position.x, position.y);
+    }
+
+    public void enableKeyHandler(boolean enable) {
+        termPanel.enableKeyHandler(enable);
+    }
+
+    /**
+     * @return the topicIdList
+     */
+    public List<String> getTopicIdList() {
+        return topicIdList;
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(termPanel.getPixelWidth()
+                + scrollBar.getPreferredSize().width,
+                termPanel.getPixelHeight());
+    }
+
+    public void sendCommand(String string) throws IOException {
+        emulator.sendBytes(string.getBytes());
+    }
+
+    @Override
+    public boolean requestFocusInWindow() {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                termPanel.requestFocusInWindow();
+            }
+        });
+        return super.requestFocusInWindow();
+    }
+
+}

@@ -1,0 +1,247 @@
+/**
+ * INTEL CONFIDENTIAL
+ * Copyright (c) 2014 Intel Corporation All Rights Reserved.
+ * The source code contained or described herein and all documents related to the source code ("Material")
+ * are owned by Intel Corporation or its suppliers or licensors. Title to the Material remains with Intel
+ * Corporation or its suppliers and licensors. The Material contains trade secrets and proprietary and
+ * confidential information of Intel or its suppliers and licensors. The Material is protected by
+ * worldwide copyright and trade secret laws and treaty provisions. No part of the Material may be used,
+ * copied, reproduced, modified, published, uploaded, posted, transmitted, distributed, or disclosed in
+ * any way without Intel's prior express written permission. No license under any patent, copyright,
+ * trade secret or other intellectual property right is granted to or conferred upon you by disclosure
+ * or delivery of the Materials, either expressly, by implication, inducement, estoppel or otherwise.
+ * Any license under such intellectual property rights must be express and approved by Intel in writing.
+ */
+
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ *	
+ *  Functional Group: Fabric Viewer Application
+ *
+ *  File Name: StatusPanel.java
+ *
+ *  Archive Source: $Source$
+ *
+ *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.3  2015/01/11 21:48:17  jijunwan
+ *  Archive Log:    setup wizard improvements
+ *  Archive Log:    1) look and feel adjustment
+ *  Archive Log:    2) secure FE support
+ *  Archive Log:    3) apply wizard on current subnet
+ *  Archive Log:    4) message display based on message type rather than directly specifying UI resources
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2014/12/19 18:59:18  rjtierne
+ *  Archive Log:    Added interactive capability to status panel
+ *  Archive Log:
+ *  Archive Log:    Revision 1.1  2014/12/10 21:31:03  rjtierne
+ *  Archive Log:    New Setup Wizard based on framework
+ *  Archive Log:
+ *
+ *  Overview: View for a Wizard's status panel
+ *
+ *  @author: rjtierne
+ *
+ ******************************************************************************/
+package com.intel.stl.ui.wizards.view;
+
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+
+import org.jdesktop.swingx.JXCollapsiblePane;
+
+import com.intel.stl.ui.common.STLConstants;
+import com.intel.stl.ui.common.UIConstants;
+import com.intel.stl.ui.common.view.ComponentFactory;
+import com.intel.stl.ui.wizards.impl.IWizardTask;
+import com.intel.stl.ui.wizards.impl.InteractionType;
+
+public class StatusPanel extends JXCollapsiblePane implements IStatusView {
+
+    private static final long serialVersionUID = 7169689232956883008L;
+
+    private IWizardTask wizardTaskController;
+
+    private boolean isStatusOpen = true;
+
+    private JTextArea txtAreaStatus;
+
+    private JButton collapseButton;
+
+    private Object[] data;
+
+    private JPanel pnlAnswer;
+
+    private InteractionType action;
+
+    private final int maxHeight;
+
+    public StatusPanel() {
+        initComponents();
+        maxHeight = getPreferredSize().height;
+        closeStatusPanel();
+        setAnimated(true);
+    }
+
+    protected void initComponents() {
+
+        // Add a status panel to hold any messages coming from the views
+        setLayout(new BorderLayout());
+
+        collapseButton =
+                new JButton(getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION));
+        txtAreaStatus = new JTextArea(3, 30);
+        txtAreaStatus.setOpaque(true);
+        txtAreaStatus.setEditable(false);
+        txtAreaStatus.setLineWrap(true);
+        txtAreaStatus.setWrapStyleWord(true);
+        txtAreaStatus.setFont(UIConstants.H5_FONT.deriveFont(Font.BOLD));
+        txtAreaStatus.setBorder(BorderFactory.createLoweredBevelBorder());
+        txtAreaStatus.setBackground(UIConstants.INTEL_RED);
+        add(txtAreaStatus, BorderLayout.CENTER);
+
+        // Create a panel with the Yes/No buttons on it
+        pnlAnswer = new JPanel();
+        pnlAnswer.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        pnlAnswer.setOpaque(false);
+        pnlAnswer.setLayout(new GridLayout(2, 5, 0, 5));
+
+        JButton btnYes =
+                ComponentFactory.getIntelActionButton(STLConstants.K0081_YES
+                        .getValue());
+        btnYes.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                wizardTaskController.doInteractiveAction(action, data);
+            }
+        });
+        pnlAnswer.add(btnYes);
+
+        JButton btnNo =
+                ComponentFactory.getIntelActionButton(STLConstants.K0082_NO
+                        .getValue());
+        btnNo.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                wizardTaskController.setDone(false);
+                closeStatusPanel();
+                wizardTaskController.doInteractiveAction(action, (Object) null);
+            }
+        });
+        pnlAnswer.add(btnNo);
+
+        // Add the answer panel to the status panel
+        add(pnlAnswer, BorderLayout.EAST);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.wizards.view.IStatusView#openStatusPanel()
+     */
+    @Override
+    public void openStatusPanel() {
+        if (!isStatusOpen) {
+            collapseButton.doClick();
+            isStatusOpen = true;
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.wizards.view.IStatusView#closeStatusPanel()
+     */
+    @Override
+    public void closeStatusPanel() {
+        if (isStatusOpen) {
+            collapseButton.doClick();
+            isStatusOpen = false;
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.wizards.view.IStatusView#toggleStatusPanel()
+     */
+    @Override
+    public void toggleStatusPanel() {
+        collapseButton.doClick();
+        isStatusOpen = !isStatusOpen;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.wizards.view.IStatusView#showMessage(java.lang.String,
+     * InteractionType, java.awt.Color, java.awt.Color, java.lang.Object[])
+     */
+    @Override
+    public void showMessage(String message, InteractionType action,
+            int messageType, Object... data) {
+
+        this.action = action;
+        boolean interactive = (action == null) ? false : true;
+
+        // This is used in the interactive action
+        this.data = data;
+
+        // Hide or display answer panel depending on interactive flag
+        pnlAnswer.setVisible(interactive);
+
+        // Set the background and foreground of the text area
+        setMessageType(messageType);
+
+        // Set the status message on the text area
+        txtAreaStatus.setText(message);
+
+        // Simulate a button click to expand the status panel
+        openStatusPanel();
+    }
+
+    protected void setMessageType(int messageType) {
+        if (messageType == JOptionPane.ERROR_MESSAGE) {
+            txtAreaStatus.setBackground(UIConstants.INTEL_RED);
+            txtAreaStatus.setForeground(UIConstants.INTEL_DARK_GRAY);
+        } else if (messageType == JOptionPane.WARNING_MESSAGE) {
+            txtAreaStatus.setBackground(UIConstants.INTEL_LIGHT_YELLOW);
+            txtAreaStatus.setForeground(UIConstants.INTEL_DARK_GRAY);
+        } else {
+            txtAreaStatus.setBackground(UIConstants.INTEL_DARK_GREEN);
+            txtAreaStatus.setForeground(UIConstants.INTEL_DARK_GRAY);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.wizards.view.IStatusView#setWizardTaskController(com
+     * .intel.stl.ui.wizards.impl.IWizardTask)
+     */
+    @Override
+    public void setWizardTaskController(IWizardTask wizardTaskController) {
+        this.wizardTaskController = wizardTaskController;
+    }
+
+    /**
+     * @return the openHeight
+     */
+    public int getMaxHeight() {
+        return maxHeight;
+    }
+
+}

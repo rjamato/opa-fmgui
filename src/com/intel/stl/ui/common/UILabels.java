@@ -1,0 +1,340 @@
+/**
+ * INTEL CONFIDENTIAL
+ * Copyright (c) 2014 Intel Corporation All Rights Reserved.
+ * The source code contained or described herein and all documents related to the source code ("Material")
+ * are owned by Intel Corporation or its suppliers or licensors. Title to the Material remains with Intel
+ * Corporation or its suppliers and licensors. The Material contains trade secrets and proprietary and
+ * confidential information of Intel or its suppliers and licensors. The Material is protected by
+ * worldwide copyright and trade secret laws and treaty provisions. No part of the Material may be used,
+ * copied, reproduced, modified, published, uploaded, posted, transmitted, distributed, or disclosed in
+ * any way without Intel's prior express written permission. No license under any patent, copyright,
+ * trade secret or other intellectual property right is granted to or conferred upon you by disclosure
+ * or delivery of the Materials, either expressly, by implication, inducement, estoppel or otherwise.
+ * Any license under such intellectual property rights must be express and approved by Intel in writing.
+ */
+
+package com.intel.stl.ui.common;
+
+import java.text.MessageFormat;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+import java.util.ResourceBundle.Control;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.intel.stl.api.IMessage;
+
+/**
+ * This is the message repository for the Fabric Manager GUI messages. Please,
+ * follow the following convention: STL10001-STL10999: Initialization and
+ * general messages STL20001-STL20999: Messages related to the Connect Manager
+ * component STL30001-STL30999: Messages related to the Database Manager
+ * component STL40001-STL40999: Messages related to the UI component Add ranges
+ * as more components are added. Don't forget to add the actual message in the
+ * messages.properties file.
+ * 
+ * @author Fernando Fernandez
+ * 
+ */
+public enum UILabels implements IMessage {
+
+    STL10001_SETTINGS_FILE_FORMAT_INVALID(10001),
+    STL10002_IO_EXCEPTION_READING_SETTINGS(10002),
+    STL10003_FOLDER_CANNOT_BE_CREATED(10003),
+    STL10004_SECURITY_EXCEPTION_IN_FOLDER(10004),
+    STL10005_DATABASE_ENGINE_NOTSUPPORTED(10005),
+    STL10006_ERROR_STARTING_DATABASE_ENGINE(10006),
+    STL10007_APPLICATION_CONFIGURATION_EXCEPTION(10007),
+
+    STL10100_ERRORS_INIT_APP(10100),
+    STL10101_ONE_ERROR_INIT_APP(10101),
+    STL10102_MULTI_INSTANCES(10102),
+    STL10103_MORE_SELECTIONS(10103),
+    STL10104_INIT_SUBNET(10104),
+    STL10105_CREATE_CONTEXT(10105),
+    STL10106_PERSIST_USER_SETTINGS(10106),
+    STL10107_CLEAR_CONTEXT(10107),
+    STL10108_INIT_PAGE(10108),
+    STL10109_LOADING_PROPERTY(10109),
+    STL10110_REFRESHING_PAGES(10110),
+    STL10111_REFRESHING_PAGE(10111),
+    STL10112_INIT_PAGE_COMPLETED(10112),
+    STL10113_CONNECTION_LOST(10113),
+
+    STL10200_TOPN_BANDWIDTH(10200),
+    STL10201_TOPN_CONGESTION(10201),
+    STL10202_NODE_STATES(10202),
+    STL10203_NODE_EVENTS(10203),
+    STL10204_NODE_NO_EVENTS(10204),
+    STL10205_TOPN_PACKET_RATE(10205),
+    STL10206_TOPN_SIGNAL_INTEGRITY(10206),
+    STL10207_TOPN_SMA_CONGESTION(10207),
+    STL10208_TOPN_SECURITY(10208),
+    STL10209_TOPN_ROUTING(10209),
+    STL10210_TOPN(10210),
+    STL10211_WORST_NODE(10211),
+    STL10212_TIRE_N(10212),
+    STL10213_TOPN_BUBBLE(10213),
+
+    // Database Manager messages
+    STL30002_DATABASE_ENGINE_ERROR(30002),
+    STL30003_DATABASE_DEFINITION_FILE_NOT_FOUND(30003),
+    STL30004_ERROR_READING_DATABASE_DEFINITION(30004),
+    STL30005_ERRORS_DURING_DATABASE_DEFINITION(30005),
+    STL30006_SQLEXCEPTION(30006),
+    STL30007_ERROR_STARTING_DB_ENGINE(30007),
+
+    STL40001_ERROR_No_DATA(40001),
+    STL40002_TO_BAR(40002),
+    STL40003_TO_PIE(40003),
+    STL40004_ERROR_INACTIVE_PORT(40004),
+    STL40005_TREE_INFO_MSG(40005),
+    STL40006_FOCUSPORTS_TASK(40006),
+    STL40007_IMAGEINFO_TASK(40007),
+    STL40008_GROUPINFO_TASK(40008),
+    STL40009_VFINFO_TASK(40009),
+    STL40010_PORTCOUNTERS_TASK(40010),
+    STL40011_VFPORTCOUNTERS_TASK(40011),
+    STL40012_DEVICE_STATES(40012),
+    STL40013_FATAL_FAILURE(40013),
+
+    // RenameEventDialog
+    STL50001_EVENT_VALID(50001),
+    // ConversionPatternHelpDialog
+    STL50002_DATA1(50002),
+    STL50003_DATA2(50003),
+    STL50004_DATA3(50004),
+    STL50005_DATA4(50005),
+    STL50006_DATA5(50006),
+    STL50007_DATA6(50007),
+    STL50008_DATA7(50008),
+    STL50009_DATA8(50009),
+    STL50010_DATA9(50010),
+    STL50011_DATA10(50011),
+    STL50012_DATA11(50012),
+    STL50013_DATA12(50013),
+    STL50014_DATA13(50014),
+    STL50015_DATA14(50015),
+    // SetupWizard
+    STL50016_MIDDLE_WIZARD_CONFIG(50016),
+    // SetupWizardController
+    STL50017_CONNECTION_EST(50017),
+    // EventRulesPanelController
+    STL50018_NAME_EVENT(50018),
+    STL50019_DIFF_EVENT_NAME(50019),
+    // EventRule
+    STL50020_SET_COMMAND_ID(50020),
+    STL50021_CREATE_MESSAGE_EVENT_TYPE(50021),
+    STL50022_PORT_ACTIVE(50022),
+    STL50023_PORT_INACTIVE(50023),
+    STL50024_CREATE_MESSAGE(50024),
+    // FileUtilities
+    STL50025_DATA_SUCCESSFUL_WRTTEN(50025),
+    STL50026_SERIALIZABLE_EXCEPTION(50026),
+    STL50027_DATA_NOT_SAVED_FILE(50027),
+    STL50028_DATA_LOADED_SUCCESSFULLY(50028),
+    STL50029_FILE_NOT_FOUND(50029),
+    STL50030_NOT_SERIALIZABLE(50030),
+    // LoggingConfigurationController
+    STL50031_ERROR_WHILE(50031),
+    STL50032_CHANGES_APPLIED(50032),
+    // SubnetInputValidator
+    STL50033_VALID_SUBNET_ENTRY(50033),
+
+    // LoggingInputValidator
+    STL50034_MAX_FILE_SIZE_MISSING(50034),
+    STL50035_MAX_FILE_SIZE_INVALID_TYPE(50035),
+    STL50036_MAX_FILE_SIZE_FORMAT_EXCEPTION(50036),
+    STL50037_MAX_NUM_FILES_OUT_OF_RANGE(50037),
+    STL50038_MAX_NUM_FILES_MISSING(50038),
+    STL50039_MAX_NUM_FILES_INVALID_TYPE(50039),
+    STL50040_MAX_NUM_FILES_TOO_LARGE(50040),
+    STL50041_MAX_NUM_FILES_FORMAT_EXCEPTION(50041),
+    STL50042_FILE_LOCATION_MISSING(50042),
+    STL50043_FILE_LOCATION_CREATION_ERROR(50043),
+    STL50044_FILE_LOCATION_HEADLESS_ERROR(50044),
+    STL50045_FILE_LOCATION_IO_ERROR(50045),
+    STL50046_FILE_LOCATION_DIRECTORY_ERROR(50046),
+    STL50047_FORMAT_STRING_EMPTY(50047),
+    STL50048_FORMAT_STRING_INVALID(50048),
+
+    // ConversionPatternHelpDialog
+    STL50049_TO_PREVIEW(50049),
+    // SubnetPanel
+    STL50050_CONNECTION_FAIL(50050),
+    STL50051_USE_OLD_SUBNET(50051),
+    STL50052_IGNORE_INVALID_SUBNET(50052),
+    // SubnetInputValidator, EventRulesPanelController
+    STL50053_MAX_ERROR(50053),
+    STL50054_EVENT_NAME(50054),
+    // EventRulesPanel
+    STL50055_EVENT_CHECKBOX_TIP(50055),
+    // LoggingConfigurationPanel
+    STL50056_APPENDER_SWITCH_WARNING(50056),
+    STL50057_LOGGING_CONFIG_SAVE_FAILURE(50057),
+    STL50058_SAMPLE_LOG_MESSAGE(50058),
+    STL50059_CONNECTION_FAILURE_PROCEED(50059),
+    STL50060_UNSUPPORTED_APPENDER_TYPE(50060),
+    STL50061_INVALID_THRESHOLD_TYPE(50061),
+    STL50062_MAX_FILE_SIZE_OUT_OF_RANGE(50062),
+    STL50063_OK(50063),
+
+    // User Preferences Input Validator
+    STL50064_REFRESH_RATE_MISSING(50064),
+    STL50065_REFRESH_RATE_INVALID_TYPE(50065),
+    STL50066_REFRESH_RATE_OUT_OF_RANGE(50066),
+    STL50067_REFRESH_RATE_THRESHOLD_ERROR(50067),
+    STL50068_REFRESH_RATE_FORMAT_EXCEPTION(50068),
+    STL50069_REFRESH_RATE_UNITS_MISSING(50069),
+    STL50070_REFRESH_RATE_UNITS_INVALID_TYPE(50070),
+    STL50071_REFRESH_RATE_UNITS_OUT_OF_RANGE(50071),
+    STL50072_REFRESH_RATE_UNITS_FORMAT_EXCEPTION(50072),
+    STL50073_TIMING_WINDOW_MISSING(50073),
+    STL50074_TIMING_WINDOW_INVALID_TYPE(50074),
+    STL50075_TIMING_WINDOW_OUT_OF_RANGE(50075),
+    STL50076_TIMING_WINDOW_FORMAT_EXCEPTION(50076),
+    STL50077_NUM_WORST_NODES_MISSING(50077),
+    STL50078_NUM_WORST_NODES_INVALID_TYPE(50078),
+    STL50079_NUM_WORST_NODES_OUT_OF_RANGE(50079),
+    STL50080_NUM_WORST_NODES_FORMAT_EXCEPTION(50080),
+
+    // Multinet Wizard
+    STL50081_ABANDON_CHANGES_MESSAGE(50081),
+    STL50082_DELETE_SUBNET_MESSAGE(50082),
+    STL50083_WELCOME_MESSAGE(50083),
+    STL50084_CANT_BE_BLANK(50084),
+    STL50085_MUST_BE_NUMERIC(50085),
+    STL50086_DUPLICATE_HOSTS(50086),
+    STL50087_DUPLICATE_SUBNETS(50087),
+    STL50088_HOST_NOT_FOUND(50088),
+    STL50089_UNABLE_TO_VALIDATE(50089),
+    STL50090_DB_SAVE_FAILURE(50090),
+    STL50091_CONNECT_TO_SUBNET(50091),
+    STL50092_CONFIGURE_SUBNET(50092),
+    STL50093_WELCOME_FM_GUI(50093),
+    STL50094_WELCOME_ERROR(50094),
+    STL50095_TEXT_FIELD_LIMIT(50095),
+
+    // CertsAssistant
+    STL50200_SUBNETDESC_CANNOT_BE_NULL(50200),
+    STL50201_CERTSDESC_CANNOT_BE_NULL(50201),
+
+    // Event messages
+    STL60001_TOPO_CHANGE(60001),
+    STL60002_PORT_ACTIVE(60002),
+    STL60003_PORT_INACTIVE(60003),
+    STL60004_FE_CONN_LOST(60004),
+    STL60005_FE_CONN_ESTABLISH(60005),
+    STL60006_SM_CONN_LOST(60006),
+    STL60007_SM_CONN_ESTABLISH(60007),
+    STL60008_CONN_LOST(60008),
+    STL60009_PRESS_REFRESH(60009),
+
+    STL60100_PORT_PREVIEW(60100),
+
+    STL70001_COLLAPSABLE_NODE_TOOLTIP(70001),
+    STL70002_SLOW_PORTS(70002),
+    STL70003_DEG_PORTS(70003),
+
+    // Console Messages
+    STL80001_CONSOLE_CONNECTION_ERROR(80001),
+    STL80002_INVALID_PORT_NUMBER(80002),
+    STL80003_AUTHENTICATION_FAILURE(80003),
+    STL80004_MAX_CONSOLES(80004),
+    STL80005_INVALID_COMMAND(80005),
+    STL80006_COMMAND_HELP_REFERENCE(80006),
+    STL80007_PORT_INVALID_FORMAT(80007),
+    STL80008_INVALID_SUBNET_ID(80008),
+    STL80009_MAX_CHANNELS_IN_SESSION(80009),
+
+    STL81000_DEPLOY_ERROR(81000),
+    STL81001_DUP_NAME(81001),
+    STL81002_DUP_NAME_SUG(81002),
+    STL81003_REF_CONF(81003),
+    STL81004_REMOVE_REF(81004),
+    STL81005_UPDATE_REF(81005),
+    STL81006_INVALID_IDRANGE(81006),
+    STL81007_CHANGE_ID(81007),
+    STL81008_INVALID_GIDRANGE(81008),
+    STL81009_CHANGE_GID(81009),
+
+    STL81050_DG_DEVICES_DESC(81050),
+    STL81051_DG_SELECT_DESC(81051),
+    STL81052_DG_INCLUDE_DESC(81052),
+
+    STL81100_SAVE_ITEM(81100),
+    STL81101_REMOVE_ITEM(81101),
+    STL81102_ISSUES_FOUND(81102),
+    STL81103_NO_ISSUES_FOUND(81103),
+    STL81104_ONE_ISSUE_FOUND(81104),
+
+    STL81110_DEPLOY_MSG(81110),
+
+    // Error messages in the UI
+    STL90001_DEVICE_TYPE_NOT_SET(90001),
+    STL90002_DEVICE_CATEGORY_NOT_APPLICABLE(90002),
+    STL90003_DEVICE_CATEGORY_NOT_SELECTED(90003),
+    STL90004_BUILD_TREE_FAILED(90004),
+    STL90005_UPDATE_TREE_FAILED(90005),
+
+    STL91000_ABOUT_APP(91000),
+    STL91001_BUILD_ID(91001),
+    STL91002_BUILD_DATE(91002),
+    STL99999_HOLDER(99999);
+
+    private static final String STL_MESSAGES_BUNDLE =
+            "com.intel.stl.ui.common.labels";
+
+    private static final String STL_MESSAGES_ENCODING = "UTF-8";
+
+    private static final Control STL_CONTROL = new UTFControl(
+            STL_MESSAGES_ENCODING);
+
+    private static final ResourceBundle STL_MESSAGES = ResourceBundle
+            .getBundle(STL_MESSAGES_BUNDLE, STL_CONTROL);
+
+    private static Logger log = LoggerFactory.getLogger(UILabels.class);
+
+    private final int errorcode;
+
+    private final String key;
+
+    private UILabels(int errorcode) {
+        this.errorcode = errorcode;
+        this.key = String.format("STL%05d", errorcode);
+    }
+
+    @Override
+    public int getErrorCode() {
+        return errorcode;
+    }
+
+    @Override
+    public String getMessageKey() {
+        return key;
+    }
+
+    @Override
+    public String getDescription() {
+        try {
+            return STL_MESSAGES.getString(key);
+        } catch (MissingResourceException mre) {
+            String message = "Message '" + key + "' not found!";
+            log.error(message);
+            return message;
+        }
+    }
+
+    @Override
+    public String getDescription(Object... arguments) {
+        try {
+            return MessageFormat.format(STL_MESSAGES.getString(key), arguments);
+        } catch (MissingResourceException mre) {
+            String message = "Message '" + key + "' not found!";
+            log.error(message);
+            return message;
+        }
+    }
+
+}

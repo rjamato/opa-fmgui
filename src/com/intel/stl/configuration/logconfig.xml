@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" >
+  <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{ISO8601} [%thread] %-5level - %m%n</pattern>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>ERROR</level>
+    </filter>
+  </appender>
+  <appender name="RollingFile-1" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+    <File>${fmgui.logs.dir}/fmgui.log</File>
+    <encoder>
+      <pattern>%d{ISO8601} [%thread] %-5level - %m%n</pattern>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>ERROR</level>
+    </filter>
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <maxIndex>10</maxIndex>
+      <FileNamePattern>${fmgui.logs.dir}/fmgui.log.%i</FileNamePattern>
+    </rollingPolicy>
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <MaxFileSize>5MB</MaxFileSize>
+    </triggeringPolicy>
+  </appender>
+  <appender name="HibernateSql" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+    <File>${fmgui.logs.dir}/hibernate.log</File>
+    <encoder>
+      <pattern>%d{ISO8601} [%thread] %-5level - %m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <maxIndex>5</maxIndex>
+      <FileNamePattern>${fmgui.logs.dir}/hibernate.log.%i</FileNamePattern>
+    </rollingPolicy>
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <MaxFileSize>20MB</MaxFileSize>
+    </triggeringPolicy>
+  </appender>
+  <appender name="DbMgr" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+    <File>${fmgui.logs.dir}/stldbmgr.log</File>
+    <encoder>
+      <pattern>%d{ISO8601} [%thread] %-5level - %m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <maxIndex>10</maxIndex>
+      <FileNamePattern>${fmgui.logs.dir}/stldbmgr.log.%i</FileNamePattern>
+    </rollingPolicy>
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <MaxFileSize>5MB</MaxFileSize>
+    </triggeringPolicy>
+  </appender>
+  <appender name="FecDriver" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+    <File>${fmgui.logs.dir}/stlfecdriver.log</File>
+    <encoder>
+      <pattern>%d{ISO8601} [%thread] %-5level - %m%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <maxIndex>10</maxIndex>
+      <FileNamePattern>${fmgui.logs.dir}/stlfecdriver.log.%i</FileNamePattern>
+    </rollingPolicy>
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <MaxFileSize>5MB</MaxFileSize>
+    </triggeringPolicy>
+  </appender>
+  <logger name="com.intel.stl.datamanager" level="INFO">
+    <appender-ref ref="DbMgr"/>
+  </logger>
+  <logger name="com.intel.stl.dbengine" level="INFO">
+    <appender-ref ref="DbMgr"/>
+  </logger>
+  <logger name="com.intel.stl.fecdriver" level="INFO">
+    <appender-ref ref="FecDriver"/>
+  </logger>
+  <logger name="org.hibernate.type" additivity="false" level="OFF">
+    <appender-ref ref="HibernateSql"/>
+  </logger>
+  <logger name="org.hibernate.SQL" additivity="false" level="OFF">
+    <appender-ref ref="HibernateSql"/>
+  </logger>
+  <root level="DEBUG">
+    <appender-ref ref="stdout"/>
+    <appender-ref ref="RollingFile-1"/>
+  </root>
+</configuration>
