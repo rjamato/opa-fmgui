@@ -81,12 +81,9 @@ Wait for the successful completion of the build process:
     BUILD SUCCESSFUL
     Total time: n seconds
 
-Copy the generated jar file fmgui-10_0_0_990_97.jar in folder 
-FMGUI_SRC/target to FMGUI_SRC. 
-
 Type the following command to start the application:
 
-    fmgui
+    ./fmgui.sh
 
 
 

@@ -6,8 +6,8 @@ Implementation-Title: Intel Fabric Manager GUI
 Implementation-Vendor: Intel Corporation
 Implementation-Version: 1.0.0
 Schema-Version: 27
-Intel-Build-Id: 10_0_0_0_190
-Intel-Build-Date: 2015-05-27 03:18:29
+Intel-Build-Id: 10_0_0_0_2
+Intel-Build-Date: 2015-08-13 17:49:06
 Main-Class: com.intel.stl.main.FMGuiApp
 Class-Path: . lib/antlr-2.7.7.jar lib/dom4j-1.6.1.jar lib/gritty-0.02.
  jar lib/hibernate-commons-annotations-4.0.4.Final.jar lib/hibernate-c

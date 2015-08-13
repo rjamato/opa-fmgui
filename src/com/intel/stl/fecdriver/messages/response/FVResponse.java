@@ -1,3 +1,29 @@
+/**
+ * Copyright (c) 2015, Intel Corporation
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ *     * Redistributions of source code must retain the above copyright notice,
+ *       this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of Intel Corporation nor the names of its contributors
+ *       may be used to endorse or promote products derived from this software
+ *       without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 package com.intel.stl.fecdriver.messages.response;
 
 // Java imports
@@ -15,7 +41,6 @@ import com.intel.stl.fecdriver.messages.adapter.RmppMad;
 import com.intel.stl.fecdriver.messages.command.FVMessage;
 
 /**
- * Abstract class for all FVResponses. Reads reponse specific data.
  * 
  * <br>
  * Copyright (c) 2001, VIEO, Inc. All rights reserved.
@@ -40,14 +65,12 @@ public abstract class FVResponse<E> extends FVMessage implements IResponse<E> {
     private long expireTime;
 
     /**
-     * @return the description
      */
     public String getDescription() {
         return description;
     }
 
     /**
-     * @param description
      *            the description to set
      */
     public void setDescription(String description) {
@@ -64,7 +87,6 @@ public abstract class FVResponse<E> extends FVMessage implements IResponse<E> {
     }
 
     /**
-     * @return the error
      */
     public synchronized Exception getError() {
         return error;
@@ -98,7 +120,6 @@ public abstract class FVResponse<E> extends FVMessage implements IResponse<E> {
     }
 
     /*
-     * (non-Javadoc)
      * 
      * @see java.util.concurrent.Future#cancel(boolean)
      */
@@ -109,7 +130,6 @@ public abstract class FVResponse<E> extends FVMessage implements IResponse<E> {
     }
 
     /*
-     * (non-Javadoc)
      * 
      * @see java.util.concurrent.Future#isCancelled()
      */
@@ -119,7 +139,6 @@ public abstract class FVResponse<E> extends FVMessage implements IResponse<E> {
     }
 
     /*
-     * (non-Javadoc)
      * 
      * @see java.util.concurrent.Future#isDone()
      */
@@ -129,7 +148,6 @@ public abstract class FVResponse<E> extends FVMessage implements IResponse<E> {
     }
 
     /*
-     * (non-Javadoc)
      * 
      * @see java.util.concurrent.Future#get()
      */
@@ -142,7 +160,6 @@ public abstract class FVResponse<E> extends FVMessage implements IResponse<E> {
     }
 
     /*
-     * (non-Javadoc)
      * 
      * @see java.util.concurrent.Future#get(long, java.util.concurrent.TimeUnit)
      */

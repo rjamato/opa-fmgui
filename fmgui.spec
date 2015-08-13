@@ -4,22 +4,22 @@
 # Copyright (c) 2015 Intel Corporation
 #
 %define name IntelOPA-FMGUI
-%define appdir IntelOPA-FMGUI-10_0_0_0_190
+%define appdir IntelOPA-FMGUI-10_0_0_0_2
 %define appfolder fmgui
-%define appjar fmgui-10_0_0_0_190.jar
+%define appjar fmgui-10_0_0_0_2.jar
 %define _binary_payload w9.gzdio
 
 Name: IntelOPA-FMGUI
-Version: 10_0_0_0_190
+Version: 10_0_0_0_2
 Release: beta
 Summary: Fabric Manager Graphical User Interface
 Group: Applications/System
 ExclusiveArch: noarch
 BuildArch: noarch
-Source0: IntelOPA-FMGUI-10_0_0_0_190.source.tar 
+Source0: IntelOPA-FMGUI-10_0_0_0_2.source.tar 
 Buildroot: %{_topdir}/%{name}-%{version}-buildroot
 URL: www.intel.com
-License: TBD
+License: BSD 3-clause "New" or "Revised" License
 
 %description
 FMGUI is the Fabric Manager Graphical User Interface.  It can be run by invoking the Bash
@@ -58,6 +58,9 @@ mkdir -p %{buildroot}/usr/local/share/desktop-directories
 mkdir -p %{buildroot}/usr/local/share/icons/hicolor/48x48/apps
 mkdir -p %{buildroot}/etc/xdg/menus/applications-merged
 cp -a %{appdir}/%{appjar} %{buildroot}%{_javadir}/%{appfolder}
+cp -a %{appdir}/README %{buildroot}%{_javadir}/%{appfolder}
+cp -a %{appdir}/LICENSE %{buildroot}%{_javadir}/%{appfolder}
+cp -a %{appdir}/THIRD-PARTY-README.html %{buildroot}%{_javadir}/%{appfolder}
 cp -a %{appdir}/lib/* %{buildroot}%{_javadir}/%{appfolder}/lib
 cp -a %{appdir}/help/* %{buildroot}%{_javadir}/%{appfolder}/help
 cp -a %{appdir}/install/fmgui.sh %{buildroot}/usr/local/bin/fmgui
@@ -67,10 +70,10 @@ cp -a %{appdir}/install/images/* %{buildroot}/usr/local/share/icons/hicolor
 cp -a %{appdir}/install/Fabric.menu %{buildroot}/etc/xdg/menus/applications-merged
 
 %files
-%defattr(755,fmgui,fmgui)
+%defattr(755,root,root)
 %{_javadir}/%{appfolder}
-%attr(755,fmgui,fmgui) /usr/local/bin/fmgui
-%attr(644,fmgui,fmgui) /usr/local/share/applications/fmgui.desktop
-%attr(644,fmgui,fmgui) /usr/local/share/desktop-directories/Fabric.directory
+%attr(755,root,root) /usr/local/bin/fmgui
+%attr(644,root,root) /usr/local/share/applications/fmgui.desktop
+%attr(644,root,root) /usr/local/share/desktop-directories/Fabric.directory
 /usr/local/share/icons/hicolor
-%attr(644,fmgui,fmgui) %{_sysconfdir}/xdg/menus/applications-merged/Fabric.menu
+%attr(644,root,root) %{_sysconfdir}/xdg/menus/applications-merged/Fabric.menu
