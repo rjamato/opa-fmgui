@@ -85,5 +85,32 @@ Type the following command to start the application:
 
     ./fmgui.sh
 
+Creating RPMs
+The opa-fmgui.spec file was created to act as part of Intel's internal build process
+but can be used manually create RPMs through the following steps.
 
+Change directory to the level above the opa-fmgui directory
 
+       cd ..
+
+Change the name of the directory from opa-fmgui to IntelOPA-FMGUI-10_0_0_0_2
+
+       mv opa-fmgui IntelOPA-FMGUI-10_0_0_0_2
+
+Create a tar file of the opa-fmgui sources in the rpmbuild/SOURCES directory
+
+       tar -cvf $HOME/rpmbuild/SOURCES/IntelOPA-FMGUI-10_0_0_0_2.source.tar --exclude-vcs IntelOPA-FMGUI-10_0_0_0_2
+
+Change directory back into the opa-fmgui directory now called IntelOPA-FMGUI-10_0_0_0_2
+
+       cd IntelOPA-FMGUI-10_0_0_0_2
+
+Create the RPMs using the rpmbuild program
+
+       rpmbuild -ba fmgui.spec
+
+Put the directory back to its original name
+
+       cd ..; mv IntelOPA-FMGUI-10_0_0_0_2 opa-fmgui; cd opa-fmgui
+
+This will create an RPM file in the the $HOME/rpmbuild/RPMS/noarch directory.
