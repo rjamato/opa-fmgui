@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3.2.1  2015/08/12 15:21:52  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.5  2015/09/17 11:51:43  jypak
+ *  Archive Log:    PR 129516- vfSID as described in spec not implemented in gen 1 fm or tools
+ *  Archive Log:    Removed all vfSID related code.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/08/17 18:49:17  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/01/13 22:00:10  jijunwan
  *  Archive Log:    PR 126408 - PM port group & VF name string termination unclear
@@ -75,12 +80,12 @@ import com.intel.stl.common.StringUtils;
 import com.intel.stl.fecdriver.messages.adapter.SimpleDatagram;
 
 /**
- * ref: /ALL_EMB/IbAccess/Common/Inc/stl_pa.h v1.33
+ * ref: /ALL_EMB/IbAccess/Common/Inc/stl_pa.h v1.49
  * 
  * <pre>
  *  typedef struct _STL_PA_VF_Cfg_Req {
  * [64]     char                    vfName[STL_PM_VFNAMELEN];
- * [72]     uint64                  vfSID;
+ * [72]     uint64                  reserved;
  * [88]     STL_PA_IMAGE_ID_DATA    imageId;
  *  } PACK_SUFFIX STL_PA_VF_CFG_REQ;
  *   
@@ -102,10 +107,6 @@ public class VFConfigReq extends SimpleDatagram<VFConfigReqBean> {
         StringUtils.setString(name, buffer, 0, PAConstants.STL_PM_GROUPNAMELEN);
     }
 
-    public void setVfSid(long sid) {
-        buffer.putLong(64, sid);
-    }
-
     public void setImageNumber(long imageNumber) {
         buffer.putLong(72, imageNumber);
     }
@@ -125,8 +126,7 @@ public class VFConfigReq extends SimpleDatagram<VFConfigReqBean> {
         VFConfigReqBean bean = new VFConfigReqBean();
         bean.setVfName(StringUtils.toString(buffer.array(),
                 buffer.arrayOffset(), PAConstants.STL_PM_GROUPNAMELEN));
-        buffer.position(64);
-        bean.setVfSid(buffer.getLong());
+        buffer.position(72);
         bean.setImageId(new ImageIdBean(buffer.getLong(), buffer.getInt()));
         return bean;
     }

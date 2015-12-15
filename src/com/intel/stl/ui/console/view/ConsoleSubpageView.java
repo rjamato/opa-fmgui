@@ -35,8 +35,17 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.11.2.1  2015/08/12 15:27:04  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.14  2015/08/17 18:54:14  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.13  2015/06/25 11:55:06  jypak
+ *  Archive Log:    PR 129073 - Add help action for Admin Page.
+ *  Archive Log:    The help action is added to App, DG, VF,Console page and Console terminal. For now, a help ID and a content are being used as a place holder for each page. Once we get the help contents delivered by technical writer team, the HelpAction will be updated with correct help ID.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.12  2015/05/27 14:35:27  rjtierne
+ *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
+ *  Archive Log:    Removed loginDialogView
  *  Archive Log:
  *  Archive Log:    Revision 1.11  2015/04/09 21:13:41  rjtierne
  *  Archive Log:    Made method closeConsole() synchronized to fix synchronization problem with
@@ -86,6 +95,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -94,8 +104,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.intel.stl.ui.common.IHelp;
+import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UIConstants;
+import com.intel.stl.ui.common.UIImages;
 import com.intel.stl.ui.common.Util;
+import com.intel.stl.ui.common.view.ComponentFactory;
 import com.intel.stl.ui.common.view.IntelTabbedPaneUI;
 import com.intel.stl.ui.console.IConsoleEventListener;
 import com.intel.stl.ui.console.IConsoleListener;
@@ -108,13 +121,13 @@ public class ConsoleSubpageView extends JPanel implements ITabListener {
 
     private JTabbedPane tabbedPane;
 
+    private JButton helpBtn;
+
     private IntelTabbedPaneUI tabUI;
 
     private JPanel ctrPanel;
 
     private NewTabView newTabView;
-
-    private final LoginDialogView loginDialogView;
 
     private LoginBean defaultLoginBean;
 
@@ -125,11 +138,7 @@ public class ConsoleSubpageView extends JPanel implements ITabListener {
     private final List<ConsoleTabView> tabList =
             new ArrayList<ConsoleTabView>();
 
-    public ConsoleSubpageView(LoginDialogView loginDialogView,
-            IHelp consoleHelpListener) {
-
-        this.loginDialogView = loginDialogView;
-        this.loginDialogView.setTabListener(this);
+    public ConsoleSubpageView(IHelp consoleHelpListener) {
         this.consoleHelpListener = consoleHelpListener;
         initComponents();
     }
@@ -165,6 +174,22 @@ public class ConsoleSubpageView extends JPanel implements ITabListener {
                 Util.runInEDT(highlightTabs);
             }
         });
+
+        helpBtn =
+                ComponentFactory.getImageButton(UIImages.HELP_ICON
+                        .getImageIcon());
+        helpBtn.setToolTipText(STLConstants.K0037_HELP.getValue());
+        ctrPanel.add(helpBtn);
+    }
+
+    public void enableHelp(boolean b) {
+        if (helpBtn != null) {
+            helpBtn.setEnabled(b);
+        }
+    }
+
+    public JButton getHelpButton() {
+        return helpBtn;
     }
 
     public void setDefaultLoginBean(LoginBean defaultLoginBean) {
@@ -189,9 +214,7 @@ public class ConsoleSubpageView extends JPanel implements ITabListener {
     }
 
     protected void addNewTab(String symbol) {
-        newTabView =
-                new NewTabView(loginDialogView, defaultLoginBean,
-                        consoleEventListener);
+        newTabView = new NewTabView(defaultLoginBean, consoleEventListener);
         tabbedPane.addTab(symbol, new JLabel());
         tabbedPane.setTabComponentAt(tabbedPane.indexOfTab(symbol), newTabView);
         tabbedPane.setEnabledAt(tabbedPane.indexOfTab(symbol), false);

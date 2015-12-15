@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6.2.1  2015/08/12 15:22:21  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.8  2015/08/17 18:49:13  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/07/29 16:43:42  fernande
+ *  Archive Log:    PR 129631 - Ports table sometimes not getting performance related data . Fixed simulation of notices to overload application and attempt to reproduce the issue.
  *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/02/23 22:22:23  jijunwan
  *  Archive Log:    improved to include/exclude inactive nodes/links in query
@@ -114,12 +118,15 @@ import com.intel.stl.api.subnet.GIDGlobal;
 import com.intel.stl.api.subnet.NodeRecordBean;
 import com.intel.stl.api.subnet.NodeType;
 import com.intel.stl.api.subnet.SubnetDataNotFoundException;
+import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.api.subnet.impl.NodeCache;
 import com.intel.stl.configuration.CacheManager;
 import com.intel.stl.fecdriver.messages.adapter.sa.GID;
 
 public class NoticeSimulator {
     private static Logger log = LoggerFactory.getLogger(NoticeSimulator.class);
+
+    private static final String SIM_THREAD_PREFIX = "simthread-";
 
     private List<NodeRecordBean> nodes;
 
@@ -232,6 +239,9 @@ public class NoticeSimulator {
                 simulate();
             }
         });
+        SubnetDescription subnet =
+                cacheMgr.getSAHelper().getSubnetDescription();
+        worker.setName(SIM_THREAD_PREFIX + subnet.getSubnetId());
         worker.start();
     }
 
@@ -258,6 +268,9 @@ public class NoticeSimulator {
                 for (int i = 0; i < notices.length; i++) {
                     notices[i] = createNotice();
                 }
+                String subnetName =
+                        cacheMgr.getSAHelper().getSubnetDescription().getName();
+                cacheMgr.getDatabaseManager().saveNotices(subnetName, notices);
                 fireNotice(notices);
             }
         }

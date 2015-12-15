@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.10.2.1  2015/08/12 15:26:39  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.12  2015/08/17 18:53:39  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/07/31 21:11:19  fernande
+ *  Archive Log:    PR 129631 - Ports table sometimes not getting performance related data. Improved logging.
  *  Archive Log:
  *  Archive Log:    Revision 1.10  2015/04/14 14:42:49  jypak
  *  Archive Log:    Fix to avoid MAD request error for history query.
@@ -157,8 +161,7 @@ public class PortCounterSubscriber extends Subscriber<PortCountersBean> {
                             .scheduleTask(taskList, task, callback, caller);
             return submittedTask;
         } catch (Exception e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             return null;
         }
     }
@@ -180,8 +183,7 @@ public class PortCounterSubscriber extends Subscriber<PortCountersBean> {
         try {
             taskScheduler.removeTask(taskList, task, callback);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -221,8 +223,7 @@ public class PortCounterSubscriber extends Subscriber<PortCountersBean> {
         try {
             taskScheduler.removeTask(taskList, tasks, callbacks);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 

@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:21:59  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/08/17 18:48:51  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/05/26 15:32:08  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/02/16 05:10:35  jijunwan
  *  Archive Log:    added cmd input argument information to MadException
@@ -58,9 +62,10 @@ import com.intel.stl.common.STLMessages;
 public class MadException extends FMException {
     private static final long serialVersionUID = 4063493800672669073L;
 
-    public MadException(Class type, short attributeId, short code, String desc) {
-        super(STLMessages.STL2000_MAD_FAILED, type.getSimpleName(), StringUtils
-                .shortHexString(attributeId), StringUtils.shortHexString(code),
-                desc);
+    public MadException(Class<?> type, short attributeId, short code,
+            String desc) {
+        super(STLMessages.STL20000_MAD_FAILED, type.getSimpleName(),
+                StringUtils.shortHexString(attributeId), StringUtils
+                        .shortHexString(code), desc);
     }
 }

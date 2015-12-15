@@ -35,8 +35,22 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:26:55  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.7  2015/08/17 18:53:43  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/06/30 22:28:49  jijunwan
+ *  Archive Log:    PR 129215 - Need short chart name to support pin capability
+ *  Archive Log:    - introduced short name to performance items
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/06/25 20:42:13  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improved PerformanceItem to support port counters
+ *  Archive Log:    - improved PerformanceItem to use generic ISource to describe data source
+ *  Archive Log:    - improved PerformanceItem to use enum DataProviderName to describe data provider name
+ *  Archive Log:    - improved PerformanceItem to support creating a copy of PerformanceItem
+ *  Archive Log:    - improved TrendItem to share scale with other charts
+ *  Archive Log:    - improved SimpleDataProvider to support hsitory data
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/02/17 23:22:14  jijunwan
  *  Archive Log:    PR 127106 - Suggest to use same bucket range for Group Err Summary as shown in "opatop" command to plot performance graphs in FV
@@ -66,24 +80,53 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.Util;
+import com.intel.stl.ui.performance.GroupSource;
 
-public abstract class HistogramItem extends AbstractPerformanceItem {
+public abstract class HistogramItem extends
+        AbstractPerformanceItem<GroupSource> {
     protected XYSeriesCollection dataset;
 
-    public HistogramItem(String fullName) {
-        this(fullName, DEFAULT_DATA_POINTS);
+    private final Object copyCritical = new Object();
+
+    public HistogramItem(String shortName, String fullName) {
+        this(shortName, fullName, DEFAULT_DATA_POINTS);
     }
 
     /**
      * Description:
      * 
-     * @param name
+     * @param sourceName
      * @param maxDataPoints
      */
-    public HistogramItem(String fullName, int maxDataPoints) {
-        super(STLConstants.K0079_HISTOGRAM.getValue(), fullName, maxDataPoints);
+    public HistogramItem(String shortName, String fullName, int maxDataPoints) {
+        super(STLConstants.K0079_HISTOGRAM.getValue(), shortName, fullName,
+                maxDataPoints);
         initDataProvider();
         initDataset();
+    }
+
+    public HistogramItem(HistogramItem item) {
+        super(item);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.performance.item.AbstractPerformanceItem#copyDataset
+     * (com.intel.stl.ui.performance.item.AbstractPerformanceItem)
+     */
+    @Override
+    protected void copyDataset(AbstractPerformanceItem<GroupSource> item) {
+        try {
+            HistogramItem hi = (HistogramItem) item;
+            synchronized (hi.copyCritical) {
+                dataset = (XYSeriesCollection) hi.dataset.clone();
+            }
+        } catch (CloneNotSupportedException e) {
+            // shouldn't happen
+            e.printStackTrace();
+        }
     }
 
     protected void initDataset() {
@@ -126,12 +169,14 @@ public abstract class HistogramItem extends AbstractPerformanceItem {
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
-                dataset.setNotify(false);
-                dataset.removeAllSeries();
-                dataset.addSeries(xyseries);
-                dataset.setIntervalPositionFactor(0);
-                dataset.setIntervalWidth(range / values.length);
-                dataset.setNotify(true);
+                synchronized (copyCritical) {
+                    dataset.setNotify(false);
+                    dataset.removeAllSeries();
+                    dataset.addSeries(xyseries);
+                    dataset.setIntervalPositionFactor(0);
+                    dataset.setIntervalWidth(range / values.length);
+                    dataset.setNotify(true);
+                }
             }
         });
     }
@@ -141,8 +186,10 @@ public abstract class HistogramItem extends AbstractPerformanceItem {
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
-                if (dataset != null) {
-                    dataset.removeAllSeries();
+                synchronized (copyCritical) {
+                    if (dataset != null) {
+                        dataset.removeAllSeries();
+                    }
                 }
             }
         });

@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:22:24  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.6  2015/08/17 18:49:20  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/08/04 15:20:48  jijunwan
+ *  Archive Log:    PR 129809 - Cannot remove attribute for a VF
+ *  Archive Log:    - Improved VF to clear all optional attributes, so when we update a VF, removed attributes will get removed.
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/03/30 14:17:08  jijunwan
  *  Archive Log:    fixed null issues
@@ -420,6 +425,17 @@ public class VirtualFabric {
     }
 
     public void clear() {
+        pkey = null;
+        maxMtu = null;
+        maxRate = null;
+        standby = null;
+        highPriority = null;
+        bandwidth = null;
+        pktLifeTimeMult = null;
+        baseSL = null;
+        flowControlDisable = null;
+        preemptRank = null;
+        hoqLife = null;
         if (members != null) {
             members.clear();
         }

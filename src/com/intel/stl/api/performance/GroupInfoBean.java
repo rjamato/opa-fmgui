@@ -35,11 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8.2.2  2015/08/12 15:21:44  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.12  2015/08/17 18:48:41  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.8.2.1  2015/05/06 19:22:08  jijunwan
- *  Archive Log:    fixed hashCode and equals issue found by FindBugs
+ *  Archive Log:    Revision 1.11  2015/07/14 18:56:03  fernande
+ *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Fixes for Klocwork issues
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/07/02 20:22:59  fernande
+ *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Moving Blobs to the database; arrays are now being saved to the database as collection tables.
  *  Archive Log:
  *  Archive Log:    Revision 1.9  2015/05/01 21:38:34  jijunwan
  *  Archive Log:    fixed hashCode and equals issue found by FindBug
@@ -62,7 +66,10 @@
 package com.intel.stl.api.performance;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import com.intel.stl.api.ITimestamped;
 import com.intel.stl.api.Utils;
@@ -92,11 +99,11 @@ public class GroupInfoBean implements ITimestamped, Serializable {
 
     private ErrSummaryBean internalErrorMaximums;
 
-    private ErrBucketBean[] internalErrorPorts;
+    private List<ErrBucketBean> internalErrorPorts;
 
     private ErrSummaryBean externalErrorMaximums;
 
-    private ErrBucketBean[] externalErrorPorts;
+    private List<ErrBucketBean> externalErrorPorts;
 
     private byte maxInternalRate;
 
@@ -277,7 +284,8 @@ public class GroupInfoBean implements ITimestamped, Serializable {
     public ErrStatBean getInternalErrors() {
         ErrStatBean internalErrors = new ErrStatBean();
         internalErrors.setErrorMaximums(internalErrorMaximums);
-        internalErrors.setPorts(internalErrorPorts);
+
+        internalErrors.setPorts(getInternalErrorPortsAsArray());
         return internalErrors;
     }
 
@@ -287,7 +295,7 @@ public class GroupInfoBean implements ITimestamped, Serializable {
      */
     public void setInternalErrors(ErrStatBean internalErrors) {
         this.internalErrorMaximums = internalErrors.getErrorMaximums();
-        this.internalErrorPorts = internalErrors.getPorts();
+        setInternalErrorPorts(internalErrors.getPorts());
     }
 
     public ErrSummaryBean getInternalErrorMaximums() {
@@ -298,11 +306,25 @@ public class GroupInfoBean implements ITimestamped, Serializable {
         this.internalErrorMaximums = internalErrorMaximums;
     }
 
-    public ErrBucketBean[] getInternalErrorPorts() {
-        return internalErrorPorts;
+    public ErrBucketBean[] getInternalErrorPortsAsArray() {
+        if (internalErrorPorts == null) {
+            internalErrorPorts = new ArrayList<ErrBucketBean>();
+        }
+        ErrBucketBean[] ebArray = new ErrBucketBean[internalErrorPorts.size()];
+        return internalErrorPorts.toArray(ebArray);
     }
 
     public void setInternalErrorPorts(ErrBucketBean[] internalErrorPorts) {
+        List<ErrBucketBean> ebList =
+                new ArrayList<ErrBucketBean>(Arrays.asList(internalErrorPorts));
+        this.internalErrorPorts = ebList;
+    }
+
+    public List<ErrBucketBean> getInternalErrorPorts() {
+        return internalErrorPorts;
+    }
+
+    public void setInternalErrorPorts(List<ErrBucketBean> internalErrorPorts) {
         this.internalErrorPorts = internalErrorPorts;
     }
 
@@ -312,7 +334,7 @@ public class GroupInfoBean implements ITimestamped, Serializable {
     public ErrStatBean getExternalErrors() {
         ErrStatBean externalErrors = new ErrStatBean();
         externalErrors.setErrorMaximums(externalErrorMaximums);
-        externalErrors.setPorts(externalErrorPorts);
+        externalErrors.setPorts(getExternalErrorPortsAsArray());
         return externalErrors;
     }
 
@@ -322,7 +344,7 @@ public class GroupInfoBean implements ITimestamped, Serializable {
      */
     public void setExternalErrors(ErrStatBean externalErrors) {
         this.externalErrorMaximums = externalErrors.getErrorMaximums();
-        this.externalErrorPorts = externalErrors.getPorts();
+        setExternalErrorPorts(externalErrors.getPorts());
     }
 
     public ErrSummaryBean getExternalErrorMaximums() {
@@ -333,11 +355,25 @@ public class GroupInfoBean implements ITimestamped, Serializable {
         this.externalErrorMaximums = externalErrorMaximums;
     }
 
-    public ErrBucketBean[] getExternalErrorPorts() {
-        return externalErrorPorts;
+    public ErrBucketBean[] getExternalErrorPortsAsArray() {
+        if (externalErrorPorts == null) {
+            externalErrorPorts = new ArrayList<ErrBucketBean>();
+        }
+        ErrBucketBean[] ebArray = new ErrBucketBean[externalErrorPorts.size()];
+        return externalErrorPorts.toArray(ebArray);
     }
 
     public void setExternalErrorPorts(ErrBucketBean[] externalErrorPorts) {
+        List<ErrBucketBean> ebList =
+                new ArrayList<ErrBucketBean>(Arrays.asList(externalErrorPorts));
+        this.externalErrorPorts = ebList;
+    }
+
+    public List<ErrBucketBean> getExternalErrorPorts() {
+        return externalErrorPorts;
+    }
+
+    public void setExternalErrorPorts(List<ErrBucketBean> externalErrorPorts) {
         this.externalErrorPorts = externalErrorPorts;
     }
 

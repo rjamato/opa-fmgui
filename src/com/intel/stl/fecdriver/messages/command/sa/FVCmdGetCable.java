@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.1  2015/08/12 15:21:51  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.8  2015/08/17 18:48:45  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/06/28 17:51:36  tmrimmer
+ *  Archive Log:    PR 129390 - correct opainfo handling of cableinfo for down port without QSFP
+ *  Archive Log:    PR 129390 - improve cableinfo internals and defines
  *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/04/22 18:52:34  jypak
  *  Archive Log:    Fix to check input type when there is no input.
@@ -52,14 +57,15 @@ package com.intel.stl.fecdriver.messages.command.sa;
 
 import com.intel.stl.api.subnet.CableRecordBean;
 import com.intel.stl.api.subnet.SAConstants;
+import com.intel.stl.fecdriver.MultipleResponseCommand;
 import com.intel.stl.fecdriver.messages.adapter.CommonMad;
 import com.intel.stl.fecdriver.messages.adapter.sa.CableInfoRecord;
 import com.intel.stl.fecdriver.messages.adapter.sa.SAHeader;
 import com.intel.stl.fecdriver.messages.command.InputArgument;
 import com.intel.stl.fecdriver.messages.response.sa.FVRspGetCable;
 
-public class FVCmdGetCable extends
-        SACommand<CableRecordBean, CableInfoRecord, CableRecordBean> {
+public class FVCmdGetCable extends SACommand<CableInfoRecord, CableRecordBean>
+        implements MultipleResponseCommand<CableRecordBean, FVRspGetCable> {
 
     public FVCmdGetCable() {
         setResponse(new FVRspGetCable());
@@ -111,18 +117,18 @@ public class FVCmdGetCable extends
         // TODO: Once FE cable info request is fixed, revisit.
         // Set default values
         record.setDataLength((byte) (SAConstants.STL_CABLE_INFO_PAGESZ - 1));
-        record.setAddress((short) SAConstants.STL_CIB_START_ADDR);
+        record.setAddress((short) SAConstants.STL_CIB_STD_START_ADDR);
 
         switch (input.getType()) {
             case InputTypeLid:
-                header.setComponentMask(SAConstants.STL_CIB_COMP_LID
-                        | SAConstants.STL_CIB_COMP_LEN
-                        | SAConstants.STL_CIB_COMP_ADDR);
+                header.setComponentMask(SAConstants.STL_CIR_COMP_LID
+                        | SAConstants.STL_CIR_COMP_LEN
+                        | SAConstants.STL_CIR_COMP_ADDR);
                 record.setLID(input.getLid());
                 break;
             case InputTypeNoInput:
-                header.setComponentMask(SAConstants.STL_CIB_COMP_LEN
-                        | SAConstants.STL_CIB_COMP_ADDR);
+                header.setComponentMask(SAConstants.STL_CIR_COMP_LEN
+                        | SAConstants.STL_CIR_COMP_ADDR);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported input type "

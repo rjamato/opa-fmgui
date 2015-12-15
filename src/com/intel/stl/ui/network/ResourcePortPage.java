@@ -35,8 +35,16 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.20.2.1  2015/08/12 15:26:50  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.22.2.1  2015/10/19 22:44:20  jijunwan
+ *  Archive Log:    PR 131097 - Connectivity tab under Topology has no information.
+ *  Archive Log:    - changed a sort of typo in the code
+ *  Archive Log:
+ *  Archive Log:    Revision 1.22  2015/09/30 13:26:46  fisherma
+ *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
+ *  Archive Log:
+ *  Archive Log:    Revision 1.21  2015/08/17 18:54:00  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.20  2015/04/03 21:06:30  jijunwan
  *  Archive Log:    Introduced canExit to IPageController, and canPageChange to IPageListener to allow us do some checking before we switch to another page. Fixed the following bugs
@@ -121,6 +129,7 @@ import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.Vector;
 
 import javax.swing.ImageIcon;
 
@@ -287,7 +296,27 @@ public class ResourcePortPage implements IResourceNodeSubpageController {
      */
     @Override
     public void showNode(FVResourceNode source, GraphNode node) {
-        processNode(node, NodeType.getNodeType(node.getType()));
+        // processNode(node, NodeType.getNodeType(node.getType()));
+        processNode(source, NodeType.getNodeType(node.getType()));
+    }
+
+    protected void processNode(FVResourceNode node, NodeType nodeType) {
+        Vector<FVResourceNode> children = node.getVisibleChildren();
+        if (children.size() >= 1) {
+            short[] ports = null;
+            if (nodeType == NodeType.SWITCH) {
+                ports = new short[children.size() - 1];
+                for (int i = 1; i < children.size(); i++) {
+                    ports[i - 1] = (short) children.get(i).getId();
+                }
+            } else {
+                ports = new short[children.size()];
+                for (int i = 0; i < children.size(); i++) {
+                    ports[i] = (short) children.get(i).getId();
+                }
+            }
+            tableController.showConnectivity(node.getId(), null, ports);
+        }
     }
 
     protected void processNode(GraphNode node, NodeType nodeType) {

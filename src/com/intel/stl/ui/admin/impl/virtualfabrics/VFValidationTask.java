@@ -35,8 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:26:45  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/10/09 17:57:29  fernande
+ *  Archive Log:    PR130753 - XML parse errors when new VF is created from FM GUI. Added check during validation of opaconfig.xml to make sure the "All" application is not added if a PKey is especified.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/10/09 17:47:48  fernande
+ *  Archive Log:    PR130753 - XML parse errors when new VF is created from FM GUI. Added check during validation of opaconfig.xml to make sure the "All" application is not added if a PKey is especified.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/08/17 18:53:54  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2015/03/27 15:47:47  jijunwan
  *  Archive Log:    first version of VirtualFabric UI
@@ -50,8 +57,15 @@
 
 package com.intel.stl.ui.admin.impl.virtualfabrics;
 
+import static com.intel.stl.ui.common.STLConstants.K2124_NAME_CHECK;
+import static com.intel.stl.ui.common.STLConstants.K2162_PKEY_CHECK;
+import static com.intel.stl.ui.common.UILabels.STL81010_APPLICATIONS_ALL;
+import static com.intel.stl.ui.common.UILabels.STL81011_APPLICATIONS_ALL_SUG;
+
 import java.util.List;
 
+import com.intel.stl.api.management.virtualfabrics.ApplicationName;
+import com.intel.stl.api.management.virtualfabrics.PKey;
 import com.intel.stl.api.management.virtualfabrics.VirtualFabric;
 import com.intel.stl.ui.admin.ChangeState;
 import com.intel.stl.ui.admin.Item;
@@ -63,6 +77,8 @@ import com.intel.stl.ui.common.ValidationItem;
 import com.intel.stl.ui.common.ValidationModel;
 
 public class VFValidationTask extends ValidationTask<VirtualFabric> {
+
+    private static final String VF_APPLICATION_ALL = "All";
 
     /**
      * Description:
@@ -92,15 +108,37 @@ public class VFValidationTask extends ValidationTask<VirtualFabric> {
         int count = 0;
         if (toCheck.getState() == ChangeState.UPDATE
                 || toCheck.getState() == ChangeState.ADD) {
-            dialog.reportProgress(STLConstants.K2124_NAME_CHECK.getValue()
-                    + "...");
+            dialog.reportProgress(K2124_NAME_CHECK.getValue() + "...");
             ValidationItem<VirtualFabric> vi = uniqueNameCheck(toCheck);
             if (vi != null) {
                 publish(vi);
                 count += 1;
             }
         }
-
+        VirtualFabric vf = toCheck.getObj();
+        PKey pkey = vf.getPKey();
+        if (pkey != null) {
+            List<ApplicationName> apps = vf.getApplications();
+            boolean appAllSpecified = false;
+            for (ApplicationName app : apps) {
+                if (VF_APPLICATION_ALL.equals(app.getValue())) {
+                    appAllSpecified = true;
+                    break;
+                }
+            }
+            if (appAllSpecified) {
+                // The Admin VF has the all powerfull PKey 0x7fff; another
+                // fabric specifying All would need that PKey, so in this case
+                // PKey should be defaulted
+                ValidationItem<VirtualFabric> vi =
+                        new ValidationItem<VirtualFabric>(
+                                K2162_PKEY_CHECK.getValue(),
+                                STL81010_APPLICATIONS_ALL.getDescription(),
+                                STL81011_APPLICATIONS_ALL_SUG.getDescription());
+                publish(vi);
+                count += 1;
+            }
+        }
         return count;
     }
 

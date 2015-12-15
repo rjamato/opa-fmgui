@@ -35,8 +35,29 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.40.2.1  2015/08/12 15:26:50  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.46  2015/08/17 18:54:00  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.45  2015/08/05 04:09:31  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on Topology Page
+ *  Archive Log:
+ *  Archive Log:    Revision 1.44  2015/06/25 15:27:19  jypak
+ *  Archive Log:    PR 128980 - Be able to search devices by name or lid.
+ *  Archive Log:    Fixes for the FindBugs issues.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.43  2015/06/22 13:11:57  jypak
+ *  Archive Log:    PR 128980 - Be able to search devices by name or lid.
+ *  Archive Log:    New feature added to enable search devices by name, lid or node guid. The search results are displayed as a tree and when a result node from the tree is selected, original tree is expanded and the corresponding node is highlighted.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.42  2015/06/05 16:45:30  jijunwan
+ *  Archive Log:    PR 129089 - Link jumping doesn't keep context
+ *  Archive Log:    - search in current tree and use current node as hint in node search
+ *  Archive Log:
+ *  Archive Log:    Revision 1.41  2015/05/07 14:18:40  jypak
+ *  Archive Log:    PR 128564 - Topology Tree synchronization issue:
+ *  Archive Log:    Null check the context before update in the TopologyTreeController. Other safe guard code added to avoid potential synchronization issue.
  *  Archive Log:
  *  Archive Log:    Revision 1.40  2015/04/28 13:52:09  jijunwan
  *  Archive Log:    ignored PortUpdateEvent since it's redundant to NodeUpdateEvent
@@ -201,11 +222,15 @@ import com.intel.stl.ui.event.NodeUpdateEvent;
 import com.intel.stl.ui.event.PortUpdateEvent;
 import com.intel.stl.ui.framework.IAppEvent;
 import com.intel.stl.ui.main.Context;
+import com.intel.stl.ui.main.UndoableSelection;
 import com.intel.stl.ui.model.GraphCells;
 import com.intel.stl.ui.model.GraphEdge;
 import com.intel.stl.ui.model.GraphNode;
+import com.intel.stl.ui.monitor.SearchController;
 import com.intel.stl.ui.monitor.TreeController;
 import com.intel.stl.ui.monitor.TreeNodeType;
+import com.intel.stl.ui.monitor.TreeSelection;
+import com.intel.stl.ui.monitor.TreeSubpageSelection;
 import com.intel.stl.ui.monitor.tree.FVResourceNode;
 import com.intel.stl.ui.monitor.tree.FVTreeManager;
 import com.intel.stl.ui.monitor.tree.FVTreeModel;
@@ -222,6 +247,10 @@ public class TopologyTreeController extends TreeController<TopologyView> {
 
     private final TopologyGraphController graphSelectionController;
 
+    private String previousSubpageName;
+
+    private String currentSubpageName;
+
     /**
      * Description:
      * 
@@ -231,6 +260,8 @@ public class TopologyTreeController extends TreeController<TopologyView> {
             MBassador<IAppEvent> eventBus, FVTreeManager treeBuilder) {
         super(pTreeView, eventBus, treeBuilder);
         graphSelectionController = new TopologyGraphController(this, eventBus);
+
+        new SearchController(view.getSearchView(), eventBus, treeBuilder, this);
     }
 
     /*
@@ -262,6 +293,7 @@ public class TopologyTreeController extends TreeController<TopologyView> {
      */
     @Override
     public void onRefresh(final IProgressObserver observer) {
+        isSystemUpdate = true;
         // we do refresh by recovering last tree selections which is done when
         // we refresh our hierarchy trees. Setting lastTreeSelection to null
         // will allow us respond to these selections rather ignore them.
@@ -291,12 +323,13 @@ public class TopologyTreeController extends TreeController<TopologyView> {
     }
 
     @Override
-    public void onNodeUpdate(final NodeUpdateEvent evt) {
+    public synchronized void onNodeUpdate(final NodeUpdateEvent evt) {
         // ignore portUpdateEvent
-        if (evt instanceof PortUpdateEvent) {
+        if (evt instanceof PortUpdateEvent || mContext == null) {
             return;
         }
 
+        isSystemUpdate = true;
         lastTreeSelection = null;
         graphSelectionController.onRefresh(null, new CallbackAdapter<Void>() {
             @Override
@@ -352,6 +385,15 @@ public class TopologyTreeController extends TreeController<TopologyView> {
             return;
         }
 
+        previousSubpageName = graphSelectionController.getCurrentSubpage();
+        // always set subpage name to null for a new set of nodes. If they come
+        // from undo, we shall keep currentSubpageName because it's set during
+        // undo
+        if (!undoHandler.isInProgress()) {
+            currentSubpageName = null;
+        }
+
+        graphSelectionController.setCurrentSubpage(currentSubpageName);
         collapseTreeSelections(lastTreeSelection, nodes);
         lastTreeSelection = nodes;
         switch (nodes[0].getType()) {
@@ -377,6 +419,47 @@ public class TopologyTreeController extends TreeController<TopologyView> {
                         graphSelectionController, nodes);
                 break;
         } // switch
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.monitor.TreeController#getUndoableSelection(com.intel
+     * .stl.ui.monitor.TreeSelection, com.intel.stl.ui.monitor.TreeSelection)
+     */
+    @Override
+    protected UndoableSelection<?> getUndoableSelection(
+            TreeSelection oldSelection, TreeSelection newSelection) {
+        // In theory, the currentSubpageName shall be the real current subpage
+        // name. However, it will take time to know the subpage name because
+        // the subpage is set after background tasks finished. This will require
+        // some sync and the control logic can be complex. To make things
+        // simple, we always set desired subpage name to null, and rely on the
+        // same logic to figure out the real subpage, i.e. always pick up the
+        // first subpage. In this way, we needn't to wait for the real subpage
+        // and can safely generate undo action by using null for
+        // currentSubpageName.
+        TreeSubpageSelection oldTSSelection =
+                new TreeSubpageSelection(oldSelection, previousSubpageName);
+        TreeSubpageSelection newTSSelection =
+                new TreeSubpageSelection(newSelection, currentSubpageName);
+        return new UndoableTopTreeSelection(this, oldTSSelection,
+                newTSSelection);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.monitor.TreeController#getCurrentNode()
+     */
+    @Override
+    protected FVResourceNode getCurrentNode() {
+        if (lastTreeSelection == null || lastTreeSelection.length == 0) {
+            return null;
+        } else {
+            return lastTreeSelection[lastTreeSelection.length - 1];
+        }
     }
 
     protected void collapseTreeSelections(FVResourceNode[] previous,
@@ -585,17 +668,27 @@ public class TopologyTreeController extends TreeController<TopologyView> {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.intel.stl.ui.monitor.TreeController#getDesiredDestination()
-     */
     @Override
-    protected JumpDestination getDesiredDestination() {
-        return JumpDestination.TOPOLOGY;
+    public String getName() {
+        return JumpDestination.TOPOLOGY.getName();
     }
 
     public void cleanup() {
         graphSelectionController.cleanup();
+    }
+
+    /**
+     * <i>Description:</i>
+     * 
+     * @param treeModel
+     * @param paths
+     * @param expanded
+     * @param subpageName
+     */
+    public void showNode(FVTreeModel treeModel, TreePath[] paths,
+            boolean[] expanded, String subpageName) {
+        // isSystemUpdate = true;
+        currentSubpageName = subpageName;
+        showNode(treeModel, paths, expanded);
     }
 }

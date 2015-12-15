@@ -35,8 +35,46 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.17.2.1  2015/08/12 15:27:16  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.26  2015/08/17 18:54:25  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.25  2015/08/05 04:04:48  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on Performance Page
+ *  Archive Log:
+ *  Archive Log:    Revision 1.24  2015/08/04 23:00:35  jijunwan
+ *  Archive Log:    PR 129821 - connectivity table has no Link Width Down Grade data
+ *  Archive Log:    - added related data to data table
+ *  Archive Log:
+ *  Archive Log:    Revision 1.23  2015/07/17 15:41:17  rjtierne
+ *  Archive Log:    PR 129547 - Need to add Node type and lid to the Connectivity
+ *  Archive Log:    - Removed constants NODE_GUID_COLUMN, PORT_COLUMN, and TYPE_COLUMN.  Now
+ *  Archive Log:    using the ids from the ConnectivityTableColumns enumeration.
+ *  Archive Log:    - In mouseListener for createTable(), ignoring IndexOutOfBoundsException from ConvertRowIndexToMode() when user clicks on the connectivity table below available rows.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.22  2015/07/14 20:33:27  rjtierne
+ *  Archive Log:    PR 129545 - Klocwork and FindBugs fixes
+ *  Archive Log:    - Added static constant NODE_GUID_COLUMN for accessing Guid from connectivity table
+ *  Archive Log:
+ *  Archive Log:    Revision 1.21  2015/07/13 21:57:52  rjtierne
+ *  Archive Log:    PR 129355 - Ability to click on cables to get cable info
+ *  Archive Log:    - Added new cable info popup window to be displayed when column
+ *  Archive Log:    selected from connectivity table
+ *  Archive Log:    - Rendered new cable info icon
+ *  Archive Log:    - Added mouse listener to respond to clicking on the "Cable Info" column of
+ *  Archive Log:    the connectivity table and display a popup with cable information
+ *  Archive Log:
+ *  Archive Log:    Revision 1.20  2015/06/01 15:01:20  jypak
+ *  Archive Log:    PR 128823 - Improve performance tables to include all portcounters fields.
+ *  Archive Log:    All port counters fields added to performance table and connectivity table.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.19  2015/05/14 15:03:25  rjtierne
+ *  Archive Log:    PR 128682 - Set link quality indicator to "Unknown" on port error
+ *  Archive Log:    Change cell renderer to display the link quality description as the tool tip instead of just the value
+ *  Archive Log:
+ *  Archive Log:    Revision 1.18  2015/05/14 13:22:38  rjtierne
+ *  Archive Log:    Change cell renderer to display the link quality description as the tool tip instead of just the value
  *  Archive Log:
  *  Archive Log:    Revision 1.17  2015/04/08 19:45:16  rjtierne
  *  Archive Log:    PR 126844 - Can make Port counter names in UIs more concise.
@@ -134,6 +172,7 @@ import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.decorator.PatternPredicate;
 
+import com.intel.stl.api.subnet.NodeType;
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UIConstants;
 import com.intel.stl.ui.common.UIImages;
@@ -157,16 +196,22 @@ public class ConnectivitySubpageView extends
      */
     private static final long serialVersionUID = -2465696391555897980L;
 
-    private static final int TYPE_COLUMN = 3;
-
-    private static final int PORT_COLUMN = 2;
-
     protected IPortSelectionListener listener;
+
+    private CableInfoPopupView cableInfoPopupView;
 
     public ConnectivitySubpageView(ConnectivityTableModel model) {
         super(model);
         installPopupMenu();
         installListeners();
+    }
+
+    public CableInfoPopupView getCableInfoPopupView() {
+        return cableInfoPopupView;
+    }
+
+    public void setCableInfoPopupView(CableInfoPopupView cableInfoPopupView) {
+        this.cableInfoPopupView = cableInfoPopupView;
     }
 
     /*
@@ -177,7 +222,7 @@ public class ConnectivitySubpageView extends
      * .TableModel)
      */
     @Override
-    protected JXTable createTable(ConnectivityTableModel model) {
+    protected JXTable createTable(final ConnectivityTableModel model) {
         // Configure the table
         JXTable table = new JXTable(model);
         table.setColumnControlVisible(true);
@@ -212,6 +257,37 @@ public class ConnectivitySubpageView extends
 
         // Turn of the ability to sort columns
         table.setSortable(false);
+
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                JXTable table = (JXTable) e.getSource();
+
+                // Unloaded tables should be ignored
+                if (table.getRowCount() <= 0) {
+                    return;
+                }
+
+                try {
+                    int row =
+                            table.convertRowIndexToModel(table.rowAtPoint(e
+                                    .getPoint()));
+                    int col =
+                            table.convertColumnIndexToModel(table
+                                    .columnAtPoint(e.getPoint()));
+
+                    if (col == ConnectivityTableColumns.CABLE_INFO.getId()) {
+
+                        cableInfoPopupView.onCableInfoSelection(table, row,
+                                col, model, e);
+                    }
+                } catch (IndexOutOfBoundsException ie) {
+                    // User click on table beyond number of rows - ignored
+                }
+
+            }
+        });
+
         return table;
     }
 
@@ -236,7 +312,8 @@ public class ConnectivitySubpageView extends
                             int mRow = mTable.convertRowIndexToModel(vRow);
                             ConnectivityTableData data = model.getEntry(mRow);
                             listener.onJumpToPort(data.getNodeLidValue(),
-                                    data.getPortNumValue(), destination);
+                                    data.getPortNumValue(),
+                                    destination.getName());
                         }
                     }
 
@@ -287,7 +364,8 @@ public class ConnectivitySubpageView extends
                         int mRow = mTable.convertRowIndexToModel(vRow);
                         ConnectivityTableData data = model.getEntry(mRow);
                         listener.onJumpToPort(data.getNodeLidValue(),
-                                data.getPortNumValue(), JumpDestination.DEFAULT);
+                                data.getPortNumValue(),
+                                JumpDestination.DEFAULT.getName());
                     }
                 }
             }
@@ -370,39 +448,31 @@ public class ConnectivitySubpageView extends
     }
 
     protected void filterColumns() {
-        ConnectivityTableColumns[] toHide =
+        ConnectivityTableColumns[] toShow =
                 new ConnectivityTableColumns[] {
 
                         // Show these columns
-                        // ConnectivityTableColumns.DEVICE_NAME,
-                        // ConnectivityTableColumns.NODE_GUID,
-                        // ConnectivityTableColumns.PORT_NUMBER,
-                        // ConnectivityTableColumns.LINK_STATE,
-                        // ConnectivityTableColumns.PHYSICAL_LINK_STATE,
-                        // ConnectivityTableColumns.LINK_QUALITY,
-                        // ConnectivityTableColumns.ACTIVE_LINK_SPEED,
-                        // ConnectivityTableColumns.SUPPORTED_LINK_SPEED,
-                        // ConnectivityTableColumns.LINK_DOWN,
-
-                        // Hide these columns
-                        ConnectivityTableColumns.LINK_RECOVERIES,
+                        ConnectivityTableColumns.NODE_NAME,
+                        ConnectivityTableColumns.PORT_NUMBER,
+                        ConnectivityTableColumns.CABLE_INFO,
+                        ConnectivityTableColumns.LINK_STATE,
+                        ConnectivityTableColumns.PHYSICAL_LINK_STATE,
+                        ConnectivityTableColumns.LINK_QUALITY,
                         ConnectivityTableColumns.ACTIVE_LINK_WIDTH,
-                        ConnectivityTableColumns.ENABLED_LINK_WIDTH,
-                        ConnectivityTableColumns.SUPPORTED_LINK_WIDTH,
-                        ConnectivityTableColumns.ENABLED_LINK_SPEED,
-                        ConnectivityTableColumns.TX_PACKETS,
-                        ConnectivityTableColumns.RX_PACKETS,
-                        ConnectivityTableColumns.RX_ERRORS,
-                        ConnectivityTableColumns.RX_REMOTE_PHYSICAL_ERRRORS,
-                        ConnectivityTableColumns.TX_DISCARDS,
-                        ConnectivityTableColumns.LOCAL_LINK_INTEGRITY_ERRRORS,
-                        ConnectivityTableColumns.EXCESSIVE_BUFFER_OVERRUNS,
-                        ConnectivityTableColumns.SWITCH_RELAY_ERRRORS,
-                        ConnectivityTableColumns.TX_PORT_CONSTRAINT,
-                        ConnectivityTableColumns.RX_PORT_CONSTRAINT };
+                        ConnectivityTableColumns.ACTIVE_LINK_WIDTH_DG_TX,
+                        ConnectivityTableColumns.ACTIVE_LINK_WIDTH_DG_RX,
+                        ConnectivityTableColumns.ACTIVE_LINK_SPEED,
+                        ConnectivityTableColumns.RX_DATA,
+                        ConnectivityTableColumns.TX_DATA,
+                        ConnectivityTableColumns.LINK_DOWNED, };
 
-        for (ConnectivityTableColumns col : toHide) {
-            mTable.getColumnExt(col.getTitle()).setVisible(false);
+        ConnectivityTableColumns[] all = ConnectivityTableColumns.values();
+        boolean[] vis = new boolean[all.length];
+        for (ConnectivityTableColumns col : toShow) {
+            vis[col.getId()] = true;
+        }
+        for (int i = 0; i < vis.length; i++) {
+            mTable.getColumnExt(all[i].getTitle()).setVisible(vis[i]);
         }
     }
 
@@ -414,7 +484,10 @@ public class ConnectivitySubpageView extends
         if (tableEntry.isSlowLinkState()) {
             icon = UIImages.SLOW_LINK.getImageIcon();
         } else {
-            String str = (String) table.getModel().getValueAt(row, TYPE_COLUMN);
+
+            String str =
+                    (String) table.getModel().getValueAt(row,
+                            ConnectivityTableColumns.LINK_STATE.getId());
             if (str.equals(STLConstants.K0524_INACTIVE.getValue())) {
                 icon = UIImages.INACTIVE_LINK.getImageIcon();
             } else {
@@ -458,13 +531,18 @@ public class ConnectivitySubpageView extends
         }
 
         // Rows with "Inactive" types are bold
-        String str = (String) table.getModel().getValueAt(row, TYPE_COLUMN);
+        NodeType nodeType =
+                (NodeType) table.getModel().getValueAt(row,
+                        ConnectivityTableColumns.NODE_TYPE.getId());
+        String str = nodeType.name();
         if (str.equals(STLConstants.K0524_INACTIVE.getValue())) {
             cell.setFont(UIConstants.H6_FONT.deriveFont(Font.BOLD));
         }
 
         // Rows with "Neighbor" ports are italic
-        str = (String) table.getModel().getValueAt(row, PORT_COLUMN);
+        str =
+                (String) table.getModel().getValueAt(row,
+                        ConnectivityTableColumns.PORT_NUMBER.getId());
         if (str.contains(STLConstants.K0525_NEIGHBOR.getValue())) {
             cell.setFont(UIConstants.H6_FONT.deriveFont(Font.ITALIC));
         }
@@ -489,6 +567,26 @@ public class ConnectivitySubpageView extends
             cell.setBackground(lastBackgroundColor);
         }
 
+        // Set the icon for the cable info column
+        int cableInfoColumn = -1;
+        try {
+            cableInfoColumn =
+                    table.getColumnModel().getColumnIndex(
+                            ConnectivityTableColumns.CABLE_INFO.getTitle());
+        } catch (IllegalArgumentException e) {
+        }
+        if (cableInfoColumn == col) {
+            if (value != null) {
+                ((JLabel) cell).setIcon(UIImages.CABLE.getImageIcon());
+
+                // Set the cable info tool tip
+                ((JLabel) cell)
+                        .setToolTipText(STLConstants.K3050_CABLE_INFO_TOOL_TIP
+                                .getValue());
+                ((JLabel) cell).setHorizontalAlignment(JLabel.CENTER);
+            }
+        }
+
         // Set icon for LINK_QUALITY column cells
         int qualityIndex = -1;
         try {
@@ -503,8 +601,10 @@ public class ConnectivitySubpageView extends
                 ((JLabel) cell).setIcon(LinkQualityViz
                         .getLinkQualityIcon(((Integer) value).byteValue()));
 
+                // Use link quality description for tool tip
                 ((JLabel) cell).setToolTipText(LinkQualityViz
-                        .getLinkQualityStr(((Integer) value).byteValue()));
+                        .getLinkQualityDescription(((Integer) value)
+                                .byteValue()));
             }
             // Don't show link quality number text
             ((JLabel) cell).setText("");

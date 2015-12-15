@@ -35,11 +35,19 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.23.2.2  2015/08/12 15:27:21  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.28  2015/08/17 18:54:52  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.23.2.1  2015/05/06 19:39:18  jijunwan
- *  Archive Log:    changed to directly show exception(s)
+ *  Archive Log:    Revision 1.27  2015/08/12 19:28:15  fisherma
+ *  Archive Log:    Store/retrieve SMTP settings in/from SECTION_PREFERENCE properties.  Cleanup unused interface.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.26  2015/08/10 17:55:51  robertja
+ *  Archive Log:    PR 128974 - Email notification functionality.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.25  2015/07/17 20:48:28  jijunwan
+ *  Archive Log:    PR 129594 - Apply new input verification on setup wizard
+ *  Archive Log:    - introduced isEditValid to allow us check whether we have valid edit
  *  Archive Log:
  *  Archive Log:    Revision 1.24  2015/05/01 21:29:10  jijunwan
  *  Archive Log:    changed to directly show exception(s)
@@ -135,7 +143,6 @@ package com.intel.stl.ui.wizards.impl.preferences;
 import javax.swing.JComponent;
 
 import com.intel.stl.api.configuration.ConfigurationException;
-import com.intel.stl.api.configuration.UserSettings;
 import com.intel.stl.api.performance.PMConfigBean;
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.Util;
@@ -152,7 +159,7 @@ import com.intel.stl.ui.wizards.model.preferences.PreferencesModel;
 import com.intel.stl.ui.wizards.view.preferences.PreferencesWizardView;
 
 public class PreferencesWizardController implements IMultinetWizardTask,
-        IPreferencesControl, IModelChangeListener<IWizardModel> {
+        IModelChangeListener<IWizardModel> {
 
     private final PreferencesWizardView view;
 
@@ -173,7 +180,6 @@ public class PreferencesWizardController implements IMultinetWizardTask,
 
     public PreferencesWizardController(PreferencesWizardView view) {
         this.view = view;
-        this.view.setControlListener(this);
     }
 
     public PreferencesWizardController(PreferencesWizardView view,
@@ -408,19 +414,6 @@ public class PreferencesWizardController implements IMultinetWizardTask,
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.intel.stl.ui.wizards.impl.preferences.IPreferencesControl#getUserSettings
-     * ()
-     */
-    @Override
-    public UserSettings getUserSettings() {
-
-        return multinetWizardController.retrieveUserSettings();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see com.intel.stl.ui.wizards.impl.IWizardTask#updateModel()
      */
     @Override
@@ -432,6 +425,7 @@ public class PreferencesWizardController implements IMultinetWizardTask,
         preferencesModel
                 .setTimingWindowInSeconds(view.getTimeWindowInSeconds());
         preferencesModel.setNumWorstNodes(view.getNumWorstNodes());
+        preferencesModel.setMailRecipients(view.getEmailList());
     }
 
     /*
@@ -506,6 +500,20 @@ public class PreferencesWizardController implements IMultinetWizardTask,
     @Override
     public void setConnectable(boolean connectable) {
         this.connectable = connectable;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.wizards.impl.IWizardTask#isEditValid()
+     */
+    @Override
+    public boolean isEditValid() {
+        return view.isEditValid();
+    }
+
+    public void onEmailTest(String recipients) {
+        multinetWizardController.onEmailTest(recipients);
     }
 
 }

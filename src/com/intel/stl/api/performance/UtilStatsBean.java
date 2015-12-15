@@ -35,8 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:21:44  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.7  2015/08/17 18:48:41  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/07/14 18:56:03  fernande
+ *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Fixes for Klocwork issues
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/07/02 20:22:59  fernande
+ *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Moving Blobs to the database; arrays are now being saved to the database as collection tables.
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/02/04 21:37:53  jijunwan
  *  Archive Log:    impoved to handle unsigned values
@@ -53,7 +60,9 @@
 package com.intel.stl.api.performance;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import com.intel.stl.api.Utils;
 
@@ -76,10 +85,8 @@ public class UtilStatsBean implements Serializable {
 
     private int numBWBuckets; // this should be fine, no need to promote to long
 
-    // java.sql.Blob, Byte[], byte[] and serializable type (Integer) will be
-    // persisted in a Blob.
-    private Integer[] bwBuckets; // this should be fine, no need to promote to
-                                 // long
+    private List<Integer> bwBuckets; // this should be fine, no need to promote
+                                     // to long
 
     private long avgKPps; // unsigned int
 
@@ -204,19 +211,27 @@ public class UtilStatsBean implements Serializable {
     /**
      * @return the bwBuckets
      */
-    public Integer[] getBwBuckets() {
+    public List<Integer> getBwBuckets() {
         return bwBuckets;
+    }
+
+    public Integer[] getBwBucketsAsArray() {
+        if (bwBuckets == null) {
+            bwBuckets = new ArrayList<Integer>();
+        }
+        Integer[] intArray = new Integer[bwBuckets.size()];
+        return bwBuckets.toArray(intArray);
     }
 
     /**
      * @param bwBuckets
      *            the bwBuckets to set
      */
-    public void setBwBuckets(Integer[] bwBuckets) {
-        if (bwBuckets.length != PAConstants.STL_PM_UTIL_BUCKETS) {
+    public void setBwBuckets(List<Integer> bwBuckets) {
+        if (bwBuckets.size() != PAConstants.STL_PM_UTIL_BUCKETS) {
             throw new IllegalArgumentException("Invalid data length. Expect "
                     + PAConstants.STL_PM_UTIL_BUCKETS + ", got "
-                    + bwBuckets.length);
+                    + bwBuckets.size());
         }
 
         this.bwBuckets = bwBuckets;
@@ -301,9 +316,9 @@ public class UtilStatsBean implements Serializable {
         return "UtilStatsBean [totalMBps=" + totalMBps + ", totalKPps="
                 + totalKPps + ", avgMBps=" + avgMBps + ", minMBps=" + minMBps
                 + ", maxMBps=" + maxMBps + ", numBWBuckets=" + numBWBuckets
-                + ", bwBuckets=" + Arrays.toString(bwBuckets) + ", avgKPps="
-                + avgKPps + ", minKPps=" + minKPps + ", maxKPps=" + maxKPps
-                + "]";
+                + ", bwBuckets=" + Arrays.toString(bwBuckets.toArray())
+                + ", avgKPps=" + avgKPps + ", minKPps=" + minKPps
+                + ", maxKPps=" + maxKPps + "]";
     }
 
 }

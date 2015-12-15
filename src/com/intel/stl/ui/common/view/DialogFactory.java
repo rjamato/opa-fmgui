@@ -35,11 +35,24 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.2  2015/08/12 15:26:33  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.13  2015/08/31 15:52:05  jijunwan
+ *  Archive Log:    PR 130204 - Shortcut launch results in meaningless error and forces me to reboot my machine
+ *  Archive Log:    - added new method to show error messages and wait for user's input
  *  Archive Log:
- *  Archive Log:    Revision 1.4.2.1  2015/05/06 19:40:10  jijunwan
- *  Archive Log:    improvement on error dialog to show parent's title, handle special case etc.
+ *  Archive Log:    Revision 1.12  2015/08/17 18:53:36  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/06/17 15:40:28  fisherma
+ *  Archive Log:    PR129220 - partial fix for the login changes.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/05/21 17:02:41  fisherma
+ *  Archive Log:    Make error dialogs non-modal by default.  Added code to make the error dialog "sticky" to its parent frame if there is one.  This way the error dialog is always shown over the parent window and will be moved around along with the parent window.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/05/11 12:26:07  rjtierne
+ *  Archive Log:    PR 128585 - Fix errors found by Klocwork and FindBugs
+ *  Archive Log:    Removed static DialogBuilder errorDialog and returned new local instantiation
+ *  Archive Log:    in getDialogBuilder()
  *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/05/05 18:29:45  jijunwan
  *  Archive Log:    improvement to avoid potential sync issue
@@ -84,8 +97,6 @@
 package com.intel.stl.ui.common.view;
 
 import java.awt.Component;
-import java.awt.Dialog.ModalExclusionType;
-import java.awt.Dialog.ModalityType;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -117,8 +128,6 @@ public class DialogFactory {
     public static int OK_OPTION = 0;
 
     public static int CANCEL_OPTION = 1;
-
-    private static DialogBuilder errorDialog = null;
 
     private static Map<Component, DialogBuilder> errorDialogs =
             new HashMap<Component, DialogBuilder>();
@@ -155,6 +164,7 @@ public class DialogFactory {
     }
 
     // Same as Info dialog, except use warning icon.
+    // Warning dialog is modal
     public static void showWarningDialog(Component owner, String msg) {
         DialogBuilder warningDialog =
                 new DialogBuilder(owner, STLConstants.K0031_WARNING.getValue(),
@@ -167,7 +177,9 @@ public class DialogFactory {
 
     //
     // The error dialog displays new errors currently in the buffer.
-    // It is document modal and 'always on top'
+    // This error dialog is modeless by default.
+    // If a modal error dialog is required, add another showErrorDialog()
+    // method to construct one with boolean modalityType parameter.
     //
     public static void showErrorDialog(Component comp, String errorString) {
         if (errorString != null && !errorString.isEmpty()) {
@@ -184,7 +196,31 @@ public class DialogFactory {
     public static void showErrorDialog(Component comp,
             Collection<? extends Throwable> errors) {
         DialogBuilder dlg = getDialogBuilder(comp);
+        showErrors(dlg, errors);
+    }
 
+    /**
+     * 
+     * <i>Description:</i> show errors on a model dialog. This is used for
+     * errors during App initialization where no Frame available. We need to
+     * wait until user click OK and then go ahead shutdown the application
+     * 
+     * @param comp
+     * @param errors
+     */
+    public static void showModalErrorDialog(Component comp,
+            Collection<? extends Throwable> errors) {
+        Component root = comp == null ? null : SwingUtilities.getRoot(comp);
+        DialogBuilder dlg =
+                new DialogBuilder(root, STLConstants.K0030_ERROR.getValue(),
+                        true, STLConstants.K0645_OK.getValue(), null);
+        dlg.setImageIcon(DialogFactory.ERROR_ICON);
+        dlg.getDialog().setAlwaysOnTop(true);
+        showErrors(dlg, errors);
+    }
+
+    private static void showErrors(DialogBuilder dlg,
+            Collection<? extends Throwable> errors) {
         boolean toShow = false;
         for (Throwable e : errors) {
             if (e instanceof ExecutionException) {
@@ -213,29 +249,37 @@ public class DialogFactory {
 
     private static DialogBuilder getDialogBuilder(Component comp) {
         if (comp == null) {
-            if (null == errorDialog) {
-                errorDialog =
-                        new DialogBuilder(STLConstants.K0645_OK.getValue());
-                errorDialog.setImageIcon(DialogFactory.ERROR_ICON);
-                errorDialog.setTitle(STLConstants.K0030_ERROR.getValue());
-                errorDialog.getDialog().setModalExclusionType(
-                        ModalExclusionType.TOOLKIT_EXCLUDE);
-            }
+            // if (null == errorDialog) {
+            DialogBuilder errorDialog =
+                    new DialogBuilder(STLConstants.K0645_OK.getValue());
+            errorDialog.setImageIcon(DialogFactory.ERROR_ICON);
+            errorDialog.setTitle(STLConstants.K0030_ERROR.getValue());
+            // }
             return errorDialog;
         }
 
         Component root = SwingUtilities.getRoot(comp);
         DialogBuilder dlg = errorDialogs.get(root);
         if (dlg == null || !dlg.getDialog().isShowing()) {
+            // Construct error dialog with modal=false by default
             dlg =
                     new DialogBuilder(root,
-                            STLConstants.K0030_ERROR.getValue(), true,
+                            STLConstants.K0030_ERROR.getValue(), false,
                             STLConstants.K0645_OK.getValue(), null);
             dlg.setImageIcon(DialogFactory.ERROR_ICON);
-            dlg.getDialog().setModalityType(ModalityType.DOCUMENT_MODAL);
             errorDialogs.put(root, dlg);
         }
         return dlg;
+    }
+
+    public static int showPasswordDialog(java.awt.Component owner,
+            String title, java.awt.Component contentPanel) {
+        DialogBuilder passwordDialog =
+                new DialogBuilder(owner, title, true, contentPanel,
+                        STLConstants.K0645_OK.getValue(),
+                        STLConstants.K0621_CANCEL.getValue());
+        passwordDialog.getDialog().setVisible(true);
+        return passwordDialog.getButtonPressed();
     }
 
 }

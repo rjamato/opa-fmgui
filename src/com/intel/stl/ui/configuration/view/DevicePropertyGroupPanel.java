@@ -35,8 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7.2.1  2015/08/12 15:27:09  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.9  2015/08/17 18:54:17  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/06/09 18:37:24  jijunwan
+ *  Archive Log:    PR 129069 - Incorrect Help action
+ *  Archive Log:    - moved help action from view to controller
+ *  Archive Log:    - only enable help button when we have HelpID
+ *  Archive Log:    - fixed incorrect HelpIDs
  *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/04/10 14:23:02  jijunwan
  *  Archive Log:    PR 127495 - Add LED indicator bit to STL_PORT_STATES
@@ -76,8 +83,6 @@ package com.intel.stl.ui.configuration.view;
 
 import java.awt.Component;
 
-import javax.help.HelpBroker;
-import javax.help.HelpSet;
 import javax.swing.JComponent;
 
 import com.intel.stl.api.configuration.ResourceCategory;
@@ -92,7 +97,6 @@ import com.intel.stl.ui.configuration.SC2VLNTMTBarChartController;
 import com.intel.stl.ui.configuration.SC2VLTMTBarChartController;
 import com.intel.stl.ui.configuration.VLStallCountByVLBarChartController;
 import com.intel.stl.ui.framework.AbstractView;
-import com.intel.stl.ui.main.HelpAction;
 import com.intel.stl.ui.model.DevicePropertyCategory;
 import com.intel.stl.ui.model.DevicePropertyGroup;
 
@@ -163,12 +167,6 @@ public class DevicePropertyGroupPanel extends
             PropertyGroupPanel<DevicePropertyCategory, DevicePropertyGroup> {
         private static final long serialVersionUID = 6635431613502243647L;
 
-        private HelpAction helpAction;
-
-        private HelpBroker helpBroker;
-
-        private HelpSet helpSet;
-
         /**
          * Description:
          * 
@@ -182,29 +180,15 @@ public class DevicePropertyGroupPanel extends
         protected Component createCategoryPanel(
                 DevicePropertyCategory category, PropertyVizStyle style) {
             Component categoryPanel;
-            // Usually controller should enable help. However, this GroupPanel
-            // is supposed to enable help and it is only exposed as JComponent
-            // even to DevicePropertyGroupPanel.
-            helpAction = HelpAction.getInstance();
-            helpBroker = helpAction.getHelpBroker();
-            helpSet = helpAction.getHelpSet();
             if (category.size() < 26) {
                 if (category.getCategory() == ResourceCategory.LFT_HISTOGRAM) {
                     categoryPanel = new LFTHistogramPanel();
                     new LFTHistogramController(category,
                             (LFTHistogramPanel) categoryPanel, null);
-
-                    helpBroker.enableHelpOnButton(getHelpButton(),
-                            helpAction.getLft(), helpSet);
-
                 } else if (category.getCategory() == ResourceCategory.SC2SLMT_CHART) {
                     categoryPanel = new SC2SLMTBarChartPanel();
                     new SC2SLMTBarChartController(category,
                             (SC2SLMTBarChartPanel) categoryPanel, null);
-
-                    helpBroker.enableHelpOnButton(getHelpButton(),
-                            helpAction.getSC2SL(), helpSet);
-
                 } else if (category.getCategory() == ResourceCategory.SC2VLTMT_CHART) {
                     categoryPanel = new SC2VLTMTBarChartPanel();
                     new SC2VLTMTBarChartController(category,
@@ -213,33 +197,26 @@ public class DevicePropertyGroupPanel extends
                     categoryPanel = new SC2VLNTMTBarChartPanel();
                     new SC2VLNTMTBarChartController(category,
                             (SC2VLNTMTBarChartPanel) categoryPanel, null);
-
                 } else if (category.getCategory() == ResourceCategory.MTU_CHART) {
                     categoryPanel = new MTUByVLBarChartPanel();
                     new MTUByVLBarChartController(category,
                             (MTUByVLBarChartPanel) categoryPanel, null);
-
                 } else if (category.getCategory() == ResourceCategory.HOQLIFE_CHART) {
                     categoryPanel = new HoQLifeBarChartPanel();
                     new HoQLifeBarChartController(category,
                             (HoQLifeBarChartPanel) categoryPanel, null);
-
                 } else if (category.getCategory() == ResourceCategory.VL_STALL_CHART) {
                     categoryPanel = new VLStallCountByVLBarChartPanel();
                     new VLStallCountByVLBarChartController(category,
                             (VLStallCountByVLBarChartPanel) categoryPanel, null);
-
                 } else {
                     categoryPanel = new DevicePropertyCategoryPanel(style);
                     new PropertyCategoryController(category,
                             (DevicePropertyCategoryPanel) categoryPanel, null);
-
-                    enableHelpOnCategory(category.getCategory());
                 }
             } else {
                 if (category.size() < 51) {
                     categoryPanel = new MultiColumnCategoryPanel(2, style);
-                    enableHelpOnCategory(category.getCategory());
                 } else {
                     categoryPanel = new PagingCategoryPanel(2, 16, 5, style);
                 }
@@ -249,69 +226,31 @@ public class DevicePropertyGroupPanel extends
             return categoryPanel;
         }
 
-        private void enableHelpOnCategory(ResourceCategory category) {
-            switch (category) {
-                case NODE_INFO:
-                    helpBroker.enableHelpOnButton(getHelpButton(),
-                            helpAction.getNodeGeneral(), helpSet);
-                    break;
-                case SWITCH_INFO:
-                    helpBroker.enableHelpOnButton(getHelpButton(),
-                            helpAction.getSwitchInformation(), helpSet);
-                    break;
-                case SWITCH_ROUTING:
-                    helpBroker.enableHelpOnButton(getHelpButton(),
-                            helpAction.getRoutingInformation(), helpSet);
-                    break;
-                case DEVICE_GROUPS:
-                    helpBroker.enableHelpOnButton(getHelpButton(),
-                            helpAction.getDeviceGroup(), helpSet);
-                    break;
-                case MFT_TABLE:
-                    helpBroker.enableHelpOnButton(getHelpButton(),
-                            helpAction.getMft(), helpSet);
-                    break;
-                case PORT_INFO:
-                    helpBroker.enableHelpOnButton(getHelpButton(),
-                            helpAction.getPortDevInfo(), helpSet);
-                    break;
-                case LINK_WIDTH:
-                    helpBroker.enableHelpOnButton(getHelpButton(),
-                            helpAction.getPortLink(), helpSet);
-                    break;
-                case LINK_CONNECTED_TO:
-                    helpBroker.enableHelpOnButton(getHelpButton(),
-                            helpAction.getPortLinkConn(), helpSet);
-                    break;
-                case PORT_CAPABILITIES:
-                    helpBroker.enableHelpOnButton(getHelpButton(),
-                            helpAction.getPortCap(), helpSet);
-                    break;
-                case VIRTUAL_LANE:
-                    helpBroker.enableHelpOnButton(getHelpButton(),
-                            helpAction.getVL(), helpSet);
-                    break;
-                case PORT_DIAGNOSTICS:
-                    helpBroker.enableHelpOnButton(getHelpButton(),
-                            helpAction.getDiagnostics(), helpSet);
-                    break;
-                case PORT_PARTITION_ENFORCEMENT:
-                    helpBroker.enableHelpOnButton(getHelpButton(),
-                            helpAction.getPartition(), helpSet);
-                    break;
-                case PORT_MANAGEMENT:
-                    helpBroker.enableHelpOnButton(getHelpButton(),
-                            helpAction.getManagement(), helpSet);
-                    break;
-                case FLIT_CTRL_INTERLEAVE:
-                    helpBroker.enableHelpOnButton(getHelpButton(),
-                            helpAction.getFlitControl(), helpSet);
-                    break;
+    }
 
-                default:
-                    break;
-            }
-        };
+    /**
+     * <i>Description:</i>
+     * 
+     * @param b
+     */
+    public void enableHelp(boolean b) {
+        if (mainPanel == null) {
+            // this shouldn't happen
+            throw new RuntimeException("No panel initialized");
+        }
+        mainPanel.enableHelp(b);
+    }
 
+    /**
+     * <i>Description:</i>
+     * 
+     * @return
+     */
+    public Component getHelpButton() {
+        if (mainPanel == null) {
+            // this shouldn't happen
+            throw new RuntimeException("No panel initialized");
+        }
+        return mainPanel.getHelpButton();
     }
 }

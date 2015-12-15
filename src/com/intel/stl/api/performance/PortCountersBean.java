@@ -35,8 +35,16 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8.2.1  2015/08/12 15:21:44  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.11  2015/10/08 16:18:38  fernande
+ *  Archive Log:    PR130810 - Add 64bit reserved field to PA PortCounters queries for query by GUID in Gen2. Changed commands to match FM spec.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/08/17 18:48:41  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/06/25 21:04:02  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improvement on data randomization that ensure an attribute at the same time point get the same data where
  *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/02/12 19:30:00  jijunwan
  *  Archive Log:    introduced interface ITimestamped, and all timimg attributes implemented it, so we can easily know which attribute is associated with timestamp
@@ -127,6 +135,8 @@ public class PortCountersBean implements ITimestamped, Serializable {
     private long linkDowned; // unsigned int
 
     private short uncorrectableErrors; // unsigned byte
+
+    private byte numLanesDown;
 
     private byte linkQualityIndicator;
 
@@ -625,6 +635,21 @@ public class PortCountersBean implements ITimestamped, Serializable {
     }
 
     /**
+     * @return the numLanesDown
+     */
+    public byte getNumLanesDown() {
+        return numLanesDown;
+    }
+
+    /**
+     * @param numLanesDown
+     *            the numLanesDown to set
+     */
+    public void setNumLanesDown(byte numLanesDown) {
+        this.numLanesDown = numLanesDown;
+    }
+
+    /**
      * @return the linkQualityIndicator
      */
     public byte getLinkQualityIndicator() {
@@ -691,6 +716,54 @@ public class PortCountersBean implements ITimestamped, Serializable {
     /*
      * (non-Javadoc)
      * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
+        result = prime * result + nodeLid;
+        result = prime * result + portNumber;
+        return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        PortCountersBean other = (PortCountersBean) obj;
+        if (imageId == null) {
+            if (other.imageId != null) {
+                return false;
+            }
+        } else if (!imageId.equals(other.imageId)) {
+            return false;
+        }
+        if (nodeLid != other.nodeLid) {
+            return false;
+        }
+        if (portNumber != other.portNumber) {
+            return false;
+        }
+        return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
@@ -722,4 +795,5 @@ public class PortCountersBean implements ITimestamped, Serializable {
                 + ", linkQualityIndicator=" + linkQualityIndicator
                 + ", imageId=" + imageId + "]";
     }
+
 }

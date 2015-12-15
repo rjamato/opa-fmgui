@@ -35,8 +35,17 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:26:52  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.5  2015/08/17 18:54:01  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/07/16 21:26:32  jijunwan
+ *  Archive Log:    PR 129528 - input validation improvement
+ *  Archive Log:    - restrict numbers to be positive integer, i.e. dot and minus are invalid chars
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/07/13 18:43:50  jijunwan
+ *  Archive Log:    PR 129528 - input validation improvement
+ *  Archive Log:    - In VF config, Bandwidth need to be in format "#.##%" and the value should be in range (0, 1]
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/03/30 14:25:37  jijunwan
  *  Archive Log:    1) introduced IRendererModel to create renderer only we nee
@@ -59,11 +68,30 @@ import java.text.NumberFormat;
 
 import com.intel.stl.api.management.virtualfabrics.Bandwidth;
 import com.intel.stl.ui.admin.view.FieldRenderer;
+import com.intel.stl.ui.common.UIConstants;
+import com.intel.stl.ui.common.view.ExFormattedTextField;
+import com.intel.stl.ui.common.view.SafeNumberField;
 
 public class BandwidthRenderer extends FieldRenderer<Double, Bandwidth> {
 
     public BandwidthRenderer() {
-        super(NumberFormat.getPercentInstance(), 0.1);
+        super(UIConstants.PERCENTAGE2, 0.1);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.admin.view.FieldRenderer#createFiled(java.text.NumberFormat
+     * )
+     */
+    @Override
+    protected ExFormattedTextField createFiled(NumberFormat format) {
+        SafeNumberField<Double> res =
+                new SafeNumberField<Double>(format, 0.0, false, 1.0, true);
+        // positive only, allow decimal
+        res.setValidChars("0123456789.%");
+        return res;
     }
 
     /*

@@ -24,20 +24,36 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ * 
  *  Functional Group: Fabric Viewer Application
- *
+ * 
  *  File Name: SC2VLNTMTBarChartPanel.java
- *
- *  Overview: 
- *
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.3.4.1  2015/10/13 17:32:49  jijunwan
+ *  Archive Log: PR 130976 - Empty property on switch port zero
+ *  Archive Log: - changed code to handle exception
+ *  Archive Log: - change to display N/A when a category is unavailable
+ *  Archive Log:
+ *  Archive Log: Revision 1.3  2015/08/17 18:54:17  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.2  2015/06/10 19:58:56  jijunwan
+ *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
  *  @author: jypak
- *
+ * 
  ******************************************************************************/
-
 package com.intel.stl.ui.configuration.view;
 
 import static com.intel.stl.ui.common.STLConstants.K1105_SC;
@@ -46,6 +62,7 @@ import static com.intel.stl.ui.model.DeviceProperty.SC;
 import static com.intel.stl.ui.model.DeviceProperty.VLNT;
 
 import java.awt.Dimension;
+import java.awt.Font;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -57,13 +74,19 @@ import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.view.ComponentFactory;
 import com.intel.stl.ui.model.DevicePropertyCategory;
 
 public class SC2VLNTMTBarChartPanel extends DevicePropertyCategoryPanel {
 
     private static final long serialVersionUID = 1L;
+    
+    private static final Logger log = LoggerFactory
+    		.getLogger(SC2VLNTMTBarChartPanel.class);
 
     private static final Dimension PREFERRED_CHART_SIZE = new Dimension(360,
             240);
@@ -78,20 +101,28 @@ public class SC2VLNTMTBarChartPanel extends DevicePropertyCategoryPanel {
 
     @Override
     public void modelChanged(DevicePropertyCategory model) {
-        double[] values = (double[]) model.getProperty(VLNT).getObject();
+    	try {
+            double[] values = (double[]) model.getProperty(VLNT).getObject();
 
-        int numSCs = (Integer) model.getProperty(SC).getObject();
+            int numSCs = (Integer) model.getProperty(SC).getObject();
 
-        final XYSeries xyseries = new XYSeries("");
+            final XYSeries xyseries = new XYSeries("");
 
-        int x = 0;
-        for (double v : values) {
+            int x = 0;
+            for (double v : values) {
 
-            xyseries.add(x++, v);
-        }
-        dataset.addSeries(xyseries);
+                xyseries.add(x++, v);
+            }
+            dataset.addSeries(xyseries);
 
-        chartPanel.getChart().getXYPlot().getDomainAxis().setRange(0, numSCs);
+            chartPanel.getChart().getXYPlot().getDomainAxis()
+            		.setRange(0, numSCs);
+    	} catch (Exception e) {
+    		log.warn("Failed to display model", e);
+    		propsPanel.remove(chartPanel);
+    		propsPanel.add(ComponentFactory.getH4Label(
+    				STLConstants.K0039_NOT_AVAILABLE.getValue(), Font.PLAIN)); 
+    	}
     }
 
     @Override

@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:27:08  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.3  2015/08/17 18:54:16  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/07/14 17:06:02  jijunwan
+ *  Archive Log:    PR 129541 - Should forbid save or deploy when there is invalid edit on management panel
+ *  Archive Log:    - throw InvalidEditException when there is invalid edit
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2015/03/05 17:38:19  jijunwan
  *  Archive Log:    init version to support Application management
@@ -150,7 +155,6 @@ public class Item<E> {
         final int prime = 31;
         int result = 1;
         result = prime * result + (int) (id ^ (id >>> 32));
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((obj == null) ? 0 : obj.hashCode());
         return result;
     }
@@ -173,13 +177,6 @@ public class Item<E> {
         }
         Item other = (Item) obj;
         if (id != other.id) {
-            return false;
-        }
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
             return false;
         }
         if (this.obj == null) {

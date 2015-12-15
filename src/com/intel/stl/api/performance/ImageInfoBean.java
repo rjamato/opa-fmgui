@@ -35,8 +35,21 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8.2.1  2015/08/12 15:21:44  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.12  2015/09/26 03:21:08  jijunwan
+ *  Archive Log:    PR 130522 - OtherPorts doesn't report a value
+ *  Archive Log:    - fixed mistake on hasChange
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/09/20 22:30:40  jijunwan
+ *  Archive Log:    PR 130522 - OtherPorts doesn't report a value
+ *  Archive Log:    - introduced hasChange to ImageInfo to detect if there is any statistics changes between two ImageInfo
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/08/17 18:48:41  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/06/25 21:04:02  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improvement on data randomization that ensure an attribute at the same time point get the same data where
  *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/04/09 03:29:21  jijunwan
  *  Archive Log:    updated to match FM 390
@@ -388,6 +401,46 @@ public class ImageInfoBean implements ITimestamped, Serializable {
     /*
      * (non-Javadoc)
      * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
+        return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        ImageInfoBean other = (ImageInfoBean) obj;
+        if (imageId == null) {
+            if (other.imageId != null) {
+                return false;
+            }
+        } else if (!imageId.equals(other.imageId)) {
+            return false;
+        }
+        return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
@@ -402,6 +455,46 @@ public class ImageInfoBean implements ITimestamped, Serializable {
                 + ", numSkippedPorts=" + numSkippedPorts
                 + ", numUnexpectedClearPorts=" + numUnexpectedClearPorts
                 + ", SMInfo=" + Arrays.toString(SMInfo) + "]";
+    }
+
+    public boolean hasChange(ImageInfoBean other) {
+        if (this == other) {
+            return false;
+        }
+        if (other == null) {
+            return true;
+        }
+        if (numFailedNodes != other.numFailedNodes) {
+            return true;
+        }
+        if (numFailedPorts != other.numFailedPorts) {
+            return true;
+        }
+        if (numHFIPorts != other.numHFIPorts) {
+            return true;
+        }
+        if (numLinks != other.numLinks) {
+            return true;
+        }
+        if (numSMs != other.numSMs) {
+            return true;
+        }
+        if (numSkippedNodes != other.numSkippedNodes) {
+            return true;
+        }
+        if (numSkippedPorts != other.numSkippedPorts) {
+            return true;
+        }
+        if (numSwitchNodes != other.numSwitchNodes) {
+            return true;
+        }
+        if (numSwitchPorts != other.numSwitchPorts) {
+            return true;
+        }
+        if (numUnexpectedClearPorts != other.numUnexpectedClearPorts) {
+            return true;
+        }
+        return false;
     }
 
 }

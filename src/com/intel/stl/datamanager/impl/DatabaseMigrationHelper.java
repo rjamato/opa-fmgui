@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:22:08  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/08/18 21:04:41  fernande
+ *  Archive Log:    PR 128703 - Fail over doesn't work on A0 Fabric. Fixed schema update because FE list is not copied over to new database
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/08/17 18:49:00  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/03/16 17:38:14  fernande
  *  Archive Log:    STLConnection lifecycle support. STLConnections can now be reused and temporary connections are not cached and their socket is closed after they are logically closed. Changed SubnetDescription in support of failover to have a list of HostInfo objects instead of just info for one host.
@@ -53,6 +57,7 @@
 
 package com.intel.stl.datamanager.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -64,6 +69,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.intel.stl.api.StringUtils;
+import com.intel.stl.api.subnet.HostInfo;
 import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.datamanager.SubnetRecord;
 import com.intel.stl.datamanager.UserRecord;
@@ -96,6 +102,9 @@ public class DatabaseMigrationHelper {
         tx.begin();
         String subnetName = subnet.getSubnetDescription().getName();
         String uniqueName = subnet.getUniqueName();
+        List<HostInfo> feList = subnet.getSubnetDescription().getFEList();
+        List<HostInfo> newfeList = new ArrayList<HostInfo>(feList);
+        subnet.getSubnetDescription().setFEList(newfeList);
         em.persist(subnet);
         try {
             tx.commit();

@@ -35,8 +35,23 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:26:33  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.6  2015/08/17 18:53:36  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/07/01 20:08:10  jijunwan
+ *  Archive Log:    PR 129441 - Being able to save multiple times on the changes we made on Admin page
+ *  Archive Log:    -  changed ValidationDialog to be DOCUMENT_MODAL
+ *  Archive Log:    - improved OptionDialog#showDialog to show dialog later to avoid block on current EDT.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/05/12 17:40:12  rjtierne
+ *  Archive Log:    PR 128624 - Klocwork and FindBugs fixes for UI
+ *  Archive Log:    Reorganized code to check the while-loop condition within the synchronized block
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/05/11 12:26:18  rjtierne
+ *  Archive Log:    PR 128585 - Fix errors found by Klocwork and FindBugs
+ *  Archive Log:    - Renamed method intsallButtons() to installButtons()
+ *  Archive Log:    - Removed redundant if condition in installButtons()
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/03/11 21:16:02  jijunwan
  *  Archive Log:    added remove and deploy features
@@ -113,7 +128,7 @@ public abstract class OptionDialog extends JDialog implements IAssistant {
         getContentPane().add(panel, BorderLayout.CENTER);
 
         ctrPanel = new JPanel();
-        intsallButtons(ctrPanel, optionType);
+        installButtons(ctrPanel, optionType);
         getContentPane().add(ctrPanel, BorderLayout.SOUTH);
 
         setSize();
@@ -133,7 +148,7 @@ public abstract class OptionDialog extends JDialog implements IAssistant {
      * 
      * @param ctrPanel2
      */
-    protected void intsallButtons(JPanel ctrPanel, int optionType) {
+    protected void installButtons(JPanel ctrPanel, int optionType) {
         ctrPanel.setLayout(new FlowLayout(FlowLayout.TRAILING));
         if (optionType == JOptionPane.OK_OPTION
                 || optionType == JOptionPane.OK_CANCEL_OPTION) {
@@ -151,8 +166,7 @@ public abstract class OptionDialog extends JDialog implements IAssistant {
             ctrPanel.add(okButton);
         }
 
-        if (optionType == JOptionPane.CANCEL_OPTION
-                || optionType == JOptionPane.OK_CANCEL_OPTION) {
+        if (optionType == JOptionPane.CANCEL_OPTION) {
             cancelButton = new JButton("Cancel");
             cancelButton.addActionListener(new ActionListener() {
                 @Override
@@ -198,7 +212,7 @@ public abstract class OptionDialog extends JDialog implements IAssistant {
     protected abstract JComponent getMainComponent();
 
     public void showDialog() {
-        Util.runInEDT(new Runnable() {
+        SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 setVisible(true);
@@ -231,14 +245,14 @@ public abstract class OptionDialog extends JDialog implements IAssistant {
     }
 
     protected void waitForInput() {
-        while (option == -1) {
-            try {
-                synchronized (waitObj) {
+        synchronized (waitObj) {
+            while (option == -1) {
+                try {
                     waitObj.wait();
+                } catch (InterruptedException e) {
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (InterruptedException e) {
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
     }

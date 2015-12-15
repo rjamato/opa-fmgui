@@ -25,7 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
  *	
@@ -36,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3.2.1  2015/08/12 15:26:38  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.5  2015/08/17 18:53:46  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/08/05 03:10:28  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - improved GrapgEdge to include node type
  *  Archive Log:
  *  Archive Log:    Revision 1.3  2014/07/03 22:13:47  jijunwan
  *  Archive Log:    1) added normalization to GraphEdge, so we can identify the same edges represented in different directions
@@ -63,53 +67,70 @@ import java.util.TreeMap;
 
 public class GraphEdge extends GraphCell {
     private static final long serialVersionUID = 6368674272408088705L;
+
     private int fromLid;
+
+    private byte fromType;
+
     private int toLid;
+
+    private byte toType;
+
     private Map<Integer, Integer> links;
-    
+
     /**
-     * Description: 
+     * Description:
      * 
      */
     public GraphEdge() {
         super();
     }
 
-    public GraphEdge(int fromLid, int toLid, Map<Integer, Integer> links) {
+    public GraphEdge(int fromLid, byte fromType, int toLid, byte toType,
+            Map<Integer, Integer> links) {
         super();
         this.fromLid = fromLid;
+        this.fromType = fromType;
         this.toLid = toLid;
+        this.toType = toType;
         this.links = links;
         this.name = createName();
     }
-    
+
     /**
-     * Description: 
-     *
+     * Description:
+     * 
      * @param fromLid
      * @param toLid
-     * @param links 
+     * @param links
      */
-    public GraphEdge(String name, int fromLid, int toLid, Map<Integer, Integer> links) {
+    public GraphEdge(String name, int fromLid, byte fromType, int toLid,
+            byte toType, Map<Integer, Integer> links) {
         super(name);
         this.fromLid = fromLid;
+        this.fromType = fromType;
         this.toLid = toLid;
+        this.toType = toType;
         this.links = links;
     }
-    
+
     public GraphEdge normalize() {
         if (fromLid < toLid) {
-            Map<Integer, Integer> reversedLinks = new TreeMap<Integer, Integer>();
+            Map<Integer, Integer> reversedLinks =
+                    new TreeMap<Integer, Integer>();
             for (Integer key : links.keySet()) {
                 reversedLinks.put(links.get(key), key);
             }
-            return new GraphEdge(toLid, fromLid, reversedLinks);
+            return new GraphEdge(toLid, toType, fromLid, fromType,
+                    reversedLinks);
         } else {
             return this;
         }
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.intel.stl.ui.model.GraphCell#isVertex()
      */
     @Override
@@ -118,7 +139,7 @@ public class GraphEdge extends GraphCell {
     }
 
     protected String createName() {
-        return fromLid+"-"+toLid;
+        return fromLid + "-" + toLid;
     }
 
     /**
@@ -129,10 +150,26 @@ public class GraphEdge extends GraphCell {
     }
 
     /**
-     * @param fromLid the fromLid to set
+     * @param fromLid
+     *            the fromLid to set
      */
     public void setFromLid(int fromLid) {
         this.fromLid = fromLid;
+    }
+
+    /**
+     * @return the fromType
+     */
+    public byte getFromType() {
+        return fromType;
+    }
+
+    /**
+     * @param fromType
+     *            the fromType to set
+     */
+    public void setFromType(byte fromType) {
+        this.fromType = fromType;
     }
 
     /**
@@ -143,10 +180,26 @@ public class GraphEdge extends GraphCell {
     }
 
     /**
-     * @param toLid the toLid to set
+     * @param toLid
+     *            the toLid to set
      */
     public void setToLid(int toLid) {
         this.toLid = toLid;
+    }
+
+    /**
+     * @return the toType
+     */
+    public byte getToType() {
+        return toType;
+    }
+
+    /**
+     * @param toType
+     *            the toType to set
+     */
+    public void setToType(byte toType) {
+        this.toType = toType;
     }
 
     /**
@@ -157,13 +210,16 @@ public class GraphEdge extends GraphCell {
     }
 
     /**
-     * @param links the links to set
+     * @param links
+     *            the links to set
      */
     public void setLinks(Map<Integer, Integer> links) {
         this.links = links;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -171,30 +227,54 @@ public class GraphEdge extends GraphCell {
         final int prime = 31;
         int result = 1;
         result = prime * result + fromLid;
+        result = prime * result + fromType;
+        result = prime * result + ((links == null) ? 0 : links.hashCode());
         result = prime * result + toLid;
+        result = prime * result + toType;
         return result;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         GraphEdge other = (GraphEdge) obj;
-        if (fromLid != other.fromLid)
+        if (fromLid != other.fromLid) {
             return false;
-        if (toLid != other.toLid)
+        }
+        if (fromType != other.fromType) {
             return false;
+        }
+        if (links == null) {
+            if (other.links != null) {
+                return false;
+            }
+        } else if (!links.equals(other.links)) {
+            return false;
+        }
+        if (toLid != other.toLid) {
+            return false;
+        }
+        if (toType != other.toType) {
+            return false;
+        }
         return true;
     }
 
+    @Override
     public String toString() {
-        return fromLid+"-"+toLid+":"+links.size()+" "+links;
+        return fromLid + "-" + toLid + ":" + links.size() + " " + links;
     }
 }

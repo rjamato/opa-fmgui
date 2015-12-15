@@ -35,8 +35,19 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8.2.1  2015/08/12 15:27:18  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.11  2015/09/08 21:46:27  jijunwan
+ *  Archive Log:    PR 130330 - Windows FM GUI - Admin->Console - switching side tabs causes multiple consoles
+ *  Archive Log:    - changed code to distinguish number of connected consoles and number of consoles
+ *  Archive Log:    - changed ConsolePage to use number of consoles, so if we have an unconnected console, it doesn't create another new console.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/08/17 18:54:27  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/05/27 14:34:20  rjtierne
+ *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
+ *  Archive Log:    Added "reason" field to onConnectFail() to make behavioural distinction between
+ *  Archive Log:    initializing a console and unlocking an existing console.
  *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/04/10 14:08:25  rjtierne
  *  Archive Log:    PR 126675 - User cannot execute commands on duplicate Console numbers beyond 10 consoles.
@@ -76,7 +87,6 @@
 package com.intel.stl.ui.console;
 
 import com.intel.stl.ui.common.IProgressObserver;
-import com.intel.stl.ui.console.view.LoginDialogView;
 import com.intel.stl.ui.main.Context;
 
 // Added this comment to correct PR 126675 comment above
@@ -97,7 +107,8 @@ public interface IConsoleEventListener {
 
     public void onConnect(boolean connected, String command);
 
-    public void onConnectFail(ConsoleTerminalController console, Exception e);
+    public void onConnectFail(ConsoleTerminalController console, int reason,
+            Exception e);
 
     public void cleanup();
 
@@ -105,11 +116,19 @@ public interface IConsoleEventListener {
 
     public void removeConsole(int id);
 
-    public int getNumConsoles();
+    /**
+     * 
+     * <i>Description:</i>
+     * 
+     * @param connectedOnly
+     *            if true we only count connected consoles
+     * @return
+     */
+    public int getNumConsoles(boolean connectedOnly);
 
-    public LoginDialogView getLoginDialog();
+    public IConsoleLogin getConsoleLogin();
 
-    public void onUnlockThread(int consoleId, String pw);
+    public void onUnlockThread(int consoleId, char[] pw);
 
     public void closeSession(ConsoleTerminalController console);
 

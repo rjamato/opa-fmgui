@@ -35,8 +35,34 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.1  2015/08/12 15:22:26  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.12  2015/10/06 15:51:01  rjtierne
+ *  Archive Log:    PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
+ *  Archive Log:    - Implemented cleanup() to close the JSchSession and remove it from the map in JSchSessionFactory so
+ *  Archive Log:    that the user is required to log into the Admin page again when a subnet is brought up subsequent times.
+ *  Archive Log:    - Set HostType for the current FE in the subnet to null so the Log Viewers login page is displayed when
+ *  Archive Log:    a subnet is brought up subsequent times.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/09/28 13:53:24  fisherma
+ *  Archive Log:    PR 130425 - added cancel button to allow user to cancel out of hung or slow ssh logins.  Cancel action terminates sftp connection and closes remote ssh session.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/08/17 18:49:50  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/08/17 17:33:48  jijunwan
+ *  Archive Log:    PR 128973 - Deploy FM conf changes on all SMs
+ *  Archive Log:    - improved ManagementApi to suppoer deploy changes on another SM
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/08/17 14:22:58  rjtierne
+ *  Archive Log:    PR 128979 - SM Log display
+ *  Archive Log:    This is the first version of the Log Viewer which displays select lines of text from the remote SM log file. Updates include searchable raw text from file, user-defined number of lines to display, refreshing end of file, and paging. This PR is now closed and further updates can be found by referencing PR 130011 - "Enhance SM Log Viewer to include Standard and Advanced requirements".
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/07/28 18:20:30  fisherma
+ *  Archive Log:    PR 129219 - Admin page login dialog improvement.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/07/09 17:55:45  jijunwan
+ *  Archive Log:    PR 129509 - Shall refresh UI after failover completed
+ *  Archive Log:    - added reset method to ManagermentApi so we can reset after failover completed
  *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/04/28 21:54:59  jijunwan
  *  Archive Log:    improved LoginAssistant to support setting owner
@@ -70,22 +96,22 @@ package com.intel.stl.api.management.impl;
 import java.util.List;
 import java.util.Set;
 
-import com.intel.stl.api.ILoginAssistant;
 import com.intel.stl.api.management.FMConfHelper;
 import com.intel.stl.api.management.IManagementApi;
+import com.intel.stl.api.management.TmpFmConfHelper;
 import com.intel.stl.api.management.applications.Application;
 import com.intel.stl.api.management.applications.ApplicationException;
-import com.intel.stl.api.management.applications.IApplicationManangement;
 import com.intel.stl.api.management.applications.impl.ApplicationManagement;
 import com.intel.stl.api.management.devicegroups.DeviceGroup;
 import com.intel.stl.api.management.devicegroups.DeviceGroupException;
-import com.intel.stl.api.management.devicegroups.IDeviceGroupManagement;
 import com.intel.stl.api.management.devicegroups.impl.DeviceGroupManagement;
-import com.intel.stl.api.management.virtualfabrics.IVirtualFabricManagement;
 import com.intel.stl.api.management.virtualfabrics.VirtualFabric;
 import com.intel.stl.api.management.virtualfabrics.VirtualFabricException;
 import com.intel.stl.api.management.virtualfabrics.impl.VirtualFabricManagement;
+import com.intel.stl.api.subnet.HostInfo;
 import com.intel.stl.api.subnet.SubnetDescription;
+import com.intel.stl.fecdriver.network.ssh.impl.JSchSession;
+import com.intel.stl.fecdriver.network.ssh.impl.JSchSessionFactory;
 
 /**
  * This class provides access to FM configuration management functions. It
@@ -96,49 +122,42 @@ import com.intel.stl.api.subnet.SubnetDescription;
 public class ManagementApi implements IManagementApi {
     private final FMConfHelper confHelper;
 
-    private final IApplicationManangement appMgt;
+    private final ApplicationManagement appMgt;
 
-    private final IDeviceGroupManagement groupMgt;
+    private final DeviceGroupManagement groupMgt;
 
-    private final IVirtualFabricManagement vfMgt;
+    private final VirtualFabricManagement vfMgt;
+
+    private final SubnetDescription subnet;
 
     public ManagementApi(SubnetDescription subnet) {
         confHelper = FMConfHelper.getInstance(subnet);
         appMgt = new ApplicationManagement(confHelper);
         groupMgt = new DeviceGroupManagement(confHelper);
         vfMgt = new VirtualFabricManagement(confHelper);
+        this.subnet = subnet;
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.intel.stl.api.management.IManagementApi#setLoginAssistant(com.intel
-     * .stl.api.ILoginAssistant)
+     * @see com.intel.stl.api.management.IManagementApi#reset()
      */
     @Override
-    public void setLoginAssistant(ILoginAssistant loginAssistant) {
-        confHelper.setLoginAssistant(loginAssistant);
+    public void reset() {
+        confHelper.reset();
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.intel.stl.api.management.IManagementApi#getLoginAssistant()
+     * @see com.intel.stl.api.management.IManagementApi#hasChanges()
      */
     @Override
-    public ILoginAssistant getLoginAssistant() {
-        return confHelper.getLoginAssistant();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.intel.stl.api.management.IManagementApi#refresh()
-     */
-    @Override
-    public void refresh() throws Exception {
-        confHelper.getConfFile(true);
+    public boolean hasChanges() {
+        return !appMgt.getChanges().isEmpty()
+                || !groupMgt.getChanges().isEmpty()
+                || !vfMgt.getChanges().isEmpty();
     }
 
     /*
@@ -147,8 +166,30 @@ public class ManagementApi implements IManagementApi {
      * @see com.intel.stl.api.management.IManagementApi#deplaoy(boolean)
      */
     @Override
-    public void deploy(boolean restart) throws Exception {
-        confHelper.deployConf();
+    public void deploy(char[] password, boolean restart) throws Exception {
+        confHelper.deployConf(password);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.api.management.IManagementApi#deployTo(char[],
+     * com.intel.stl.api.subnet.HostInfo)
+     */
+    @Override
+    public void deployTo(char[] password, HostInfo target) throws Exception {
+        FMConfHelper tmpConfHelper = new TmpFmConfHelper(target);
+        tmpConfHelper.fetchConfigFile(password);
+        ApplicationManagement tmpAppMgt =
+                new ApplicationManagement(tmpConfHelper);
+        appMgt.applyChangesTo(tmpAppMgt);
+        DeviceGroupManagement tmpGroupMgt =
+                new DeviceGroupManagement(tmpConfHelper);
+        groupMgt.applyChangesTo(tmpGroupMgt);
+        VirtualFabricManagement tmpVfMgt =
+                new VirtualFabricManagement(tmpConfHelper);
+        vfMgt.applyChangesTo(tmpVfMgt);
+        tmpConfHelper.deployConf(password);
     }
 
     /*
@@ -404,4 +445,60 @@ public class ManagementApi implements IManagementApi {
         vfMgt.addOrUpdateVirtualFabric(oldName, vf);
     }
 
+    @Override
+    public SubnetDescription getSubnetDescription() {
+        return subnet;
+    }
+
+    @Override
+    public boolean isConfigReady() {
+        return confHelper.checkConfigFilePresense();
+    }
+
+    @Override
+    public boolean hasSession() {
+        boolean connectionStatus = false;
+
+        // Check if the factory has a session for this subnet
+        // and if it does, verify that it is connected
+        JSchSession session = JSchSessionFactory.getSessionFromMap(subnet);
+
+        if (session != null) {
+            connectionStatus = session.isConnected();
+        }
+
+        return connectionStatus;
+    }
+
+    @Override
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.api.management.IManagementApi#tryToConnect(char[])
+     * 
+     * This method will try to connect to the server and retrieve the config
+     * file To check if connection is successful, call
+     * doWeHaveConfigFileInHelper()
+     */
+    public void fetchConfigFile(char[] password) throws Exception {
+        confHelper.fetchConfigFile(password);
+    }
+
+    @Override
+    public void onCancelFetchConfig(SubnetDescription subnet) {
+        // Terminate any open or in-progress ssh/ftp/sftp connections
+        confHelper.cancelFetchConfigFile(subnet);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.api.management.IManagementApi#cleanup()
+     */
+    @Override
+    public void cleanup() {
+        subnet.getCurrentFE().setHostType(null);
+        JSchSessionFactory.closeSession(subnet);
+        confHelper.reset();
+    }
 }

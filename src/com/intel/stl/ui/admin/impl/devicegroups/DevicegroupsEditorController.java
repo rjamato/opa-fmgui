@@ -35,8 +35,16 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:27:12  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.3  2015/08/17 18:54:21  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/05/14 17:19:43  jijunwan
+ *  Archive Log:    PR 128697 - Handle empty list of items
+ *  Archive Log:    - Added code to handle null item
+ *  Archive Log:    - Added code to clean panel when it gets a null item
+ *  Archive Log:    - Enable/disable buttons properly when we get an empty item list or null item
+ *  Archive Log:    - Improved to handle item selection when the index is invalid, such as -1
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2015/03/24 17:46:10  jijunwan
  *  Archive Log:    init version of DeviceGroup editor
@@ -93,7 +101,11 @@ public class DevicegroupsEditorController extends
      */
     @Override
     public void setItem(Item<DeviceGroup> item, Item<DeviceGroup>[] items) {
-        selectionCtr.setItem(item, items);
+        if (item == null) {
+            selectionCtr.clear();
+        } else {
+            selectionCtr.setItem(item, items);
+        }
         super.setItem(item, items);
     }
 

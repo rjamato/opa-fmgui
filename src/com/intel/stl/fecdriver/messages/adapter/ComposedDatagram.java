@@ -24,6 +24,34 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: ComposedDatagram.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.4  2015/08/17 18:49:32  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - change backend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.3  2015/06/11 17:53:24  fernande
+ *  Archive Log: PR 129034 Support secure FE. Added toString(prefix) method so that we can get a string representation of the datagram to log it if needed.
+ *  Archive Log:
+ *  Archive Log: Revision 1.2  2015/06/10 19:36:35  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: jijunwan
+ * 
+ ******************************************************************************/
 package com.intel.stl.fecdriver.messages.adapter;
 
 import java.io.PrintStream;
@@ -34,231 +62,227 @@ import java.util.List;
 
 /**
  * @author jijunwan
- *
+ * 
  */
 public class ComposedDatagram<E> implements IDatagram<E> {
-	private int length = 0;
-	private List<ByteBuffer> buffers = new ArrayList<ByteBuffer>();
-	private ByteOrder order = null;
-	private boolean hasConsistentOrder = true;
-	private List<IDatagram<?>> datagrams = new ArrayList<IDatagram<?>>();
-	private boolean dirty = true;
-	
-	public ComposedDatagram() {
-	}
-	
-	public ComposedDatagram(IDatagram<?> ...datagrams) {
-		for (IDatagram<?> datagram : datagrams) {
-			this.datagrams.add(datagram);
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see com.vieo.fv.resource.stl.data.IDatagram#build(boolean)
-	 */
-	@Override
-	public int build(boolean force) {
-		int len = 0;
-		for (IDatagram<?> datagram : datagrams) {
-			len += datagram.build(force);
-		}
-		if (len>0)
-			refresh();
-		return getLength();
-	}
+    private int length = 0;
 
-	/* (non-Javadoc)
-	 * @see com.vieo.fv.resource.stl.data.IDatagram#wrap(byte[], int)
-	 */
-	@Override
-	public int wrap(byte[] data, int offset) {
-		int pos = offset;
-		for (IDatagram<?> datagram : datagrams) {
-			pos = datagram.wrap(data, pos);
-		}
-		refresh();
-		return pos;
-	}
+    private List<ByteBuffer> buffers = new ArrayList<ByteBuffer>();
 
-	/**
-	 * NOTE: if a sub ComposedDatagram changed, it's the user's responsibility to call this method to ensure 
-	 * parent ComposedDatagram has correct information
-	 * TODO: add listener to automatically do this 
-	 */
-	public void refresh() {
-		length = 0;
-		buffers.clear();
-		order = null;
-		
-		for (IDatagram<?> datagram : datagrams) {
-			if (!datagram.hasBuffer())
-				throw new IllegalArgumentException("Datagram has no buffer! Please initialize it with #build or #wrap method first.");
-			
-			length += datagram.getLength();
-			
-			ByteBuffer[] localBuffers = datagram.getByteBuffers();
-			if (localBuffers!=null) {
-				for (ByteBuffer buffer : localBuffers) {
-					buffers.add(buffer);
-				}
-			}
-			
-			if ((datagram instanceof ComposedDatagram) && !((ComposedDatagram<?>)datagram).hasConsistentOrder) {
-				hasConsistentOrder = false;
-				continue;
-			}
-			
-			if (order==null)
-				order = datagram.getByteOrder();
-			else if (hasConsistentOrder) {
-				if (order!=datagram.getByteOrder()) {
-					hasConsistentOrder = false;
-				}
-			}
-		}
-		
-		dirty = false;
-	}
-	
-	public List<IDatagram<?>> getDatagrams() {
-		return datagrams;
-	}
-	
-	public void addDatagram(IDatagram<?> datagram) {
-		if (datagram==null)
-			return;
-		
-		datagrams.add(datagram);
-		if (!datagram.hasBuffer()) {
-			dirty = true;
-			return;
-		}
-		
-		length += datagram.getLength();
-		
-		ByteBuffer[] localBuffers = datagram.getByteBuffers();
-		if (localBuffers!=null) {
-			for (ByteBuffer buffer : localBuffers) {
-				buffers.add(buffer);
-			}
-		}
-		
-		if ((datagram instanceof ComposedDatagram) && !((ComposedDatagram<?>)datagram).hasConsistentOrder) {
-			hasConsistentOrder = false;
-			return;
-		}
+    private ByteOrder order = null;
 
-		if (order==null)
-			order = datagram.getByteOrder();
-		else if (hasConsistentOrder) {
-			if (order!=datagram.getByteOrder()) {
-				hasConsistentOrder = false;
-			}
-		}
-	}
-	
-	public void removeDatagram(IDatagram<?> datagram) {
-		if (datagram==null)
-			return;
-		
-		if (!datagrams.remove(datagram))
-			return;
-		if (!datagram.hasBuffer()) {
-			dirty = true;
-			return;
-		}
-		
-		length -= datagram.getLength();
-		
-		ByteBuffer[] localBuffers = datagram.getByteBuffers();
-		if (localBuffers!=null) {
-			for (ByteBuffer buffer : localBuffers) {
-				buffers.remove(buffer);
-			}
-		}
-		
-		if (!hasConsistentOrder) {
-			order = null;
-			hasConsistentOrder = true;
-			for (IDatagram<?> dg : datagrams) {
-				if ((datagram instanceof ComposedDatagram) && !((ComposedDatagram<?>)datagram).hasConsistentOrder) {
-					hasConsistentOrder = false;
-					break;
-				}
-				
-				if (order==null)
-					order = dg.getByteOrder();
-				else {
-					if (order!=dg.getByteOrder()) {
-						hasConsistentOrder = false;
-						break;
-					}
-				}
-			}
-		}
-	}
+    private boolean hasConsistentOrder = true;
 
-	/* (non-Javadoc)
-	 * @see com.vieo.fv.resource.stl.data.IDatagram#getByteBuffers()
-	 */
-	@Override
-	public ByteBuffer[] getByteBuffers() {
-		if (dirty)
-			refresh();
-		
-		return buffers.toArray(new ByteBuffer[0]);
-	}
+    private List<IDatagram<?>> datagrams = new ArrayList<IDatagram<?>>();
 
-	/* (non-Javadoc)
-	 * @see com.vieo.fv.resource.stl.data.IDatagram#getLength()
-	 */
-	@Override
-	public int getLength() {
-		if (dirty)
-			refresh();
-		
-		return length;
-	}
+    private boolean dirty = true;
 
-	/* (non-Javadoc)
-	 * @see com.vieo.fv.resource.stl.data.IDatagram#getByteOrder()
-	 */
-	@Override
-	public ByteOrder getByteOrder() {
-		if (dirty)
-			refresh();
-		
-		if (hasConsistentOrder)
-			return order;
-		else
-			throw new RuntimeException("No consistent ByteOrder");
-	}
+    public ComposedDatagram() {
+    }
 
-	/* (non-Javadoc)
-	 * @see com.vieo.fv.resource.stl.data.IDatagram#hasBuffer()
-	 */
-	@Override
-	public boolean hasBuffer() {
-		return !dirty;
-	}
+    public ComposedDatagram(IDatagram<?>... datagrams) {
+        for (IDatagram<?> datagram : datagrams) {
+            this.datagrams.add(datagram);
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see com.vieo.fv.resource.stl.data.IDatagram#dump(java.lang.String, java.io.PrintStream)
-	 */
-	@Override
-	public void dump(String prefix, PrintStream out) {
-		out.println(prefix+getClass().getSimpleName());
-		for (IDatagram<?> datagram : datagrams) {
-			datagram.dump(prefix+"  ", out);
-		}
-	}
+    @Override
+    public int build(boolean force) {
+        int len = 0;
+        for (IDatagram<?> datagram : datagrams) {
+            len += datagram.build(force);
+        }
+        if (len > 0)
+            refresh();
+        return getLength();
+    }
 
-	/* (non-Javadoc)
-	 * @see com.intel.hpc.stl.resourceadapter.data.IDatagram#toObject()
-	 */
-	@Override
-	public E toObject() {
-		return null;
-	}
+    @Override
+    public int wrap(byte[] data, int offset) {
+        int pos = offset;
+        for (IDatagram<?> datagram : datagrams) {
+            pos = datagram.wrap(data, pos);
+        }
+        refresh();
+        return pos;
+    }
+
+    /**
+     * NOTE: if a sub ComposedDatagram changed, it's the user's responsibility
+     * to call this method to ensure parent ComposedDatagram has correct
+     * information TODO: add listener to automatically do this
+     */
+    public void refresh() {
+        length = 0;
+        buffers.clear();
+        order = null;
+
+        for (IDatagram<?> datagram : datagrams) {
+            if (!datagram.hasBuffer())
+                throw new IllegalArgumentException(
+                        "Datagram has no buffer! Please initialize it with #build or #wrap method first.");
+
+            length += datagram.getLength();
+
+            ByteBuffer[] localBuffers = datagram.getByteBuffers();
+            if (localBuffers != null) {
+                for (ByteBuffer buffer : localBuffers) {
+                    buffers.add(buffer);
+                }
+            }
+
+            if ((datagram instanceof ComposedDatagram)
+                    && !((ComposedDatagram<?>) datagram).hasConsistentOrder) {
+                hasConsistentOrder = false;
+                continue;
+            }
+
+            if (order == null)
+                order = datagram.getByteOrder();
+            else if (hasConsistentOrder) {
+                if (order != datagram.getByteOrder()) {
+                    hasConsistentOrder = false;
+                }
+            }
+        }
+
+        dirty = false;
+    }
+
+    public List<IDatagram<?>> getDatagrams() {
+        return datagrams;
+    }
+
+    public void addDatagram(IDatagram<?> datagram) {
+        if (datagram == null)
+            return;
+
+        datagrams.add(datagram);
+        if (!datagram.hasBuffer()) {
+            dirty = true;
+            return;
+        }
+
+        length += datagram.getLength();
+
+        ByteBuffer[] localBuffers = datagram.getByteBuffers();
+        if (localBuffers != null) {
+            for (ByteBuffer buffer : localBuffers) {
+                buffers.add(buffer);
+            }
+        }
+
+        if ((datagram instanceof ComposedDatagram)
+                && !((ComposedDatagram<?>) datagram).hasConsistentOrder) {
+            hasConsistentOrder = false;
+            return;
+        }
+
+        if (order == null)
+            order = datagram.getByteOrder();
+        else if (hasConsistentOrder) {
+            if (order != datagram.getByteOrder()) {
+                hasConsistentOrder = false;
+            }
+        }
+    }
+
+    public void removeDatagram(IDatagram<?> datagram) {
+        if (datagram == null)
+            return;
+
+        if (!datagrams.remove(datagram))
+            return;
+        if (!datagram.hasBuffer()) {
+            dirty = true;
+            return;
+        }
+
+        length -= datagram.getLength();
+
+        ByteBuffer[] localBuffers = datagram.getByteBuffers();
+        if (localBuffers != null) {
+            for (ByteBuffer buffer : localBuffers) {
+                buffers.remove(buffer);
+            }
+        }
+
+        if (!hasConsistentOrder) {
+            order = null;
+            hasConsistentOrder = true;
+            for (IDatagram<?> dg : datagrams) {
+                if ((datagram instanceof ComposedDatagram)
+                        && !((ComposedDatagram<?>) datagram).hasConsistentOrder) {
+                    hasConsistentOrder = false;
+                    break;
+                }
+
+                if (order == null)
+                    order = dg.getByteOrder();
+                else {
+                    if (order != dg.getByteOrder()) {
+                        hasConsistentOrder = false;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public ByteBuffer[] getByteBuffers() {
+        if (dirty)
+            refresh();
+
+        return buffers.toArray(new ByteBuffer[0]);
+    }
+
+    @Override
+    public int getLength() {
+        if (dirty)
+            refresh();
+
+        return length;
+    }
+
+    @Override
+    public ByteOrder getByteOrder() {
+        if (dirty)
+            refresh();
+
+        if (hasConsistentOrder)
+            return order;
+        else
+            throw new RuntimeException("No consistent ByteOrder");
+    }
+
+    @Override
+    public boolean hasBuffer() {
+        return !dirty;
+    }
+
+    @Override
+    public void dump(String prefix, PrintStream out) {
+        out.println(prefix + getClass().getSimpleName());
+        for (IDatagram<?> datagram : datagrams) {
+            datagram.dump(prefix + "  ", out);
+        }
+    }
+
+    @Override
+    public String toString(String prefix) {
+        StringBuffer strBuff = new StringBuffer();
+        strBuff.append(prefix);
+        strBuff.append(getClass().getSimpleName());
+        for (IDatagram<?> datagram : datagrams) {
+            strBuff.append(datagram.toString(prefix + "  "));
+        }
+        return strBuff.toString();
+    }
+
+    @Override
+    public E toObject() {
+        return null;
+    }
 
 }

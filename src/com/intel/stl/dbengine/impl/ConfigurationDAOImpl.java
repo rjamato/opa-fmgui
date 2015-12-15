@@ -35,8 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.19.2.1  2015/08/12 15:22:29  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.20  2015/08/17 18:49:34  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.19  2015/02/11 22:01:46  fernande
  *  Archive Log:    Fix error introduced in previous changes where getUserSettings was returning an exception on first run, when no subnets are defined and should return the default user settings.

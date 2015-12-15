@@ -24,10 +24,36 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: FVCmdGetSC2SLMT.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.5  2015/08/17 18:48:45  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - change backend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.4  2015/06/10 19:36:41  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: jypak
+ * 
+ ******************************************************************************/
 package com.intel.stl.fecdriver.messages.command.sa;
 
 import com.intel.stl.api.subnet.SAConstants;
 import com.intel.stl.api.subnet.SC2SLMTRecordBean;
+import com.intel.stl.fecdriver.SingleResponseCommand;
 import com.intel.stl.fecdriver.messages.adapter.CommonMad;
 import com.intel.stl.fecdriver.messages.adapter.sa.SAHeader;
 import com.intel.stl.fecdriver.messages.adapter.sa.SC2SLMTRecord;
@@ -39,7 +65,8 @@ import com.intel.stl.fecdriver.messages.response.sa.FVRspGetSC2SLMT;
  * 
  */
 public class FVCmdGetSC2SLMT extends
-        SACommand<SC2SLMTRecordBean, SC2SLMTRecord, SC2SLMTRecordBean> {
+        SACommand<SC2SLMTRecord, SC2SLMTRecordBean> implements
+        SingleResponseCommand<SC2SLMTRecordBean, FVRspGetSC2SLMT> {
 
     public FVCmdGetSC2SLMT() {
         setResponse(new FVRspGetSC2SLMT());

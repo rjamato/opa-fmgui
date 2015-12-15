@@ -35,8 +35,19 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.23.2.1  2015/08/12 15:21:45  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.27  2015/09/26 06:17:08  jijunwan
+ *  Archive Log:    130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
+ *  Archive Log:    - added reset to clear all caches and update DB topology
+ *  Archive Log:
+ *  Archive Log:    Revision 1.26  2015/08/17 18:48:40  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.25  2015/07/10 20:45:27  fernande
+ *  Archive Log:    PR 129522 - Notice is not written to database due to topology not found. Moved FE Helpers to the session object and changed the order of initialization for the SubnetContext.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.24  2015/07/09 18:51:49  fernande
+ *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Added method to expose application settings in the settings.xml file to higher levels in the app
  *  Archive Log:
  *  Archive Log:    Revision 1.23  2015/03/27 20:42:26  fernande
  *  Archive Log:    Changed to use the new SerialProcessingService interface
@@ -123,6 +134,7 @@
 
 package com.intel.stl.configuration;
 
+import static com.intel.stl.configuration.AppSettings.APP_DB_SUBNET;
 import static com.intel.stl.configuration.MemCacheType.CABLE;
 import static com.intel.stl.configuration.MemCacheType.GROUP;
 import static com.intel.stl.configuration.MemCacheType.GROUP_CONF;
@@ -139,7 +151,6 @@ import static com.intel.stl.configuration.MemCacheType.SM;
 import static com.intel.stl.configuration.MemCacheType.SWITCH;
 import static com.intel.stl.configuration.MemCacheType.VLARBTABLE;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -150,6 +161,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.intel.stl.api.StringUtils;
+import com.intel.stl.api.configuration.impl.SubnetContextImpl;
 import com.intel.stl.api.notice.impl.NoticeProcess;
 import com.intel.stl.api.performance.impl.GroupCache;
 import com.intel.stl.api.performance.impl.GroupConfCache;
@@ -171,7 +183,7 @@ import com.intel.stl.api.subnet.impl.TopologyUpdateTask;
 import com.intel.stl.api.subnet.impl.VLArbTableCache;
 import com.intel.stl.common.STLMessages;
 import com.intel.stl.datamanager.DatabaseManager;
-import com.intel.stl.fecdriver.impl.FEHelper;
+import com.intel.stl.fecdriver.session.ISession;
 
 public class CacheManagerImpl implements CacheManager {
 
@@ -180,12 +192,7 @@ public class CacheManagerImpl implements CacheManager {
 
     private static Logger log = LoggerFactory.getLogger(CacheManagerImpl.class);
 
-    private final Map<String, FEHelper> helpers =
-            new HashMap<String, FEHelper>();
-
-    private final DatabaseManager dbMgr;
-
-    private final SerialProcessingService processingService;
+    private final SubnetContextImpl subnetContext;
 
     private final Map<String, ManagedCache> allCaches =
             new ConcurrentHashMap<String, ManagedCache>(10, 0.9f, 1);
@@ -193,7 +200,9 @@ public class CacheManagerImpl implements CacheManager {
     private final Map<MemCacheType, ManagedCache> caches =
             new ConcurrentHashMap<MemCacheType, ManagedCache>(8, 0.9f, 1);
 
-    private boolean useDB;
+    private final boolean useDB;
+
+    private final boolean initialized = false;
 
     private final AtomicReference<TopologyUpdateTask> topologyUpdateRef;
 
@@ -201,37 +210,34 @@ public class CacheManagerImpl implements CacheManager {
 
     private long lastErrorTimestamp = 0;
 
-    public CacheManagerImpl(DatabaseManager dbMgr,
-            SerialProcessingService processingService) {
-        this.dbMgr = dbMgr;
-        this.processingService = processingService;
+    public CacheManagerImpl(SubnetContextImpl subnetContext) {
+        this.subnetContext = subnetContext;
         this.topologyUpdateRef = new AtomicReference<TopologyUpdateTask>(null);
-    }
-
-    @Override
-    public FEHelper getHelper(String helperName) {
-        FEHelper helper = helpers.get(helperName);
-        return helper;
-    }
-
-    @Override
-    public SAHelper getSAHelper() {
-        return (SAHelper) helpers.get(SA_HELPER);
-    }
-
-    @Override
-    public PAHelper getPAHelper() {
-        return (PAHelper) helpers.get(PA_HELPER);
+        this.useDB =
+                Boolean.parseBoolean(subnetContext.getAppSetting(APP_DB_SUBNET,
+                        "true"));
     }
 
     @Override
     public SerialProcessingService getProcessingService() {
-        return processingService;
+        return subnetContext.getProcessingService();
     }
 
     @Override
     public DatabaseManager getDatabaseManager() {
-        return dbMgr;
+        return subnetContext.getDatabaseManager();
+    }
+
+    @Override
+    public SAHelper getSAHelper() {
+        ISession session = subnetContext.getSession();
+        return session.getSAHelper();
+    }
+
+    @Override
+    public PAHelper getPAHelper() {
+        ISession session = subnetContext.getSession();
+        return session.getPAHelper();
     }
 
     @Override
@@ -355,15 +361,8 @@ public class CacheManagerImpl implements CacheManager {
         }
     }
 
-    public synchronized void initialize(boolean useDB,
-            boolean startBackgroundTasks) {
-        this.useDB = useDB;
-
+    public synchronized void initialize() {
         createCaches();
-        if (startBackgroundTasks) {
-            startTopologyUpdate();
-        }
-
     }
 
     /**
@@ -415,15 +414,6 @@ public class CacheManagerImpl implements CacheManager {
         }
     }
 
-    public void registerHelper(String helperName, FEHelper helper) {
-        FEHelper currHelper = helpers.get(helperName);
-        if (currHelper != null) {
-            throw new IllegalArgumentException(
-                    "A helper with that name already exists");
-        }
-        helpers.put(helperName, helper);
-    }
-
     private void startTopologyUpdate() {
 
         if (!useDB) {
@@ -433,8 +423,9 @@ public class CacheManagerImpl implements CacheManager {
         TopologyUpdateTask topologyUpdate = topologyUpdateRef.get();
         if (topologyUpdate == null) {
 
-            SAHelper helper = getSAHelper();
-            topologyUpdate = new TopologyUpdateTask(helper, dbMgr);
+            SAHelper helper = subnetContext.getSession().getSAHelper();
+            topologyUpdate =
+                    new TopologyUpdateTask(helper, getDatabaseManager());
             boolean updated =
                     topologyUpdateRef.compareAndSet(null, topologyUpdate);
             if (!updated) {
@@ -455,7 +446,7 @@ public class CacheManagerImpl implements CacheManager {
             }
         }
 
-        processingService.submitSerial(topologyUpdate,
+        getProcessingService().submitSerial(topologyUpdate,
                 new ResultHandler<Void>() {
 
                     @Override
@@ -503,13 +494,23 @@ public class CacheManagerImpl implements CacheManager {
     /*
      * (non-Javadoc)
      * 
+     * @see com.intel.stl.configuration.CacheManager#clear()
+     */
+    @Override
+    public void reset() {
+        for (ManagedCache cache : caches.values()) {
+            cache.reset();
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.intel.stl.configuration.CacheManager#cleancup()
      */
     @Override
     public void cleanup() {
-        for (FEHelper helper : helpers.values()) {
-            helper.close();
-        }
+        // Nothing to cleanup yet
     }
 
     // For testing

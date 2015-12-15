@@ -1,6 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration scan="true" scanPeriod="60 seconds" >
-  <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration scan="true" scanPeriod="60 seconds">
+
+  <!-- Console Appender: stdout - Messages are inherited from the root, 
+       which is the application log level. Filtering is done manually at
+	   this appender level, and access is not available in the UI.
+	   
+	   where they are filtered depending on the 
+	   level value of the filtering level below. -->
+  <appender class="ch.qos.logback.core.ConsoleAppender" name="stdout">
     <encoder>
       <pattern>%d{ISO8601} [%thread] %-5level - %m%n</pattern>
     </encoder>
@@ -8,15 +15,17 @@
       <level>ERROR</level>
     </filter>
   </appender>
-  <appender name="RollingFile-1" class="ch.qos.logback.core.rolling.RollingFileAppender">
+  
+  <!-- RollingFile Appender: RollingFile-1 - Messages are inherited from the root,
+       which is the application log level.  No filtering is done at this appender 
+	   level. The root logging level is set by the user in the logging configuration 
+	   dialog. -->
+  <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="RollingFile-1">
     <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
     <File>${fmgui.logs.dir}/fmgui.log</File>
     <encoder>
       <pattern>%d{ISO8601} [%thread] %-5level - %m%n</pattern>
     </encoder>
-    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-      <level>ERROR</level>
-    </filter>
     <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
       <maxIndex>10</maxIndex>
       <FileNamePattern>${fmgui.logs.dir}/fmgui.log.%i</FileNamePattern>
@@ -25,7 +34,12 @@
       <MaxFileSize>5MB</MaxFileSize>
     </triggeringPolicy>
   </appender>
-  <appender name="HibernateSql" class="ch.qos.logback.core.rolling.RollingFileAppender">
+  
+  <!-- RollingFile Appender: HibernateSql - Messages are inherited from the root,
+       which is the application log level.  No filtering is done at this appender 
+	   level. The root logging level is set by the user in the logging configuration 
+	   dialog. -->
+  <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="HibernateSql">
     <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
     <File>${fmgui.logs.dir}/hibernate.log</File>
     <encoder>
@@ -39,50 +53,81 @@
       <MaxFileSize>20MB</MaxFileSize>
     </triggeringPolicy>
   </appender>
-  <appender name="DbMgr" class="ch.qos.logback.core.rolling.RollingFileAppender">
+  
+  <!-- RollingFile Appender: DbMgr - Messages are inherited from the root,
+       which is the application log level.  Filtering is done manually at this appender 
+	   level, and access is not available in the UI. The root logging level must be set
+       directly in this file. -->
+  <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="DbMgr">
     <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
-    <File>${fmgui.logs.dir}/stldbmgr.log</File>
+    <File>${fmgui.logs.dir}/opadbmgr.log</File>
     <encoder>
       <pattern>%d{ISO8601} [%thread] %-5level - %m%n</pattern>
     </encoder>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>OFF</level>
+    </filter>
     <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
       <maxIndex>10</maxIndex>
-      <FileNamePattern>${fmgui.logs.dir}/stldbmgr.log.%i</FileNamePattern>
+      <FileNamePattern>${fmgui.logs.dir}/opadbmgr.log.%i</FileNamePattern>
     </rollingPolicy>
     <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
       <MaxFileSize>5MB</MaxFileSize>
     </triggeringPolicy>
   </appender>
-  <appender name="FecDriver" class="ch.qos.logback.core.rolling.RollingFileAppender">
+  
+  <!-- RollingFile Appender: FecDriver - Messages are inherited from the root,
+       which is the application log level.  Filtering is done manually at this appender 
+	   level, but access is not available in the UI. The root logging level must be set
+       directly in this file. -->
+  <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="FecDriver">
     <!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
-    <File>${fmgui.logs.dir}/stlfecdriver.log</File>
+    <File>${fmgui.logs.dir}/opafecdriver.log</File>
     <encoder>
       <pattern>%d{ISO8601} [%thread] %-5level - %m%n</pattern>
     </encoder>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>OFF</level>
+    </filter>
     <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
       <maxIndex>10</maxIndex>
-      <FileNamePattern>${fmgui.logs.dir}/stlfecdriver.log.%i</FileNamePattern>
+      <FileNamePattern>${fmgui.logs.dir}/opafecdriver.log.%i</FileNamePattern>
     </rollingPolicy>
     <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
       <MaxFileSize>5MB</MaxFileSize>
-    </triggeringPolicy>
+    </triggeringPolicy>		
   </appender>
-  <logger name="com.intel.stl.datamanager" level="INFO">
+  
+  <!-- Set the appender level for the datamanager logger to inherit level from the root --> 
+  <logger level="INHERITED" name="com.intel.stl.datamanager">
     <appender-ref ref="DbMgr"/>
   </logger>
-  <logger name="com.intel.stl.dbengine" level="INFO">
+  
+  <!-- Set the appender level for the dbengine logger to inherit level from the root --> 	
+  <logger level="INHERITED" name="com.intel.stl.dbengine">
     <appender-ref ref="DbMgr"/>
   </logger>
-  <logger name="com.intel.stl.fecdriver" level="INFO">
+  
+  <!-- Set the appender level for the fecdriver logger to inherit level from the root --> 	  
+  <logger level="INHERITED" name="com.intel.stl.fecdriver">
     <appender-ref ref="FecDriver"/>
   </logger>
-  <logger name="org.hibernate.type" additivity="false" level="OFF">
+  
+  <!-- Set the appender level for the hibernate.type logger to inherit level from the root -->   
+  <logger additivity="false" level="OFF" name="org.hibernate.type">
     <appender-ref ref="HibernateSql"/>
   </logger>
-  <logger name="org.hibernate.SQL" additivity="false" level="OFF">
+  
+  <!-- Set the appender level for the hibernate.SQL logger to inherit level from the root -->   
+  <logger additivity="false" level="OFF" name="org.hibernate.SQL">
     <appender-ref ref="HibernateSql"/>
   </logger>
-  <root level="DEBUG">
+  
+  <logger level="OFF" name="org.hibernate">
+  </logger>
+  
+  <!-- Set the root logger level and make the console and rolling file appenders inherit its level -->   
+  <root level="INFO">
     <appender-ref ref="stdout"/>
     <appender-ref ref="RollingFile-1"/>
   </root>

@@ -24,6 +24,57 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: STLMessages.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.50  2015/09/21 20:46:56  jijunwan
+ *  Archive Log: PR 130542 - Confusion error message on fetching conf file
+ *  Archive Log: - improved SftpException to include file path information
+ *  Archive Log:
+ *  Archive Log: Revision 1.49  2015/08/17 18:49:06  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - change backend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.48  2015/08/17 14:22:53  rjtierne
+ *  Archive Log: PR 128979 - SM Log display
+ *  Archive Log: This is the first version of the Log Viewer which displays select lines of text from the remote SM log file. Updates include searchable raw text from file, user-defined number of lines to display, refreshing end of file, and paging. This PR is now closed and further updates can be found by referencing PR 130011 - "Enhance SM Log Viewer to include Standard and Advanced requirements".
+ *  Archive Log:
+ *  Archive Log: Revision 1.47  2015/08/10 17:04:42  robertja
+ *  Archive Log: PR128974 - Email notification functionality.
+ *  Archive Log:
+ *  Archive Log: Revision 1.46  2015/07/31 21:04:51  fernande
+ *  Archive Log: PR 129631 - Ports table sometimes not getting performance related data. Translating a RequestCancelledException into a special PerformanceRequestCancelledException for UI consumption.
+ *  Archive Log:
+ *  Archive Log: Revision 1.45  2015/07/02 14:43:00  robertja
+ *  Archive Log: PR 128703 - Messages for new failover states.
+ *  Archive Log:
+ *  Archive Log: Revision 1.44  2015/07/01 18:19:52  robertja
+ *  Archive Log: PR128703 - Add messages for new failover states.
+ *  Archive Log:
+ *  Archive Log: Revision 1.43  2015/06/18 20:55:51  fernande
+ *  Archive Log: PR 129034 Support secure FE. Improvements to framework in SMFailoverManager
+ *  Archive Log:
+ *  Archive Log: Revision 1.42  2015/06/11 17:47:11  fernande
+ *  Archive Log: PR 129034 Support secure FE. Added message for SMRecordBean record not found condition.
+ *  Archive Log:
+ *  Archive Log: Revision 1.41  2015/06/10 19:36:45  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: Fernando Fernandez
+ * 
+ ******************************************************************************/
 
 package com.intel.stl.common;
 
@@ -75,18 +126,20 @@ public enum STLMessages implements IMessage {
     STL10023_ERROR_READING_RESOURCE(10023),
     STL10024_NO_COMPONENT_FOUND(10024),
     STL10025_STARTING_COMPONENT(10025),
+    STL10026_FE_ADAPTER(10026),
 
     STL10100_ERRORS_INIT_APP(10100),
     STL10101_ONE_ERROR_INIT_APP(10101),
     STL10102_MULTI_INSTANCES(10102),
 
     // FEC driver errors
-    STL2000_MAD_FAILED(20000),
-    STL2001_CONNECTION_ERROR(20001),
-    STL2002_CONNECTION_CLOSED(20002),
-    STL2003_CONNECTION_TIMEOUT(20003),
-    STL2004_SM_UNAVAILABLE(20004),
-    STL2005_PM_UNAVAILABLE(20005),
+    STL20000_MAD_FAILED(20000),
+    STL20001_CONNECTION_ERROR(20001),
+    STL20002_CONNECTION_CLOSED(20002),
+    STL20003_CONNECTION_TIMEOUT(20003),
+    STL20004_SM_UNAVAILABLE(20004),
+    STL20005_PM_UNAVAILABLE(20005),
+    STL20006_CHANNEL_CLOSED(20006),
 
     // Database Manager messages
     STL30001_STARTING_DATABASE_ENGINE(30001),
@@ -177,6 +230,7 @@ public enum STLMessages implements IMessage {
     STL40003_PARAMETERS(40003),
     STL40004_DATABASE_ERROR_SUBNET(40004),
     STL40005_DATABASE_ERROR_CONFIG(40005),
+    STL40006_SMRECORD_NOT_FOUND(40006),
 
     // Configuration API messages
     STL50001_ERROR_PARSING_LOGGING_CONFIG(50001),
@@ -191,6 +245,7 @@ public enum STLMessages implements IMessage {
     STL50010_ASYNC_SERVICE_NOT_INITIALIZED(50010),
     STL50011_INVALID_XPATH_EXPRESSION(50011),
     STL50012_SOCKET_CLOSE_FAILURE(50012),
+    STL50013_ERROR_PARSING_FM_CONFIG(50013),
 
     // General messages
     STL60001_FATAL_FAILURE(60001),
@@ -200,6 +255,7 @@ public enum STLMessages implements IMessage {
     STL60005_EXCEPTION_EXECUTING_TASK(60005),
     STL60006_EXCEPTION_REFRESHING_CACHE(60006),
     STL60007_SUBMITTERS_TRACE(60007),
+    STL60008_REQUEST_CANCELLED_BY_USER(60008),
 
     STL61001_CERT_CONF(61001),
     STL61002_KEY_STORE_LOC(61002),
@@ -217,6 +273,9 @@ public enum STLMessages implements IMessage {
     STL61015_CONNECTING(61015),
     STL61016_FETCHING(61016),
     STL61017_DEPLOYING(61017),
+    STL61018_LOG_FILE_NOT_FOUND(61018),
+    STL61019_SSH_CONNECTION_FAILURE(61019),
+    STL61020_SFTP_FAILURE(61020),
 
     STL61100_REF_CONFLICT(61100),
     STL61101_DUP_NAME(61101),
@@ -245,7 +304,19 @@ public enum STLMessages implements IMessage {
     STL63025_ADDUPDATE_VF_ERR(63025),
     STL63026_GET_VF_ERR(63026),
 
+    // Failover messages.
     STL64000_SM_FAILOVER_UNSUCCESSFUL(64000),
+    STL64001_SM_FAILOVER_COMPLETE(64001),
+    STL64002_SM_FAILOVER_CONNECTION_ATTEMPT(64002),
+    STL64003_SM_FAILOVER_CONNECTION_FAILED(64003),
+    STL64004_SM_FAILOVER_CONNECTION_RETRY(64004),
+    STL64005_SM_FAILOVER_ATTEMPTING_CONNECTION(64005),
+    STL64006_SM_FAILOVER_GET_SM_ERROR(64006),
+    STL64007_SM_FAILOVER_GET_PM_ERROR(64007),
+    STL64008_SM_FAILOVER_GET_SM_RETRY(64008),
+    STL64009_SM_FAILOVER_GET_PM_RETRY(64009),
+
+    STL70000_SMTP_UNABLE_TO_CONNECT(70000),
 
     STL99999_HOLDER(99999);
 

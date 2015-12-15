@@ -35,11 +35,55 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.63.2.2  2015/08/12 15:26:53  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.76  2015/09/30 13:26:49  fisherma
+ *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
  *  Archive Log:
- *  Archive Log:    Revision 1.63.2.1  2015/05/06 19:39:16  jijunwan
- *  Archive Log:    changed to directly show exception(s)
+ *  Archive Log:    Revision 1.75  2015/09/25 13:41:31  jijunwan
+ *  Archive Log:    PR 130611 - Event Fields missing after closing and reconnecting to the same fabric
+ *  Archive Log:    - minor change to ensure we remove old component
+ *  Archive Log:
+ *  Archive Log:    Revision 1.74  2015/09/08 20:56:48  jijunwan
+ *  Archive Log:    PR 130327 - Windows FM GUI - problems adjusting size of log at bottom of home tab
+ *  Archive Log:    - set minimum size for related panels
+ *  Archive Log:    - reset divider location when the event table's size is less than its minimum size
+ *  Archive Log:
+ *  Archive Log:    Revision 1.73  2015/09/08 18:34:15  jijunwan
+ *  Archive Log:    PR 130277 - FM GUI Locked up due to [AWT-EventQueue-0] ERROR - Unsupported MTUSize 0x0d java.lang.IllegalArgumentException: Unsupported MTUSize 0x0d
+ *  Archive Log:    - moved isDev to FMGuiPlugin so both backend and frontend can access it
+ *  Archive Log:
+ *  Archive Log:    Revision 1.72  2015/09/08 14:59:06  jijunwan
+ *  Archive Log:    PR 130277 - FM GUI Locked up due to [AWT-EventQueue-0] ERROR - Unsupported MTUSize 0x0d java.lang.IllegalArgumentException: Unsupported MTUSize 0x0d
+ *  Archive Log:    - moved isDev logic to backend
+ *  Archive Log:
+ *  Archive Log:    Revision 1.71  2015/08/17 18:54:02  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.70  2015/08/10 17:30:07  robertja
+ *  Archive Log:    PR 128974 - Email notification functionality.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.69  2015/08/05 02:47:03  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - introduced UndoHandler to manage undo/redo
+ *  Archive Log:    - added undo/redo to main frame
+ *  Archive Log:    - improved FabricController to support undoHandler and undo action on page selection
+ *  Archive Log:    - improved FabricController to support the new page name based IPageListener
+ *  Archive Log:
+ *  Archive Log:    Revision 1.68  2015/07/13 22:24:53  jijunwan
+ *  Archive Log:    PR 129533 - Close application without confirmation on changes
+ *  Archive Log:    - check changes before we close frame
+ *  Archive Log:
+ *  Archive Log:    Revision 1.67  2015/06/30 17:50:10  fisherma
+ *  Archive Log:    PR 129220 - Improvement on secure FE login.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.66  2015/06/25 20:24:57  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on fabric viewer and simple 'static' cards
+ *  Archive Log:
+ *  Archive Log:    Revision 1.65  2015/06/10 19:25:01  rjtierne
+ *  Archive Log:    PR 128975 - Can not setup application log
+ *  Archive Log:    Added new logging menu item under the Configure menu to display the logging
+ *  Archive Log:    configuration dialog
  *  Archive Log:
  *  Archive Log:    Revision 1.64  2015/05/01 21:29:07  jijunwan
  *  Archive Log:    changed to directly show exception(s)
@@ -265,8 +309,10 @@ import static com.intel.stl.ui.common.STLConstants.K0007_SUBNET;
 import static com.intel.stl.ui.common.STLConstants.K0054_CONFIGURE;
 import static com.intel.stl.ui.common.STLConstants.K0069_CONNECT_TO;
 import static com.intel.stl.ui.common.STLConstants.K0112_ONLINE_HELP;
+import static com.intel.stl.ui.common.STLConstants.K0669_LOGGING;
 import static com.intel.stl.ui.common.STLConstants.K0689_WIZARD;
 import static com.intel.stl.ui.common.STLConstants.K0740_CLOSE;
+import static com.intel.stl.ui.common.STLConstants.K5001_EMAIL_MENU_ITEM_TEXT;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -292,6 +338,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 
+import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -303,6 +350,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
@@ -312,6 +360,7 @@ import javax.swing.event.ChangeListener;
 
 import org.jdesktop.swingx.VerticalLayout;
 
+import com.intel.stl.api.FMGuiPlugin;
 import com.intel.stl.api.StringUtils;
 import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.ui.common.EventTableController;
@@ -329,9 +378,8 @@ import com.intel.stl.ui.common.view.IntelTabbedPaneUI;
 import com.intel.stl.ui.common.view.ProgressPanel;
 import com.intel.stl.ui.main.FabricController;
 import com.intel.stl.ui.main.FabricModel;
-import com.intel.stl.ui.main.FabricPlugin;
 
-public class FVMainFrame extends JFrame implements IFabricView {
+public class FVMainFrame extends JFrame implements IFabricView, ChangeListener {
     /**
      * Serial Version UID
      */
@@ -364,10 +412,16 @@ public class FVMainFrame extends JFrame implements IFabricView {
 
     private JButton refreshBtn;
 
+    private JButton undoBtn;
+
+    private JButton redoBtn;
+
     /**
      * Pin Board Panel
      */
     private JPanel mPnlPinBoard;
+
+    private PinBoardView pinBoardView;
 
     private EventSummaryBarPanel eventSummaryBarPanel;
 
@@ -397,11 +451,17 @@ public class FVMainFrame extends JFrame implements IFabricView {
 
     private JMenuItem wizardMenu;
 
+    private JMenuItem loggingMenu;
+
     private JMenuItem randomMenu;
+
+    private JMenuItem hideNodesMenu;
 
     private JMenuItem onlineHelpMenu;
 
     private JMenuItem aboutMenu;
+
+    private JMenuItem emailMenu;
 
     private JPanel glassPanel;
 
@@ -409,7 +469,7 @@ public class FVMainFrame extends JFrame implements IFabricView {
 
     private ProgressPanel progressPanel;
 
-    private int currentTab;
+    private String currentTab;
 
     private Dimension screenSize;
 
@@ -449,6 +509,12 @@ public class FVMainFrame extends JFrame implements IFabricView {
 
     @Override
     public void showInitScreen(Rectangle bounds, boolean maximized) {
+        // Get property value for the hideNodesMenu
+        // and trigger the action to make it appear checked
+        if (controller.getHideInactiveNodes()) {
+            hideNodesMenu.doClick();
+        }
+
         createConnectMenu();
         mCardLayout.show(getContentPane(), INIT_PANEL);
         setBounds(bounds);
@@ -464,7 +530,7 @@ public class FVMainFrame extends JFrame implements IFabricView {
     }
 
     public void initComponents() {
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         // Set the main frame screen dimensions
         screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         screenSize.width = (int) (screenSize.width * 0.8);
@@ -495,11 +561,13 @@ public class FVMainFrame extends JFrame implements IFabricView {
         progressPanel = new ProgressPanel(false);
         glassPanel = new JPanel();
         glassPanel.setOpaque(false);
+
         glassPanel.setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.CENTER;
         glassPanel.add(progressPanel, gc);
+
         setGlassPane(glassPanel);
 
         installActions();
@@ -523,10 +591,15 @@ public class FVMainFrame extends JFrame implements IFabricView {
 
         eventSummaryBarPanel = new EventSummaryBarPanel();
         eventSummaryBarPanel.setVisible(true);
-        mPnlPinBoard.add(eventSummaryBarPanel, BorderLayout.CENTER);
+        mPnlPinBoard.add(eventSummaryBarPanel, BorderLayout.NORTH);
         mPnlPinBoard.setVisible(true);
         mPnlPinBoard.setBackground(UIConstants.INTEL_WHITE);
 
+        pinBoardView = new PinBoardView();
+        pinBoardView.setOpaque(false);
+        JScrollPane scrollPane = new JScrollPane(pinBoardView);
+        scrollPane.getViewport().setBackground(UIConstants.INTEL_WHITE);
+        mPnlPinBoard.add(scrollPane, BorderLayout.CENTER);
         // Put the pin board on the right component of the main split pane
         pane.setRightComponent(mPnlPinBoard);
 
@@ -535,6 +608,19 @@ public class FVMainFrame extends JFrame implements IFabricView {
         leftPane.setContinuousLayout(true);
         leftPane.setResizeWeight(0.8);
         leftPane.setDividerSize(4);
+        leftPane.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                if (mEventTableView.getSize().height < mEventTableView
+                        .getMinimumSize().height) {
+                    int newLoc =
+                            leftPane.getSize().height
+                                    - mEventTableView.getMinimumSize().height
+                                    - 4;
+                    leftPane.setDividerLocation(newLoc);
+                }
+            }
+        });
 
         // Create the tabbed pane which will be populated when showContent() is
         // called
@@ -544,35 +630,28 @@ public class FVMainFrame extends JFrame implements IFabricView {
             @Override
             public void setSelectedIndex(int index) {
                 if (listener == null
-                        || listener.canPageChange(currentTab, index)) {
+                        || listener.canPageChange(currentTab,
+                                mTabbedTopLevel.getTitleAt(index))) {
                     super.setSelectedIndex(index);
                 }
             }
         };
-        mTabbedTopLevel.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                int oldTab = currentTab;
-                currentTab = mTabbedTopLevel.getSelectedIndex();
-                if (listener != null) {
-                    listener.onPageChanged(oldTab, currentTab);
-                }
-            }
-        });
+        mTabbedTopLevel.addChangeListener(this);
 
         IntelTabbedPaneUI tabUi = new IntelTabbedPaneUI();
         JPanel ctrPanel = tabUi.getControlPanel();
         initTabCtrlPanel(ctrPanel);
         mTabbedTopLevel.setUI(tabUi);
-        leftPane.setLeftComponent(mTabbedTopLevel);
+        leftPane.setTopComponent(mTabbedTopLevel);
 
         // Add the event table
         mEventTableModel = new EventTableModel();
         mEventTableView = new EventTableView(mEventTableModel);
+        mEventTableView.setMinimumSize(new Dimension(200, 64));
         mEventTableView.setVisible(false);
         mEventTableController =
                 new EventTableController(mEventTableModel, mEventTableView);
-        leftPane.setRightComponent(mEventTableView);
+        leftPane.setBottomComponent(mEventTableView);
 
         // Put left pane to the left component of the main split pane
         pane.setLeftComponent(leftPane);
@@ -593,6 +672,12 @@ public class FVMainFrame extends JFrame implements IFabricView {
         JPanel panel = new JPanel();
         toolBar = new JToolBar();
         toolBar.setFloatable(false);
+
+        undoBtn = new JButton(UIImages.UNDO.getImageIcon());
+        toolBar.add(undoBtn);
+
+        redoBtn = new JButton(UIImages.REDO.getImageIcon());
+        toolBar.add(redoBtn);
 
         refreshBtn =
                 new JButton(STLConstants.K0107_REFRESH.getValue(),
@@ -677,13 +762,29 @@ public class FVMainFrame extends JFrame implements IFabricView {
                 new JMenuItem(K0689_WIZARD.getValue(),
                         UIImages.SETTING_ICON.getImageIcon());
         conf.add(wizardMenu);
-        if (FabricPlugin.IS_DEV) {
+        loggingMenu =
+                new JMenuItem(K0669_LOGGING.getValue(),
+                        UIImages.LOG_MENU_ICON.getImageIcon());
+        conf.add(loggingMenu);
+
+        emailMenu =
+                new JMenuItem(K5001_EMAIL_MENU_ITEM_TEXT.getValue(),
+                        UIImages.EMAIL_ICON.getImageIcon());
+        conf.add(emailMenu);
+
+        if (FMGuiPlugin.IS_DEV) {
             randomMenu =
                     ComponentFactory
                             .getIntelCheckBoxMenuItem(STLConstants.K0057_RANDOM
                                     .getValue());
             conf.add(randomMenu);
         }
+
+        hideNodesMenu =
+                ComponentFactory
+                        .getIntelCheckBoxMenuItem(STLConstants.K5013_HIDE_INACTIVE_NODES_MENU_STR
+                                .getValue());
+        conf.add(hideNodesMenu);
 
         JMenu help = new JMenu(STLConstants.K0037_HELP.getValue());
         onlineHelpMenu =
@@ -709,13 +810,20 @@ public class FVMainFrame extends JFrame implements IFabricView {
         setWindowAction(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                controller.onWindowClose();
+                if (listener == null
+                        || listener.canPageChange(currentTab, null)) {
+                    dispose();
+                    controller.onWindowClose();
+                }
             }
         });
         setCloseAction(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                controller.onMenuClose();
+                if (listener == null
+                        || listener.canPageChange(currentTab, null)) {
+                    controller.onMenuClose();
+                }
             }
         });
         setWizardAction(new ActionListener() {
@@ -724,7 +832,20 @@ public class FVMainFrame extends JFrame implements IFabricView {
                 controller.showSetupWizard(subnetName);
             }
         });
-        if (FabricPlugin.IS_DEV) {
+        setLoggingAction(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controller.showLoggingConfig();
+            }
+        });
+        setEmailSettingsAction(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                controller.showEmailSettingsDialog();
+            }
+        });
+
+        if (FMGuiPlugin.IS_DEV) {
             setRandomAction(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -738,6 +859,19 @@ public class FVMainFrame extends JFrame implements IFabricView {
                 }
             });
         }
+        setHideNodesAction(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (controller.getCurrentSubnet() == null) {
+                    // do nothing if not any subnet connected
+                    return;
+                }
+
+                boolean hideInactiveNodes =
+                        ((JCheckBoxMenuItem) e.getSource()).isSelected();
+                controller.onHideInactiveNodes(hideInactiveNodes);
+            }
+        });
         setHelpAction(new ActionListener() {
 
             @Override
@@ -762,6 +896,16 @@ public class FVMainFrame extends JFrame implements IFabricView {
                 }
             }
         });
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        String oldTab = currentTab;
+        int index = mTabbedTopLevel.getSelectedIndex();
+        currentTab = mTabbedTopLevel.getTitleAt(index);
+        if (listener != null) {
+            listener.onPageChanged(oldTab, currentTab);
+        }
     }
 
     /*
@@ -826,19 +970,31 @@ public class FVMainFrame extends JFrame implements IFabricView {
      */
     @Override
     public void showContent(List<IPageController> pages) {
+        mTabbedTopLevel.removeChangeListener(this);
         for (IPageController page : pages) {
             mTabbedTopLevel.addTab(page.getName(), page.getIcon(),
                     page.getView(), page.getDescription());
         }
+        int index = mTabbedTopLevel.getSelectedIndex();
+        currentTab = mTabbedTopLevel.getTitleAt(index);
+        mTabbedTopLevel.addChangeListener(this);
 
         mCardLayout.show(getContentPane(), CONTENT_PANEL);
+
+        Dimension d1 = mTabbedTopLevel.getMinimumSize();
+        Dimension d2 = mEventTableView.getMinimumSize();
+        int other = getJMenuBar().getHeight() + 4; // divider size
+        int newMinHeight = d1.height + d2.height + other;
+        setMinimumSize(new Dimension(getMinimumSize().width, newMinHeight));
 
         validate();
     }
 
     @Override
     public void close() {
-        dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+        if (listener == null || listener.canPageChange(currentTab, null)) {
+            dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+        }
     }
 
     @Override
@@ -878,6 +1034,7 @@ public class FVMainFrame extends JFrame implements IFabricView {
         int ix = mTabbedTopLevel.indexOfComponent(page.getView());
         if (ix >= 0) {
             mTabbedTopLevel.setSelectedIndex(ix);
+            currentTab = mTabbedTopLevel.getTitleAt(ix);
         }
     }
 
@@ -893,8 +1050,39 @@ public class FVMainFrame extends JFrame implements IFabricView {
         wizardMenu.addActionListener(listener);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.main.view.IFabricView#setLoggingAction(java.awt.event
+     * .ActionListener)
+     */
+    @Override
+    public void setLoggingAction(ActionListener listener) {
+        loggingMenu.addActionListener(listener);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.main.view.IFabricView#setAboutDialogAction(java.awt.
+     * event .ActionListener)
+     */
+    @Override
     public void setAboutDialogAction(ActionListener listener) {
         aboutMenu.addActionListener(listener);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.main.view.IFabricView#setEmailSettingsAction(
+     * java.awt.event.ActionListener)
+     */
+    @Override
+    public void setEmailSettingsAction(ActionListener listener) {
+        emailMenu.addActionListener(listener);
     }
 
     /*
@@ -912,6 +1100,10 @@ public class FVMainFrame extends JFrame implements IFabricView {
     public void setHelpAction(ActionListener listener) {
         onlineHelpMenu.addActionListener(listener);
     };
+
+    public void setHideNodesAction(ActionListener listener) {
+        hideNodesMenu.addActionListener(listener);
+    }
 
     /*
      * (non-Javadoc)
@@ -953,6 +1145,16 @@ public class FVMainFrame extends JFrame implements IFabricView {
         }
     }
 
+    @Override
+    public void setUndoAction(Action action) {
+        undoBtn.setAction(action);
+    }
+
+    @Override
+    public void setRedoAction(Action action) {
+        redoBtn.setAction(action);
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -968,11 +1170,10 @@ public class FVMainFrame extends JFrame implements IFabricView {
         mCardLayout.show(getContentPane(), INIT_PANEL);
         subnetName = null;
         setTitle(K0001_FABRIC_VIEWER_TITLE.getValue());
-        ChangeListener[] listeners = mTabbedTopLevel.getChangeListeners();
-        for (int i = 0; i < listeners.length; i++) {
-            mTabbedTopLevel.removeChangeListener(listeners[i]);
-        }
+        mTabbedTopLevel.removeChangeListener(this);
         mTabbedTopLevel.removeAll();
+        currentTab = null;
+        mTabbedTopLevel.addChangeListener(this);
     }
 
     @Override
@@ -1133,6 +1334,13 @@ public class FVMainFrame extends JFrame implements IFabricView {
         return this;
     }
 
+    /**
+     * @return the pinBoardView
+     */
+    public PinBoardView getPinBoardView() {
+        return pinBoardView;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -1188,6 +1396,9 @@ public class FVMainFrame extends JFrame implements IFabricView {
 
     private void setupContentPane() {
         JPanel panel = (JPanel) getContentPane();
+        if (mSplPnTopLevel != null) {
+            panel.remove(mSplPnTopLevel);
+        }
         mSplPnTopLevel = createContentPane();
         panel.add(CONTENT_PANEL, mSplPnTopLevel);
         setRefreshAction(new ActionListener() {
@@ -1197,6 +1408,26 @@ public class FVMainFrame extends JFrame implements IFabricView {
             }
         });
         setPageListener(controller);
+    }
+
+    public Component installGlassPanel(Component comp) {
+        Component oldComp = null;
+        if (glassPanel.getComponentCount() == 1) {
+            oldComp = glassPanel.getComponent(0);
+        } else if (glassPanel.getComponentCount() > 1) {
+            // shouldn't happen
+            throw new RuntimeException("Invalid glass panel!");
+        }
+
+        glassPanel.removeAll();
+        glassPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.fill = GridBagConstraints.NONE;
+        gc.anchor = GridBagConstraints.CENTER;
+        glassPanel.add(comp, gc);
+        glassPanel.updateUI();
+
+        return oldComp;
     }
 
 } // class MainAppFrame

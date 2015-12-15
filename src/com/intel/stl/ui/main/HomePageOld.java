@@ -24,6 +24,35 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: HomePageOld.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.39  2015/08/17 18:53:38  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.38  2015/08/11 17:37:23  jijunwan
+ *  Archive Log: PR 126645 - Topology Page does not show correct data after port disable/enable event
+ *  Archive Log: - improved to get distribution data with argument "refresh". When it's true, calculate distribution rather than get it from cache
+ *  Archive Log:
+ *  Archive Log: Revision 1.37  2015/06/10 19:58:49  jijunwan
+ *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: jijunwan
+ * 
+ ******************************************************************************/
 package com.intel.stl.ui.main;
 
 import static com.intel.stl.ui.common.PageWeight.MEDIUM;
@@ -106,6 +135,8 @@ public class HomePageOld implements IPageController {
     private final MBassador<IAppEvent> eventBus;
 
     private ImageInfoSubscriber imageInfoSubscriber;
+
+    private boolean isRefreshing;
 
     public HomePageOld(MBassador<IAppEvent> eventBus) {
         this(eventBus, false);
@@ -233,22 +264,27 @@ public class HomePageOld implements IPageController {
         viewClear();
         IPerformanceApi perfApi = scheduler.getPerformanceApi();
 
-        ImageInfoBean imgInfo = perfApi.getLatestImageInfo();
-        imageInfoCallback.onDone(imgInfo);
-        if (observer.isCancelled()) {
-            viewClear();
-            return;
-        }
+        isRefreshing = true;
+        try {
+            ImageInfoBean imgInfo = perfApi.getLatestImageInfo();
+            imageInfoCallback.onDone(imgInfo);
+            if (observer.isCancelled()) {
+                viewClear();
+                return;
+            }
 
-        // StateSummary ss = scheduler.getStateSummary();
-        // stateSummaryCallback.onDone(ss);
-        if (observer.isCancelled()) {
-            viewClear();
-            return;
-        }
+            // StateSummary ss = scheduler.getStateSummary();
+            // stateSummaryCallback.onDone(ss);
+            if (observer.isCancelled()) {
+                viewClear();
+                return;
+            }
 
-        performance.onRefresh(observer);
-        observer.onFinish();
+            performance.onRefresh(observer);
+            observer.onFinish();
+        } finally {
+            isRefreshing = false;
+        }
     }
 
     /*
@@ -288,9 +324,9 @@ public class HomePageOld implements IPageController {
                                 subnetApi.getConnectionDescription(), imageInfo);
                 try {
                     groupStatistics.setNodeTypesDist(subnetApi
-                            .getNodesTypeDist(false));
+                            .getNodesTypeDist(false, isRefreshing));
                     groupStatistics.setPortTypesDist(subnetApi
-                            .getPortsTypeDist(true));
+                            .getPortsTypeDist(true, isRefreshing));
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();

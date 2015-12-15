@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3.2.1  2015/08/12 15:26:42  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.5  2015/10/06 21:33:23  fernande
+ *  Archive Log:    PR130728 - IPChassis Name listed as N/A on Switch Information table. Removed chassis name since information is not provided by FE
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/08/17 18:53:50  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/01/11 21:36:25  jijunwan
  *  Archive Log:    adapt to latest data structure changes on FM
@@ -59,11 +63,9 @@
 
 package com.intel.stl.ui.configuration;
 
-import static com.intel.stl.ui.common.STLConstants.K0383_NA;
 import static com.intel.stl.ui.common.STLConstants.K0385_TRUE;
 import static com.intel.stl.ui.common.STLConstants.K0386_FALSE;
 import static com.intel.stl.ui.model.DeviceProperty.ENH_SWITCH_PORT0;
-import static com.intel.stl.ui.model.DeviceProperty.IPCHASSIS_NAME;
 import static com.intel.stl.ui.model.DeviceProperty.LIFETIME_VALUE;
 import static com.intel.stl.ui.model.DeviceProperty.PORT_STATE_CHANGE;
 
@@ -80,7 +82,7 @@ public class SwitchInfoProcessor extends BaseCategoryProcessor {
             getEmptySwitchDeviceInfo(category);
             return;
         }
-        addProperty(category, IPCHASSIS_NAME, K0383_NA.getValue());
+        // addProperty(category, IPCHASSIS_NAME, K0383_NA.getValue());
         if (switchInfo.isEnhancedPort0()) {
             addProperty(category, ENH_SWITCH_PORT0, K0385_TRUE.getValue());
         } else {
@@ -97,7 +99,7 @@ public class SwitchInfoProcessor extends BaseCategoryProcessor {
 
     private void getEmptySwitchDeviceInfo(DevicePropertyCategory category) {
         // TODO: need to come from API
-        addProperty(category, IPCHASSIS_NAME, K0383_NA.getValue());
+        // addProperty(category, IPCHASSIS_NAME, K0383_NA.getValue());
         addProperty(category, ENH_SWITCH_PORT0, "");
         addProperty(category, LIFETIME_VALUE, "");
         addProperty(category, PORT_STATE_CHANGE, "");

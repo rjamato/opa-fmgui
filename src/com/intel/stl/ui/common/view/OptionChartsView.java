@@ -35,8 +35,19 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8.2.1  2015/08/12 15:26:33  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.11  2015/08/17 18:53:36  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/08/06 13:18:08  jypak
+ *  Archive Log:    PR 129707 - Device Types or Device Groups and All/Internal/External labels.
+ *  Archive Log:    When disable irrelevant data types for different device types (All, HFI, SW etc.), set a default data type for the device type.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/08/05 03:00:44  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on charts to track chart  change, jump event
+ *  Archive Log:    - applied undo mechanism on chart section to track group change
+ *  Archive Log:    - improved OptionChartsView to support undoable data type and history selection
  *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/03/27 18:40:02  jijunwan
  *  Archive Log:    moved extended JList and ComboBox to package common.view
@@ -191,13 +202,14 @@ public class OptionChartsView extends ChartsView {
                         DataType type =
                                 (DataType) dataTypeList.getSelectedValue();
                         if (prevDataType != type) {
+                            DataType oldType = prevDataType;
                             prevDataType = type;
                             if (dataTypeBtn != null) {
                                 dataTypeBtn.setText(dataTypeList
                                         .getSelectedValue().toString());
                             }
 
-                            listener.onDataTypeChange(type);
+                            listener.onDataTypeChange(oldType, type);
                         }
                         if (dataPopupOptions != null
                                 && dataPopupOptions.isVisible()) {
@@ -230,6 +242,10 @@ public class OptionChartsView extends ChartsView {
 
     public void setType(DataType type) {
         dataTypeList.setSelectedValue(type, true);
+        prevDataType = type;
+        if (dataTypeBtn != null) {
+            dataTypeBtn.setText(dataTypeList.getSelectedValue().toString());
+        }
     }
 
     protected void addDataTypeButton() {
@@ -317,13 +333,14 @@ public class OptionChartsView extends ChartsView {
                                 (HistoryType) historyTypeList
                                         .getSelectedValue();
                         if (prevHistoryType != type) {
+                            HistoryType oldType = prevHistoryType;
                             prevHistoryType = type;
                             if (historyTypeBtn != null) {
                                 historyTypeBtn.setText(historyTypeList
                                         .getSelectedValue().toString());
                             }
 
-                            listener.onDataTypeChange(type);
+                            listener.onDataTypeChange(oldType, type);
                         }
                         if (historyPopupOptions != null
                                 && historyPopupOptions.isVisible()) {
@@ -357,6 +374,10 @@ public class OptionChartsView extends ChartsView {
 
     public void setHistoryType(HistoryType type) {
         historyTypeList.setSelectedValue(type, true);
+        if (historyTypeBtn != null) {
+            historyTypeBtn.setText(historyTypeList.getSelectedValue()
+                    .toString());
+        }
     }
 
     protected void addHistoryTypeButton() {

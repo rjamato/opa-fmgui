@@ -24,7 +24,45 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: VFInfo.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.9  2015/10/08 16:20:37  fernande
+ *  Archive Log: PR130760 - Update FV GUI to reflect Changes to vol1g1 spec introduced in DN 0507. Changed commands to match FM spec
+ *  Archive Log:
+ *  Archive Log: Revision 1.8  2015/09/17 11:51:43  jypak
+ *  Archive Log: PR 129516- vfSID as described in spec not implemented in gen 1 fm or tools
+ *  Archive Log: Removed all vfSID related code.
+ *  Archive Log:
+ *  Archive Log: Revision 1.7  2015/08/17 18:49:17  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - change backend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.6  2015/07/02 20:27:49  fernande
+ *  Archive Log: PR 129447 - Database size increases a lot over a short period of time. Moving Blobs to the database; arrays are now being saved to the database as collection tables.
+ *  Archive Log:
+ *  Archive Log: Revision 1.5  2015/06/10 19:36:29  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: jijunwan
+ * 
+ ******************************************************************************/
 package com.intel.stl.fecdriver.messages.adapter.pa;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.intel.stl.api.performance.ErrBucketBean;
 import com.intel.stl.api.performance.ErrStatBean;
@@ -37,13 +75,13 @@ import com.intel.stl.common.StringUtils;
 import com.intel.stl.fecdriver.messages.adapter.SimpleDatagram;
 
 /**
- * ref: /ALL_EMB/IbAccess/Common/Inc/stl_pa.h<br>
+ * ref: /ALL_EMB/IbAccess/Common/Inc/stl_pa.h v1.53<br>
  * ref: /ALL_EMB/IbAccess/Common/Inc/ib_pa.h
  * 
  * <pre>
  *  typedef struct _STL_PA_VF_INFO_DATA {
  * [64] 	char					vfName[STL_PM_VFNAMELEN];	// \0 terminated
- * [72] 	uint64					vfSID;
+ * [72] 	uint64					reserved;
  * [88] 	STL_PA_IMAGE_ID_DATA	imageId;
  * [92] 	uint32					numPorts;
  * [180] STL_PA_PM_UTIL_STATS	internalUtilStats;
@@ -101,14 +139,9 @@ import com.intel.stl.fecdriver.messages.adapter.SimpleDatagram;
  *  [16]    uint32                  securityErrors;
  *  [20]    uint32                  routingErrors;
  *  
- *  [24]    uint16                  congInefficiencyPct10;    // in units of 10% 
- *  [26]    uint16                  waitInefficiencyPct10;    // in units of 10% 
- *  [28]    uint16                  bubbleInefficiencyPct10;  // in units of 10% 
- *  [30]    uint16                  discardsPct10;            // in units of 10% 
- *                                                           
- *  [32]    uint16                  congestionDiscardsPct10;  // in units of 10% 
- *  [34]    uint16                  utilizationPct10;         // in units of 10% 
- *  [36]    uint32                  reserved; 
+ *  [24]    uint16                  utilizationPct10;         // in units of 10% 
+ *  [26]    uint16                  discardsPct10;            // in units of 10% 
+ *  [28]    uint16                  reserved[6]; 
  *  } PACK_SUFFIX STL_PA_PM_ERROR_SUMMARY;
  *  
  *  #define STL_PM_VFNAMELEN		64
@@ -150,9 +183,10 @@ public class VFInfo extends SimpleDatagram<VFInfoBean> {
         bean.setMinMBps(buffer.getInt());
         bean.setMaxMBps(buffer.getInt());
         bean.setNumBWBuckets(buffer.getInt());
-        Integer[] buckets = new Integer[PAConstants.STL_PM_UTIL_BUCKETS];
-        for (int i = 0; i < buckets.length; i++) {
-            buckets[i] = buffer.getInt();
+        List<Integer> buckets =
+                new ArrayList<Integer>(PAConstants.STL_PM_UTIL_BUCKETS);
+        for (int i = 0; i < PAConstants.STL_PM_UTIL_BUCKETS; i++) {
+            buckets.add(buffer.getInt());
         }
         bean.setBwBuckets(buckets);
         bean.setAvgKPps(buffer.getInt());
@@ -170,13 +204,11 @@ public class VFInfo extends SimpleDatagram<VFInfoBean> {
         esBean.setBubbleErrors(buffer.getInt());
         esBean.setSecurityErrors(buffer.getInt());
         esBean.setRoutingErrors(buffer.getInt());
-        esBean.setCongInefficiencyPct10(buffer.getShort() & 0xffff);
-        esBean.setWaitInefficiencyPct10(buffer.getShort() & 0xffff);
-        esBean.setBubbleInefficiencyPct10(buffer.getShort() & 0xffff);
-        esBean.setDiscardsPct10(buffer.getShort() & 0xffff);
-        esBean.setCongestionDiscardsPct10(buffer.getShort() & 0xffff);
         esBean.setUtilizationPct10(buffer.getShort() & 0xffff);
-
+        esBean.setDiscardsPct10(buffer.getShort() & 0xffff);
+        buffer.getInt(); // reserved
+        buffer.getInt(); // reserved
+        buffer.getInt(); // reserved
         ErrBucketBean[] ebBeans = new ErrBucketBean[PAConstants.PM_ERR_BUCKETS];
         for (int i = 0; i < ebBeans.length; i++) {
             ebBeans[i] = new ErrBucketBean();
@@ -204,8 +236,7 @@ public class VFInfo extends SimpleDatagram<VFInfoBean> {
         VFInfoBean bean = new VFInfoBean();
         bean.setVfName(StringUtils.toString(buffer.array(),
                 buffer.arrayOffset(), PAConstants.STL_PM_VFNAMELEN));
-        buffer.position(64);
-        bean.setVfSID(buffer.getLong());
+        buffer.position(72);
         ImageIdBean imageId =
                 new ImageIdBean(buffer.getLong(), buffer.getInt());
         bean.setImageId(imageId);

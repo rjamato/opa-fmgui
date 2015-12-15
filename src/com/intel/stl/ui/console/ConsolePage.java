@@ -35,8 +35,22 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.15.2.1  2015/08/12 15:27:18  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.19  2015/10/09 13:40:08  rjtierne
+ *  Archive Log:    PR 129027 - Need to handle customized command prompts when detecting commands on console
+ *  Archive Log:    Removed warnings
+ *  Archive Log:
+ *  Archive Log:    Revision 1.18  2015/09/08 21:46:27  jijunwan
+ *  Archive Log:    PR 130330 - Windows FM GUI - Admin->Console - switching side tabs causes multiple consoles
+ *  Archive Log:    - changed code to distinguish number of connected consoles and number of consoles
+ *  Archive Log:    - changed ConsolePage to use number of consoles, so if we have an unconnected console, it doesn't create another new console.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.17  2015/08/17 18:54:27  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.16  2015/06/25 11:54:56  jypak
+ *  Archive Log:    PR 129073 - Add help action for Admin Page.
+ *  Archive Log:    The help action is added to App, DG, VF,Console page and Console terminal. For now, a help ID and a content are being used as a place holder for each page. Once we get the help contents delivered by technical writer team, the HelpAction will be updated with correct help ID.
  *  Archive Log:
  *  Archive Log:    Revision 1.15  2015/04/03 21:06:25  jijunwan
  *  Archive Log:    Introduced canExit to IPageController, and canPageChange to IPageListener to allow us do some checking before we switch to another page. Fixed the following bugs
@@ -113,6 +127,7 @@ import com.intel.stl.ui.common.UIImages;
 import com.intel.stl.ui.console.view.ConsoleView;
 import com.intel.stl.ui.framework.IAppEvent;
 import com.intel.stl.ui.main.Context;
+import com.intel.stl.ui.main.HelpAction;
 import com.intel.stl.ui.main.view.IFabricView;
 
 public class ConsolePage implements IPageController {
@@ -120,6 +135,9 @@ public class ConsolePage implements IPageController {
     private final static int SSH_PORT = 22;
 
     private final ConsoleView consoleView;
+
+    @SuppressWarnings("unused")
+    private String helpID;
 
     private final IConsoleEventListener dispatchManager;
 
@@ -131,7 +149,25 @@ public class ConsolePage implements IPageController {
             IConsoleEventListener dispatchManager, MBassador<IAppEvent> eventBus) {
 
         this.consoleView = consoleView;
+        installHelp();
         this.dispatchManager = dispatchManager;
+    }
+
+    protected void installHelp() {
+        String helpId = getHelpID();
+        if (helpId != null) {
+            consoleView.enableHelp(true);
+            HelpAction helpAction = HelpAction.getInstance();
+            helpAction.getHelpBroker().enableHelpOnButton(
+                    consoleView.getHelpButton(), helpId,
+                    helpAction.getHelpSet());
+        } else {
+            consoleView.enableHelp(false);
+        }
+    }
+
+    public String getHelpID() {
+        return HelpAction.getInstance().getAdminConsole();
     }
 
     /*
@@ -217,7 +253,7 @@ public class ConsolePage implements IPageController {
     @Override
     public void onEnter() {
 
-        if (dispatchManager.getNumConsoles() <= 0) {
+        if (dispatchManager.getNumConsoles(false) <= 0) {
             if (context != null) {
                 SubnetDescription sd = context.getSubnetDescription();
                 defaultLoginBean =

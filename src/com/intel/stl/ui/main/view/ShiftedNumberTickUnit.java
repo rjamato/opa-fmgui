@@ -25,7 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
  *	
@@ -36,12 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.2  2015/08/12 15:26:53  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.3  2015/08/17 18:54:02  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.1.2.1  2015/05/21 21:09:45  jijunwan
+ *  Archive Log:    Revision 1.2  2015/05/21 20:47:02  jijunwan
  *  Archive Log:    PR 128855 - Incorrect value conversion on flits
- *  Archive Log:    - added 1 fit = 8 bytes to value conversion
+ *  Archive Log:    - added 1 fit = 8 byte to value conversion
  *  Archive Log:    - changed to use MB rather than MiB
  *  Archive Log:    - some code lean up
  *  Archive Log:
@@ -61,27 +61,28 @@ package com.intel.stl.ui.main.view;
 
 import org.jfree.chart.axis.NumberTickUnit;
 
-
 public class ShiftedNumberTickUnit extends NumberTickUnit {
-    
+
     /**
      * 
      */
     private static final long serialVersionUID = -811003783349565742L;
-    private double tenMultiplier;
-    
+
+    private final double tenMultiplier;
+
     /**
      * 
-     * Description: 
-     *
+     * Description:
+     * 
      * @param size
-     * @param tickUnitSize - Long integer to hold upto Giga numbers.
+     * @param tickUnitSize
+     *            - Long integer to hold upto Giga numbers.
      */
     public ShiftedNumberTickUnit(double size, double tickUnitSize) {
         super(size);
         this.tenMultiplier = tickUnitSize;
     }
-    
+
     @Override
     public String valueToString(double value) {
         return Long.toString((long) (value / tenMultiplier));

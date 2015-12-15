@@ -25,11 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.intel.stl.api.configuration;
-
-import java.io.Serializable;
-import java.util.List;
-
 /*******************************************************************************
  * I N T E L C O R P O R A T I O N
  * 
@@ -37,38 +32,62 @@ import java.util.List;
  * 
  * File Name: LoggingConfiguration.java
  * 
- * Archive Source: $Source:
- * /cvs/vendor/intel/fmgui/server/src/main/java/com/intel
- * /stl/api/configuration/LoggingConfiguration.java,v $
+ * Archive Source: $Source$
  * 
  * Archive Log: $Log$
- * Archive Log: Revision 1.3.2.1  2015/08/12 15:21:40  jijunwan
- * Archive Log: PR 129955 - Need to change file header's copyright text to BSD license text
+ * Archive Log: Revision 1.6  2015/08/17 18:48:36  jijunwan
+ * Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ * Archive Log: - change backend files' headers
  * Archive Log:
- * Archive Log: Revision 1.3  2014/05/13 18:31:47  fernande
+ * Archive Log: Revision 1.5  2015/06/26 13:37:09  rjtierne
+ * Archive Log: PR 128975 - Can not setup application log
+ * Archive Log: - Override toString() to provide a better description of class attributes during debug.
+ * Archive Log: - Since the root log level comes from a higher level logger, the rootLogLevel has been changed
+ * Archive Log: to LoggerConfig rootLogger from which the root level can be obtained.
+ * Archive Log:
+ * Archive Log: Revision 1.4  2015/06/10 19:14:26  rjtierne
+ * Archive Log: PR 128975 - Can not setup application log
+ * Archive Log: Now using this class as a wrapper for the list of appenders, list of loggers, and root level logger
+ * Archive Log: 
+ * Archive Log: Revision 1.3 2014/05/13 18:31:47 fernande 
  * Archive Log: Implemented saveLoggingConfiguration and getLoggingConfiguration
- * Archive Log: Archive Log: Revision 1.2
- * 2014/04/19 14:31:34 fernande Archive Log: More changes to plug the Setup
- * wizard Archive Log: Archive Log: Revision 1.1 2014/04/18 18:27:05 jypak
- * Archive Log: Config API for Setup Wizard Migration. Archive Log: Archive Log:
- * Revision 1.1 2014/04/12 20:39:17 fernande Archive Log: Initial version
- * Archive Log: Archive Log: Revision 1.1 2014/04/09 16:35:11 jypak Archive Log:
- * Setup Wizard. The SetupWizardMain class control the wizard to come up as an
- * initial or a non-initial setup wizard. Once the Setup Wizard is incorporated
- * to the whole GUI, the main class should be discarded. Archive Log:
+ * Archive Log: 
+ * Archive Log: Revision 1.2 2014/04/19 14:31:34 fernande 
+ * Archive Log: More changes to plug the Setup wizard 
+ * Archive Log: 
+ * Archive Log: Revision 1.1 2014/04/18 18:27:05 jypak 
+ * Archive Log: Config API for Setup Wizard Migration. 
+ * Archive Log: 
+ * Archive Log: Revision 1.1 2014/04/12 20:39:17 fernande 
+ * Archive Log: Initial version 
+ * Archive Log: 
+ * Archive Log: Revision 1.1 2014/04/09 16:35:11 jypak 
+ * Archive Log: Setup Wizard. The SetupWizardMain class control the wizard
+ * to come up as an initial or a non-initial setup wizard. Once the Setup Wizard
+ * is incorporated to the whole GUI, the main class should be discarded. 
+ * Archive Log:
  * 
- * Overview: A bean to be transferred between the Config API
- * (LoggingConfigurationController) and SetupWizard for logging configuration
- * info.
+ * Overview: Java representation of the logger configuration file containing
+ * the root logger, list of appenders, and list of loggers.
  * 
  * @author jypak
  * 
  ******************************************************************************/
+
+package com.intel.stl.api.configuration;
+
+import java.io.Serializable;
+import java.util.List;
+
 public class LoggingConfiguration implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private LoggerConfig rootLogger = null;
+
     private List<AppenderConfig> appenders = null;
+
+    private List<LoggerConfig> loggers = null;
 
     /**
      * @return the list of appenders
@@ -85,4 +104,27 @@ public class LoggingConfiguration implements Serializable {
         this.appenders = appenders;
     }
 
+    public List<LoggerConfig> getLoggers() {
+        return loggers;
+    }
+
+    public void setLoggers(List<LoggerConfig> loggers) {
+        this.loggers = loggers;
+    }
+
+    public LoggerConfig getRootLogger() {
+        return rootLogger;
+    }
+
+    public void setRootLogger(LoggerConfig rootLogger) {
+        this.rootLogger = rootLogger;
+    }
+
+    @Override
+    public String toString() {
+
+        return "LoggingConfiguration [rootLogger=" + getRootLogger()
+                + ", appenders=" + getAppenders() + "loggers=" + getLoggers()
+                + "]";
+    }
 }

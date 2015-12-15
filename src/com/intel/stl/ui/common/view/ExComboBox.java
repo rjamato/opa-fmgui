@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:26:33  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.3  2015/09/21 21:40:32  jijunwan
+ *  Archive Log:    PR 130229 - The text component of all editable combo boxes should provide validation of the input
+ *  Archive Log:    - adapt to the new IntelComboBoxUI
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/08/17 18:53:36  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2015/03/30 14:28:23  jijunwan
  *  Archive Log:    created extended combobox model to support disabled items
@@ -158,12 +163,13 @@ public class ExComboBox<E> extends JComboBox<E> {
             JLabel label =
                     (JLabel) super.getListCellRendererComponent(list, value,
                             index, isSelected, cellHasFocus);
-            decorateDisabledCell(label, model.isDisabled(index));
+            decorateDisabledCell(label, model.isDisabled(index), index);
             return label;
         }
     }
 
-    protected void decorateDisabledCell(JLabel label, boolean isDisabled) {
+    protected void decorateDisabledCell(JLabel label, boolean isDisabled,
+            int index) {
         if (isDisabled) {
             if (disabledColor != null) {
                 label.setForeground(disabledColor);

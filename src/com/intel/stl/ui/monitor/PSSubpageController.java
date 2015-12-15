@@ -35,8 +35,36 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.49.2.1  2015/08/12 15:26:58  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.56  2015/09/20 23:41:18  jijunwan
+ *  Archive Log:    PR 130523 - Performance Event window reports negative when nodes are rebooted
+ *  Archive Log:    - changed to use base line data
+ *  Archive Log:
+ *  Archive Log:    Revision 1.55  2015/08/17 18:53:41  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.54  2015/08/11 14:38:23  jijunwan
+ *  Archive Log:    PR 129917 - No update on event statistics
+ *  Archive Log:    - Apply event subscriber on the event card on Performance page
+ *  Archive Log:    - fixed the blink chart issue
+ *  Archive Log:
+ *  Archive Log:    Revision 1.53  2015/08/06 17:19:41  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - improved GroupSelectedEvent to GroupsSelectedEvent to support selecting multiple groups
+ *  Archive Log:    - fixed couple NPE issues
+ *  Archive Log:
+ *  Archive Log:    Revision 1.52  2015/08/06 13:18:10  jypak
+ *  Archive Log:    PR 129707 - Device Types or Device Groups and All/Internal/External labels.
+ *  Archive Log:    When disable irrelevant data types for different device types (All, HFI, SW etc.), set a default data type for the device type.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.51  2015/08/05 04:04:47  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on Performance Page
+ *  Archive Log:
+ *  Archive Log:    Revision 1.50  2015/06/25 20:50:02  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on dynamic cards that can have different data sources
+ *  Archive Log:    - change to use port counter performance item
  *  Archive Log:
  *  Archive Log:    Revision 1.49  2015/04/17 13:15:22  robertja
  *  Archive Log:    Resolve Klocwork critical issues around failing to check for null returned from a method.
@@ -258,6 +286,7 @@ import com.intel.stl.ui.common.ISectionController;
 import com.intel.stl.ui.common.PageWeight;
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.view.JSectionView;
+import com.intel.stl.ui.event.GroupsSelectedEvent;
 import com.intel.stl.ui.framework.IAppEvent;
 import com.intel.stl.ui.main.Context;
 import com.intel.stl.ui.model.DataType;
@@ -267,10 +296,16 @@ import com.intel.stl.ui.monitor.tree.FVResourceNode;
 import com.intel.stl.ui.monitor.view.PSGraphSectionView;
 import com.intel.stl.ui.monitor.view.PSInfoSectionView;
 import com.intel.stl.ui.monitor.view.SummarySubpageView;
+import com.intel.stl.ui.performance.GroupSource;
+import com.intel.stl.ui.performance.provider.DataProviderName;
+import com.intel.stl.ui.publisher.CallbackAdapter;
 import com.intel.stl.ui.publisher.ICallback;
 import com.intel.stl.ui.publisher.IEventFilter;
 import com.intel.stl.ui.publisher.IStateChangeListener;
+import com.intel.stl.ui.publisher.Task;
 import com.intel.stl.ui.publisher.TaskScheduler;
+import com.intel.stl.ui.publisher.subscriber.EventSubscriber;
+import com.intel.stl.ui.publisher.subscriber.SubscriberType;
 
 public class PSSubpageController implements IPerfSubpageController,
         IStateChangeListener {
@@ -282,8 +317,6 @@ public class PSSubpageController implements IPerfSubpageController,
     private IPerformanceApi perfApi;
 
     private TaskScheduler mTaskScheduler;
-
-    private ICallback<StateSummary> customStatesCallback;
 
     private final List<ISectionController<?>> mSections;
 
@@ -305,8 +338,6 @@ public class PSSubpageController implements IPerfSubpageController,
 
     private FVResourceNode selectedTreeNode;
 
-    private PerformanceTreeController parentController;
-
     private final MBassador<IAppEvent> eventBus;
 
     private NodeType mNodeType;
@@ -314,6 +345,12 @@ public class PSSubpageController implements IPerfSubpageController,
     private Set<Integer> mNodes;
 
     private boolean isNewContext;
+
+    private EventSubscriber eventSubscriber;
+
+    private ICallback<StateSummary> stateSummaryCallback;
+
+    private Task<StateSummary> stateSummaryTask;
 
     public PSSubpageController(SummarySubpageView pSubpageView,
             MBassador<IAppEvent> eventBus) {
@@ -356,12 +393,15 @@ public class PSSubpageController implements IPerfSubpageController,
     @Override
     public void setContext(Context pContext, IProgressObserver observer) {
         clear();
+        uninstallEventMonitor();
+
+        isNewContext = mContext == pContext;
         mContext = pContext;
         subnetApi = mContext.getSubnetApi();
         perfApi = mContext.getPerformanceApi();
         mTaskScheduler = mContext.getTaskScheduler();
-        mContext.getEvtCal().addListener(this);
-        isNewContext = true;
+        installEventMonitor();
+
         mGraphSectionController.setContext(pContext, observer);
         observer.onFinish();
     }
@@ -405,18 +445,48 @@ public class PSSubpageController implements IPerfSubpageController,
         for (ISectionController<?> section : mSections) {
             section.clear();
         }
-        // if (mContext != null) {
-        // if (mContext.getEvtCal() != null) {
-        // mContext.getEvtCal().removeListener(this);
-        // }
-        // }
 
         selectedTreeNode = null;
     }
 
+    protected void installEventMonitor() {
+        mContext.getEvtCal().addListener(this);
+
+        eventSubscriber =
+                (EventSubscriber) mTaskScheduler
+                        .getSubscriber(SubscriberType.EVENT);
+        stateSummaryCallback = new CallbackAdapter<StateSummary>() {
+            /*
+             * (non-Javadoc)
+             * 
+             * @see
+             * com.intel.hpc.stl.ui.publisher.CallBackAdapter#onDone(java.lang
+             * .Object)
+             */
+            @Override
+            public synchronized void onDone(StateSummary result) {
+                if (result != null) {
+                    onStateChange(result);
+                }
+            }
+        };
+        stateSummaryTask =
+                eventSubscriber.registerStateSummary(stateSummaryCallback);
+
+    }
+
+    protected void uninstallEventMonitor() {
+        if (mContext != null && mContext.getEvtCal() != null) {
+            mContext.getEvtCal().removeListener(this);
+        }
+        if (eventSubscriber != null && stateSummaryTask != null) {
+            eventSubscriber.deregisterStateSummary(stateSummaryTask,
+                    stateSummaryCallback);
+        }
+    }
+
     @Override
     public void setParentController(PerformanceTreeController parentController) {
-        this.parentController = parentController;
     }
 
     /**
@@ -585,14 +655,14 @@ public class PSSubpageController implements IPerfSubpageController,
             }
 
             if (type == NodeType.HFI) {
-                total = dgStats.getNodeTypesDist().get(NodeType.HFI);
+                total = summary.getBaseTotalHFIs();
                 severityMap = summary.getHfiStates();
             } else if (type == NodeType.SWITCH) {
-                total = dgStats.getNodeTypesDist().get(NodeType.SWITCH);
+                total = summary.getBaseTotalSWs();
                 severityMap = summary.getSwitchStates();
             } else if (selectedTreeNode != null
                     && selectedTreeNode.getType() == TreeNodeType.ALL) {
-                total = dgStats.getNumNodes();
+                total = summary.getBaseTotalNodes();
                 severityMap = summary.getStates(null);
             } else if (nodes != null && !nodes.isEmpty()) {
                 total = nodes.size();
@@ -704,6 +774,8 @@ public class PSSubpageController implements IPerfSubpageController,
             }
         }
 
+        mGraphSectionController.setOrigin(new GroupsSelectedEvent(this,
+                PerformancePage.NAME, treeNode.getTitle(), treeNode.getType()));
     }
 
     protected void processTreeNode(FVResourceNode treeNode,
@@ -730,26 +802,32 @@ public class PSSubpageController implements IPerfSubpageController,
                 }
             }
         });
+
         TreeNodeType type = treeNode.getType();
         if (type == TreeNodeType.ALL) {
-            mGraphSectionController.setDisabledDataTypes(DataType.EXTERNAL,
-                    DataType.TRANSMIT, DataType.RECEIVE);
+            mGraphSectionController.setDisabledDataTypes(DataType.ALL,
+                    DataType.EXTERNAL, DataType.TRANSMIT, DataType.RECEIVE);
         } else if (type == TreeNodeType.HCA_GROUP) {
-            mGraphSectionController.setDisabledDataTypes(DataType.INTERNAL);
+            mGraphSectionController.setDisabledDataTypes(DataType.ALL,
+                    DataType.INTERNAL);
         } else if (type == TreeNodeType.DEVICE_GROUP) {
             if (treeNode.getTitle().equals(DefaultDeviceGroup.HFI.getName())) {
-                mGraphSectionController.setDisabledDataTypes(DataType.INTERNAL);
+                mGraphSectionController.setDisabledDataTypes(DataType.ALL,
+                        DataType.INTERNAL);
             } else if (treeNode.getTitle().equals(
                     DefaultDeviceGroup.ALL.getName())) {
-                mGraphSectionController.setDisabledDataTypes(DataType.EXTERNAL,
-                        DataType.TRANSMIT, DataType.RECEIVE);
+                mGraphSectionController.setDisabledDataTypes(DataType.ALL,
+                        DataType.EXTERNAL, DataType.TRANSMIT, DataType.RECEIVE);
+            } else {
+                mGraphSectionController.setDisabledDataTypes(DataType.ALL,
+                        (DataType[]) null);
             }
         } else {
-            mGraphSectionController.setDisabledDataTypes((DataType[]) null);
+            mGraphSectionController.setDisabledDataTypes(null,
+                    (DataType[]) null);
         }
-        mGraphSectionController.setDataProvider(TreeNodeType.DEVICE_GROUP
-                .name());
-        mGraphSectionController.setSource(name);
+        mGraphSectionController.setDataProvider(DataProviderName.PORT_GROUP);
+        mGraphSectionController.setSource(new GroupSource(name));
     }
 
     protected void processVFTreeNode(FVResourceNode treeNode,
@@ -772,11 +850,11 @@ public class PSSubpageController implements IPerfSubpageController,
                 }
             }
         });
-        mGraphSectionController.setDisabledDataTypes(DataType.EXTERNAL,
-                DataType.TRANSMIT, DataType.RECEIVE);
-        mGraphSectionController.setDataProvider(TreeNodeType.VIRTUAL_FABRIC
-                .name());
-        mGraphSectionController.setSource(name);
+        mGraphSectionController.setDisabledDataTypes(DataType.ALL,
+                DataType.EXTERNAL, DataType.TRANSMIT, DataType.RECEIVE);
+        mGraphSectionController
+                .setDataProvider(DataProviderName.VIRTUAL_FABRIC);
+        mGraphSectionController.setSource(new GroupSource(name));
     }
 
     protected NodeType getNodeType(FVResourceNode treeNode) {
@@ -826,9 +904,8 @@ public class PSSubpageController implements IPerfSubpageController,
 
     @Override
     public void onStateChange(StateSummary summary) {
-        if ((summary != null) && (mNodes != null)) {
+        if (summary != null) {
             processNewEvent(summary, mNodeType, mNodes);
-
         }
     }
 

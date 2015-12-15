@@ -35,8 +35,18 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.1  2015/08/12 15:27:21  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.8  2015/08/17 18:54:52  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/08/12 20:41:56  fisherma
+ *  Archive Log:    PR 129747 - Time Window failed when updating recommended value in Time Window.  Updated the validation and upper limit on the time property.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/05/12 17:43:58  rjtierne
+ *  Archive Log:    PR 128624 - Klocwork and FindBugs fixes for UI
+ *  Archive Log:    - Initialize static instance to null
+ *  Archive Log:    - Make the constructor private to enforce the Singleton pattern
+ *  Archive Log:    - Make getInstance() synchronized to prevent duplicate object creation
  *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/02/23 15:06:33  rjtierne
  *  Archive Log:    Simplified processing of refresh rate units
@@ -80,16 +90,20 @@ public class PreferencesInputValidator {
 
     private final int MIN_TIMING_WINDOW = 1;
 
-    private final int MAX_TIMING_WINDOW = 100;
+    // Setting Maximum timing window to 9999 seconds
+    private final int MAX_TIMING_WINDOW = 9999;
 
     private final int MIN_NUM_WORST_NODES = 10;
 
     private final int MAX_NUM_WORST_NODES = 100;
 
-    private static PreferencesInputValidator instance;
+    private static PreferencesInputValidator instance = null;
 
-    public static PreferencesInputValidator getInstance() {
+    private PreferencesInputValidator() {
 
+    }
+
+    public synchronized static PreferencesInputValidator getInstance() {
         if (instance == null) {
             instance = new PreferencesInputValidator();
         }
@@ -223,6 +237,7 @@ public class PreferencesInputValidator {
                     errorCode =
                             PreferencesValidatorError.TIMING_WINDOW_OUT_OF_RANGE
                                     .getId();
+
                 }
             }
         } catch (NumberFormatException e) {
@@ -328,6 +343,10 @@ public class PreferencesInputValidator {
             throw new RuntimeException("Unknown time unit value '" + value
                     + "'");
         }
+    }
+
+    public int getMaxTimingLimit() {
+        return MAX_TIMING_WINDOW;
     }
 
 }

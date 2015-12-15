@@ -35,8 +35,28 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:21:42  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.11  2015/10/06 15:51:14  rjtierne
+ *  Archive Log:    PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
+ *  Archive Log:    - Updated toString() to include the new hostType attribute.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/10/01 21:27:36  fernande
+ *  Archive Log:    PR130409 - [Dell]: FMGUI Admin Console login fails when switch is configured without username and password. Added HostType to HostInfo bean
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/08/17 18:48:38  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/07/28 18:20:31  fisherma
+ *  Archive Log:    PR 129219 - Admin page login dialog improvement.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/06/08 15:59:44  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Stabilizing the new FEAdapter code. Adding IConnectionAssistant field so that other layers can provide an assistant, otherwise it falls back to the DefaultConnectionAssistant.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/05/04 22:22:30  jijunwan
+ *  Archive Log:    set CertsDescription to be transient by mistake. Change it back now, and make it to be Serializable since HostInfo is Serializable
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/05/01 21:40:40  jijunwan
+ *  Archive Log:    fixed Serializable issue found by FindBug
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/04/08 15:17:11  fernande
  *  Archive Log:    Changes to allow for failover to work when the current (initial) FE is not available.
@@ -63,12 +83,15 @@ import java.io.Serializable;
 import java.net.InetAddress;
 
 import com.intel.stl.api.CertsDescription;
+import com.intel.stl.api.IConnectionAssistant;
 
 public class HostInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private String host;
+
+    private HostType hostType;
 
     private int port = 3245;
 
@@ -77,6 +100,12 @@ public class HostInfo implements Serializable {
     private CertsDescription certsDescription = new CertsDescription();
 
     private InetAddress inetAddress;
+
+    private IConnectionAssistant connectionAssistant;
+
+    private String sshUserName = "";
+
+    private int sshPortNum = 22;
 
     public HostInfo() {
     }
@@ -100,6 +129,14 @@ public class HostInfo implements Serializable {
 
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public HostType getHostType() {
+        return hostType;
+    }
+
+    public void setHostType(HostType hostType) {
+        this.hostType = hostType;
     }
 
     public int getPort() {
@@ -134,6 +171,14 @@ public class HostInfo implements Serializable {
         this.inetAddress = inetAddress;
     }
 
+    public IConnectionAssistant getConnectionAssistant() {
+        return connectionAssistant;
+    }
+
+    public void setConnectionAssistant(IConnectionAssistant connectionAssistant) {
+        this.connectionAssistant = connectionAssistant;
+    }
+
     public HostInfo copy() {
         HostInfo newHostInfo = new HostInfo();
         newHostInfo.setHost(host);
@@ -143,10 +188,18 @@ public class HostInfo implements Serializable {
             CertsDescription newCertsDescription =
                     new CertsDescription(certsDescription.getKeyStoreFile(),
                             certsDescription.getTrustStoreFile());
+            newCertsDescription.setKeyStorePwd(certsDescription
+                    .getKeyStorePwd());
+            newCertsDescription.setTrustStorePwd(certsDescription
+                    .getTrustStorePwd());
             newHostInfo.setCertsDescription(newCertsDescription);
         } else {
             newHostInfo.setCertsDescription(null);
         }
+        newHostInfo.setConnectionAssistant(connectionAssistant);
+        newHostInfo.setSshUserName(sshUserName);
+        newHostInfo.setSshPortNum(sshPortNum);
+
         return newHostInfo;
     }
 
@@ -202,8 +255,27 @@ public class HostInfo implements Serializable {
 
     @Override
     public String toString() {
-        return "HostInfo [host=" + host + ", port=" + port + ", secureConnect="
-                + secureConnect + ", certsDescription=" + certsDescription
-                + "]";
+        return "HostInfo [host=" + host + ", hostType=" + hostType + ", port="
+                + port + ", secureConnect=" + secureConnect
+                + ", certsDescription=" + certsDescription + ", sshUserName="
+                + sshUserName + ", sshPortNum=" + sshPortNum + "]";
     }
+
+    // If sslUserName is not set, an empty string is returned.
+    public String getSshUserName() {
+        return sshUserName;
+    }
+
+    public void setSshUserName(String sslUserName) {
+        this.sshUserName = sslUserName;
+    }
+
+    public int getSshPortNum() {
+        return sshPortNum;
+    }
+
+    public void setSshPortNum(int sslPortNum) {
+        this.sshPortNum = sslPortNum;
+    }
+
 }

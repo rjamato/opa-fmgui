@@ -35,8 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:21:40  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/08/21 03:54:19  fisherma
+ *  Archive Log:    Added property to turn email notifications feature on/off.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/08/17 18:48:36  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/08/10 17:04:40  robertja
+ *  Archive Log:    PR128974 - Email notification functionality.
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2015/02/04 21:29:37  jijunwan
  *  Archive Log:    added Mail Manager
@@ -66,11 +73,22 @@ public class MailProperties implements Serializable {
 
     private String fromAddr;
 
-    private String toAddr;
-
     private boolean authEnabled;
 
     private boolean tlsEnabled;
+
+    private boolean isEmailFeatureEnabled = false;
+
+    public MailProperties() {
+        smtpServer = "";
+        smtpPort = -1;
+        userName = "";
+        password = " ".toCharArray();
+        fromAddr = "";
+        authEnabled = false;
+        tlsEnabled = false;
+        isEmailFeatureEnabled = false;
+    }
 
     /**
      * @return the smtpServer
@@ -148,21 +166,6 @@ public class MailProperties implements Serializable {
     }
 
     /**
-     * @return the toAddr
-     */
-    public String getToAddr() {
-        return toAddr;
-    }
-
-    /**
-     * @param toAddr
-     *            the toAddr to set
-     */
-    public void setToAddr(String toAddr) {
-        this.toAddr = toAddr;
-    }
-
-    /**
      * @return the authEnabled
      */
     public boolean isAuthEnabled() {
@@ -190,6 +193,23 @@ public class MailProperties implements Serializable {
      */
     public void setTlsEnabled(boolean tlsEnabled) {
         this.tlsEnabled = tlsEnabled;
+    }
+
+    /**
+     * @return isEmailFeatureEnabled access method to see if the email
+     *         notifications should be enabled.
+     */
+    public boolean getEmailNotificationsEnabled() {
+        return isEmailFeatureEnabled;
+    }
+
+    /**
+     * @param isEnabled
+     *            is the email notifications feature enabled
+     * 
+     */
+    public void setEmailNotificationsEnabled(boolean isEnabled) {
+        this.isEmailFeatureEnabled = isEnabled;
     }
 
     /*
@@ -265,8 +285,8 @@ public class MailProperties implements Serializable {
         return "MailProperties [smtpServer=" + smtpServer + ", smtpPort="
                 + smtpPort + ", userName=" + userName + ", password="
                 + Arrays.toString(password) + ", fromAddr=" + fromAddr
-                + ", toAddr=" + toAddr + ", authEnabled=" + authEnabled
-                + ", tlsEnabled=" + tlsEnabled + "]";
+                + ", authEnabled=" + authEnabled + ", tlsEnabled=" + tlsEnabled
+                + "]";
     }
 
 }

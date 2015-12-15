@@ -35,8 +35,27 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.35.2.1  2015/08/12 15:22:12  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.42  2015/08/17 18:49:03  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.41  2015/08/10 17:04:46  robertja
+ *  Archive Log:    PR128974 - Email notification functionality.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.40  2015/07/31 21:04:21  fernande
+ *  Archive Log:    PR 129631 - Ports table sometimes not getting performance related data. Translating a RequestCancelledException into a special PerformanceRequestCancelledException for UI consumption.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.39  2015/07/30 13:15:07  fernande
+ *  Archive Log:    PR 129437 - ImageInfo save issue. The code now update a previously saved ImageInfo record.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.38  2015/07/10 20:44:35  fernande
+ *  Archive Log:    PR 129522 - Notice is not written to database due to topology not found. Moved FE Helpers to the session object and changed the order of initialization for the SubnetContext.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.37  2015/07/09 18:50:29  fernande
+ *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Added GroupInfoPurgeTask; it deletes GroupInfo records older that a retention time (default is 15 days) and with a certain frequency (default is daily). These values can be changed in the settings.xml file.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.36  2015/05/26 15:34:45  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
  *  Archive Log:
  *  Archive Log:    Revision 1.35  2015/04/17 16:41:38  jypak
  *  Archive Log:    Fix for this intermittent problem for PA short term history : For the group info trend charts, when a different short term history time scope(1h, 2h, 6h, 24h) is selected for like ten times, the time domain axis displays years (1970, 1980...) and chart doesn't update correctly. The fix is to return null for the history data bean in performance API when the image data for the bean is returned as null.  The image data was null because the FE request of the data was cancelled before any response was processed. Because this error occurs only when the request was cancelled, we can just return null history data to avoid adding '0' time stamp to group info chart. Same safeguard code lines were added for VFInfo/PortCounter/VFPortCounter history. The port counter history doesn't seem to have this intermittent problem for single port history query but multi port history request can have same problem in the future.
@@ -79,24 +98,38 @@
 
 package com.intel.stl.api.performance.impl;
 
+import static com.intel.stl.api.configuration.AppInfo.PROPERTIES_DATABASE;
+import static com.intel.stl.api.performance.impl.GroupInfoPurgeTask.LAST_GROUPINFO_PURGE;
 import static com.intel.stl.common.STLMessages.STL30048_ERROR_SAVING_GROUP_CONFIG;
 import static com.intel.stl.common.STLMessages.STL30049_ERROR_GETTING_GROUP_CONFIG;
 import static com.intel.stl.common.STLMessages.STL30050_ERROR_GETTING_PORT_CONFIG;
 import static com.intel.stl.common.STLMessages.STL30052_ERROR_GETTING_GROUP_INFO;
+import static com.intel.stl.common.STLMessages.STL60003_PERFORMANCE_DATA_FAILURE;
+import static com.intel.stl.configuration.AppSettings.PERF_GROUPINFO_PURGEFREQ;
+import static com.intel.stl.configuration.AppSettings.PERF_GROUPINFO_RETENTION;
+import static com.intel.stl.configuration.AppSettings.PERF_GROUPINFO_SAVEBATCH;
+import static com.intel.stl.configuration.AppSettings.PERF_IMAGEINFO_CACHESIZE;
+import static com.intel.stl.configuration.AppSettings.PERF_IMAGEINFO_SAVEBATCH;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.intel.stl.api.BaseApi;
 import com.intel.stl.api.DatabaseException;
 import com.intel.stl.api.StringUtils;
+import com.intel.stl.api.configuration.impl.SubnetContextImpl;
 import com.intel.stl.api.performance.FocusPortsRspBean;
 import com.intel.stl.api.performance.GroupConfigRspBean;
 import com.intel.stl.api.performance.GroupInfoBean;
@@ -107,6 +140,7 @@ import com.intel.stl.api.performance.ImageInfoBean;
 import com.intel.stl.api.performance.PMConfigBean;
 import com.intel.stl.api.performance.PerformanceDataNotFoundException;
 import com.intel.stl.api.performance.PerformanceException;
+import com.intel.stl.api.performance.PerformanceRequestCancelledException;
 import com.intel.stl.api.performance.PortConfigBean;
 import com.intel.stl.api.performance.PortCountersBean;
 import com.intel.stl.api.performance.VFConfigRspBean;
@@ -120,18 +154,17 @@ import com.intel.stl.common.CircularBuffer;
 import com.intel.stl.common.STLMessages;
 import com.intel.stl.configuration.AsyncTask;
 import com.intel.stl.configuration.CacheManager;
-import com.intel.stl.configuration.ProcessingService;
+import com.intel.stl.configuration.ResultHandler;
 import com.intel.stl.datamanager.DatabaseManager;
+import com.intel.stl.fecdriver.session.RequestCancelledByUserException;
 
 /**
  * @author jijunwan
  * 
  */
-public class PerformanceApi extends BaseApi implements IPerformanceApi {
+public class PerformanceApi implements IPerformanceApi {
 
     private static Logger log = LoggerFactory.getLogger(PerformanceApi.class);
-
-    private static boolean DEBUG = false;
 
     protected static int IMAGE_INFO_BUFFER_SIZE = 10;
 
@@ -147,9 +180,30 @@ public class PerformanceApi extends BaseApi implements IPerformanceApi {
     // needed); in milliseconds
     private static long GROUP_INFO_SAVE_THROTTLE = 20000;
 
-    private final CacheManager cacheMgr;
+    // Frequency between purges; in hours
+    private static int GROUP_INFO_PURGE_FREQUENCY = 24;
 
-    private final ProcessingService processingService;
+    // Frequency between purges; in days
+    private static int GROUP_INFO_RETENTION = 15;
+
+    // First purge when the app is used for the first time
+    private static long GROUP_INFO_PURGE_FIRST = 300000; // five minutes
+
+    private static long MILISECONDS_PER_HOUR = 60 * 60 * 1000;
+
+    private static long MILISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+
+    private final int imageinfoBatchSize;
+
+    private final int groupinfoBatchSize;
+
+    private final long groupinfoPurgeFrequency;
+
+    private final long groupinfoRetention;
+
+    private final SubnetContextImpl subnetContext;
+
+    private final CacheManager cacheMgr;
 
     private final DatabaseManager dbServer;
 
@@ -165,22 +219,36 @@ public class PerformanceApi extends BaseApi implements IPerformanceApi {
 
     private final AtomicLong lastGroupInfoSaveTask = new AtomicLong(0);
 
+    private final AtomicLong nextGroupInfoPurgeTask = new AtomicLong(0);
+
     private List<VFListBean> vfList;
 
     private boolean addRandom;
 
     private final Randomizer randomizer = new Randomizer();
 
-    public PerformanceApi(CacheManager cacheMgr) {
-        this.cacheMgr = cacheMgr;
-        this.processingService = cacheMgr.getProcessingService();
-        this.helper = cacheMgr.getPAHelper();
-        helper.setConnectionEventListener(this);
+    public PerformanceApi(SubnetContextImpl subnetContext) {
+        this.subnetContext = subnetContext;
+        this.cacheMgr = subnetContext.getCacheManager();
+        this.helper = subnetContext.getSession().getPAHelper();
         this.dbServer = cacheMgr.getDatabaseManager();
+        int imageinfoBufferSize =
+                getAppSetting(PERF_IMAGEINFO_CACHESIZE, IMAGE_INFO_BUFFER_SIZE);
         this.imageInfoCache =
                 new CircularBuffer<ImageIdBean, ImageInfoBean>(
-                        IMAGE_INFO_BUFFER_SIZE);
+                        imageinfoBufferSize);
         this.groupInfoSaveBuffer = new ConcurrentLinkedQueue<GroupInfoBean>();
+        this.imageinfoBatchSize =
+                getAppSetting(PERF_IMAGEINFO_SAVEBATCH, IMAGE_INFO_SAVE_BATCH);
+        this.groupinfoBatchSize =
+                getAppSetting(PERF_GROUPINFO_SAVEBATCH, GROUP_INFO_SAVE_BATCH);
+        this.groupinfoPurgeFrequency =
+                getAppSetting(PERF_GROUPINFO_PURGEFREQ,
+                        GROUP_INFO_PURGE_FREQUENCY) * MILISECONDS_PER_HOUR;
+        this.groupinfoRetention =
+                getAppSetting(PERF_GROUPINFO_RETENTION, GROUP_INFO_RETENTION)
+                        * MILISECONDS_PER_DAY;
+        resetNextGroupInfoPurgeTime();
     }
 
     /*
@@ -252,7 +320,7 @@ public class PerformanceApi extends BaseApi implements IPerformanceApi {
             imageInfo = helper.getImageInfo(0L, 0);
             if (imageInfo != null) {
                 imageInfoCache.put(imageInfo.getImageId(), imageInfo);
-                if (imageInfoCache.getSaveQueueSize() > IMAGE_INFO_SAVE_BATCH) {
+                if (imageInfoCache.getSaveQueueSize() > imageinfoBatchSize) {
                     ImageInfoSaveTask saveTask =
                             new ImageInfoSaveTask(helper, dbServer,
                                     imageInfoCache);
@@ -302,6 +370,8 @@ public class PerformanceApi extends BaseApi implements IPerformanceApi {
                 }
             }
             return groupInfo;
+        } catch (PerformanceRequestCancelledException e) {
+            throw e;
         } catch (Exception e) {
             throw getPerformanceException(e);
         }
@@ -464,6 +534,8 @@ public class PerformanceApi extends BaseApi implements IPerformanceApi {
                 }
             }
             return bean;
+        } catch (PerformanceRequestCancelledException e) {
+            throw e;
         } catch (Exception e) {
             throw getPerformanceException(e);
         }
@@ -579,6 +651,8 @@ public class PerformanceApi extends BaseApi implements IPerformanceApi {
                 randomizer.randomVFInfo(bean);
             }
             return bean;
+        } catch (PerformanceRequestCancelledException e) {
+            throw e;
         } catch (Exception e) {
             throw getPerformanceException(e);
         }
@@ -612,6 +686,8 @@ public class PerformanceApi extends BaseApi implements IPerformanceApi {
                 randomizer.randomVFInfo(bean);
             }
             return bean;
+        } catch (PerformanceRequestCancelledException e) {
+            throw e;
         } catch (Exception e) {
             throw getPerformanceException(e);
         }
@@ -707,6 +783,8 @@ public class PerformanceApi extends BaseApi implements IPerformanceApi {
                 }
             }
             return bean;
+        } catch (PerformanceRequestCancelledException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
             throw getPerformanceException(e);
@@ -739,8 +817,9 @@ public class PerformanceApi extends BaseApi implements IPerformanceApi {
                 }
             }
             return bean;
+        } catch (PerformanceRequestCancelledException e) {
+            throw e;
         } catch (Exception e) {
-            e.printStackTrace();
             throw getPerformanceException(e);
         }
     }
@@ -765,13 +844,51 @@ public class PerformanceApi extends BaseApi implements IPerformanceApi {
                     groupInfoSaveBuffer.offer(groupInfo);
                 }
             }
-            if (groupInfoSaveBuffer.size() > GROUP_INFO_SAVE_BATCH) {
+            if (groupInfoSaveBuffer.size() > groupinfoBatchSize) {
                 // Start background task to save to database
                 GroupInfoSaveTask saveTask =
                         new GroupInfoSaveTask(helper, dbServer,
                                 groupInfoSaveBuffer);
                 submitWithThrottle(saveTask, lastGroupInfoSaveTask,
                         GROUP_INFO_SAVE_THROTTLE);
+            }
+            long now = System.currentTimeMillis();
+            long purgeTime = nextGroupInfoPurgeTask.get();
+            if (now > purgeTime) {
+                // In case the purge fails, we retry after this amount of time
+                long nextTry = now + GROUP_INFO_PURGE_FIRST;
+                boolean swapped =
+                        nextGroupInfoPurgeTask
+                                .compareAndSet(purgeTime, nextTry);
+                if (swapped) {
+                    long ago = now - groupinfoRetention;
+                    GroupInfoPurgeTask task =
+                            new GroupInfoPurgeTask(helper, dbServer, ago);
+                    log.info(
+                            "Starting GroupInfo purge task. Purging records older than {}",
+                            getFormattedTimestamp(ago));
+                    subnetContext.getProcessingService().submit(task,
+                            new ResultHandler<Integer>() {
+
+                                @Override
+                                public void onTaskCompleted(
+                                        Future<Integer> result) {
+                                    try {
+                                        int deleted = result.get();
+                                        resetNextGroupInfoPurgeTime();
+                                        log.info(
+                                                "{} GroupInfo records purged.",
+                                                deleted);
+                                    } catch (InterruptedException e) {
+                                        log.error("GroupInfo purge task was interrupted");
+                                    } catch (ExecutionException e) {
+                                        log.error(
+                                                "GroupInfo purge task had an error",
+                                                e.getCause());
+                                    }
+                                }
+                            });
+                }
             }
         }
     }
@@ -806,11 +923,15 @@ public class PerformanceApi extends BaseApi implements IPerformanceApi {
     }
 
     private PerformanceException getPerformanceException(Exception e) {
-        PerformanceException pe =
-                new PerformanceException(
-                        STLMessages.STL60003_PERFORMANCE_DATA_FAILURE, e,
-                        StringUtils.getErrorMessage(e));
-        log.error(StringUtils.getErrorMessage(pe), e);
+        PerformanceException pe;
+        if (e instanceof RequestCancelledByUserException) {
+            pe = new PerformanceRequestCancelledException();
+        } else {
+            pe =
+                    new PerformanceException(STL60003_PERFORMANCE_DATA_FAILURE,
+                            e, StringUtils.getErrorMessage(e));
+            log.error(StringUtils.getErrorMessage(pe), e);
+        }
         return pe;
     }
 
@@ -824,8 +945,60 @@ public class PerformanceApi extends BaseApi implements IPerformanceApi {
             boolean swapped =
                     lastSubmissionTS.compareAndSet(lastSubmission, now);
             if (swapped) {
-                processingService.submit(task, null);
+                subnetContext.getProcessingService().submit(task, null);
             }
+        }
+    }
+
+    private void resetNextGroupInfoPurgeTime() {
+        Map<String, Properties> appProps =
+                dbServer.getAppInfo().getPropertiesMap();
+        Properties dbProps = appProps.get(PROPERTIES_DATABASE);
+        if (dbProps == null) {
+            // There is no reference point, create one after the application has
+            // initialized
+            nextGroupInfoPurgeTask.set(System.currentTimeMillis()
+                    + GROUP_INFO_PURGE_FIRST);
+        } else {
+            SubnetDescription subnet = subnetContext.getSubnetDescription();
+            String lastPurge =
+                    dbProps.getProperty(LAST_GROUPINFO_PURGE
+                            + subnet.getSubnetId());
+            if (lastPurge == null) {
+                nextGroupInfoPurgeTask.set(System.currentTimeMillis()
+                        + GROUP_INFO_PURGE_FIRST);
+            } else {
+                try {
+                    long lastPurgeTS = Long.parseLong(lastPurge);
+                    nextGroupInfoPurgeTask.set(lastPurgeTS
+                            + groupinfoPurgeFrequency);
+                } catch (NumberFormatException e) {
+                    nextGroupInfoPurgeTask.set(System.currentTimeMillis()
+                            + GROUP_INFO_PURGE_FIRST);
+                }
+            }
+        }
+        log.info("Next GroupInfo purge task to start on {}",
+                getFormattedTimestamp(nextGroupInfoPurgeTask.get()));
+    }
+
+    private String getFormattedTimestamp(long timestamp) {
+        Date date = new Date(timestamp);
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss");
+        return sdf.format(date);
+    }
+
+    private int getAppSetting(String settingName, int defaultValue) {
+        try {
+            int value =
+                    Integer.parseInt(subnetContext.getAppSetting(settingName,
+                            new Integer(defaultValue).toString()));
+            return value;
+        } catch (NumberFormatException e) {
+            log.warn(
+                    "Invalid value for setting '{}'; using default value of {}",
+                    settingName, defaultValue, e);
+            return defaultValue;
         }
     }
 

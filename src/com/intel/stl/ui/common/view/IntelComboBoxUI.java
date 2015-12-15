@@ -35,8 +35,23 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8.2.1  2015/08/12 15:26:33  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.13  2015/09/14 16:07:35  jijunwan
+ *  Archive Log:    PR 130229 - The text component of all editable combo boxes should provide validation of the input
+ *  Archive Log:    - fixed IntelComboBox border issues
+ *  Archive Log:
+ *  Archive Log:    Revision 1.12  2015/08/19 15:48:10  jijunwan
+ *  Archive Log:    PR 130058 - inconsistent look and feel on ComboBox
+ *  Archive Log:    - added code to support set editor border
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/08/17 18:53:36  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/08/10 20:56:36  fisherma
+ *  Archive Log:    Fixing border for Intel L&F ComboBox on Linux platforms.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/06/12 20:51:32  fisherma
+ *  Archive Log:    PR 129207 - removed references to SwingSet2 and DefaultLookup as they are internal proprietary API's and may be removed in a future release.
  *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/03/27 15:49:55  jijunwan
  *  Archive Log:    added border support
@@ -94,8 +109,6 @@ import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.plaf.basic.ComboPopup;
 
-import sun.swing.DefaultLookup;
-
 import com.intel.stl.ui.common.UIConstants;
 import com.intel.stl.ui.common.UIImages;
 
@@ -103,7 +116,15 @@ public class IntelComboBoxUI extends BasicComboBoxUI {
     private String arrowButtonTooltip;
 
     private Border arrowButtonBorder = BorderFactory
-            .createLineBorder(UIConstants.INTEL_BORDER_GRAY);
+            .createLineBorder(UIConstants.INTEL_GRAY);
+
+    private Border editorBorder = BorderFactory.createMatteBorder(1, 1, 1, 0,
+            UIConstants.INTEL_GRAY);
+
+    private Border rendererBorder = BorderFactory.createCompoundBorder(
+            editorBorder, BorderFactory.createEmptyBorder(0, 2, 0, 2));
+
+    private final Border emptyBorder = new EmptyBorder(1, 3, 1, 3);
 
     protected int horizontalAlignment = JLabel.LEFT;
 
@@ -119,13 +140,13 @@ public class IntelComboBoxUI extends BasicComboBoxUI {
         super.installDefaults();
         comboBox.setForeground(UIConstants.INTEL_DARK_GRAY);
         comboBox.setBackground(UIConstants.INTEL_WHITE);
+        comboBox.setBorder(BorderFactory.createEmptyBorder());
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * javax.swing.plaf.basic.BasicComboBoxUI#createArrowButton()
+     * @see javax.swing.plaf.basic.BasicComboBoxUI#createArrowButton()
      */
     @Override
     protected JButton createArrowButton() {
@@ -161,6 +182,13 @@ public class IntelComboBoxUI extends BasicComboBoxUI {
         }
     }
 
+    public void setEditorBorder(Border border) {
+        editorBorder = border;
+        rendererBorder =
+                BorderFactory.createCompoundBorder(editorBorder,
+                        BorderFactory.createEmptyBorder(0, 2, 0, 2));
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -188,24 +216,27 @@ public class IntelComboBoxUI extends BasicComboBoxUI {
                 label.setText(getValueString(value));
                 label.setToolTipText(getValueTooltip(value));
                 label.setHorizontalAlignment(horizontalAlignment);
-
-                Border border = null;
-                if (cellHasFocus) {
-                    if (isSelected) {
-                        border =
-                                DefaultLookup
-                                        .getBorder(this, ui,
-                                                "List.focusSelectedCellHighlightBorder");
-                    }
-                    if (border == null) {
-                        border =
-                                DefaultLookup.getBorder(this, ui,
-                                        "List.focusCellHighlightBorder");
-                    }
+                if (index == -1) {
+                    label.setBorder(rendererBorder);
                 } else {
-                    border = new EmptyBorder(1, 2, 1, 2);
+                    label.setBorder(emptyBorder);
                 }
-                label.setBorder(border);
+
+                /*
+                 * This code is not being used now:
+                 */
+                /*
+                 * Border border = null; if (cellHasFocus) { if (isSelected) {
+                 * // This is not a valid UIManager property, so this //
+                 * statement gets ignored border = UIManager.getBorder(
+                 * "List.focusSelectedCellHighlightBorder"); } // This due to
+                 * above statement not setting the b if (border == null) {
+                 * border = UIManager.getBorder(
+                 * "List.focusCellHighlightBorder"); } } else { border = new
+                 * EmptyBorder(1, 2, 1, 2); }
+                 * 
+                 * label.setBorder(border);
+                 */
 
                 return label;
             }
@@ -270,6 +301,7 @@ public class IntelComboBoxUI extends BasicComboBoxUI {
             public Component getEditorComponent() {
                 JTextField editor = (JTextField) super.getEditorComponent();
                 editor.setForeground(UIConstants.INTEL_DARK_GRAY);
+                editor.setBorder(editorBorder);
                 editor.setToolTipText(comboBox.getToolTipText());
                 return editor;
             }

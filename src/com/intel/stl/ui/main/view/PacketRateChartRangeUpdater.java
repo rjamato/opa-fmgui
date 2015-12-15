@@ -35,16 +35,29 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.4  2015/08/12 15:26:53  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.6  2015/08/18 14:28:34  jijunwan
+ *  Archive Log:    PR 130033 - Fix critical issues found by Klocwork or FindBugs
+ *  Archive Log:    - DateFormat is not thread safe. Changed to create new DateFormat to avoid sharing it among different threads
  *  Archive Log:
- *  Archive Log:    Revision 1.1.2.3  2015/05/21 21:09:45  jijunwan
+ *  Archive Log:    Revision 1.5  2015/08/17 18:54:02  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/06/29 15:05:47  jypak
+ *  Archive Log:    PR 129284 - Incorrect QSFP field name.
+ *  Archive Log:    Field name fix has been implemented. Also, introduced a conversion to Date object to add flexibility to display date code.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/06/25 20:53:47  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improved to share scale between all chart (include pinned chart) with the same data type
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/05/21 20:47:02  jijunwan
  *  Archive Log:    PR 128855 - Incorrect value conversion on flits
- *  Archive Log:    - added 1 fit = 8 bytes to value conversion
+ *  Archive Log:    - added 1 fit = 8 byte to value conversion
  *  Archive Log:    - changed to use MB rather than MiB
  *  Archive Log:    - some code lean up
  *  Archive Log:
- *  Archive Log:    Revision 1.1.2.2  2015/05/17 18:30:45  jijunwan
+ *  Archive Log:    Revision 1.1  2015/05/14 17:43:10  jijunwan
  *  Archive Log:    PR 127700 - Delta data on host performance display is accumulating
  *  Archive Log:    - corrected delta value calculation
  *  Archive Log:    - changed to display data/pkts rate rather than delta on chart and table
@@ -91,7 +104,6 @@ package com.intel.stl.ui.main.view;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.jfree.chart.JFreeChart;
@@ -103,6 +115,7 @@ import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYDataset;
 
 import com.intel.stl.ui.common.STLConstants;
+import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.monitor.UnitDescription;
 
 public class PacketRateChartRangeUpdater implements IChartRangeUpdater {
@@ -122,6 +135,10 @@ public class PacketRateChartRangeUpdater implements IChartRangeUpdater {
 
     @Override
     public void updateChartRange(JFreeChart chart, long lower, long upper) {
+        if (lower > upper) {
+            return;
+        }
+
         XYPlot xyplot = (XYPlot) chart.getPlot();
         NumberAxis range = (NumberAxis) xyplot.getRangeAxis();
         range.setRangeWithMargins(lower, upper);
@@ -138,9 +155,8 @@ public class PacketRateChartRangeUpdater implements IChartRangeUpdater {
                     .setBaseToolTipGenerator(
                             new PktsRateToolTipGenerator(
                                     "<html><b>{0}</b><br> Time: {1}<br> Data: {2}</html>",
-                                    new SimpleDateFormat("HH:mm:ss"),
-                                    new DecimalFormat("#,##0.00" + " "
-                                            + unitDes)));
+                                    Util.getHHMMSS(), new DecimalFormat(
+                                            "#,##0.00" + " " + unitDes)));
         } else {
             range.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         }

@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3.2.1  2015/08/12 15:21:44  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.5  2015/10/08 16:20:15  fernande
+ *  Archive Log:    PR130760 - Update FV GUI to reflect Changes to vol1g1 spec introduced in DN 0507. Changed commands to match FM spec
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/08/17 18:48:41  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/02/04 21:37:53  jijunwan
  *  Archive Log:    impoved to handle unsigned values
@@ -119,6 +123,10 @@ public class PMConfigBean implements Serializable {
     private short uncorrectableErrors;
 
     private short fmConfigErrors;
+
+    private byte linkQualityIndicator;
+
+    private byte linkWidthDowngrade;
 
     //
     private long memoryFootprint;
@@ -377,6 +385,36 @@ public class PMConfigBean implements Serializable {
      */
     public void setFmConfigErrors(byte fmConfigErrors) {
         this.fmConfigErrors = (short) (fmConfigErrors & 0xff);
+    }
+
+    /**
+     * @return the linkQualityIndicator
+     */
+    public byte getLinkQualityIndicator() {
+        return linkQualityIndicator;
+    }
+
+    /**
+     * @param linkQualityIndicator
+     *            the linkQualityIndicator to set
+     */
+    public void setLinkQualityIndicator(byte linkQualityIndicator) {
+        this.linkQualityIndicator = linkQualityIndicator;
+    }
+
+    /**
+     * @return the linkWidthDowngrade
+     */
+    public byte getLinkWidthDowngrade() {
+        return linkWidthDowngrade;
+    }
+
+    /**
+     * @param linkWidthDowngrade
+     *            the linkWidthDowngrade to set
+     */
+    public void setLinkWidthDowngrade(byte linkWidthDowngrade) {
+        this.linkWidthDowngrade = linkWidthDowngrade;
     }
 
     public int getIntegrityErrors() {

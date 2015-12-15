@@ -35,8 +35,19 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:27:03  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.7  2015/08/17 18:54:12  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/06/25 20:24:58  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on fabric viewer and simple 'static' cards
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/06/09 18:37:22  jijunwan
+ *  Archive Log:    PR 129069 - Incorrect Help action
+ *  Archive Log:    - moved help action from view to controller
+ *  Archive Log:    - only enable help button when we have HelpID
+ *  Archive Log:    - fixed incorrect HelpIDs
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2014/10/02 21:26:14  jijunwan
  *  Archive Log:    fixed issued found by FindBugs
@@ -63,9 +74,11 @@ package com.intel.stl.ui.common;
 
 import net.engio.mbassy.bus.MBassador;
 
+import com.intel.stl.ui.common.PinDescription.PinID;
 import com.intel.stl.ui.common.view.ICardListener;
 import com.intel.stl.ui.common.view.JCardView;
 import com.intel.stl.ui.framework.IAppEvent;
+import com.intel.stl.ui.main.HelpAction;
 
 public abstract class BaseCardController<E extends ICardListener, V extends JCardView<E>>
         implements ICardController<V>, ICardListener {
@@ -74,6 +87,8 @@ public abstract class BaseCardController<E extends ICardListener, V extends JCar
     protected V view;
 
     protected final MBassador<IAppEvent> eventBus;
+
+    private String helpID;
 
     /**
      * Description:
@@ -87,8 +102,22 @@ public abstract class BaseCardController<E extends ICardListener, V extends JCar
             throw new IllegalArgumentException("View can not be null!");
         }
         this.view = view;
+        installHelp();
+
         this.eventBus = eventBus;
         installListener();
+    }
+
+    protected void installHelp() {
+        String helpId = getHelpID();
+        if (helpId != null) {
+            view.enableHelp(true);
+            HelpAction helpAction = HelpAction.getInstance();
+            helpAction.getHelpBroker().enableHelpOnButton(view.getHelpButton(),
+                    helpId, helpAction.getHelpSet());
+        } else {
+            view.enableHelp(false);
+        }
     }
 
     protected void installListener() {
@@ -133,9 +162,38 @@ public abstract class BaseCardController<E extends ICardListener, V extends JCar
      */
     @Override
     public void onHelp() {
-        // TODO Auto-generated method stub
-
+        // Nothing to do. Already handled by HelpBroker.
     }
 
     public abstract E getCardListener();
+
+    /**
+     * @param helpID
+     *            the helpID to set
+     */
+    public void setHelpID(String helpID) {
+        this.helpID = helpID;
+        installHelp();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.ICardController#getHelpID()
+     */
+    @Override
+    public String getHelpID() {
+        return helpID;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.ICardController#getPinID()
+     */
+    @Override
+    public PinID getPinID() {
+        return null;
+    }
+
 }

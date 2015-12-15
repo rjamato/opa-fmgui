@@ -35,8 +35,26 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7.2.1  2015/08/12 15:26:41  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.11  2015/08/17 18:53:49  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/06/30 22:31:42  jijunwan
+ *  Archive Log:    PR 129215 - Need short chart name to support pin capability
+ *  Archive Log:    - use short name as pin card title
+ *  Archive Log:    - improved pin argument to include full name and provide data source description
+ *  Archive Log:    - fixed improper full name issues on trend charts
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/06/25 20:50:03  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on dynamic cards that can have different data sources
+ *  Archive Log:    - change to use port counter performance item
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/06/09 18:37:23  jijunwan
+ *  Archive Log:    PR 129069 - Incorrect Help action
+ *  Archive Log:    - moved help action from view to controller
+ *  Archive Log:    - only enable help button when we have HelpID
+ *  Archive Log:    - fixed incorrect HelpIDs
  *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/03/10 18:43:17  jypak
  *  Archive Log:    JavaHelp System introduced to enable online help.
@@ -79,14 +97,14 @@ import net.engio.mbassy.bus.MBassador;
 import com.intel.stl.ui.common.ChartsCard;
 import com.intel.stl.ui.common.view.ChartsView;
 import com.intel.stl.ui.framework.IAppEvent;
-import com.intel.stl.ui.main.HelpAction;
 import com.intel.stl.ui.model.DatasetDescription;
 import com.intel.stl.ui.performance.item.AbstractPerformanceItem;
 import com.intel.stl.ui.performance.item.IPerformanceItem;
 import com.intel.stl.ui.performance.item.TopNItem;
 import com.intel.stl.ui.performance.item.TrendItem;
 
-public class BaseGroupController extends AbstractGroupController {
+public class BaseGroupController extends AbstractGroupController<GroupSource> {
+    private ChartsCard trendCard, topNCard, histogramCard;
 
     /**
      * Description:
@@ -97,10 +115,13 @@ public class BaseGroupController extends AbstractGroupController {
      * @param topNItem
      * @param sourceNames
      */
+    @SuppressWarnings("unchecked")
     public BaseGroupController(MBassador<IAppEvent> eventBus, String name,
-            TrendItem trendItem, AbstractPerformanceItem histogramItem,
+            TrendItem<GroupSource> trendItem,
+            AbstractPerformanceItem<GroupSource> histogramItem,
             TopNItem topNItem) {
-        super(eventBus, name, trendItem, histogramItem, topNItem);
+        super(eventBus, name, new IPerformanceItem[] { trendItem,
+                histogramItem, topNItem });
     }
 
     /*
@@ -113,61 +134,95 @@ public class BaseGroupController extends AbstractGroupController {
     @Override
     protected List<ChartsCard> initCards(Map<String, DatasetDescription> map) {
         List<ChartsCard> res = new ArrayList<ChartsCard>();
-        HelpAction helpAction = HelpAction.getInstance();
-
         if (allItems[0] != null) {
-            ChartsCard card = createTrendCard(allItems[0], map);
-
-            helpAction.getHelpBroker().enableHelpOnButton(
-                    card.getView().getHelpButton(), helpAction.getPerfTrend(),
-                    helpAction.getHelpSet());
-
-            res.add(card);
+            trendCard = createTrendCard(allItems[0], map);
+            res.add(trendCard);
         }
 
         if (allItems[1] != null) {
-            ChartsCard card = createHistogramCard(allItems[1], map);
-
-            helpAction.getHelpBroker().enableHelpOnButton(
-                    card.getView().getHelpButton(), helpAction.getHistogram(),
-                    helpAction.getHelpSet());
-
-            res.add(card);
+            histogramCard = createHistogramCard(allItems[1], map);
+            res.add(histogramCard);
         }
 
         if (allItems[2] != null) {
-            ChartsCard card = createTopNCard(allItems[2], map);
-
-            helpAction.getHelpBroker().enableHelpOnButton(
-                    card.getView().getHelpButton(), helpAction.getPerfTopN(),
-                    helpAction.getHelpSet());
-
-            res.add(card);
+            topNCard = createTopNCard(allItems[2], map);
+            res.add(topNCard);
         }
         return res;
     }
 
-    protected ChartsCard createTrendCard(IPerformanceItem item,
+    public void setHelpIDs(String trendHelpID, String histogramHelpID,
+            String topNHelpID) {
+        if (trendCard != null) {
+            trendCard.setHelpID(trendHelpID);
+        }
+        if (histogramCard != null) {
+            histogramCard.setHelpID(histogramHelpID);
+        }
+        if (topNCard != null) {
+            topNCard.setHelpID(topNHelpID);
+        }
+    }
+
+    protected ChartsCard createTrendCard(IPerformanceItem<GroupSource> item,
+            Map<String, DatasetDescription> map) {
+        return createOptionCard(item, map, true, false);
+    }
+
+    protected ChartsCard createHistogramCard(
+            IPerformanceItem<GroupSource> item,
             Map<String, DatasetDescription> map) {
         return createCard(item, map);
     }
 
-    protected ChartsCard createHistogramCard(IPerformanceItem item,
+    protected ChartsCard createTopNCard(IPerformanceItem<GroupSource> item,
             Map<String, DatasetDescription> map) {
         return createCard(item, map);
     }
 
-    protected ChartsCard createTopNCard(IPerformanceItem item,
-            Map<String, DatasetDescription> map) {
-        return createCard(item, map);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.performance.AbstractGroupController#getItemView(com.
+     * intel.stl.ui.performance.item.IPerformanceItem)
+     */
+    @Override
+    protected ChartsView getItemView(IPerformanceItem<GroupSource> item) {
+        if (allItems[0] == item) {
+            return trendCard.getView();
+        } else if (allItems[1] == item) {
+            return histogramCard.getView();
+        } else if (allItems[2] == item) {
+            return topNCard.getView();
+        } else {
+            return null;
+        }
     }
 
-    protected ChartsCard createCard(IPerformanceItem item,
-            Map<String, DatasetDescription> map) {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.performance.AbstractGroupController#getChartArgument
+     * (com.intel.stl.ui.performance.item.IPerformanceItem)
+     */
+    @Override
+    protected ChartArgument<GroupSource> getChartArgument(
+            IPerformanceItem<GroupSource> item) {
+        GroupChartArgument arg = new GroupChartArgument();
         String name = item.getName();
-        ChartsView view =
-                new ChartsView(name, PerformanceChartsCreator.instance());
-        return createChartsCard(view, map, name);
+        arg.setName(name);
+        arg.setFullName(item.getFullName());
+        arg.setProvider(item.getCurrentProviderName().name());
+        if (item.getType() != null) {
+            arg.setDataType(item.getType());
+        }
+        if (item.getHistoryType() != null) {
+            arg.setHistoryType(item.getHistoryType());
+        }
+        arg.setSources(item.getSources());
+        return arg;
     }
 
 }

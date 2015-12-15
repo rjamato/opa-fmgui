@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6.2.1  2015/08/12 15:27:16  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.8  2015/08/17 18:54:25  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/08/05 04:04:48  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on Performance Page
  *  Archive Log:
  *  Archive Log:    Revision 1.6  2014/09/18 14:57:41  jijunwan
  *  Archive Log:    supported jumpTo events
@@ -97,7 +102,8 @@ public interface TreeViewInterface {
 
     public void setSelectionMode(int selectionMode);
 
-    public void expandAndSelectTreePath(FVTreeModel treeModel, TreePath path);
+    public void expandAndSelectTreePath(FVTreeModel treeModel,
+            TreePath[] paths, boolean[] isExpanded);
 
     public void clear();
 }

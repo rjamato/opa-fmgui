@@ -35,8 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.10.2.1  2015/08/12 15:26:58  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.12  2015/08/17 18:53:40  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/06/09 18:37:21  jijunwan
+ *  Archive Log:    PR 129069 - Incorrect Help action
+ *  Archive Log:    - moved help action from view to controller
+ *  Archive Log:    - only enable help button when we have HelpID
+ *  Archive Log:    - fixed incorrect HelpIDs
  *  Archive Log:
  *  Archive Log:    Revision 1.10  2015/03/10 18:43:12  jypak
  *  Archive Log:    JavaHelp System introduced to enable online help.
@@ -109,11 +116,16 @@ public class PSInfoSection extends
         statisticsCard =
                 new PSStatisticsCard(view.getStatisticsCardView(), eventBus);
         eventsCard = new PSEventsCard(view.getEventsCardView(), eventBus);
+    }
 
-        HelpAction helpAction = HelpAction.getInstance();
-        helpAction.getHelpBroker().enableHelpOnButton(view.getHelpButton(),
-                helpAction.getPerfSubnetSummary(), helpAction.getHelpSet());
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.BaseSectionController#getHelpID()
+     */
+    @Override
+    public String getHelpID() {
+        return HelpAction.getInstance().getPerfSubnetSummary();
     }
 
     /*

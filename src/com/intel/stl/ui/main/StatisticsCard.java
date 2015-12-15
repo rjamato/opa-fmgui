@@ -32,10 +32,20 @@
  *
  *  File Name: StatisticsController.java
  *
- *  Archive Source: 
- *
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.22  2015/08/17 18:53:38  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
  *  Archive Log:
- *
+ *  Archive Log: Revision 1.21  2015/06/09 18:37:27  jijunwan
+ *  Archive Log: PR 129069 - Incorrect Help action
+ *  Archive Log: - moved help action from view to controller
+ *  Archive Log: - only enable help button when we have HelpID
+ *  Archive Log: - fixed incorrect HelpIDs
+ *  Archive Log:
+ * 
  *  Overview: 
  *
  *  @author: jijunwan
@@ -86,10 +96,16 @@ public class StatisticsCard extends
                 new StaDetailsController(
                         STLConstants.K0024_ACTIVE_PORTS.getValue(),
                         view.getPortsPanel());
+    }
 
-        HelpAction helpAction = HelpAction.getInstance();
-        helpAction.getHelpBroker().enableHelpOnButton(view.getHelpButton(),
-                helpAction.getSubnetName(), helpAction.getHelpSet());
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.ICardController#getHelpID()
+     */
+    @Override
+    public String getHelpID() {
+        return HelpAction.getInstance().getSubnetStatisticsName();
     }
 
     /**

@@ -35,8 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:26:50  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.3  2015/08/17 18:54:00  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/08/06 17:26:23  jijunwan
+ *  Archive Log:    PR 129825 - Topology summary doesn't catch down graded ports
+ *  Archive Log:    - improved to display "abnormal" ports
+ *  Archive Log:    - added undo navigation support
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2014/10/22 02:21:26  jijunwan
  *  Archive Log:    1) moved update tasks into task package
@@ -52,7 +58,10 @@
 
 package com.intel.stl.ui.network;
 
+import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import com.intel.stl.ui.common.UILabels;
 
@@ -195,9 +204,9 @@ public class TopologyTier {
     public static class Quality {
         private int totalPorts;
 
-        private int slowPorts;
+        private final List<Point> slowPorts = new ArrayList<Point>();
 
-        private int degPorts;
+        private final List<Point> degPorts = new ArrayList<Point>();
 
         private int[] qualities;
 
@@ -223,39 +232,37 @@ public class TopologyTier {
         /**
          * @return the slowPorts
          */
-        public int getSlowPorts() {
-            return slowPorts;
+        public int getNumSlowPorts() {
+            return slowPorts.size();
         }
 
         /**
-         * @param slowPorts
-         *            the slowPorts to set
+         * @return the slowPorts
          */
-        public void setSlowPorts(int slowPorts) {
-            this.slowPorts = slowPorts;
+        public List<Point> getSlowPorts() {
+            return slowPorts;
         }
 
-        public void increaseSlowPorts(int num) {
-            slowPorts += num;
+        public void addSlowPort(int lid, int portNum) {
+            slowPorts.add(new Point(lid, portNum));
         }
 
         /**
          * @return the degPorts
          */
-        public int getDegPorts() {
-            return degPorts;
+        public int getNumDegPorts() {
+            return degPorts.size();
         }
 
         /**
-         * @param degPorts
-         *            the degPorts to set
+         * @return the degPorts
          */
-        public void setDegPorts(int degPorts) {
-            this.degPorts = degPorts;
+        public List<Point> getDegPorts() {
+            return degPorts;
         }
 
-        public void increaseDegPorts(int num) {
-            degPorts += num;
+        public void addDegPort(int lid, int portNum) {
+            degPorts.add(new Point(lid, portNum));
         }
 
         /**

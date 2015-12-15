@@ -35,8 +35,22 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.11.2.1  2015/08/12 15:26:55  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.14  2015/08/17 18:53:43  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.13  2015/06/30 22:28:49  jijunwan
+ *  Archive Log:    PR 129215 - Need short chart name to support pin capability
+ *  Archive Log:    - introduced short name to performance items
+ *  Archive Log:
+ *  Archive Log:    Revision 1.12  2015/06/25 20:42:13  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improved PerformanceItem to support port counters
+ *  Archive Log:    - improved PerformanceItem to use generic ISource to describe data source
+ *  Archive Log:    - improved PerformanceItem to use enum DataProviderName to describe data provider name
+ *  Archive Log:    - improved PerformanceItem to support creating a copy of PerformanceItem
+ *  Archive Log:    - improved TrendItem to share scale with other charts
+ *  Archive Log:    - improved SimpleDataProvider to support hsitory data
  *  Archive Log:
  *  Archive Log:    Revision 1.11  2015/02/17 23:22:14  jijunwan
  *  Archive Log:    PR 127106 - Suggest to use same bucket range for Group Err Summary as shown in "opatop" command to plot performance graphs in FV
@@ -87,6 +101,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
 import org.jfree.data.general.Dataset;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
@@ -96,6 +112,8 @@ import org.slf4j.LoggerFactory;
 
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.Util;
+import com.intel.stl.ui.monitor.ChartScaleGroupManager;
+import com.intel.stl.ui.performance.ISource;
 
 /**
  * This controller collects data from a data provider, then applies a data
@@ -112,32 +130,74 @@ import com.intel.stl.ui.common.Util;
  * VFabrics, from which where we will collect data
  * </ol>
  */
-public abstract class TrendItem extends AbstractPerformanceItem {
+public abstract class TrendItem<S extends ISource> extends
+        AbstractPerformanceItem<S> {
     private final static Logger log = LoggerFactory.getLogger(TrendItem.class);
 
     private final static boolean DEBUG = false;
+
+    private ChartScaleGroupManager<TimeSeriesCollection> scaleManager;
 
     protected TimeSeriesCollection dataset;
 
     protected List<TimeSeries> trendSeries;
 
-    public TrendItem(String fullName) {
-        this(fullName, DEFAULT_DATA_POINTS);
+    private final Object copyCritical = new Object();
+
+    public TrendItem(String shortName, String fullName) {
+        this(shortName, fullName, DEFAULT_DATA_POINTS);
     }
 
     /**
      * Description:
      * 
-     * @param name
+     * @param sourceName
      *            Name of this TrendItem, it will be the name displayed on UI
      * @param maxDataPoints
      *            the history length of this trend. It's defined by number of
      *            data points on a Chart
      */
-    public TrendItem(String fullName, int maxDataPoints) {
-        super(STLConstants.K0078_TREND.getValue(), fullName, maxDataPoints);
+    public TrendItem(String shortName, String fullName, int maxDataPoints) {
+        this(STLConstants.K0078_TREND.getValue(), shortName, fullName,
+                maxDataPoints);
+    }
+
+    public TrendItem(String name, String shortName, String fullName,
+            int maxDataPoints) {
+        super(name, shortName, fullName, maxDataPoints);
         initDataProvider();
         initDataset();
+    }
+
+    public TrendItem(TrendItem<S> item) {
+        super(item);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.performance.item.AbstractPerformanceItem#copyDataset
+     * (com.intel.stl.ui.performance.item.AbstractPerformanceItem)
+     */
+    @Override
+    protected void copyDataset(AbstractPerformanceItem<S> item) {
+        TrendItem<S> trendItem = (TrendItem<S>) item;
+        dataset = createTrendDataset();
+        trendSeries = new ArrayList<TimeSeries>();
+        // need to sync with the data update in the item to be copied
+        synchronized (trendItem.copyCritical) {
+            for (TimeSeries ts : trendItem.trendSeries) {
+                try {
+                    trendSeries.add((TimeSeries) ts.clone());
+                } catch (CloneNotSupportedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        for (int i = trendSeries.size() - 1; i >= 0; i--) {
+            dataset.addSeries(trendSeries.get(i));
+        }
     }
 
     /**
@@ -158,15 +218,19 @@ public abstract class TrendItem extends AbstractPerformanceItem {
         return new TimeSeriesCollection();
     }
 
-    protected List<TimeSeries> createTrendSeries(String[] series) {
+    protected List<TimeSeries> createTrendSeries(S[] series) {
         List<TimeSeries> res = new ArrayList<TimeSeries>();
         if (series != null) {
-            for (String name : series) {
-                TimeSeries all = new TimeSeries(name);
+            for (S serie : series) {
+                TimeSeries all = new TimeSeries(serie.sourceName());
                 res.add(all);
             }
         }
         return res;
+    }
+
+    protected TimeSeries getTimeSeries(S name) {
+        return dataset.getSeries(name.sourceName());
     }
 
     /*
@@ -198,7 +262,7 @@ public abstract class TrendItem extends AbstractPerformanceItem {
      * (java.lang.String[])
      */
     @Override
-    public void sourcesRemoved(String[] names) {
+    public void sourcesRemoved(S[] names) {
         if (DEBUG) {
             System.out.println(currentProviderName + ":" + getName() + " "
                     + getFullName() + ": sourcesRemoved "
@@ -220,7 +284,7 @@ public abstract class TrendItem extends AbstractPerformanceItem {
      * (java.lang.String[])
      */
     @Override
-    public void sourcesToAdd(final String[] names) {
+    public void sourcesToAdd(final S[] names) {
         if (DEBUG) {
             System.out.println(currentProviderName + ":" + getName() + " "
                     + getFullName() + ": sourcesToAdd "
@@ -230,16 +294,34 @@ public abstract class TrendItem extends AbstractPerformanceItem {
             @Override
             public void run() {
                 if (names != null && names.length > 0) {
-                    trendSeries = createTrendSeries(names);
-                    for (int i = trendSeries.size() - 1; i >= 0; i--) {
-                        dataset.addSeries(trendSeries.get(i));
+                    synchronized (copyCritical) {
+                        trendSeries = createTrendSeries(names);
+                        for (int i = trendSeries.size() - 1; i >= 0; i--) {
+                            dataset.addSeries(trendSeries.get(i));
+                        }
                     }
                 }
             }
         });
     }
 
-    public void updateTrend(final long value, final Date date, final String name) {
+    /**
+     * @param scaleManager
+     *            the scaleManager to set
+     */
+    public void setScaleManager(
+            ChartScaleGroupManager<TimeSeriesCollection> scaleManager) {
+        this.scaleManager = scaleManager;
+    }
+
+    /**
+     * @return the scaleManager
+     */
+    public ChartScaleGroupManager<TimeSeriesCollection> getScaleManager() {
+        return scaleManager;
+    }
+
+    public void updateTrend(final double value, final Date date, final S name) {
         if (dataset == null) {
             return;
         }
@@ -247,23 +329,35 @@ public abstract class TrendItem extends AbstractPerformanceItem {
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
-                TimeSeries series = dataset.getSeries(name);
-                if (series != null) {
-                    series.addOrUpdate(new Second(date), value);
-                    if (series.getItemCount() > maxDataPoints) {
-                        series.delete(0, 0);
+                // need to sync with the dataset copy
+                synchronized (copyCritical) {
+                    TimeSeries series = getTimeSeries(name);
+                    if (series != null) {
+                        series.addOrUpdate(new Second(date), value);
+                        if (series.getItemCount() > maxDataPoints) {
+                            series.delete(0, 0);
+                        } else {
+                            series.fireSeriesChanged();
+                        }
                     } else {
-                        series.fireSeriesChanged();
+                        log.warn(currentProviderName + ":" + getName() + " "
+                                + getFullName()
+                                + ": Couldn't find TimeSeries '" + name + "'");
+                        // throw new
+                        // RuntimeException("Couldn't find TimeSeries '"
+                        // + name + "'");
                     }
-                } else {
-                    log.warn(currentProviderName + ":" + getName() + " "
-                            + getFullName() + ": Couldn't find TimeSeries '"
-                            + name + "'");
-                    // throw new RuntimeException("Couldn't find TimeSeries '"
-                    // + name + "'");
                 }
             }
         });
+        if (scaleManager != null) {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    scaleManager.updateChartsRange();
+                }
+            });
+        }
     }
 
     /*
@@ -276,12 +370,15 @@ public abstract class TrendItem extends AbstractPerformanceItem {
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
-                if (dataset != null) {
-                    for (int i = 0; i < dataset.getSeriesCount(); i++) {
-                        dataset.getSeries(i).clear();
+                synchronized (copyCritical) {
+                    if (dataset != null) {
+                        for (int i = 0; i < dataset.getSeriesCount(); i++) {
+                            dataset.getSeries(i).clear();
+                        }
                     }
                 }
             }
         });
     }
+
 }

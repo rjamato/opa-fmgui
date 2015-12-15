@@ -35,11 +35,24 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6.2.1  2015/08/12 15:21:42  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.11  2015/09/18 18:13:09  fernande
+ *  Archive Log:    PR 130080 - Support FABRIC_INFO_RECORD. Added support in the FE Adapter for use in fabric health score improvement.
  *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/01/11 20:04:31  jijunwan
- *  Archive Log:    updated to the latest FM as of 01/05/2015
+ *  Archive Log:    Revision 1.10  2015/08/19 22:26:35  jijunwan
+ *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
+ *  Archive Log:    - correction on OM length calculation
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/08/17 18:48:38  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/08/07 14:57:53  jypak
+ *  Archive Log:    PR 129397 -gaps in cableinfo output and handling.
+ *  Archive Log:    Updates on the formats of the cableinfo output and also new enums were defined for different output values.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/06/28 17:51:35  tmrimmer
+ *  Archive Log:    PR 129390 - correct opainfo handling of cableinfo for down port without QSFP
+ *  Archive Log:    PR 129390 - improve cableinfo internals and defines
  *  Archive Log:
  *
  *  Overview: 
@@ -134,7 +147,7 @@ public interface SAConstants {
 
     short STL_SA_ATTR_BUFF_CTRL_TAB_RECORD = 0x008C;
 
-    short STL_SA_ATTR_SWITCH_LIFETIME_RECORD = 0x008D;
+    short STL_SA_ATTR_FABRICINFO_RECORD = 0x008D;
 
     // Available 0x008E-0x008F;
     short STL_SA_ATTR_QUARANTINED_NODE_RECORD = 0x0090; // Previously vendor
@@ -312,14 +325,14 @@ public interface SAConstants {
     /* Reserved 0x0000000000000004 */
     long STL_MFTB_RECORD_COMP_BLOCKNUM = 0x0000000000000008;
 
-    long STL_CIB_COMP_LID = 0x1;
+    long STL_CIR_COMP_LID = 0x1;
 
-    long STL_CIB_COMP_PORT = 0x2;
+    long STL_CIR_COMP_PORT = 0x2;
 
-    long STL_CIB_COMP_LEN = 0x4;
+    long STL_CIR_COMP_LEN = 0x4;
 
     // Reserved 0x8
-    long STL_CIB_COMP_ADDR = 0x10;
+    long STL_CIR_COMP_ADDR = 0x10;
 
     // SC2SLMT
     long STL_SC2SL_RECORD_COMP_LID = 0x0000000000000001;
@@ -360,5 +373,11 @@ public interface SAConstants {
     // ALL_EMB/IbAccess/Common/Inc/stl_sm.h
     int STL_CABLE_INFO_PAGESZ = 128;
 
-    int STL_CIB_START_ADDR = 128;
+    int STL_CIB_STD_START_ADDR = 128;
+
+    // ALL_EMB/IbAccess/Common/Inc/stl_helper.h
+    byte CABLEINFO_OPA_CERTIFIED = (byte) 0xab;
+
+    byte CABLEINFO_CONNECTOR_NOSEP = (byte) 0x23;
+
 }

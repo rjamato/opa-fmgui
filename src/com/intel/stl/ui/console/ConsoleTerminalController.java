@@ -35,11 +35,42 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.20.2.2  2015/08/12 15:27:18  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.30  2015/10/09 13:40:19  rjtierne
+ *  Archive Log:    PR 129027 - Need to handle customized command prompts when detecting commands on console
+ *  Archive Log:    - Implementing new interface IConsole to store the console prompt and keep track of whether
+ *  Archive Log:    a console has been initialized or not
  *  Archive Log:
- *  Archive Log:    Revision 1.20.2.1  2015/05/06 19:41:06  jijunwan
- *  Archive Log:    Stability improvement
+ *  Archive Log:    Revision 1.29  2015/08/17 18:54:27  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.28  2015/07/01 22:00:38  jijunwan
+ *  Archive Log:    PR 129442 - login failed with FileNotFoundException
+ *  Archive Log:    - Changed all JSch creation on frontend to use this utility method
+ *  Archive Log:
+ *  Archive Log:    Revision 1.27  2015/06/25 11:54:56  jypak
+ *  Archive Log:    PR 129073 - Add help action for Admin Page.
+ *  Archive Log:    The help action is added to App, DG, VF,Console page and Console terminal. For now, a help ID and a content are being used as a place holder for each page. Once we get the help contents delivered by technical writer team, the HelpAction will be updated with correct help ID.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.26  2015/06/08 17:47:22  rjtierne
+ *  Archive Log:    PR 129116 - Replace "home made" BlockingQueue with Java's standard BlockingQueue
+ *  Archive Log:    Replaced BlockingQueue with ArrayBlockingQueue available under the Concurrent library
+ *  Archive Log:
+ *  Archive Log:    Revision 1.25  2015/06/08 17:41:55  rjtierne
+ *  Archive Log:    Replaced BlockingQueue with ArrayBlockingQueue available under the Concurrent library
+ *  Archive Log:
+ *  Archive Log:    Revision 1.24  2015/06/02 16:16:27  rjtierne
+ *  Archive Log:    PR 128824 - Interactive Console only can monitor commands input from key typing
+ *  Archive Log:    Passed the HelpController to IntelTerminalPanel
+ *  Archive Log:
+ *  Archive Log:    Revision 1.23  2015/05/27 14:34:06  rjtierne
+ *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
+ *  Archive Log:    Retrieved consoleLogin interface from consoleTerminalView to gain access to
+ *  Archive Log:    login view to show/hide/display errors
+ *  Archive Log:
+ *  Archive Log:    Revision 1.22  2015/05/12 17:40:32  rjtierne
+ *  Archive Log:    PR 128624 - Klocwork and FindBugs fixes for UI
+ *  Archive Log:    No need to check initTty for NULL since it was already dereferenced before
  *  Archive Log:
  *  Archive Log:    Revision 1.21  2015/04/30 21:25:40  rjtierne
  *  Archive Log:    Set command to null when console is terminated to prevent blank
@@ -132,10 +163,13 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.ImageIcon;
 
+import com.intel.stl.api.Utils;
 import com.intel.stl.ui.common.IHelp;
 import com.intel.stl.ui.common.IProgressObserver;
 import com.intel.stl.ui.common.PageWeight;
@@ -143,8 +177,8 @@ import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.console.view.ConsoleTerminalView;
 import com.intel.stl.ui.console.view.IntelTerminalPanel;
 import com.intel.stl.ui.console.view.IntelTerminalView;
-import com.intel.stl.ui.console.view.LoginDialogView;
 import com.intel.stl.ui.main.Context;
+import com.intel.stl.ui.main.HelpAction;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
@@ -156,7 +190,7 @@ import com.wittams.gritty.StyleState;
 import com.wittams.gritty.TerminalWriter;
 import com.wittams.gritty.TtyChannel;
 
-public class ConsoleTerminalController implements IConsoleListener {
+public class ConsoleTerminalController implements IConsoleListener, IConsole {
     // show last 32 history commands, and manipulate the history to omit the
     // command we used here
     private static String HISTORY_CMD =
@@ -168,13 +202,17 @@ public class ConsoleTerminalController implements IConsoleListener {
 
     private Thread processingThread = null;
 
-    private final BlockingQueue messageQueue;
+    // BlockingQueue replaced per PR 129116
+    private final BlockingQueue<String> messageQueue;
 
     private String command = null;
 
     private LoginBean loginBean;
 
     private final ConsoleTerminalView consoleTerminalView;
+
+    @SuppressWarnings("unused")
+    private String helpID;
 
     private String pageName;
 
@@ -184,17 +222,29 @@ public class ConsoleTerminalController implements IConsoleListener {
 
     private final IHelp consoleHelpListener;
 
+    private final ConsoleTerminalController cnslTermCtrl = this;
+
+    private IConsoleLogin consoleLogin;
+
     private ITty tty;
 
     private final int id;
 
     private Session lastSession;
 
+    private boolean initialized;
+
+    private String prompt;
+
+    private boolean promptReady;
+
     // Added this comment to correct PR 126675 comment above
     public ConsoleTerminalController(ConsoleTerminalView view, String pageName,
             String pageDescription, int id, IHelp consoleHelpListener) {
 
         this.consoleTerminalView = view;
+        installHelp();
+        this.consoleLogin = consoleTerminalView.getConsoleLogin();
         this.pageName = pageName;
         this.pageDescription = pageDescription;
         this.id = id;
@@ -202,16 +252,31 @@ public class ConsoleTerminalController implements IConsoleListener {
 
         terminal =
                 new IntelTerminalView(this,
-                        consoleHelpListener.getTopicIdList());
+                        consoleHelpListener.getTopicIdList(), cnslTermCtrl);
         view.setTermPanel(terminal);
 
-        // TODO Need to replace the BlockingQueue class to something else
-        // This code was taken from the Internet
-        messageQueue = new BlockingQueue(QUEUE_LIMIT);
+        messageQueue = new ArrayBlockingQueue<String>(QUEUE_LIMIT);
 
         // Pass this as the listener to the console
         consoleTerminalView.setConsoleListener(this);
     } // ConsoleTerminalController
+
+    protected void installHelp() {
+        String helpId = getHelpID();
+        if (helpId != null) {
+            consoleTerminalView.enableHelp(true);
+            HelpAction helpAction = HelpAction.getInstance();
+            helpAction.getHelpBroker().enableHelpOnButton(
+                    consoleTerminalView.getHelpButton(), helpId,
+                    helpAction.getHelpSet());
+        } else {
+            consoleTerminalView.enableHelp(false);
+        }
+    }
+
+    public String getHelpID() {
+        return HelpAction.getInstance().getAdminConsoleTerminal();
+    }
 
     /*
      * (non-Javadoc)
@@ -488,7 +553,7 @@ public class ConsoleTerminalController implements IConsoleListener {
             public void run() {
                 try {
                     if (command != null) {
-                        messageQueue.enqueue(command);
+                        messageQueue.put(command);
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -517,7 +582,7 @@ public class ConsoleTerminalController implements IConsoleListener {
      * @see com.intel.stl.ui.console.IConsoleListener#onUnlock(java.lang.String)
      */
     @Override
-    public void onUnlock(String pw) throws JSchException {
+    public void onUnlock(char[] pw) throws JSchException {
 
         // If this method was called, then the user presumably entered a
         // password and selected the OK button
@@ -527,8 +592,8 @@ public class ConsoleTerminalController implements IConsoleListener {
 
             if (success) {
                 consoleTerminalView.toggleLock(true);
-                getLoginDialog().killProgress();
-                getLoginDialog().hideDialog();
+                consoleLogin.killProgress();
+                consoleLogin.hideLogin();
             }
         } catch (JSchException e) {
             throw e;
@@ -541,16 +606,21 @@ public class ConsoleTerminalController implements IConsoleListener {
      * @see com.intel.stl.ui.console.IConsoleListener#showLoginDialog()
      */
     @Override
-    public void showLoginDialog() {
+    public void showLoginPanel() {
 
         // Otherwise try to authenticate user login and unlock the
         // terminal
-        // Before unlocking the console, bring up the login dialog
+        // Before unlocking the console, display the login panel
         LoginBean loginBean =
                 new LoginBean(lastSession.getUserName(), lastSession.getHost(),
                         String.valueOf(lastSession.getPort()));
-        getLoginDialog().showDialog(loginBean, false, id);
+        consoleLogin.showLogin(loginBean, false, id);
 
+    }
+
+    @Override
+    public void hideLoginPanel() {
+        consoleLogin.hideLogin();
     }
 
     /*
@@ -559,7 +629,7 @@ public class ConsoleTerminalController implements IConsoleListener {
      * @see com.intel.stl.ui.console.IConsoleListener#authenticateSession()
      */
     @Override
-    public boolean authenticateSession(String pw) throws JSchException {
+    public boolean authenticateSession(char[] pw) throws JSchException {
 
         Session session;
         boolean connected = false;
@@ -568,12 +638,11 @@ public class ConsoleTerminalController implements IConsoleListener {
         String hostName = lastSession.getHost();
         int portNum = lastSession.getPort();
 
-        JSch jsch = new JSch();
-        jsch.setKnownHosts("~/.ssh/known_hosts");
+        JSch jsch = Utils.createJSch();
         session = jsch.getSession(userName, hostName, portNum);
 
         if (session != null) {
-            session.setPassword(pw);
+            session.setPassword(new String(pw));
             session.connect();
             connected = session.isConnected();
         }
@@ -584,11 +653,12 @@ public class ConsoleTerminalController implements IConsoleListener {
     /*
      * (non-Javadoc)
      * 
-     * @see com.intel.stl.ui.console.IConsoleListener#getLoginDialog()
+     * @see com.intel.stl.ui.console.IConsoleListener#getConsoleLogin()
      */
     @Override
-    public LoginDialogView getLoginDialog() {
-        return consoleEventListener.getLoginDialog();
+    public IConsoleLogin getConsoleLogin() {
+        consoleLogin = consoleEventListener.getConsoleLogin();
+        return consoleLogin;
     }
 
     /*
@@ -616,7 +686,8 @@ public class ConsoleTerminalController implements IConsoleListener {
      */
     @Override
     public void onConnectFail(Exception e) {
-        consoleEventListener.onConnectFail(this, e);
+        consoleEventListener.onConnectFail(this,
+                ConsoleDispatchManager.REASON_INIT, e);
     }
 
     /**
@@ -662,7 +733,7 @@ public class ConsoleTerminalController implements IConsoleListener {
 
                         try {
 
-                            command = messageQueue.dequeue();
+                            command = messageQueue.take();
 
                             if (command != null) {
                                 if (command.compareTo("exit") == 0) {
@@ -861,6 +932,7 @@ public class ConsoleTerminalController implements IConsoleListener {
                     emulatorThread = null;
                 }
                 consoleTerminalView.setCmdFieldEnable(true);
+                setInitialized(true);
             }
         }
 
@@ -882,7 +954,7 @@ public class ConsoleTerminalController implements IConsoleListener {
             bean.setPassword(loginBean.getPassword());
 
             // Create a new session
-            JSch jsch = new JSch();
+            JSch jsch = Utils.createJSch();
             Session session =
                     jsch.getSession(bean.getUserName(), bean.getHostName(),
                             Integer.valueOf(bean.getPortNum()));
@@ -899,10 +971,10 @@ public class ConsoleTerminalController implements IConsoleListener {
                 BackBuffer backBuffer = new BackBuffer(80, 24, styleState);
                 ScrollBuffer scrollBuffer = new ScrollBuffer();
 
-                // Create view components to pass to the emulator; not used
+                // Create view components to pass to the emulator
                 IntelTerminalPanel termPanel =
                         new IntelTerminalPanel(backBuffer, scrollBuffer,
-                                styleState);
+                                styleState, consoleHelpListener, cnslTermCtrl);
                 termPanel.setCursor(0, 0);
                 TerminalWriter terminalWriter =
                         new TerminalWriter(termPanel, backBuffer, styleState);
@@ -954,11 +1026,7 @@ public class ConsoleTerminalController implements IConsoleListener {
                                     HISTORY_CMD
                                             + new String(CharacterUtils
                                                     .getCode(KeyEvent.VK_ENTER)));
-
-                    if (initTty != null) {
-                        initTty.write(commandToSend.getBytes());
-                    }
-
+                    initTty.write(commandToSend.getBytes());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -966,5 +1034,65 @@ public class ConsoleTerminalController implements IConsoleListener {
         }
 
     } // class ConsoleInitializer
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.console.IStateController#isInitialized()
+     */
+    @Override
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.console.IStateController#setInitialized(boolean)
+     */
+    @Override
+    public void setInitialized(boolean b) {
+        initialized = b;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.console.IConsole#setPrompt(java.lang.String)
+     */
+    @Override
+    public void setPrompt(String prompt) {
+        this.prompt = prompt;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.console.IConsole#getPrompt()
+     */
+    @Override
+    public String getPrompt() {
+        return prompt;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.console.IConsole#setPromptReady(boolean)
+     */
+    @Override
+    public void setPromptReady(boolean b) {
+        promptReady = b;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.console.IConsole#isPromptReady()
+     */
+    @Override
+    public boolean isPromptReady() {
+        return promptReady;
+    }
 
 } // class ConsoleTerminalController

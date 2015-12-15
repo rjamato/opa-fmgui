@@ -35,8 +35,18 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:26:38  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/10/02 13:33:43  rjtierne
+ *  Archive Log:    PR 130509 - Missing ICON for Display_Message
+ *  Archive Log:    - Changed DISPLAY_MESSAGE to point to the LOG_MENU_ICON since the icon
+ *  Archive Log:    still doesn't appear after the Hudson build.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/10/02 12:51:17  rjtierne
+ *  Archive Log:    PR 130509 - Missing ICON for Display_Message
+ *  Archive Log:    - Added ImageIcon field to simplify locating icons for event rule actions wizard
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/08/17 18:53:46  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2014/05/07 20:03:57  fernande
  *  Archive Log:    Changes to save Subnets and EventRules to the database
@@ -53,15 +63,20 @@ package com.intel.stl.ui.model;
 import static com.intel.stl.ui.common.STLConstants.K0682_DISPLAY_MESSAGE;
 import static com.intel.stl.ui.common.STLConstants.K0683_EMAIL_MESSAGE;
 
+import javax.swing.ImageIcon;
+
 import com.intel.stl.api.configuration.EventRuleAction;
+import com.intel.stl.ui.common.UIImages;
 
 public enum EventRuleActionViz {
 
-    SEND_EMAIL(EventRuleAction.SEND_EMAIL, K0683_EMAIL_MESSAGE.getValue()),
+    SEND_EMAIL(EventRuleAction.SEND_EMAIL, K0683_EMAIL_MESSAGE.getValue(),
+            UIImages.EMAIL_ICON.getImageIcon()),
     DISPLAY_MESSAGE(EventRuleAction.DISPLAY_MESSAGE, K0682_DISPLAY_MESSAGE
-            .getValue());
+            .getValue(), UIImages.LOG_MENU_ICON.getImageIcon());
 
-    public final static String[] names = new String[EventRuleActionViz.values().length];
+    public final static String[] names =
+            new String[EventRuleActionViz.values().length];
     static {
         for (int i = 0; i < names.length; i++) {
             names[i] = EventRuleActionViz.values()[i].name;
@@ -72,9 +87,13 @@ public enum EventRuleActionViz {
 
     private final String name;
 
-    private EventRuleActionViz(EventRuleAction action, String name) {
+    private final ImageIcon icon;
+
+    private EventRuleActionViz(EventRuleAction action, String name,
+            ImageIcon icon) {
         this.action = action;
         this.name = name;
+        this.icon = icon;
     }
 
     public EventRuleAction getEventRuleAction() {
@@ -83,6 +102,10 @@ public enum EventRuleActionViz {
 
     public String getName() {
         return name;
+    }
+
+    public ImageIcon getImageIcon() {
+        return icon;
     }
 
     public static EventRuleActionViz getEventRuleActionVizFor(

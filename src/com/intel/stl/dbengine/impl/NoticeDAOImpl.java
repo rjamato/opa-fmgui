@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.12.2.1  2015/08/12 15:22:29  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.14  2015/09/26 06:18:27  jijunwan
+ *  Archive Log:    130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
+ *  Archive Log:    - fix null pointer issue
+ *  Archive Log:
+ *  Archive Log:    Revision 1.13  2015/08/17 18:49:34  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.12  2015/02/23 22:34:48  jijunwan
  *  Archive Log:    improved to create revised link for GID_NOW_IN_SERVICE notice
@@ -555,13 +560,19 @@ public class NoticeDAOImpl extends BaseDAO implements NoticeDAO {
             PortState portState = portMap.get(id.getSourcePort());
             if (portState == PortState.ACTIVE) {
                 topoLink.setActive(true);
-                revTopoLink.setActive(true);
+                if (revTopoLink != null) {
+                    revTopoLink.setActive(true);
+                }
             } else {
                 topoLink.setActive(false);
-                revTopoLink.setActive(false);
+                if (revTopoLink != null) {
+                    revTopoLink.setActive(false);
+                }
             }
             linkSet.add(topoLink);
-            linkSet.add(revTopoLink);
+            if (revTopoLink != null) {
+                linkSet.add(revTopoLink);
+            }
         }
     }
 

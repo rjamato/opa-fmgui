@@ -35,8 +35,18 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.15.2.1  2015/08/12 15:27:29  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.18  2015/08/17 18:54:42  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.17  2015/08/11 20:35:11  jijunwan
+ *  Archive Log:    PR 129935 - Need proper default value for user preference
+ *  Archive Log:    - set default notice severity for each event type
+ *  Archive Log:    - use default notice severity from event type as the init value for event table
+ *  Archive Log:
+ *  Archive Log:    Revision 1.16  2015/07/17 20:48:23  jijunwan
+ *  Archive Log:    PR 129594 - Apply new input verification on setup wizard
+ *  Archive Log:    - introduced isEditValid to allow us check whether we have valid edit
  *  Archive Log:
  *  Archive Log:    Revision 1.15  2015/04/21 21:17:39  rjtierne
  *  Archive Log:    - In onReset(), initialized the current subnet in MultinetWizardController so the
@@ -102,7 +112,6 @@ import com.intel.stl.api.configuration.EventRule;
 import com.intel.stl.api.configuration.EventRuleAction;
 import com.intel.stl.api.configuration.EventType;
 import com.intel.stl.api.configuration.UserSettings;
-import com.intel.stl.api.notice.NoticeSeverity;
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.model.EventTypeViz;
 import com.intel.stl.ui.wizards.impl.IMultinetWizardListener;
@@ -238,7 +247,7 @@ public class EventWizardController implements IMultinetWizardTask,
             EventRule rule = new EventRule();
             rule.setEventName(eventType.name());
             rule.setEventType(eventType);
-            rule.setEventSeverity(NoticeSeverity.INFO);
+            rule.setEventSeverity(eventType.getDefaultSeverity());
 
             // Initially the action list is empty
             List<EventRuleAction> eventActionList =
@@ -585,5 +594,15 @@ public class EventWizardController implements IMultinetWizardTask,
     @Override
     public void setConnectable(boolean connectable) {
         this.connectable = connectable;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.wizards.impl.IWizardTask#isEditValid()
+     */
+    @Override
+    public boolean isEditValid() {
+        return view.isEditValid();
     }
 }

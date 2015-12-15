@@ -35,8 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.12.2.1  2015/08/12 15:26:50  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.15  2015/10/07 00:19:04  fernande
+ *  Archive Log:    PR130711 - Rename of Partition Enforcement table. Undoing Klocwork fix since unit test is failing
+ *  Archive Log:
+ *  Archive Log:    Revision 1.14  2015/10/06 23:55:41  fernande
+ *  Archive Log:    PR130711 - Rename of Partition Enforcement table. Fixed Klocwork issue
+ *  Archive Log:
+ *  Archive Log:    Revision 1.13  2015/08/17 18:54:00  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.12  2015/02/05 19:10:50  jijunwan
  *  Archive Log:    fixed NPE issues found by klocwork
@@ -492,7 +499,9 @@ public class TopGraph extends mxGraph {
         }
 
         mxGraphModel model = (mxGraphModel) getModel();
-        model.getCells().clear();
+        if (model != null) {
+            model.getCells().clear();
+        }
     }
 
     public TopGraph getGraphCopy(int modelId, ICancelIndicator indicator) {
@@ -734,12 +743,11 @@ public class TopGraph extends mxGraph {
     }
 
     /**
-     * Special selection model that only allows the following selections:
-     * 1) single vertex ==> Node selection
-     * 2) multiple vertices ==> Route selection
-     * 3) multiple edges ==> Link selection
-     * It forbids combination of vertices and links. When vertices and edges
-     * appear together, all edges are ignored.
+     * Special selection model that only allows the following selections: 1)
+     * single vertex ==> Node selection 2) multiple vertices ==> Route selection
+     * 3) multiple edges ==> Link selection It forbids combination of vertices
+     * and links. When vertices and edges appear together, all edges are
+     * ignored.
      */
     class TopSelectionModel extends mxGraphSelectionModel {
         private boolean isVertexSelection;

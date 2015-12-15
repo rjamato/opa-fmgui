@@ -60,8 +60,9 @@ import com.intel.stl.ui.main.view.PerfErrorsCardView;
  * /stl/ui/monitor/view/PerformanceErrorsSectionView.java,v $
  * 
  * Archive Log: $Log$
- * Archive Log: Revision 1.7.2.1  2015/08/12 15:27:16  jijunwan
- * Archive Log: PR 129955 - Need to change file header's copyright text to BSD license text
+ * Archive Log: Revision 1.8  2015/08/17 18:54:24  jijunwan
+ * Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ * Archive Log: - changed frontend files' headers
  * Archive Log:
  * Archive Log: Revision 1.7  2015/04/01 21:24:44  jijunwan
  * Archive Log: adjustment on layout

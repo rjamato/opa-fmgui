@@ -24,13 +24,44 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: IConfigurationApi.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.38  2015/08/17 18:48:36  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - change backend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.37  2015/08/14 19:46:33  fisherma
+ *  Archive Log: Allow user to disable email notifications by leaving the SMTP server name field empty.
+ *  Archive Log:
+ *  Archive Log: Revision 1.36  2015/08/10 17:04:40  robertja
+ *  Archive Log: PR128974 - Email notification functionality.
+ *  Archive Log:
+ *  Archive Log: Revision 1.35  2015/06/10 19:36:52  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: jijunwan
+ * 
+ ******************************************************************************/
 package com.intel.stl.api.configuration;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 import com.intel.stl.api.ICertsAssistant;
+import com.intel.stl.api.notice.IEmailEventListener;
+import com.intel.stl.api.notice.NoticeBean;
 import com.intel.stl.api.performance.PMConfigBean;
 import com.intel.stl.api.subnet.SubnetConnectionException;
 import com.intel.stl.api.subnet.SubnetDataNotFoundException;
@@ -48,8 +79,6 @@ public interface IConfigurationApi {
 
     AppInfo getAppInfo();
 
-    void saveAppProperties(Map<String, Properties> appProperties);
-
     List<SubnetDescription> getSubnets();
 
     SubnetDescription defineSubnet(SubnetDescription subnet);
@@ -64,9 +93,9 @@ public interface IConfigurationApi {
 
     SubnetDescription getSubnet(long subnetId);
 
-    List<AppenderConfig> getLoggingConfig() throws ConfigurationException;
+    LoggingConfiguration getLoggingConfig() throws ConfigurationException;
 
-    void saveLoggingConfiguration(List<AppenderConfig> config)
+    void saveLoggingConfiguration(LoggingConfiguration loggingConfig)
             throws ConfigurationException;
 
     List<EventRule> getEventRules() throws EventNotFoundException;
@@ -95,42 +124,74 @@ public interface IConfigurationApi {
 
     /**
      * 
-     * <i>Description:</i> register a mail properties, so we can use it to send
-     * messages
+     * <i>Description:</i> Save application-level settings to the database.
      * 
-     * @param properties
+     * @param appInfo
      */
-    public void registerMailProperties(MailProperties properties);
+    void saveAppInfo(AppInfo appInfo);
 
     /**
      * 
-     * <i>Description:</i> remove a mail properties if we do not need it anymore
+     * <i>Description:</i> Change SMTP server properties. This will cause the
+     * mail sender to create a new mail transport.
      * 
      * @param properties
      */
-    public void deregisterMailProperties(MailProperties properties);
+    void updateMailProperties(MailProperties properties);
 
     /**
      * 
-     * <i>Description:</i> change mail properties to new value. this will impact
-     * the mail sender to create a new transport
+     * <i>Description:</i> Get SMTP server properties.
      * 
-     * @param oldProperties
-     * @param newProperties
+     * @return MailProperties
      */
-    public void updateMailProperties(MailProperties oldProperties,
-            MailProperties newProperties);
+    MailProperties getMailProperties();
 
     /**
      * 
-     * <i>Description:</i> schedule sending a email with the specified mail
-     * properties. cache strategy may apply to share transport among messages
-     * with the same mail properties (see {@link MailProperties#equals}).
+     * <i>Description:</i> Send a mail message with the specified message
+     * subject and body to the list of recipients.
      * 
-     * @param properties
      * @param subject
-     * @param message
+     * @param body
+     * @param recipients
      */
-    public void submitMessage(MailProperties properties, String subject,
-            String body);
+    void submitMessage(String subject, String body, List<String> recipients);
+
+    /**
+     * 
+     * <i>Description:</i> Send a test mail message with the specified message
+     * subject and body to the recipient. A temporary mail transport is created
+     * with the parameters specified in properties.
+     * 
+     * @param properties
+     * @param recipient
+     * @param messageSubject
+     * @param meaasgeBody
+     */
+    void sendTestMail(MailProperties properties, String recipient,
+            String messageSubject, String messageBody);
+
+    /**
+     * 
+     * <i>Description:</i> Register listener for email events.
+     * 
+     * @param listener
+     */
+    public void addEmailEventListener(IEmailEventListener<NoticeBean> listener);
+
+    /**
+     * 
+     * <i>Description:</i> De-register listener for email events.
+     * 
+     * @param listener
+     */
+    public void removeEmailListener(IEmailEventListener<NoticeBean> listener);
+
+    /**
+     * 
+     * <i>Description:</i> Check if SMTP settings are present and valid
+     * 
+     */
+    public boolean isSmtpSettingsValid();
 }

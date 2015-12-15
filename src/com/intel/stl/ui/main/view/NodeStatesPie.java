@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6.2.1  2015/08/12 15:26:53  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.8  2015/08/17 18:54:02  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/06/25 20:24:57  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on fabric viewer and simple 'static' cards
  *  Archive Log:
  *  Archive Log:    Revision 1.6  2014/06/26 20:29:32  jijunwan
  *  Archive Log:    clear UI when we switch context
@@ -93,12 +98,16 @@ public class NodeStatesPie extends AbstractNodeStatesView {
     private static final long serialVersionUID = -7808133310065940957L;
 
     private ChartPanel chartPanel;
+
     private JPanel legendPanel;
 
     private JLabel[] stateLabels;
 
-    public NodeStatesPie() {
+    private final boolean concise;
+
+    public NodeStatesPie(boolean concise) {
         super();
+        this.concise = concise;
         initcomponent();
     }
 
@@ -108,29 +117,38 @@ public class NodeStatesPie extends AbstractNodeStatesView {
      */
     protected void initcomponent() {
         setLayout(new GridBagLayout());
-        
+
         chartPanel = new ChartPanel(null);
         chartPanel.setPreferredSize(new Dimension(120, 90));
-        
+
         GridBagConstraints gc = new GridBagConstraints();
+        if (concise) {
+            gc.gridwidth = GridBagConstraints.REMAINDER;
+        }
         add(chartPanel, gc);
 
-        gc.fill = GridBagConstraints.BOTH;
-        gc.weightx = 1;
-        gc.gridwidth = GridBagConstraints.REMAINDER;
-        legendPanel = new JPanel();
-        legendPanel.setOpaque(false);
-        legendPanel.setLayout(new GridBagLayout());
-        add(legendPanel, gc);
-    }
-    
-    public void setDataset(PieDataset dataset, Color[] colors) {
-        JFreeChart chart = ComponentFactory.createPlainPieChart(dataset, colors);
-        chartPanel.setChart(chart);
-        fillLengendPanel(legendPanel, dataset, colors);
+        if (!concise) {
+            gc.fill = GridBagConstraints.BOTH;
+            gc.weightx = 1;
+            gc.gridwidth = GridBagConstraints.REMAINDER;
+            legendPanel = new JPanel();
+            legendPanel.setOpaque(false);
+            legendPanel.setLayout(new GridBagLayout());
+            add(legendPanel, gc);
+        }
     }
 
-    protected void fillLengendPanel(JPanel panel, PieDataset dataset, Color[] colors) {
+    public void setDataset(PieDataset dataset, Color[] colors) {
+        JFreeChart chart =
+                ComponentFactory.createPlainPieChart(dataset, colors);
+        chartPanel.setChart(chart);
+        if (!concise) {
+            fillLengendPanel(legendPanel, dataset, colors);
+        }
+    }
+
+    protected void fillLengendPanel(JPanel panel, PieDataset dataset,
+            Color[] colors) {
         panel.removeAll();
         GridBagConstraints gc = new GridBagConstraints();
 
@@ -142,8 +160,10 @@ public class NodeStatesPie extends AbstractNodeStatesView {
             gc.weightx = 0;
             gc.gridwidth = 1;
 
-            JLabel label = new JLabel(dataset.getKey(i).toString(), Util.generateImageIcon(
-                    colors[i], 8, new Insets(1, 1, 1, 1)), JLabel.LEFT);
+            JLabel label =
+                    new JLabel(dataset.getKey(i).toString(),
+                            Util.generateImageIcon(colors[i], 8, new Insets(1,
+                                    1, 1, 1)), JLabel.LEFT);
             label.setFont(UIConstants.H5_FONT);
             label.setForeground(UIConstants.INTEL_DARK_GRAY);
             panel.add(label, gc);
@@ -156,8 +176,13 @@ public class NodeStatesPie extends AbstractNodeStatesView {
             panel.add(stateLabels[i], gc);
         }
     }
-    
+
+    @Override
     public void setStates(double[] values, String[] labels, String[] tooltips) {
+        if (concise) {
+            return;
+        }
+
         if (values.length != stateLabels.length) {
             throw new IllegalArgumentException(
                     "Incorrect array size. Expected " + stateLabels.length
@@ -180,11 +205,14 @@ public class NodeStatesPie extends AbstractNodeStatesView {
             stateLabels[i].setToolTipText(tooltips[i]);
         }
     }
-    
+
     public void clear() {
-        for (int i = 0; i < stateLabels.length; i++) {
-            stateLabels[i].setText(STLConstants.K0039_NOT_AVAILABLE.getValue());
-            stateLabels[i].setToolTipText(null);
+        if (stateLabels != null) {
+            for (int i = 0; i < stateLabels.length; i++) {
+                stateLabels[i].setText(STLConstants.K0039_NOT_AVAILABLE
+                        .getValue());
+                stateLabels[i].setToolTipText(null);
+            }
         }
     }
 }

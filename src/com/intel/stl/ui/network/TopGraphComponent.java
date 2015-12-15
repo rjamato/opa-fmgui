@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.17.2.1  2015/08/12 15:26:50  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.19  2015/09/04 04:38:54  jijunwan
+ *  Archive Log:    PR 130296 - In the Topology view, there is no indication that the links are clickable
+ *  Archive Log:    - changed to show FOLD_CURSOR when mouse over a node or link
+ *  Archive Log:
+ *  Archive Log:    Revision 1.18  2015/08/17 18:54:00  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.17  2015/04/28 14:00:34  jijunwan
  *  Archive Log:    1) improved topology viz to use TopGraph copy for outline display. This will avoid graph and outline views share internal graph view that may cause sync issues.
@@ -127,7 +132,6 @@ import org.slf4j.LoggerFactory;
 
 import com.intel.stl.ui.common.IBackgroundService;
 import com.intel.stl.ui.common.UIConstants;
-import com.intel.stl.ui.model.GraphNode;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxIGraphModel;
 import com.mxgraph.swing.mxGraphComponent;
@@ -778,27 +782,18 @@ public class TopGraphComponent extends mxGraphComponent {
                             .getCellAt(e.getX(), e.getY(), false);
 
             updateHighlight(cellFindingId.get(), cell);
-            if (cell != null && cell.isVertex()) {
-                GraphNode node = (GraphNode) cell.getValue();
-                if (node.hasEndNodes()) {
-                    return FOLD_CURSOR;
-                }
+            if (cell == null) {
+                return null;
             }
 
-            if (isMoveEnabled()) {
-                if (cell != null) {
-                    if (graphComponent.isFoldingEnabled()
-                            && graphComponent.hitFoldingIcon(cell, e.getX(),
-                                    e.getY())) {
-                        return FOLD_CURSOR;
-                    } else if (graphComponent.getGraph().isCellMovable(cell)
-                            && isDragTrigger(e)) {
-                        return MOVE_CURSOR;
-                    }
-                }
+            if (isMoveEnabled()
+                    && graphComponent.getGraph().isCellMovable(cell)
+                    && isDragTrigger(e)) {
+                return MOVE_CURSOR;
+            } else {
+                return FOLD_CURSOR;
             }
 
-            return null;
         }
 
         protected void updateHighlight(final int id, final mxCell cell) {

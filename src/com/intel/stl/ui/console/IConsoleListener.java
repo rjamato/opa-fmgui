@@ -35,8 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.11.2.1  2015/08/12 15:27:18  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.13  2015/08/17 18:54:27  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.12  2015/05/27 14:34:38  rjtierne
+ *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
+ *  Archive Log:    Stemming from a security problem with JPasswordField(), all password related
+ *  Archive Log:    Strings have been changed to char[]
  *  Archive Log:
  *  Archive Log:    Revision 1.11  2015/04/10 14:08:39  rjtierne
  *  Archive Log:    PR 126675 - User cannot execute commands on duplicate Console numbers beyond 10 consoles.
@@ -88,7 +94,6 @@ import java.awt.Point;
 import com.intel.stl.ui.common.IHelp;
 import com.intel.stl.ui.common.IPageController;
 import com.intel.stl.ui.console.view.IntelTerminalView;
-import com.intel.stl.ui.console.view.LoginDialogView;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
@@ -112,7 +117,7 @@ public interface IConsoleListener extends IPageController {
 
     public void onLock(boolean isSelected);
 
-    public void onUnlock(String pw) throws JSchException;
+    public void onUnlock(char[] pw) throws JSchException;
 
     public void onConnect(boolean sessionRunning);
 
@@ -126,13 +131,15 @@ public interface IConsoleListener extends IPageController {
 
     public Session getSession();
 
-    public boolean authenticateSession(String pw) throws JSchException;
+    public boolean authenticateSession(char[] pw) throws JSchException;
 
-    public LoginDialogView getLoginDialog();
+    public IConsoleLogin getConsoleLogin();
 
     public IntelTerminalView getTerminal();
 
-    public void showLoginDialog();
+    public void showLoginPanel();
+
+    public void hideLoginPanel();
 
     public void closeSession();
 

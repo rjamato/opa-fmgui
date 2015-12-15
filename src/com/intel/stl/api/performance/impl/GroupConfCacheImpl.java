@@ -35,11 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.2  2015/08/12 15:22:11  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/09/20 23:40:02  jijunwan
+ *  Archive Log:    PR 130523 - Performance Event window reports negative when nodes are rebooted
+ *  Archive Log:    - improved cache to handle new node
  *  Archive Log:
- *  Archive Log:    Revision 1.1.2.1  2015/05/06 19:22:33  jijunwan
- *  Archive Log:    fixed ref issue found by FindBug
+ *  Archive Log:    Revision 1.3  2015/08/17 18:49:03  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/05/01 21:39:26  jijunwan
  *  Archive Log:    fixed ref issue found by FindBug
@@ -184,6 +186,7 @@ public class GroupConfCacheImpl extends MemoryCache<Void> implements
 
     protected void refreshGroupConf(int lid) {
         synchronized (groupConfigs) {
+            boolean found = false;
             for (String group : groupConfigs.keySet()) {
                 SoftReference<List<GroupConfigRspBean>> ref =
                         groupConfigs.get(group);
@@ -191,6 +194,7 @@ public class GroupConfCacheImpl extends MemoryCache<Void> implements
                 if (confs != null) {
                     for (GroupConfigRspBean conf : confs) {
                         if (conf.getPort().getNodeLid() == lid) {
+                            found = true;
                             ref.clear();
                             log.info("Cleared cache for Device Group '" + group
                                     + "'");
@@ -199,17 +203,22 @@ public class GroupConfCacheImpl extends MemoryCache<Void> implements
                     }
                 }
             }
+            if (!found) {
+                groupConfigs.clear();
+            }
         }
     }
 
     protected void refreshVfConf(int lid) {
         synchronized (vfConfigs) {
+            boolean found = false;
             for (String group : vfConfigs.keySet()) {
                 SoftReference<List<VFConfigRspBean>> ref = vfConfigs.get(group);
                 List<VFConfigRspBean> confs = ref.get();
                 if (confs != null) {
                     for (VFConfigRspBean conf : confs) {
                         if (conf.getPort().getNodeLid() == lid) {
+                            found = true;
                             ref.clear();
                             log.info("Cleared cache for Virtual Fabric '"
                                     + group + "'");
@@ -217,6 +226,9 @@ public class GroupConfCacheImpl extends MemoryCache<Void> implements
                         }
                     }
                 }
+            }
+            if (!found) {
+                vfConfigs.clear();
             }
         }
     }

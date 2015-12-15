@@ -35,8 +35,16 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6.2.1  2015/08/12 15:22:12  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.9  2015/08/17 18:49:03  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/07/02 20:23:21  fernande
+ *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Moving Blobs to the database; arrays are now being saved to the database as collection tables.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/06/25 21:04:03  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improvement on data randomization that ensure an attribute at the same time point get the same data where
  *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/04/09 03:29:24  jijunwan
  *  Archive Log:    updated to match FM 390
@@ -69,6 +77,7 @@
 package com.intel.stl.api.performance.impl;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -144,10 +153,28 @@ public class Randomizer implements IRandomable {
         isActive = b;
     }
 
+    private final List<ImageInfoBean> recentImageInfos =
+            new ArrayList<ImageInfoBean>(4);
+
     public void randomImageInfo(ImageInfoBean imageInfo, int nodes) {
         if (!isActive) {
             return;
         }
+
+        int index = recentImageInfos.indexOf(imageInfo);
+        if (index >= 0) {
+            ImageInfoBean last = recentImageInfos.get(index);
+            imageInfo.setNumFailedNodes(last.getNumFailedNodes());
+            imageInfo.setNumSkippedNodes(last.getNumSkippedNodes());
+            imageInfo.setNumFailedPorts(last.getNumFailedPorts());
+            imageInfo.setNumSkippedPorts(last.getNumSkippedPorts());
+            return;
+        }
+
+        if (recentImageInfos.size() >= 4) {
+            recentImageInfos.remove(0);
+        }
+        recentImageInfos.add(imageInfo);
 
         imageInfo.setNumFailedNodes(random.nextInt(nodes) / 10);
         nodes -= imageInfo.getNumFailedNodes();
@@ -160,10 +187,26 @@ public class Randomizer implements IRandomable {
 
     }
 
+    private final List<GroupInfoBean> recentGroupInfos =
+            new ArrayList<GroupInfoBean>(4);
+
     public void randomGroupInfo(GroupInfoBean info) {
         if (!isActive) {
             return;
         }
+
+        int index = recentGroupInfos.indexOf(info);
+        if (index >= 0) {
+            GroupInfoBean last = recentGroupInfos.get(index);
+            info.setInternalUtilStats(last.getInternalUtilStats());
+            info.setInternalErrors(last.getInternalErrors());
+            return;
+        }
+
+        if (recentGroupInfos.size() >= 4) {
+            recentGroupInfos.remove(0);
+        }
+        recentGroupInfos.add(info);
 
         boolean isAll = info.getGroupName().equals("All");
 
@@ -184,7 +227,7 @@ public class Randomizer implements IRandomable {
         internalUtil.setTotalMBps(bandwidth);
         internalUtil.setTotalKPps(packetRate);
 
-        randomHistogram(internalUtil.getBwBuckets());
+        randomHistogram(internalUtil.getBwBucketsAsArray());
 
         ErrStatBean errStat = info.getInternalErrors();
         if (isAll) {
@@ -252,10 +295,25 @@ public class Randomizer implements IRandomable {
         }
     }
 
+    private final List<VFInfoBean> recentVFInfos = new ArrayList<VFInfoBean>(4);
+
     public void randomVFInfo(VFInfoBean info) {
         if (!isActive) {
             return;
         }
+
+        int index = recentVFInfos.indexOf(info);
+        if (index >= 0) {
+            VFInfoBean last = recentVFInfos.get(index);
+            info.setInternalUtilStats(last.getInternalUtilStats());
+            info.setInternalErrors(last.getInternalErrors());
+            return;
+        }
+
+        if (recentVFInfos.size() >= 4) {
+            recentVFInfos.remove(0);
+        }
+        recentVFInfos.add(info);
 
         UtilStatsBean internalUtil = info.getInternalUtilStats();
         long bandwidth = internalUtil.getTotalMBps() + random.nextInt(1000);
@@ -263,7 +321,7 @@ public class Randomizer implements IRandomable {
         internalUtil.setTotalMBps(bandwidth);
         internalUtil.setTotalKPps(packetRate);
 
-        randomHistogram(internalUtil.getBwBuckets());
+        randomHistogram(internalUtil.getBwBucketsAsArray());
 
         ErrStatBean errStat = info.getInternalErrors();
         long value =

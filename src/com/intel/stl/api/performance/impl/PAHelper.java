@@ -35,8 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.13.2.1  2015/08/12 15:22:11  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.16  2015/08/17 18:49:03  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.15  2015/05/29 20:34:42  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Second wave of changes: the application can be switched between the old adapter and the new; moved out several initialization pieces out of objects constructor to allow subnet initialization with a UI in place; improved generics definitions for FV commands.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.14  2015/05/26 15:34:45  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
  *  Archive Log:
  *  Archive Log:    Revision 1.13  2015/04/09 03:29:24  jijunwan
  *  Archive Log:    updated to match FM 390
@@ -83,8 +90,7 @@ import com.intel.stl.api.performance.VFInfoBean;
 import com.intel.stl.api.performance.VFListBean;
 import com.intel.stl.api.performance.VFPortCountersBean;
 import com.intel.stl.api.subnet.Selection;
-import com.intel.stl.api.subnet.SubnetDescription;
-import com.intel.stl.fecdriver.IConnection;
+import com.intel.stl.fecdriver.IStatement;
 import com.intel.stl.fecdriver.impl.FEHelper;
 import com.intel.stl.fecdriver.messages.command.InputFocus;
 import com.intel.stl.fecdriver.messages.command.InputGroupName;
@@ -111,12 +117,8 @@ import com.intel.stl.fecdriver.messages.command.pa.FVCmdGetVFPortCounters;
  * 
  */
 public class PAHelper extends FEHelper {
-    public PAHelper(IConnection conn) {
-        super(conn);
-    }
-
-    public SubnetDescription getSubnetDescription() {
-        return this.conn.getConnectionDescription();
+    public PAHelper(IStatement statement) {
+        super(statement);
     }
 
     public ImageInfoBean getImageInfo(ImageIdBean imageId) throws Exception {
@@ -128,36 +130,31 @@ public class PAHelper extends FEHelper {
         FVCmdGetImageInfo cmd =
                 new FVCmdGetImageInfo(
                         new InputImageId(imageNumber, imageOffset));
-        ImageInfoBean res = getSingleResponse(cmd);
-        return res;
+        return statement.execute(cmd);
     }
 
     public List<GroupListBean> getGroupList() throws Exception {
         FVCmdGetGroupList cmd = new FVCmdGetGroupList();
-        List<GroupListBean> res = getResponses(cmd);
-        return res;
+        return statement.execute(cmd);
     }
 
     public GroupInfoBean getGroupInfo(String name) throws Exception {
         FVCmdGetGroupInfo cmd = new FVCmdGetGroupInfo(new InputGroupName(name));
-        GroupInfoBean res = getSingleResponse(cmd);
-        return res;
+        return statement.execute(cmd);
     }
 
     public GroupInfoBean getGroupInfoHistory(String name, long imageID,
             int offset) throws Exception {
         FVCmdGetGroupInfo cmd =
                 new FVCmdGetGroupInfo(new InputGroupName(name, imageID, offset));
-        GroupInfoBean res = getSingleResponse(cmd);
-        return res;
+        return statement.execute(cmd);
     }
 
     public List<GroupConfigRspBean> getGroupConfig(String name)
             throws Exception {
         FVCmdGetGroupConfig cmd =
                 new FVCmdGetGroupConfig(new InputGroupName(name));
-        List<GroupConfigRspBean> res = getResponses(cmd);
-        return res;
+        return statement.execute(cmd);
     }
 
     public List<FocusPortsRspBean> getFocusPort(String group,
@@ -165,8 +162,7 @@ public class PAHelper extends FEHelper {
         InputFocus input = new InputFocus(group, seclection);
         input.setRange(range);
         FVCmdGetFocusPort cmd = new FVCmdGetFocusPort(input);
-        List<FocusPortsRspBean> res = getResponses(cmd);
-        return res;
+        return statement.execute(cmd);
     }
 
     public PortCountersBean getPortCounter(int lid, short portNum)
@@ -174,8 +170,7 @@ public class PAHelper extends FEHelper {
         FVCmdGetPortCounters cmd =
                 new FVCmdGetPortCounters(new InputLidPortNumber(lid,
                         (byte) portNum));
-        PortCountersBean res = getSingleResponse(cmd);
-        return res;
+        return statement.execute(cmd);
     }
 
     public PortCountersBean getPortCounterHistory(int lid, short portNum,
@@ -183,14 +178,12 @@ public class PAHelper extends FEHelper {
         FVCmdGetPortCounters cmd =
                 new FVCmdGetPortCounters(new InputLidPortNumber(lid,
                         (byte) portNum, imageID, imageOffset));
-        PortCountersBean res = getSingleResponse(cmd);
-        return res;
+        return statement.execute(cmd);
     }
 
     public List<VFListBean> getVFList() throws Exception {
         FVCmdGetVFList cmd = new FVCmdGetVFList();
-        List<VFListBean> res = getResponses(cmd);
-        return res;
+        return statement.execute(cmd);
     }
 
     /**
@@ -201,16 +194,14 @@ public class PAHelper extends FEHelper {
      */
     public VFInfoBean getVFInfo(String name) throws Exception {
         FVCmdGetVFInfo cmd = new FVCmdGetVFInfo(new InputVFName(name));
-        VFInfoBean res = getSingleResponse(cmd);
-        return res;
+        return statement.execute(cmd);
     }
 
     public VFInfoBean getVFInfoHistory(String name, long imageID,
             int imageOffset) throws Exception {
         FVCmdGetVFInfo cmd =
                 new FVCmdGetVFInfo(new InputVFName(name, imageID, imageOffset));
-        VFInfoBean res = getSingleResponse(cmd);
-        return res;
+        return statement.execute(cmd);
     }
 
     /**
@@ -221,8 +212,7 @@ public class PAHelper extends FEHelper {
      */
     public List<VFConfigRspBean> getVFConfig(String name) throws Exception {
         FVCmdGetVFConfig cmd = new FVCmdGetVFConfig(new InputVFName(name));
-        List<VFConfigRspBean> res = getResponses(cmd);
-        return res;
+        return statement.execute(cmd);
     }
 
     /**
@@ -238,8 +228,7 @@ public class PAHelper extends FEHelper {
         InputVFNameFocus input = new InputVFNameFocus(vfName, selection);
         input.setRange(n);
         FVCmdGetVFFocusPort cmd = new FVCmdGetVFFocusPort(input);
-        List<VFFocusPortsRspBean> res = getResponses(cmd);
-        return res;
+        return statement.execute(cmd);
     }
 
     /**
@@ -254,8 +243,7 @@ public class PAHelper extends FEHelper {
         FVCmdGetVFPortCounters cmd =
                 new FVCmdGetVFPortCounters(new InputVFNamePort(vfName, lid,
                         (byte) portNum));
-        VFPortCountersBean res = getSingleResponse(cmd);
-        return res;
+        return statement.execute(cmd);
     }
 
     public VFPortCountersBean getVFPortCounterHistory(String vfName, int lid,
@@ -263,12 +251,11 @@ public class PAHelper extends FEHelper {
         FVCmdGetVFPortCounters cmd =
                 new FVCmdGetVFPortCounters(new InputVFNamePort(vfName, lid,
                         (byte) portNum, imageID, imageOffset));
-        VFPortCountersBean res = getSingleResponse(cmd);
-        return res;
+        return statement.execute(cmd);
     }
 
     public PMConfigBean getPMConfig() throws Exception {
         FVCmdGetPMConfig cmd = new FVCmdGetPMConfig();
-        return getSingleResponse(cmd);
+        return statement.execute(cmd);
     }
 }

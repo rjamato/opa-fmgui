@@ -35,8 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:27:06  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/08/17 18:54:15  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/08/06 17:26:38  jijunwan
+ *  Archive Log:    PR 129825 - Topology summary doesn't catch down graded ports
+ *  Archive Log:    - improved to display "abnormal" ports
+ *  Archive Log:    - added undo navigation support
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/02/05 19:09:21  jijunwan
  *  Archive Log:    fixed a issue reported by klocwork that is actually not a problem
@@ -56,11 +62,16 @@
 package com.intel.stl.ui.network.view;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -166,19 +177,21 @@ public class TopSummaryGroupPanel extends JCardView<ICardListener> {
     public void setPortsDist(int index, double[] normalizedVals,
             String[] values, Color[] colors, String[] labels, String[] tooltips) {
         tierPanels[index].portsPanel.setContent(normalizedVals, values, colors,
-                labels, tooltips);
+                labels, tooltips, null);
     }
 
     public void setSlowPortsDist(int index, double[] normalizedVals,
-            String[] values, Color[] colors, String[] labels, String[] tooltips) {
+            String[] values, Color[] colors, String[] labels,
+            String[] tooltips, ActionListener[] actions) {
         tierPanels[index].slowPortsPanel.setContent(normalizedVals, values,
-                colors, labels, tooltips);
+                colors, labels, tooltips, actions);
     }
 
     public void setDegPortsDist(int index, double[] normalizedVals,
-            String[] values, Color[] colors, String[] labels, String[] tooltips) {
+            String[] values, Color[] colors, String[] labels,
+            String[] tooltips, ActionListener[] actions) {
         tierPanels[index].degPortsPanel.setContent(normalizedVals, values,
-                colors, labels, tooltips);
+                colors, labels, tooltips, actions);
     }
 
     class TierPanelWrapper {
@@ -281,6 +294,8 @@ public class TopSummaryGroupPanel extends JCardView<ICardListener> {
 
         private JHorizontalBar[] bars;
 
+        private ActionListener[] actions;
+
         private JLabel[] nameLabels;
 
         public PortsPanel(int size) {
@@ -307,6 +322,29 @@ public class TopSummaryGroupPanel extends JCardView<ICardListener> {
                 bars[i].setPreferredSize(new Dimension(60, 20));
                 bars[i].setVerticalAlignment(JLabel.TOP);
                 bars[i].setFont(UIConstants.H5_FONT.deriveFont(Font.BOLD));
+                final int index = i;
+                bars[i].addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (actions != null && actions[index] != null) {
+                            actions[index].actionPerformed(new ActionEvent(
+                                    bars[index], e.getID(), e.paramString()));
+                        }
+                    }
+
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        if (actions != null && actions[index] != null) {
+                            bars[index].setCursor(Cursor
+                                    .getPredefinedCursor(Cursor.HAND_CURSOR));
+                        }
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                        bars[index].setCursor(Cursor.getDefaultCursor());
+                    }
+                });
                 add(bars[i], gc);
 
                 gc.gridwidth = GridBagConstraints.REMAINDER;
@@ -318,7 +356,8 @@ public class TopSummaryGroupPanel extends JCardView<ICardListener> {
         }
 
         public void setContent(double[] normalizedVals, String[] values,
-                Color[] colors, String[] labels, String[] tooltips) {
+                Color[] colors, String[] labels, String[] tooltips,
+                ActionListener[] actions) {
             if (normalizedVals.length != size) {
                 throw new IllegalArgumentException(
                         "Incorrect normalized values size. Expecte " + size
@@ -328,6 +367,7 @@ public class TopSummaryGroupPanel extends JCardView<ICardListener> {
             checkSize("colors", colors, size);
             checkSize("labels", labels, size);
             checkSize("tooltips", tooltips, size);
+            checkSize("actions", actions, size);
 
             for (int i = 0; i < size; i++) {
                 bars[i].setText(values[i]);
@@ -342,6 +382,7 @@ public class TopSummaryGroupPanel extends JCardView<ICardListener> {
                     nameLabels[i].setToolTipText(null);
                 }
             }
+            this.actions = actions;
             repaint();
         }
 

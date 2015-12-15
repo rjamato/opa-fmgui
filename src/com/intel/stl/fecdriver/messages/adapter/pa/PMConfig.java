@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:21:52  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/10/08 16:20:37  fernande
+ *  Archive Log:    PR130760 - Update FV GUI to reflect Changes to vol1g1 spec introduced in DN 0507. Changed commands to match FM spec
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/08/17 18:49:17  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/01/11 18:19:11  jijunwan
  *  Archive Log:    PR 126331 - PortRecvBECN and PortRecvFECN: Recv should be Rcv
@@ -59,7 +63,7 @@ import com.intel.stl.fecdriver.messages.adapter.SimpleDatagram;
 
 /**
  * 
- * ref: /ALL_EMB/IbAccess/Common/Inc/stl_pa.h v1.26
+ * ref: /ALL_EMB/IbAccess/Common/Inc/stl_pa.h v1.53
  * 
  * <pre>
  * typedef struct _STL_PA_PM_Cfg_Data {
@@ -109,7 +113,9 @@ import com.intel.stl.fecdriver.messages.adapter.SimpleDatagram;
  *     uint8                   LinkDowned;
  *     uint8                   UncorrectableErrors;
  *     uint8                   FMConfigErrors;
- *     uint8                   reserved;
+ *     uint8                   LinkQualityIndicator;
+ *     uint8                   LinkWidthDowngrade;
+ *     uint8                   reserved[7];
  * } PACK_SUFFIX STL_INTEGRITY_WEIGHTS_T;
  * 
  * </pre>
@@ -118,7 +124,7 @@ import com.intel.stl.fecdriver.messages.adapter.SimpleDatagram;
 public class PMConfig extends SimpleDatagram<PMConfigBean> {
 
     public PMConfig() {
-        super(96);
+        super(104);
     }
 
     @Override
@@ -131,7 +137,7 @@ public class PMConfig extends SimpleDatagram<PMConfigBean> {
         bean.setSizeFreeze(buffer.getInt());
         bean.setLease(buffer.getInt());
         bean.setPmFlags(buffer.getInt());
-        //
+        // STL_CONGESTION_WEIGHTS_T
         bean.setPortXmitWait(buffer.get());
         bean.setSwPortCongestion(buffer.get());
         bean.setPortRcvFECN(buffer.get());
@@ -140,14 +146,14 @@ public class PMConfig extends SimpleDatagram<PMConfigBean> {
         bean.setPortMarkFECN(buffer.get());
         // Reserved
         buffer.getShort();
-        //
+        // _STL_PM_ERR_THRESHOLDS
         bean.setIntegrityErrors(buffer.getInt());
         bean.setCongestionErrors(buffer.getInt());
         bean.setSmaCongestionErrors(buffer.getInt());
         bean.setBubbleErrors(buffer.getInt());
         bean.setSecurityErrors(buffer.getInt());
         bean.setRoutingErrors(buffer.getInt());
-        //
+        // _STL_INTEGRITY_WEIGHTS
         bean.setLocalLinkIntegrityErrors(buffer.get());
         bean.setPortRcvErrors(buffer.get());
         bean.setExcessiveBufferOverruns(buffer.get());
@@ -155,8 +161,17 @@ public class PMConfig extends SimpleDatagram<PMConfigBean> {
         bean.setLinkDowned(buffer.get());
         bean.setUncorrectableErrors(buffer.get());
         bean.setFmConfigErrors(buffer.get());
+        bean.setLinkQualityIndicator(buffer.get());
+        bean.setLinkWidthDowngrade(buffer.get());
         // Reserved
         buffer.get();
+        buffer.get();
+        buffer.get();
+        buffer.get();
+        buffer.get();
+        buffer.get();
+        buffer.get();
+        //
         bean.setMemoryFootprint(buffer.getLong());
         bean.setMaxAttempts(buffer.getInt());
         bean.setResponseTimeout(buffer.getInt());

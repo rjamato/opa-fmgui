@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:26:58  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.6  2015/08/17 18:53:41  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/06/25 20:53:46  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improved to share scale between all chart (include pinned chart) with the same data type
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/04/10 11:46:46  jypak
  *  Archive Log:    Updates to make delta data and cumulative data in same unit.
@@ -65,8 +70,8 @@
 
 package com.intel.stl.ui.monitor;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.Dataset;
@@ -75,7 +80,8 @@ import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.main.view.IChartRangeUpdater;
 
 public abstract class ChartScaleGroupManager<E extends Dataset> {
-    protected Map<JFreeChart, E> chartDataMap = new HashMap<JFreeChart, E>();
+    protected Map<JFreeChart, E> chartDataMap =
+            new ConcurrentHashMap<JFreeChart, E>();
 
     protected long lower;
 
@@ -89,6 +95,11 @@ public abstract class ChartScaleGroupManager<E extends Dataset> {
 
     public void addChart(JFreeChart chart, E dataset) {
         chartDataMap.put(chart, dataset);
+    }
+
+    public void removeChart(JFreeChart chart) {
+        chartDataMap.remove(chart);
+        updateChartsRange();
     }
 
     /**

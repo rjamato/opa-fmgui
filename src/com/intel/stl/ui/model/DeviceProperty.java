@@ -35,8 +35,21 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.19.2.1  2015/08/12 15:26:38  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.23  2015/08/19 21:06:36  jijunwan
+ *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
+ *  Archive Log:    - adapt to latest FM code
+ *  Archive Log:
+ *  Archive Log:    Revision 1.22  2015/08/17 18:53:46  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.21  2015/08/07 14:57:58  jypak
+ *  Archive Log:    PR 129397 -gaps in cableinfo output and handling.
+ *  Archive Log:    Updates on the formats of the cableinfo output and also new enums were defined for different output values.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.20  2015/06/29 15:05:46  jypak
+ *  Archive Log:    PR 129284 - Incorrect QSFP field name.
+ *  Archive Log:    Field name fix has been implemented. Also, introduced a conversion to Date object to add flexibility to display date code.
  *  Archive Log:
  *  Archive Log:    Revision 1.19  2015/04/29 14:01:07  jypak
  *  Archive Log:    Updates to display unknown data in the address not interpretable in the QSFP port encoding based on the SFF-8636.
@@ -269,14 +282,16 @@ public enum DeviceProperty implements IPropertyKey {
     WIDTHS_DNGRD_SUPPORTED(STLConstants.K0321_PORT_LINK_SUPPORTED),
 
     CABLE_ID(STLConstants.K1072_CABLE_ID),
-    CABLE_EXT_ID(STLConstants.K1073_CABLE_EXT_ID),
+    CABLE_POWER_CLASS(STLConstants.K1073_CABLE_POWER_CLASS),
+    CABLE_TX_CDR_SUP(STLConstants.K1099_CABLE_TX_CDR_SUP),
+    CABLE_RX_CDR_SUP(STLConstants.K1157_CABLE_RX_CDR_SUP),
     CABLE_CONNECTOR(STLConstants.K1074_CABLE_CONNECTOR),
     CABLE_NOMINAL_BR(STLConstants.K1075_CABLE_NOMINAL_BR),
     CABLE_SMF_LEN(STLConstants.K1076_CABLE_SMF_LEN),
     CABLE_OM3_LEN(STLConstants.K1077_CABLE_OM3_LEN),
     CABLE_OM2_LEN(STLConstants.K1078_CABLE_OM2_LEN),
     CABLE_OM1_LEN(STLConstants.K1079_CABLE_OM1_LEN),
-    CABLE_COPPER_LEN(STLConstants.K1080_CABLE_COPPER_LEN),
+    CABLE_COPPER_LEN(STLConstants.K1080_CABLE_OM4_LEN),
     CABLE_DEVICE_TECH(STLConstants.K1081_CABLE_DEVICE_TECH),
     CABLE_VENDOR_NAME(STLConstants.K1082_CABLE_VENDOR_NAME),
     CABLE_EXT_MODULE(STLConstants.K1083_CABLE_EXT_MODULE),
@@ -286,20 +301,22 @@ public enum DeviceProperty implements IPropertyKey {
     CABLE_OPTICAL_WL(STLConstants.K1087_CABLE_OPTICAL_WL),
     CABLE_MAXCASE_TEMP(STLConstants.K1088_CABLE_MAXCASE_TEMP),
     CABLE_CC_BASE(STLConstants.K1089_CABLE_CC_BASE),
-    CABLE_RX_OUT_AMP_PROG(STLConstants.K1090_CABLE_RX_OUT_AMP_PROG),
-    CABLE_RX_SQULECH_DIS_IMP(STLConstants.K1091_CABLE_RX_SQULECH_DIS_IMP),
-    CABLE_RX_OUT_DIS_CAP(STLConstants.K1092_CABLE_RX_OUT_DIS_CAP),
-    CABLE_TX_SQUELCH_DIS_IMP(STLConstants.K1093_CABLE_TX_SQUELCH_DIS_IMP),
+    CABLE_TX_INP_EQ_AUTO_ADP(STLConstants.K1090_CABLE_TX_INP_EQ_AUTO_ADP),
+    CABLE_TX_INP_EQ_FIX_PROG(STLConstants.K1091_CABLE_TX_INP_EQ_FIX_PROG),
+    CABLE_RX_OUTP_EMPH_FIX_PROG(STLConstants.K1092_CABLE_RX_OUTP_EMPH_FIX_PROG),
+    CABLE_RX_OUTP_AMPL_FIX_PROG(STLConstants.K1093_CABLE_RX_OUTP_AMPL_FIX_PROG),
+    CABLE_TX_CDR_ON_OFF_CTRL(STLConstants.K1097_CABLE_TX_CDR_ON_OFF_CTRL),
+    CABLE_RX_CDR_ON_OFF_CTRL(STLConstants.K1098_CABLE_RX_CDR_ON_OFF_CTRL),
     CABLE_TX_SQUELCH_IMP(STLConstants.K1094_CABLE_TX_SQUELCH_IMP),
     CABLE_MEM_PAGE02_PROV(STLConstants.K1095_CABLE_MEM_PAGE02_PROV),
     CABLE_MEM_PAGE01_PROV(STLConstants.K1096_CABLE_MEM_PAGE01_PROV),
-    CABLE_TX_DIS_IMP(STLConstants.K1097_CABLE_TX_DIS_IMP),
-    CABLE_TX_FAULT_REP_IMP(STLConstants.K1098_CABLE_TX_FAULT_REP_IMP),
-    CABLE_LOS_REP_IMP(STLConstants.K1099_CABLE_LOS_REP_IMP),
     CABLE_VENDOR_SN(STLConstants.K1100_CABLE_VENDOR_SN),
-    CABLE_DATA_CODE(STLConstants.K1101_CABLE_DATA_CODE),
+    CABLE_DATE_CODE(STLConstants.K1101_CABLE_DATE_CODE),
     CABLE_LOT_CODE(STLConstants.K1102_CABLE_LOT_CODE),
     CABLE_CC_EXT(STLConstants.K1103_CABLE_CC_EXT),
+    CABLE_CERT_CABLE_FLAG(STLConstants.K1117_CABLE_CERT_CABLE_FLAG),
+    CABLE_REACH_CLASS(STLConstants.K1118_CABLE_REACH_CLASS),
+    CABLE_CERT_DATA_RATE(STLConstants.K1119_CABLE_CERT_DATA_RATE),
     CABLE_NA(STLConstants.K0016_UNKNOWN),
 
     SC(STLConstants.K1105_SC),

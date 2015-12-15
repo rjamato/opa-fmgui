@@ -35,8 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:26:38  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.5  2015/08/17 18:53:46  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/03/12 19:29:04  jypak
  *  Archive Log:    When JComboBox.setRenderer is invoked, if an enum is the combo box item, the default labels displayed for the combo box list are the returned results of the default toString method of the enum which are the enum types. The toString is overridden to display consistent name for HistoryType.

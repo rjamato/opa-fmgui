@@ -32,10 +32,22 @@
  *
  *  File Name: NodeStatesView.java
  *
- *  Archive Source: 
- *
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.11  2015/08/17 18:54:02  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
  *  Archive Log:
- *
+ *  Archive Log: Revision 1.10  2015/06/25 20:24:57  jijunwan
+ *  Archive Log: Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log: - applied pin framework on fabric viewer and simple 'static' cards
+ *  Archive Log:
+ *  Archive Log: Revision 1.9  2015/06/10 21:07:19  jijunwan
+ *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs
+ *  Archive Log: - manual correction on files that our tool cannot  identify
+ *  Archive Log:
+ * 
  *  Overview: 
  *
  *  @author: jijunwan
@@ -105,11 +117,11 @@ public class NodeStatesView extends JCardView<IChartStyleListener> {
             layout = new CardLayout();
             mainPanel.setLayout(layout);
 
-            barPanel = new NodeStatesBar();
+            barPanel = new NodeStatesBar(false);
             barPanel.setOpaque(false);
             mainPanel.add(barPanel, ChartStyle.BAR.name());
 
-            piePanel = new NodeStatesPie();
+            piePanel = new NodeStatesPie(false);
             piePanel.setOpaque(false);
             mainPanel.add(piePanel, ChartStyle.PIE.name());
 

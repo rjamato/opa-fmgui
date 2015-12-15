@@ -35,10 +35,30 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.35.2.2  2015/08/12 15:26:58  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.41  2015/08/17 18:53:40  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.35.2.1  2015/05/17 18:30:42  jijunwan
+ *  Archive Log:    Revision 1.40  2015/08/05 04:04:47  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on Performance Page
+ *  Archive Log:
+ *  Archive Log:    Revision 1.39  2015/06/25 20:50:02  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on dynamic cards that can have different data sources
+ *  Archive Log:    - change to use port counter performance item
+ *  Archive Log:
+ *  Archive Log:    Revision 1.38  2015/06/09 18:37:21  jijunwan
+ *  Archive Log:    PR 129069 - Incorrect Help action
+ *  Archive Log:    - moved help action from view to controller
+ *  Archive Log:    - only enable help button when we have HelpID
+ *  Archive Log:    - fixed incorrect HelpIDs
+ *  Archive Log:
+ *  Archive Log:    Revision 1.37  2015/05/14 19:19:23  jijunwan
+ *  Archive Log:    PR 127700 - Delta data on host performance display is accumulating
+ *  Archive Log:    - some code cleanup
+ *  Archive Log:
+ *  Archive Log:    Revision 1.36  2015/05/14 17:43:07  jijunwan
  *  Archive Log:    PR 127700 - Delta data on host performance display is accumulating
  *  Archive Log:    - corrected delta value calculation
  *  Archive Log:    - changed to display data/pkts rate rather than delta on chart and table
@@ -172,417 +192,90 @@
  *  @author: rjtierne
  *
  ******************************************************************************/
-package com.intel.stl.ui.monitor;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+package com.intel.stl.ui.monitor;
 
 import net.engio.mbassy.bus.MBassador;
 
-import org.jfree.data.time.Second;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
-
-import com.intel.stl.api.configuration.LinkQuality;
-import com.intel.stl.api.performance.PortCountersBean;
-import com.intel.stl.api.performance.VFPortCountersBean;
 import com.intel.stl.ui.common.BaseSectionController;
-import com.intel.stl.ui.common.ChartsCard;
 import com.intel.stl.ui.common.ICardController;
+import com.intel.stl.ui.common.IProgressObserver;
+import com.intel.stl.ui.common.ObserverAdapter;
+import com.intel.stl.ui.common.PinDescription.PinID;
 import com.intel.stl.ui.common.STLConstants;
-import com.intel.stl.ui.common.UILabels;
-import com.intel.stl.ui.common.Util;
-import com.intel.stl.ui.common.view.ChartsView;
 import com.intel.stl.ui.common.view.ISectionListener;
 import com.intel.stl.ui.framework.IAppEvent;
+import com.intel.stl.ui.main.Context;
 import com.intel.stl.ui.main.HelpAction;
-import com.intel.stl.ui.model.DatasetDescription;
-import com.intel.stl.ui.monitor.DeltaConverter.Delta;
+import com.intel.stl.ui.main.UndoHandler;
+import com.intel.stl.ui.main.view.IDataTypeListener;
+import com.intel.stl.ui.model.HistoryType;
 import com.intel.stl.ui.monitor.view.PerformanceChartsSectionView;
+import com.intel.stl.ui.performance.PortGroupController;
+import com.intel.stl.ui.performance.PortSourceName;
+import com.intel.stl.ui.performance.item.RxDataRateItem;
+import com.intel.stl.ui.performance.item.RxPktRateItem;
+import com.intel.stl.ui.performance.item.TxDataRateItem;
+import com.intel.stl.ui.performance.item.TxPktRateItem;
+import com.intel.stl.ui.performance.provider.DataProviderName;
 
 public class PerformanceChartsSection extends
         BaseSectionController<ISectionListener, PerformanceChartsSectionView> {
-    private short portNum = -1;
+    private final PortGroupController groupController;
 
-    public final static int DEFAULT_DATA_POINTS = 10;
+    private UndoHandler undoHandler;
 
-    private volatile int maxDataPoints = DEFAULT_DATA_POINTS;
-
-    private TimeSeries rxPacketsTimeSeries;
-
-    private TimeSeries txPacketsTimeSeries;
-
-    private TimeSeries rxDataTimeSeries;
-
-    private TimeSeries txDataTimeSeries;
-
-    private ChartsCard rxCard;
-
-    private ChartsCard txCard;
-
-    private final DeltaConverter rxPacketsDC = new DeltaConverter("rxPackets");
-
-    private final DeltaConverter txPacketsDC = new DeltaConverter("txPackets");
-
-    private final DeltaConverter rxDataDC = new DeltaConverter("rxData");
-
-    private final DeltaConverter txDataDC = new DeltaConverter("txData");
-
-    private long lastUpdateTime;
-
-    private final PacketRateChartScaleGroupManager packetManager;
-
-    private final DataRateChartScaleGroupManager dataManager;
-
-    private final boolean isNode;
-
+    /**
+     * Description:
+     * 
+     * @param view
+     * @param eventBus
+     */
     public PerformanceChartsSection(PerformanceChartsSectionView view,
             boolean isNode, MBassador<IAppEvent> eventBus) {
         super(view, eventBus);
-        this.isNode = isNode;
-        packetManager = new PacketRateChartScaleGroupManager();
-        dataManager = new DataRateChartScaleGroupManager();
 
-        initRxCard();
-        initTxCard();
+        RxPktRateItem rxPkt = new RxPktRateItem();
+        RxDataRateItem rxData = new RxDataRateItem();
+        TxPktRateItem txPkt = new TxPktRateItem();
+        TxDataRateItem txData = new TxDataRateItem();
+        groupController =
+                new PortGroupController(eventBus,
+                        STLConstants.K0200_PERFORMANCE.getValue(), rxPkt,
+                        rxData, txPkt, txData, HistoryType.values());
+        // no need to set origin because we have no group selection
+
+        if (groupController.getRxCard() != null
+                && groupController.getTxCard() != null) {
+            view.installCardViews(groupController.getRxCard().getView(),
+                    groupController.getTxCard().getView());
+        }
+        groupController.setSleepMode(false);
 
         HelpAction helpAction = HelpAction.getInstance();
         if (isNode) {
-            helpAction.getHelpBroker().enableHelpOnButton(view.getHelpButton(),
-                    helpAction.getNodePerf(), helpAction.getHelpSet());
+            setHelpID(helpAction.getNodePerf());
+            groupController.setHelpIDs(helpAction.getNodeRcvPkts(),
+                    helpAction.getNodeTranPkts());
         } else {
-            helpAction.getHelpBroker().enableHelpOnButton(view.getHelpButton(),
-                    helpAction.getPortPerf(), helpAction.getHelpSet());
+            setHelpID(helpAction.getPortPerf());
+            groupController.setHelpIDs(helpAction.getPortRcvPkts(),
+                    helpAction.getPortTranPkts());
         }
     }
 
-    private void initRxCard() {
-        List<DatasetDescription> lst = new ArrayList<DatasetDescription>();
-
-        String name = STLConstants.K0828_REC_PACKETS_RATE.getValue();
-        rxPacketsTimeSeries = new TimeSeries(name);
-        TimeSeriesCollection packDataset = new TimeSeriesCollection();
-        packDataset.addSeries(rxPacketsTimeSeries);
-        DatasetDescription rxPacketsDd =
-                new DatasetDescription(name, packDataset);
-        lst.add(rxPacketsDd);
-
-        name = STLConstants.K0830_REC_DATA_RATE.getValue();
-        rxDataTimeSeries = new TimeSeries(name);
-        TimeSeriesCollection dataDataset = new TimeSeriesCollection();
-        dataDataset.addSeries(rxDataTimeSeries);
-        DatasetDescription rxDataDd = new DatasetDescription(name, dataDataset);
-        lst.add(rxDataDd);
-
-        ChartsView chartsView = view.getRxCardView();
-
-        HelpAction helpAction = HelpAction.getInstance();
-        if (isNode) {
-            helpAction.getHelpBroker().enableHelpOnButton(
-                    chartsView.getHelpButton(), helpAction.getNodeRcvPkts(),
-                    helpAction.getHelpSet());
-        } else {
-            helpAction.getHelpBroker().enableHelpOnButton(
-                    chartsView.getHelpButton(), helpAction.getPortRcvPkts(),
-                    helpAction.getHelpSet());
-        }
-
-        rxCard = new ChartsCard(chartsView, eventBus, lst);
-        rxPacketsDd.setFullName(STLConstants.K0832_RATE_MEANING.getValue());
-        rxDataDd.setFullName(STLConstants.K0832_RATE_MEANING.getValue());
-
-        packetManager.addChart(chartsView
-                .getChart(STLConstants.K0828_REC_PACKETS_RATE.getValue()),
-                packDataset);
-        dataManager.addChart(chartsView
-                .getChart(STLConstants.K0830_REC_DATA_RATE.getValue()),
-                dataDataset);
-    }
-
-    private void initTxCard() {
-        List<DatasetDescription> lst = new ArrayList<DatasetDescription>();
-
-        String name = STLConstants.K0829_TRAN_PACKETS_RATE.getValue();
-        txPacketsTimeSeries = new TimeSeries(name);
-        TimeSeriesCollection packDataset = new TimeSeriesCollection();
-        packDataset.addSeries(txPacketsTimeSeries);
-        DatasetDescription txPacketsDd =
-                new DatasetDescription(name, packDataset);
-        lst.add(txPacketsDd);
-
-        name = STLConstants.K0831_TRAN_DATA_RATE.getValue();
-        txDataTimeSeries = new TimeSeries(name);
-        TimeSeriesCollection dataDataset = new TimeSeriesCollection();
-        dataDataset.addSeries(txDataTimeSeries);
-        DatasetDescription txDataDd = new DatasetDescription(name, dataDataset);
-        lst.add(txDataDd);
-
-        ChartsView chartsView = view.getTxCardView();
-
-        HelpAction helpAction = HelpAction.getInstance();
-        if (isNode) {
-            helpAction.getHelpBroker().enableHelpOnButton(
-                    chartsView.getHelpButton(), helpAction.getNodeTranPkts(),
-                    helpAction.getHelpSet());
-        } else {
-            helpAction.getHelpBroker().enableHelpOnButton(
-                    chartsView.getHelpButton(), helpAction.getPortTranPkts(),
-                    helpAction.getHelpSet());
-        }
-
-        txCard = new ChartsCard(view.getTxCardView(), eventBus, lst);
-        txPacketsDd.setFullName(STLConstants.K0832_RATE_MEANING.getValue());
-        txDataDd.setFullName(STLConstants.K0832_RATE_MEANING.getValue());
-
-        packetManager.addChart(chartsView
-                .getChart(STLConstants.K0829_TRAN_PACKETS_RATE.getValue()),
-                packDataset);
-        dataManager.addChart(chartsView
-                .getChart(STLConstants.K0831_TRAN_DATA_RATE.getValue()),
-                dataDataset);
-    }
-
-    /**
-     * @param maxDataPoints
-     *            the maxDataPoints to set
-     */
-    public void setMaxDataPoints(int maxDataPoints) {
-        this.maxDataPoints = maxDataPoints;
+    public void setPinID(PinID pinID) {
+        groupController.setPinID(pinID);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see com.intel.hpc.stl.ui.ISection#getCards()
+     * @see com.intel.stl.ui.common.ISectionController#getCards()
      */
     @Override
     public ICardController<?>[] getCards() {
-        return new ICardController[] { rxCard, txCard };
-    }
-
-    public synchronized void processPortCounters(PortCountersBean countersBean) {
-
-        if (countersBean == null) {
-            return;
-        }
-
-        Date time = countersBean.getTimestampDate();
-        if (time.getTime() == lastUpdateTime) {
-            return;
-        }
-        lastUpdateTime = time.getTime();
-
-        try {
-            if (isNode) {
-                if (countersBean.getPortNumber() != portNum) {
-                    portNum = countersBean.getPortNumber();
-                    Util.runInEDT(new Runnable() {
-                        @Override
-                        public void run() {
-                            view.setTitle(UILabels.STL60100_PORT_PREVIEW
-                                    .getDescription(Integer.toString(portNum)));
-                        }
-                    });
-                }
-            }
-
-            if (countersBean.hasUnexpectedClear()) {
-                clear();
-            }
-            if (countersBean.isDelta()) {
-                // it will be complicate to handle delta style data. To get
-                // correct
-                // cumulative data, we need the initial data when we clear
-                // counters.
-                // without a database that keeps tracking data from the very
-                // beginning, this is almost impossible. Plus we also need
-                // to clear it when a user click clear counter button. So it's
-                // better to let FM to handle it and we force ourselves to use
-                // no delta style port counter data
-                throw new IllegalArgumentException(
-                        "We do not support delta style PortCounters");
-            } else {
-                long rcvPkts = countersBean.getPortRcvPkts();
-                Delta delta = rxPacketsDC.addValue(rcvPkts, time);
-                if (delta != null) {
-                    updateTrend(rxPacketsTimeSeries, delta.getRate(),
-                            delta.getTime());
-                }
-                long xmitPkts = countersBean.getPortXmitPkts();
-                delta = txPacketsDC.addValue(xmitPkts, time);
-                if (delta != null) {
-                    updateTrend(txPacketsTimeSeries, delta.getRate(),
-                            delta.getTime());
-                }
-                updatePacketsRange();
-
-                long rcvData = countersBean.getPortRcvData();
-                delta = rxDataDC.addValue(rcvData, time);
-                if (delta != null) {
-                    updateTrend(rxDataTimeSeries, delta.getRate(),
-                            delta.getTime());
-                }
-                long xmitData = countersBean.getPortXmitData();
-                delta = txDataDC.addValue(xmitData, time);
-                if (delta != null) {
-                    updateTrend(txDataTimeSeries, delta.getRate(),
-                            delta.getTime());
-                }
-                updateDataRange();
-
-                updateLinkQualityIcon(countersBean.getLinkQualityIndicator());
-            }
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public synchronized void processVFPortCounters(
-            VFPortCountersBean countersBean) {
-        Date time = countersBean.getTimestampDate();
-        if (time.getTime() == lastUpdateTime) {
-            return;
-        }
-        lastUpdateTime = time.getTime();
-
-        try {
-            if (isNode) {
-                if (countersBean.getPortNumber() != portNum) {
-                    portNum = countersBean.getPortNumber();
-                    Util.runInEDT(new Runnable() {
-                        @Override
-                        public void run() {
-                            view.setTitle(UILabels.STL60100_PORT_PREVIEW
-                                    .getDescription(Integer.toString(portNum)));
-                        }
-                    });
-                }
-            }
-
-            if (countersBean.hasUnexpectedClear()) {
-                clear();
-            }
-            if (countersBean.isDelta()) {
-                // it will be complicate to handle delta style data. To get
-                // correct
-                // cumulative data, we need the initial data when we clear
-                // counters.
-                // without a database that keeps tracking data from the very
-                // beginning, this is almost impossible. Plus we also need
-                // to clear it when a user click clear counter button. So it's
-                // better to let FM to handle it and we force ourselves to use
-                // no delta style port counter data
-                throw new IllegalArgumentException(
-                        "We do not support delta style PortCounters");
-            } else {
-                long rcvPkts = countersBean.getPortVFRcvPkts();
-                Delta delta = rxPacketsDC.addValue(rcvPkts, time);
-                if (delta != null) {
-                    updateTrend(rxPacketsTimeSeries, delta.getRate(),
-                            delta.getTime());
-                }
-                long xmitPkts = countersBean.getPortVFXmitPkts();
-                delta = txPacketsDC.addValue(xmitPkts, time);
-                if (delta != null) {
-                    updateTrend(txPacketsTimeSeries, delta.getRate(),
-                            delta.getTime());
-                }
-                updatePacketsRange();
-
-                long rcvData = countersBean.getPortVFRcvData();
-                delta = rxDataDC.addValue(rcvData, time);
-                if (delta != null) {
-                    updateTrend(rxDataTimeSeries, delta.getRate(),
-                            delta.getTime());
-                }
-                long xmitData = countersBean.getPortVFXmitData();
-                delta = txDataDC.addValue(xmitData, time);
-                if (delta != null) {
-                    updateTrend(txDataTimeSeries, delta.getRate(),
-                            delta.getTime());
-                }
-                updateDataRange();
-
-                updateLinkQualityIcon(LinkQuality.UNKNOWN.getValue());
-            }
-
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    protected void updateTrend(final TimeSeries dataset, final Number value,
-            final Date date) {
-        Util.runInEDT(new Runnable() {
-
-            @Override
-            public void run() {
-                dataset.setNotify(false);
-                dataset.addOrUpdate(new Second(date), value);
-                if (dataset.getItemCount() > maxDataPoints) {
-                    dataset.delete(0, 0);
-                }
-                dataset.setNotify(true);
-            }
-
-        });
-    }
-
-    /**
-     * 
-     * Description: Set Max btn rx and tx to range bound at the same time.
-     * 
-     */
-    public void updatePacketsRange() {
-        Util.runInEDT(new Runnable() {
-            @Override
-            public void run() {
-                packetManager.updateChartsRange();
-            }
-        });
-    }
-
-    public void updateDataRange() {
-        Util.runInEDT(new Runnable() {
-            @Override
-            public void run() {
-                dataManager.updateChartsRange();
-            }
-        });
-    }
-
-    public void updateLinkQualityIcon(byte linkQuality) {
-        view.setLinkQualityValue(linkQuality);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.intel.stl.ui.common.ISection#clear()
-     */
-    @Override
-    public void clear() {
-        Util.runInEDT(new Runnable() {
-            @Override
-            public void run() {
-                rxPacketsTimeSeries.clear();
-                rxDataTimeSeries.clear();
-                txPacketsTimeSeries.clear();
-                txDataTimeSeries.clear();
-                if (isNode) {
-                    view.setTitle(UILabels.STL60100_PORT_PREVIEW
-                            .getDescription(""));
-                }
-                portNum = -1;
-                rxPacketsDC.clear();
-                txPacketsDC.clear();
-                rxDataDC.clear();
-                txDataDC.clear();
-                view.clearQualityValue();
-            }
-        });
+        return groupController.getCards().toArray(new ICardController[0]);
     }
 
     /*
@@ -594,4 +287,73 @@ public class PerformanceChartsSection extends
     protected ISectionListener getSectionListener() {
         return this;
     }
+
+    public void setContext(Context context, IProgressObserver observer) {
+        if (observer == null) {
+            observer = new ObserverAdapter();
+        }
+        groupController.setContext(context, observer);
+
+        if (context != null && context.getController() != null) {
+            undoHandler = context.getController().getUndoHandler();
+        }
+
+        view.setHistoryTypeListener(new IDataTypeListener<HistoryType>() {
+            @Override
+            // Each time different port is selected, each chart will be
+            // defaulted to show current. Only when different HistoryScope is
+            // selected by user, chart will show different history range.
+            public void onDataTypeChange(HistoryType oldType,
+                    HistoryType newType) {
+                setHistoryType(newType);
+
+                if (undoHandler != null && !undoHandler.isInProgress()) {
+                    UndoableSectionHistorySelection sel =
+                            new UndoableSectionHistorySelection(
+                                    PerformanceChartsSection.this, oldType,
+                                    newType);
+                    undoHandler.addUndoAction(sel);
+                }
+            }
+        });
+        observer.onFinish();
+    }
+
+    public void onRefresh(IProgressObserver observer) {
+        if (observer == null) {
+            observer = new ObserverAdapter();
+        }
+        groupController.onRefresh(observer);
+        observer.onFinish();
+    }
+
+    public void setSource(PortSourceName source) {
+        if (source.getVfName() != null) {
+            groupController.setDataProvider(DataProviderName.VF_PORT);
+        } else {
+            groupController.setDataProvider(DataProviderName.PORT);
+        }
+        groupController.setDataSources(new PortSourceName[] { source });
+    }
+
+    public void setHistoryType(HistoryType type) {
+        groupController.setHistoryType(type);
+        view.setHistoryType(type);
+    }
+
+    public void updateLinkQualityIcon(byte linkQuality) {
+        view.setLinkQualityValue(linkQuality);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.BaseSectionController#clear()
+     */
+    @Override
+    public void clear() {
+        super.clear();
+        groupController.clear();
+    }
+
 }

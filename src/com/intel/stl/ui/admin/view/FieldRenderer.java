@@ -35,8 +35,17 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:27:17  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.5  2015/08/17 18:53:52  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/07/14 17:02:36  jijunwan
+ *  Archive Log:    PR 129541 - Should forbid save or deploy when there is invalid edit on management panel
+ *  Archive Log:    - Introduce isEditValid for attribute renders
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/07/13 18:37:25  jijunwan
+ *  Archive Log:    PR 129528 - input validation improvement
+ *  Archive Log:    - updated generic classes to use the new text field
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/03/30 14:25:39  jijunwan
  *  Archive Log:    1) introduced IRendererModel to create renderer only we nee
@@ -58,18 +67,45 @@ package com.intel.stl.ui.admin.view;
 import java.awt.Component;
 import java.text.NumberFormat;
 
-import javax.swing.JFormattedTextField;
+import javax.swing.JFormattedTextField.AbstractFormatter;
 
 import com.intel.stl.api.management.WrapperNode;
+import com.intel.stl.ui.common.view.ExFormattedTextField;
 
 public abstract class FieldRenderer<T, E extends WrapperNode<T>> extends
         AbstractAttrRenderer<E> {
-    protected final JFormattedTextField field;
+    protected ExFormattedTextField field;
+
+    public FieldRenderer(AbstractFormatter formatter, T defaultValue) {
+        super();
+        try {
+            field = createFiled(formatter);
+            init(defaultValue);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public FieldRenderer(NumberFormat format, T defaultValue) {
         super();
-        field = new JFormattedTextField(format);
+        field = createFiled(format);
+        init(defaultValue);
+    }
+
+    protected ExFormattedTextField createFiled(AbstractFormatter formatter) {
+        return new ExFormattedTextField(formatter);
+    }
+
+    protected ExFormattedTextField createFiled(NumberFormat format) {
+        return new ExFormattedTextField(format);
+    }
+
+    protected void init(T defaultValue) {
         field.setValue(defaultValue);
+    }
+
+    protected void setValidationTooltip(String tooltip) {
+        field.setValidationTooltip(tooltip);
     }
 
     /*
@@ -114,6 +150,16 @@ public abstract class FieldRenderer<T, E extends WrapperNode<T>> extends
     @Override
     protected Component[] getFields() {
         return new Component[] { field };
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.admin.view.IAttrRenderer#isEditValid()
+     */
+    @Override
+    public boolean isEditValid() {
+        return field.isEditValid();
     }
 
 }

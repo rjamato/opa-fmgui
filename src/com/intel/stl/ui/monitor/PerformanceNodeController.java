@@ -35,10 +35,44 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.33.2.2  2015/08/12 15:26:58  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.43  2015/08/18 14:29:42  jijunwan
+ *  Archive Log:    PR 130033 - Fix critical issues found by Klocwork or FindBugs
+ *  Archive Log:    - fixed null pointer issue
  *  Archive Log:
- *  Archive Log:    Revision 1.33.2.1  2015/05/17 18:30:42  jijunwan
+ *  Archive Log:    Revision 1.42  2015/08/17 18:53:40  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.41  2015/08/05 04:04:47  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on Performance Page
+ *  Archive Log:
+ *  Archive Log:    Revision 1.40  2015/07/31 21:08:04  fernande
+ *  Archive Log:    PR 129631 - Ports table sometimes not getting performance related data. Modified showNode to be able to cancel a refresh action if the user switches to another node. Now the progress icon more closely matches the refresh duration.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.39  2015/06/25 20:50:02  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on dynamic cards that can have different data sources
+ *  Archive Log:    - change to use port counter performance item
+ *  Archive Log:
+ *  Archive Log:    Revision 1.38  2015/05/19 19:20:38  jijunwan
+ *  Archive Log:    PR 128797 - Notice update failed to update related notes
+ *  Archive Log:    - some code cleanup
+ *  Archive Log:
+ *  Archive Log:    Revision 1.37  2015/05/15 14:35:10  rjtierne
+ *  Archive Log:    PR 128682 - Set link quality indicator to "Unknown" on port error
+ *  Archive Log:    - Added null pointer protection and error logging for beanList[] in
+ *  Archive Log:    processVFPortCounters()
+ *  Archive Log:    - In showNode(), fixed update problem when a node is already selected when
+ *  Archive Log:    switching between DeviceTypes, DeviceGroups and VirtualFabrics. Removed
+ *  Archive Log:    conditional call to onRefresh; showNode task should be submitted regardless
+ *  Archive Log:    of the selected node.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.36  2015/05/14 19:19:23  jijunwan
+ *  Archive Log:    PR 127700 - Delta data on host performance display is accumulating
+ *  Archive Log:    - some code cleanup
+ *  Archive Log:
+ *  Archive Log:    Revision 1.35  2015/05/14 17:43:07  jijunwan
  *  Archive Log:    PR 127700 - Delta data on host performance display is accumulating
  *  Archive Log:    - corrected delta value calculation
  *  Archive Log:    - changed to display data/pkts rate rather than delta on chart and table
@@ -48,6 +82,10 @@
  *  Archive Log:      PacketChartRangeUpdater -> PacketRateChartRangeUpdater
  *  Archive Log:      DataChartScaleGroupManager -> DataRateChartScaleGroupManager
  *  Archive Log:      PacketChartScaleGroupManager -> PacketRateChartScaleGroupManager
+ *  Archive Log:
+ *  Archive Log:    Revision 1.34  2015/05/13 21:15:31  jijunwan
+ *  Archive Log:    PR 128673 - Wrong index happens when switch between nodes on performance view
+ *  Archive Log:    - always reset row index to zero when we show one node
  *  Archive Log:
  *  Archive Log:    Revision 1.33  2015/04/14 12:00:54  jypak
  *  Archive Log:    Updates to fix this problem: In the performance subpage for a node, if a history scope of non current is selected for the node and then if user select another node, the history is not updated in charts. The fix is to initialize history query after updating the lid, port num and vf name.
@@ -192,34 +230,43 @@ import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import net.engio.mbassy.bus.MBassador;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.intel.stl.api.configuration.LinkQuality;
 import com.intel.stl.api.performance.IPerformanceApi;
+import com.intel.stl.api.performance.PerformanceRequestCancelledException;
 import com.intel.stl.api.performance.PortCountersBean;
 import com.intel.stl.api.performance.VFPortCountersBean;
+import com.intel.stl.api.subnet.NodeType;
 import com.intel.stl.ui.common.IPerfSubpageController;
 import com.intel.stl.ui.common.IProgressObserver;
 import com.intel.stl.ui.common.ISectionController;
 import com.intel.stl.ui.common.PageWeight;
+import com.intel.stl.ui.common.PinDescription.PinID;
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UILabels;
+import com.intel.stl.ui.common.UndoableJumpEvent;
 import com.intel.stl.ui.common.view.ISectionListener;
 import com.intel.stl.ui.common.view.JSectionView;
-import com.intel.stl.ui.event.JumpDestination;
-import com.intel.stl.ui.event.PortSelectedEvent;
+import com.intel.stl.ui.event.NodesSelectedEvent;
+import com.intel.stl.ui.event.PortsSelectedEvent;
 import com.intel.stl.ui.framework.IAppEvent;
 import com.intel.stl.ui.main.Context;
-import com.intel.stl.ui.main.view.IDataTypeListener;
-import com.intel.stl.ui.model.HistoryType;
+import com.intel.stl.ui.main.UndoHandler;
 import com.intel.stl.ui.model.PerformanceTableModel;
 import com.intel.stl.ui.monitor.tree.FVResourceNode;
 import com.intel.stl.ui.monitor.view.PerformanceChartsSectionView;
 import com.intel.stl.ui.monitor.view.PerformanceView;
 import com.intel.stl.ui.monitor.view.PerformanceXTableView;
+import com.intel.stl.ui.performance.PortSourceName;
 import com.intel.stl.ui.publisher.CallbackAdapter;
 import com.intel.stl.ui.publisher.ICallback;
 import com.intel.stl.ui.publisher.Task;
@@ -230,6 +277,10 @@ import com.intel.stl.ui.publisher.subscriber.VFPortCounterSubscriber;
 
 public class PerformanceNodeController implements IPerfSubpageController,
         IPortSelectionListener {
+
+    private final static Logger log = LoggerFactory
+            .getLogger(PerformanceNodeController.class);
+
     private final List<ISectionController<?>> sections;
 
     private PerformanceTableSection tableSection;
@@ -242,40 +293,38 @@ public class PerformanceNodeController implements IPerfSubpageController,
 
     private TaskScheduler taskScheduler;
 
+    private final AtomicReference<Future<?>> refreshTask =
+            new AtomicReference<Future<?>>(null);
+
     private List<Task<PortCountersBean>> portCounterTask;
 
     private ICallback<PortCountersBean[]> portCounterCallback;
-
-    private ICallback<PortCountersBean> previewPortcounterHistoryCallback;
 
     private List<Task<VFPortCountersBean>> vfPortCounterTask;
 
     private ICallback<VFPortCountersBean[]> vfPortCounterCallback;
 
-    private ICallback<VFPortCountersBean> previewVfPortcounterHistoryCallback;
-
-    private Future<Void> historyTask;
-
-    private int maxDataPoints;
-
-    private HistoryType historyType = HistoryType.CURRENT;
-
     private String vfName;
 
     private int lid = -1;
 
+    private String nodeDesc;
+
     private List<Short> portNumList;
 
     private int previewPortIndex = 0;
-
-    @SuppressWarnings("unused")
-    private PerformanceTreeController parentController;
 
     private final MBassador<IAppEvent> eventBus;
 
     private PortCounterSubscriber portCounterSubscriber;
 
     private VFPortCounterSubscriber vfPortCounterSubscriber;
+
+    private FVResourceNode currentNode;
+
+    protected UndoHandler undoHandler;
+
+    private final String origin = PerformancePage.NAME;
 
     public PerformanceNodeController(PerformanceView performanceView,
             MBassador<IAppEvent> eventBus) {
@@ -319,6 +368,7 @@ public class PerformanceNodeController implements IPerfSubpageController,
                 new PerformanceChartsSection(new PerformanceChartsSectionView(
                         UILabels.STL60100_PORT_PREVIEW.getDescription("")),
                         true, eventBus);
+        chartsSection.setPinID(PinID.PERF_NODE);
         sections.add(chartsSection);
 
         return sections;
@@ -337,8 +387,11 @@ public class PerformanceNodeController implements IPerfSubpageController,
      */
     @Override
     public void setContext(Context context, IProgressObserver observer) {
-
         this.context = context;
+        if (context == null) {
+            return;
+        }
+
         taskScheduler = this.context.getTaskScheduler();
 
         // Get the port counter subscriber from the task scheduler
@@ -360,17 +413,6 @@ public class PerformanceNodeController implements IPerfSubpageController,
                 }
             }
         };
-
-        previewPortcounterHistoryCallback =
-                new CallbackAdapter<PortCountersBean>() {
-                    @Override
-                    public synchronized void onDone(
-                            PortCountersBean portCounterBean) {
-                        if (portCounterBean != null) {
-                            chartsSection.processPortCounters(portCounterBean);
-                        }
-                    }
-                };
 
         // Get the virtual fabrics port counter subscriber from the task
         // scheduler
@@ -394,69 +436,13 @@ public class PerformanceNodeController implements IPerfSubpageController,
             }
         };
 
-        previewVfPortcounterHistoryCallback =
-                new CallbackAdapter<VFPortCountersBean>() {
-                    @Override
-                    public synchronized void onDone(
-                            VFPortCountersBean vfPortcounterBean) {
-                        if (vfPortcounterBean != null) {
-                            chartsSection
-                                    .processVFPortCounters(vfPortcounterBean);
-                        }
-                    }
-                };
+        chartsSection.setContext(context, observer);
 
-        final PerformanceChartsSectionView view = chartsSection.getView();
-        view.setHistoryTypeListener(new IDataTypeListener<HistoryType>() {
-            @Override
-            // Each time different node is selected, each chart will be
-            // defaulted to show current. Only when different HistoryScope is
-            // selected by user, chart will show different history range.
-            public void onDataTypeChange(HistoryType type) {
-                setHistoryType(type);
-                view.setHistoryType(type);
-            }
-        });
+        if (context.getController() != null) {
+            undoHandler = context.getController().getUndoHandler();
+        }
         observer.onFinish();
     } // setContext
-
-    private void setHistoryType(HistoryType type) {
-        clearHistory();
-        historyType = type;
-
-        if (type == HistoryType.CURRENT) {
-            maxDataPoints = PerformanceChartsSection.DEFAULT_DATA_POINTS;
-            chartsSection.setMaxDataPoints(maxDataPoints);
-            return;
-        }
-
-        maxDataPoints = type.getMaxDataPoints(taskScheduler.getRefreshRate());
-        // Only observer can get access to controller to pass data.
-        chartsSection.setMaxDataPoints(maxDataPoints);
-
-        initHistory();
-    }
-
-    protected void initHistory() {
-        if (previewPortIndex < 0 || historyType == HistoryType.CURRENT) {
-            return;
-        }
-
-        if (portNumList != null) {
-            short portNumber = portNumList.get(previewPortIndex);
-            if (vfName != null) {
-                historyTask =
-                        vfPortCounterSubscriber.initVFPortCountersHistory(
-                                vfName, lid, portNumber, historyType,
-                                previewVfPortcounterHistoryCallback);
-            } else {
-                historyTask =
-                        portCounterSubscriber.initPortCountersHistory(lid,
-                                portNumber, historyType,
-                                previewPortcounterHistoryCallback);
-            }
-        }
-    }
 
     /*
      * (non-Javadoc)
@@ -467,62 +453,93 @@ public class PerformanceNodeController implements IPerfSubpageController,
      */
     @Override
     public void onRefresh(final IProgressObserver observer) {
-        taskScheduler.submitToBackground(new Runnable() {
-            @Override
-            public void run() {
-                refresh(observer);
-            }
-        });
+        Future<?> oldRefreshTask = refreshTask.get();
+        Runnable refreshRunnable =
+                createRefreshRunnable(vfName, lid,
+                        portNumList.toArray(new Short[0]), observer);
+        Future<?> newRefreshTask =
+                taskScheduler.submitToBackground(refreshRunnable);
+        while (!refreshTask.compareAndSet(oldRefreshTask, newRefreshTask)) {
+            oldRefreshTask = refreshTask.get();
+        }
+        if (oldRefreshTask != null && !oldRefreshTask.isDone()) {
+            oldRefreshTask.cancel(true);
+        }
     }
 
     @Override
     public void setParentController(PerformanceTreeController parentController) {
-        this.parentController = parentController;
     }
 
-    protected void refresh(IProgressObserver observer) {
-        try {
-            String vfName = null;
-            int lid = -1;
-            Short[] ports = null;
-            synchronized (this) {
-                vfName = this.vfName;
-                lid = this.lid;
-                ports = this.portNumList.toArray(new Short[0]);
-            }
+    protected Runnable createRefreshRunnable(final String vfName,
+            final int lid, final Short[] ports, final IProgressObserver observer) {
+        Runnable refreshTask = new Runnable() {
+            @Override
+            public void run() {
+                boolean refreshCancelled = false;
+                try {
+                    // The observer is not passed to the Charts section because
+                    // the
+                    // process below is more time consuming
+                    chartsSection.onRefresh(null);
 
-            tableSection.clear();
+                    tableSection.clear();
 
-            IPerformanceApi perfApi = taskScheduler.getPerformanceApi();
-            if (vfName == null) {
-                PortCountersBean[] res = new PortCountersBean[ports.length];
-                for (int i = 0; i < res.length; i++) {
-                    res[i] = perfApi.getPortCounters(lid, ports[i]);
+                    IPerformanceApi perfApi = taskScheduler.getPerformanceApi();
+                    if (vfName == null) {
+                        PortCountersBean[] res =
+                                new PortCountersBean[ports.length];
+                        for (int i = 0; i < res.length; i++) {
+                            res[i] = perfApi.getPortCounters(lid, ports[i]);
+                        }
+                        portCounterCallback.onDone(res);
+                    } else {
+                        VFPortCountersBean[] res =
+                                new VFPortCountersBean[ports.length];
+                        for (int i = 0; i < res.length; i++) {
+                            res[i] =
+                                    perfApi.getVFPortCounters(vfName, lid,
+                                            ports[i]);
+                        }
+                        vfPortCounterCallback.onDone(res);
+                    }
+                } catch (PerformanceRequestCancelledException e) {
+                    refreshCancelled = true;
+                } finally {
+                    if (!refreshCancelled) {
+                        observer.onFinish();
+                    }
                 }
-                portCounterCallback.onDone(res);
-            } else {
-                VFPortCountersBean[] res = new VFPortCountersBean[ports.length];
-                for (int i = 0; i < res.length; i++) {
-                    res[i] = perfApi.getVFPortCounters(vfName, lid, ports[i]);
-                }
-                vfPortCounterCallback.onDone(res);
             }
-        } finally {
-            observer.onFinish();
-        }
+        };
+        return refreshTask;
     }
 
     protected void processPortCounters(PortCountersBean[] beanList) {
         tableSection.updateTable(beanList, previewPortIndex);
         if (previewPortIndex >= 0) {
-            chartsSection.processPortCounters(beanList[previewPortIndex]);
+            PortCountersBean bean = beanList[previewPortIndex];
+            if (bean != null) {
+                chartsSection.updateLinkQualityIcon(bean
+                        .getLinkQualityIndicator());
+            } else {
+                log.error(UILabels.STL80002_INVALID_PORT_NUMBER
+                        .getDescription(previewPortIndex));
+            }
         }
     }
 
     protected void processVFPortCounters(VFPortCountersBean[] beanList) {
         tableSection.updateTable(beanList, previewPortIndex);
         if (previewPortIndex >= 0) {
-            chartsSection.processVFPortCounters(beanList[previewPortIndex]);
+            VFPortCountersBean bean = beanList[previewPortIndex];
+            if (bean != null) {
+                chartsSection.updateLinkQualityIcon(LinkQuality.UNKNOWN
+                        .getValue());
+            } else {
+                log.error(UILabels.STL80002_INVALID_PORT_NUMBER
+                        .getDescription(previewPortIndex));
+            }
         }
     }
 
@@ -536,77 +553,60 @@ public class PerformanceNodeController implements IPerfSubpageController,
     @Override
     public void showNode(final FVResourceNode treeNode,
             final IProgressObserver observer) {
-        int lastLid = -1;
-        synchronized (this) {
-            lastLid = lid;
+        currentNode = treeNode;
+        previewPortIndex = 0;
+        if (portCounterTask != null) {
+            portCounterSubscriber.deregisterPortCountersArray(portCounterTask,
+                    portCounterCallback);
+            chartsSection.clear();
         }
-        if (treeNode.getId() == lastLid) {
-            onRefresh(observer);
-            return;
+        if (vfPortCounterTask != null) {
+            vfPortCounterSubscriber.deregisterVFPortCounters(vfPortCounterTask,
+                    vfPortCounterCallback);
+            chartsSection.clear();
+        }
+
+        // Collect all of the port numbers associated with this node
+        int lid = treeNode.getId();
+        List<Short> portNumList = new ArrayList<Short>();
+        for (FVResourceNode portNode : treeNode.getChildren()) {
+            if (portNode.getType() == TreeNodeType.ACTIVE_PORT) {
+                portNumList.add((short) portNode.getId());
+            }
+        } // for
+
+        // Clear the performance table
+        tableSection.clear();
+
+        // Register for the list of port counter beans associated
+        // with the list
+        // of port numbers
+        FVResourceNode parent = treeNode.getParent();
+        String vfName = null;
+        if (parent.getType() == TreeNodeType.VIRTUAL_FABRIC) {
+            vfName = parent.getTitle();
+            vfPortCounterTask =
+                    vfPortCounterSubscriber.registerVFPortCounters(vfName, lid,
+                            portNumList, vfPortCounterCallback);
+
+        } else {
+            portCounterTask =
+                    portCounterSubscriber.registerPortCounters(lid,
+                            portNumList, portCounterCallback);
         }
 
         previewPortIndex = 0;
-        taskScheduler.submitToBackground(new Runnable() {
-            @Override
-            public void run() {
+        PortSourceName portSource =
+                new PortSourceName(vfName, treeNode.getTitle(), lid,
+                        portNumList.get(previewPortIndex));
+        chartsSection.setSource(portSource);
 
-                if (portCounterTask != null) {
-                    portCounterSubscriber.deregisterPortCountersArray(
-                            portCounterTask, portCounterCallback);
-                    if (historyTask != null && !historyTask.isDone()) {
-                        historyTask.cancel(true);
-                    }
-                    chartsSection.clear();
-                }
-                if (vfPortCounterTask != null) {
-                    vfPortCounterSubscriber.deregisterVFPortCounters(
-                            vfPortCounterTask, vfPortCounterCallback);
-                    if (historyTask != null && !historyTask.isDone()) {
-                        historyTask.cancel(true);
-                    }
-                    chartsSection.clear();
-                }
-
-                // Collect all of the port numbers associated with this node
-                int lid = treeNode.getId();
-                List<Short> portNumList = new ArrayList<Short>();
-                for (FVResourceNode portNode : treeNode.getChildren()) {
-                    if (portNode.getType() == TreeNodeType.ACTIVE_PORT) {
-                        portNumList.add((short) portNode.getId());
-                    }
-                } // for
-
-                // Clear the performance table
-                tableSection.clear();
-
-                // Register for the list of port counter beans associated
-                // with the list
-                // of port numbers
-                FVResourceNode parent = treeNode.getParent();
-                String vfName = null;
-                if (parent.getType() == TreeNodeType.VIRTUAL_FABRIC) {
-                    vfName = parent.getTitle();
-                    vfPortCounterTask =
-                            vfPortCounterSubscriber.registerVFPortCounters(
-                                    vfName, lid, portNumList,
-                                    vfPortCounterCallback);
-
-                } else {
-                    portCounterTask =
-                            portCounterSubscriber.registerPortCounters(lid,
-                                    portNumList, portCounterCallback);
-                }
-
-                synchronized (PerformanceNodeController.this) {
-                    PerformanceNodeController.this.vfName = vfName;
-                    PerformanceNodeController.this.lid = lid;
-                    PerformanceNodeController.this.portNumList = portNumList;
-                }
-                previewPortIndex = 0;
-                refresh(observer);
-                initHistory();
-            }
-        });
+        // This is running on the EDT, so no need to synchronize
+        this.vfName = vfName;
+        this.lid = lid;
+        this.nodeDesc = treeNode.getTitle();
+        this.portNumList = portNumList;
+        onRefresh(observer);
     }
 
     /*
@@ -617,12 +617,27 @@ public class PerformanceNodeController implements IPerfSubpageController,
     @Override
     public void onPortSelection(int rowIndex) {
         if (rowIndex != previewPortIndex) {
-            if (historyTask != null && !historyTask.isDone()) {
-                historyTask.cancel(true);
+            PortSourceName portSource =
+                    new PortSourceName(vfName, nodeDesc, lid,
+                            portNumList.get(rowIndex));
+            chartsSection.setSource(portSource);
+
+            // when we refresh or respond to a notice, StackPanel will remove
+            // selections first and then add them back. This will trigger two
+            // valueChanged calls. Checking whether currentSelection is null or
+            // not allows us ignore the case of removing all selections, i.e.
+            // currentSelection is null
+            if (rowIndex >= 0) {
+                if (undoHandler != null && !undoHandler.isInProgress()) {
+                    UndoablePortPreviewSelection undoSel =
+                            new UndoablePortPreviewSelection(
+                                    tableSection.getTableView(),
+                                    previewPortIndex, rowIndex);
+                    undoHandler.addUndoAction(undoSel);
+                }
             }
-            chartsSection.clear();
+
             previewPortIndex = rowIndex;
-            initHistory();
         }
     }
 
@@ -632,11 +647,20 @@ public class PerformanceNodeController implements IPerfSubpageController,
      * @see com.intel.stl.ui.monitor.IPortSelectionListener#onJumpToPort(int)
      */
     @Override
-    public void onJumpToPort(int lid, short portNum, JumpDestination destination) {
+    public void onJumpToPort(int lid, short portNum, String destination) {
         if (eventBus != null) {
-            PortSelectedEvent pse =
-                    new PortSelectedEvent(lid, portNum, this, destination);
+            PortsSelectedEvent pse =
+                    new PortsSelectedEvent(lid, portNum, this, destination);
             eventBus.publish(pse);
+
+            if (currentNode != null && undoHandler != null
+                    && !undoHandler.isInProgress()) {
+                NodeType type = TreeNodeType.getNodeType(currentNode.getType());
+                UndoableJumpEvent undoSel =
+                        new UndoableJumpEvent(eventBus, new NodesSelectedEvent(
+                                currentNode.getId(), type, this, origin), pse);
+                undoHandler.addUndoAction(undoSel);
+            }
         }
     }
 
@@ -737,19 +761,9 @@ public class PerformanceNodeController implements IPerfSubpageController,
                 vfPortCounterSubscriber.deregisterVFPortCounters(
                         vfPortCounterTask, vfPortCounterCallback);
             }
-            if (historyTask != null && !historyTask.isDone()) {
-                historyTask.cancel(true);
-            }
         }
 
         lid = -1;
-    }
-
-    public void clearHistory() {
-        chartsSection.clear();
-        if (historyTask != null && !historyTask.isDone()) {
-            historyTask.cancel(true);
-        }
     }
 
     @Override

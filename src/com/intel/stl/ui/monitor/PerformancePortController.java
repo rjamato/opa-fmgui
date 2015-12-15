@@ -35,10 +35,24 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.34.2.2  2015/08/12 15:26:58  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.40  2015/08/17 18:53:41  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.34.2.1  2015/05/17 18:30:42  jijunwan
+ *  Archive Log:    Revision 1.39  2015/08/05 04:04:47  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on Performance Page
+ *  Archive Log:
+ *  Archive Log:    Revision 1.38  2015/06/25 20:50:02  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on dynamic cards that can have different data sources
+ *  Archive Log:    - change to use port counter performance item
+ *  Archive Log:
+ *  Archive Log:    Revision 1.37  2015/05/14 19:19:23  jijunwan
+ *  Archive Log:    PR 127700 - Delta data on host performance display is accumulating
+ *  Archive Log:    - some code cleanup
+ *  Archive Log:
+ *  Archive Log:    Revision 1.36  2015/05/14 17:43:07  jijunwan
  *  Archive Log:    PR 127700 - Delta data on host performance display is accumulating
  *  Archive Log:    - corrected delta value calculation
  *  Archive Log:    - changed to display data/pkts rate rather than delta on chart and table
@@ -48,6 +62,10 @@
  *  Archive Log:      PacketChartRangeUpdater -> PacketRateChartRangeUpdater
  *  Archive Log:      DataChartScaleGroupManager -> DataRateChartScaleGroupManager
  *  Archive Log:      PacketChartScaleGroupManager -> PacketRateChartScaleGroupManager
+ *  Archive Log:
+ *  Archive Log:    Revision 1.35  2015/05/12 17:41:30  rjtierne
+ *  Archive Log:    PR 128624 - Klocwork and FindBugs fixes for UI
+ *  Archive Log:    Added null pointer protection to vfName in showNode()
  *  Archive Log:
  *  Archive Log:    Revision 1.34  2015/04/24 16:59:19  jypak
  *  Archive Log:    Fix for an issue with selecting an inactive port and then selecting an active port.
@@ -191,12 +209,12 @@ import static com.intel.stl.ui.common.PageWeight.MEDIUM;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Future;
 
 import javax.swing.ImageIcon;
 
 import net.engio.mbassy.bus.MBassador;
 
+import com.intel.stl.api.configuration.LinkQuality;
 import com.intel.stl.api.performance.IPerformanceApi;
 import com.intel.stl.api.performance.PortCountersBean;
 import com.intel.stl.api.performance.VFPortCountersBean;
@@ -204,16 +222,16 @@ import com.intel.stl.ui.common.IPerfSubpageController;
 import com.intel.stl.ui.common.IProgressObserver;
 import com.intel.stl.ui.common.ISectionController;
 import com.intel.stl.ui.common.PageWeight;
+import com.intel.stl.ui.common.PinDescription.PinID;
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.view.JSectionView;
 import com.intel.stl.ui.framework.IAppEvent;
 import com.intel.stl.ui.main.Context;
-import com.intel.stl.ui.main.view.IDataTypeListener;
-import com.intel.stl.ui.model.HistoryType;
 import com.intel.stl.ui.monitor.tree.FVResourceNode;
 import com.intel.stl.ui.monitor.view.PerformanceChartsSectionView;
 import com.intel.stl.ui.monitor.view.PerformanceErrorsSectionView;
 import com.intel.stl.ui.monitor.view.PerformanceView;
+import com.intel.stl.ui.performance.PortSourceName;
 import com.intel.stl.ui.publisher.CallbackAdapter;
 import com.intel.stl.ui.publisher.ICallback;
 import com.intel.stl.ui.publisher.Task;
@@ -223,6 +241,7 @@ import com.intel.stl.ui.publisher.subscriber.SubscriberType;
 import com.intel.stl.ui.publisher.subscriber.VFPortCounterSubscriber;
 
 public class PerformancePortController implements IPerfSubpageController {
+    private final static boolean DEBUG = true;
 
     private TaskScheduler taskScheduler;
 
@@ -239,13 +258,9 @@ public class PerformancePortController implements IPerfSubpageController {
 
     private ICallback<PortCountersBean> portCounterCallback;
 
-    private ICallback<PortCountersBean> portCounterHistoryCallback;
-
     private Task<VFPortCountersBean> vfPortCounterTask;
 
     private ICallback<VFPortCountersBean> vfPortCounterCallback;
-
-    private ICallback<VFPortCountersBean> vfPortCounterHistoryCallback;
 
     private final List<ISectionController<?>> sections;
 
@@ -255,20 +270,11 @@ public class PerformancePortController implements IPerfSubpageController {
 
     private final PerformanceView performancePortView;
 
-    @SuppressWarnings("unused")
-    private PerformanceTreeController parentController;
-
     private final MBassador<IAppEvent> eventBus;
 
     private PortCounterSubscriber portCounterSubscriber;
 
     private VFPortCounterSubscriber vfPortCounterSubscriber;
-
-    private Future<Void> historyTask;
-
-    private HistoryType historyType;
-
-    private int maxDataPoints;
 
     public PerformancePortController(PerformanceView performancePortView,
             MBassador<IAppEvent> eventBus) {
@@ -290,6 +296,7 @@ public class PerformancePortController implements IPerfSubpageController {
                 new PerformanceChartsSection(new PerformanceChartsSectionView(
                         STLConstants.K0200_PERFORMANCE.getValue()), false,
                         eventBus);
+        graphSection.setPinID(PinID.PERF_PORT);
         sections.add(graphSection);
 
         errorsSection =
@@ -325,58 +332,9 @@ public class PerformancePortController implements IPerfSubpageController {
                 (VFPortCounterSubscriber) taskScheduler
                         .getSubscriber(SubscriberType.VF_PORT_COUNTER);
 
-        final PerformanceChartsSectionView view = graphSection.getView();
-        view.setHistoryTypeListener(new IDataTypeListener<HistoryType>() {
-            @Override
-            // Each time different port is selected, each chart will be
-            // defaulted to show current. Only when different HistoryScope is
-            // selected by user, chart will show different history range.
-            public void onDataTypeChange(HistoryType type) {
-                setHistoryType(type);
-                view.setHistoryType(type);
-            }
-        });
+        graphSection.setContext(context, observer);
 
         observer.onFinish();
-    }
-
-    private void setHistoryType(HistoryType type) {
-        clearHistory();
-        historyType = type;
-
-        if (type == HistoryType.CURRENT) {
-            maxDataPoints = PerformanceChartsSection.DEFAULT_DATA_POINTS;
-            graphSection.setMaxDataPoints(maxDataPoints);
-            return;
-        }
-
-        // For chart, use sweep interval, for history query, use refresh
-        // rate to calculate maxDataPoints.
-        maxDataPoints = type.getMaxDataPoints(taskScheduler.getRefreshRate());
-        // Only observer can get access to controller to pass data.
-        graphSection.setMaxDataPoints(maxDataPoints);
-
-        initHistory();
-    }
-
-    protected void initHistory() {
-        if (lastVfName != null) {
-            createHistoryCallback(lastVfName);
-            if (historyType != HistoryType.CURRENT && historyType != null) {
-                historyTask =
-                        vfPortCounterSubscriber.initVFPortCountersHistory(
-                                lastVfName, lastLid, lastPortNum, historyType,
-                                vfPortCounterHistoryCallback);
-            }
-        } else {
-            createHistoryCallback();
-            if (historyType != HistoryType.CURRENT && historyType != null) {
-                historyTask =
-                        portCounterSubscriber.initPortCountersHistory(lastLid,
-                                lastPortNum, historyType,
-                                portCounterHistoryCallback);
-            }
-        }
     }
 
     /*
@@ -398,7 +356,6 @@ public class PerformancePortController implements IPerfSubpageController {
 
     @Override
     public void setParentController(PerformanceTreeController parentController) {
-        this.parentController = parentController;
     }
 
     protected void refresh(IProgressObserver observer) {
@@ -415,6 +372,8 @@ public class PerformancePortController implements IPerfSubpageController {
             if (lid == -1 || portNum == -1) {
                 return;
             }
+
+            graphSection.onRefresh(observer);
 
             IPerformanceApi perfApi = taskScheduler.getPerformanceApi();
             if (vfName != null) {
@@ -460,7 +419,7 @@ public class PerformancePortController implements IPerfSubpageController {
                                 || portNum != lastPortNum
                                 || ((vfName != null) && !vfName
                                         .equals(lastVfName))) {
-                            setPort(lid, portNum, vfName);
+                            setPort(parent.getTitle(), lid, portNum, vfName);
                         }
                         refresh(null);
                     } catch (Exception e) {
@@ -474,10 +433,15 @@ public class PerformancePortController implements IPerfSubpageController {
         }
     }
 
-    protected synchronized void setPort(int lid, short portNum, String vfName) {
+    protected synchronized void setPort(String nodeDesc, int lid,
+            short portNum, String vfName) {
         if (portCounterTask != null || vfPortCounterTask != null) {
             clear();
         }
+
+        PortSourceName portSource =
+                new PortSourceName(vfName, nodeDesc, lid, portNum);
+        graphSection.setSource(portSource);
 
         // register to query PortCounters periodically
         if (vfName != null) {
@@ -495,15 +459,9 @@ public class PerformancePortController implements IPerfSubpageController {
         lastLid = lid;
         lastPortNum = portNum;
         lastVfName = vfName;
-        initHistory();
     }
 
     protected ICallback<PortCountersBean> createCallback() {
-        // update datasets
-        // call PerformanceSubPageView to update view. this is actually
-        // unnecessary beause when we update dataset
-        // it will call the charts to update.
-
         portCounterCallback = new CallbackAdapter<PortCountersBean>() {
             /*
              * (non-Javadoc)
@@ -515,8 +473,8 @@ public class PerformancePortController implements IPerfSubpageController {
             @Override
             public synchronized void onDone(PortCountersBean result) {
                 if (result != null) {
-
-                    graphSection.processPortCounters(result);
+                    graphSection.updateLinkQualityIcon(result
+                            .getLinkQualityIndicator());
                     errorsSection.updateErrors(result);
                 }
             }
@@ -526,31 +484,7 @@ public class PerformancePortController implements IPerfSubpageController {
 
     }
 
-    protected ICallback<PortCountersBean> createHistoryCallback() {
-        // update datasets
-        // call PerformanceSubPageView to update view. this is actually
-        // unnecessary beause when we update dataset
-        // it will call the charts to update.
-
-        portCounterHistoryCallback = new CallbackAdapter<PortCountersBean>() {
-            @Override
-            public synchronized void onDone(PortCountersBean result) {
-                if (result != null) {
-                    graphSection.processPortCounters(result);
-                }
-            }
-        };
-
-        return portCounterHistoryCallback;
-
-    }
-
     protected ICallback<VFPortCountersBean> createCallback(String vfName) {
-        // update datasets
-        // call PerformanceSubPageView to update view. this is actually
-        // unnecessary beause when we update dataset
-        // it will call the charts to update.
-
         vfPortCounterCallback = new CallbackAdapter<VFPortCountersBean>() {
             /*
              * (non-Javadoc)
@@ -562,37 +496,14 @@ public class PerformancePortController implements IPerfSubpageController {
             @Override
             public synchronized void onDone(VFPortCountersBean result) {
                 if (result != null) {
-                    graphSection.processVFPortCounters(result);
+                    graphSection.updateLinkQualityIcon(LinkQuality.UNKNOWN
+                            .getValue());
                     errorsSection.updateErrors(result);
                 }
             }
         };
 
         return vfPortCounterCallback;
-
-    }
-
-    /**
-     * 
-     * <i>Description: Separate callback for history not to update error
-     * section.
-     * 
-     * @param vfName
-     * @return
-     */
-    protected ICallback<VFPortCountersBean> createHistoryCallback(String vfName) {
-        vfPortCounterHistoryCallback =
-                new CallbackAdapter<VFPortCountersBean>() {
-
-                    @Override
-                    public synchronized void onDone(VFPortCountersBean result) {
-                        if (result != null) {
-                            graphSection.processVFPortCounters(result);
-                        }
-                    }
-                };
-
-        return vfPortCounterHistoryCallback;
 
     }
 
@@ -702,21 +613,11 @@ public class PerformancePortController implements IPerfSubpageController {
                 vfPortCounterSubscriber.deregisterVFPortCounters(
                         vfPortCounterTask, vfPortCounterCallback);
             }
-            if (historyTask != null && !historyTask.isDone()) {
-                historyTask.cancel(true);
-            }
         }
+
+        graphSection.clear();
 
         lastLid = lastPortNum = -1;
-    }
-
-    public void clearHistory() {
-        graphSection.clear();
-        if (taskScheduler != null) {
-            if (historyTask != null && !historyTask.isDone()) {
-                historyTask.cancel(true);
-            }
-        }
     }
 
     @Override

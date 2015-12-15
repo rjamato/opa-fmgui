@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.1  2015/08/12 15:26:56  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.7  2015/08/17 18:54:05  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/05/07 14:18:41  jypak
+ *  Archive Log:    PR 128564 - Topology Tree synchronization issue:
+ *  Archive Log:    Null check the context before update in the TopologyTreeController. Other safe guard code added to avoid potential synchronization issue.
  *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/04/28 14:00:33  jijunwan
  *  Archive Log:    1) improved topology viz to use TopGraph copy for outline display. This will avoid graph and outline views share internal graph view that may cause sync issues.
@@ -65,6 +70,9 @@ package com.intel.stl.ui.network.task;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.intel.stl.api.subnet.ISubnetApi;
 import com.intel.stl.api.subnet.LinkRecordBean;
 import com.intel.stl.api.subnet.NodeRecordBean;
@@ -80,6 +88,8 @@ import com.intel.stl.ui.network.TopologyGraphController;
 import com.intel.stl.ui.network.TopologyTreeModel;
 
 public class RefreshGraphTask extends TopologyUpdateTask {
+    private static Logger log = LoggerFactory.getLogger(RefreshGraphTask.class);
+
     private final LayoutType type;
 
     private final IProgressObserver observer;
@@ -110,6 +120,9 @@ public class RefreshGraphTask extends TopologyUpdateTask {
      */
     @Override
     public TopGraph createNewGraph(ICancelIndicator indicator, TopGraph oldGraph) {
+        if (indicator.isCancelled()) {
+            return null;
+        }
         try {
             ISubnetApi subnetApi = controller.getSubnetApi();
             List<NodeRecordBean> nodes = subnetApi.getNodes(false);
@@ -121,6 +134,7 @@ public class RefreshGraphTask extends TopologyUpdateTask {
             return fullGraph;
         } catch (Exception e) {
             if (!isInterruptedException(e)) {
+                log.error(e.getMessage(), e);
                 e.printStackTrace();
             }
         }

@@ -35,11 +35,32 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.18.2.2  2015/08/12 15:27:01  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.28  2015/08/17 18:54:10  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.18.2.1  2015/05/06 19:39:22  jijunwan
- *  Archive Log:    changed to directly show exception(s)
+ *  Archive Log:    Revision 1.27  2015/08/10 17:55:46  robertja
+ *  Archive Log:    PR 128974 - Email notification functionality.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.26  2015/07/17 20:50:32  jijunwan
+ *  Archive Log:    PR 129594 - Apply new input verification on setup wizard
+ *  Archive Log:    - forbid switching tabs or apply other actions when there is invalid edit
+ *  Archive Log:
+ *  Archive Log:    Revision 1.25  2015/06/10 19:25:58  rjtierne
+ *  Archive Log:    PR 128975 - Can not setup application log
+ *  Archive Log:    Removed references to the logger
+ *  Archive Log:
+ *  Archive Log:    Revision 1.24  2015/05/22 16:21:21  jypak
+ *  Archive Log:    PR 128869 - Add online help on setup wizard.
+ *  Archive Log:    Added help button to MultinetWizardView. The contents will be update when it's available.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.23  2015/05/11 12:35:46  rjtierne
+ *  Archive Log:    PR 128585 - Fix errors found by Klocwork and FindBugs
+ *  Archive Log:    In onTab(), added null pointer protection to task, and display error if it's null
+ *  Archive Log:
+ *  Archive Log:    Revision 1.22  2015/05/05 21:49:42  rjtierne
+ *  Archive Log:    Changed onTab() to accept the tab name which is used to select the
+ *  Archive Log:    corresponding task
  *  Archive Log:
  *  Archive Log:    Revision 1.21  2015/05/05 20:01:15  jijunwan
  *  Archive Log:    fixed typo
@@ -151,7 +172,6 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
 
-import com.intel.stl.api.configuration.AppenderConfig;
 import com.intel.stl.api.configuration.ConfigurationException;
 import com.intel.stl.api.configuration.EventRule;
 import com.intel.stl.api.configuration.UserNotFoundException;
@@ -163,6 +183,7 @@ import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UILabels;
 import com.intel.stl.ui.common.Util;
+import com.intel.stl.ui.main.HelpAction;
 import com.intel.stl.ui.main.IFabricController;
 import com.intel.stl.ui.main.ISubnetManager;
 import com.intel.stl.ui.main.view.IFabricView;
@@ -245,6 +266,10 @@ public class MultinetWizardController implements IMultinetWizardListener,
         installTasks(tasks);
         firstTask = tasks.get(0);
         lastTask = tasks.get(tasks.size() - 1);
+
+        HelpAction helpAction = HelpAction.getInstance();
+        helpAction.getHelpBroker().enableHelpOnButton(view.getHelpButton(),
+                helpAction.getSetupWizard(), helpAction.getHelpSet());
     }
 
     public static MultinetWizardController getInstance(IFabricView owner,
@@ -364,7 +389,6 @@ public class MultinetWizardController implements IMultinetWizardListener,
      */
     @Override
     public void onPrevious() {
-
         IWizardTask previousTask = tasks.get(tasks.indexOf(currentTask) - 1);
 
         // Assume both buttons to be enabled and move to the previous task
@@ -392,7 +416,6 @@ public class MultinetWizardController implements IMultinetWizardListener,
      */
     @Override
     public boolean onNext() {
-
         boolean success = false;
 
         // Commit the changes
@@ -427,10 +450,17 @@ public class MultinetWizardController implements IMultinetWizardListener,
      * @see com.intel.stl.ui.wizards.impl.IMultinetWizardListener#onTab()
      */
     @Override
-    public void onTab() {
+    public void onTab(String tabName) {
+        IWizardTask task =
+                (tabName != null) ? getTaskByName(tabName) : currentTask;
 
-        currentTask.promoteModel(wizardModel);
-        showStep(tasks.get(tasks.indexOf(currentTask)).getName());
+        if (task != null) {
+            task.promoteModel(wizardModel);
+            showStep(tasks.get(tasks.indexOf(task)).getName());
+        } else {
+            view.showErrorMessage(STLConstants.K0030_ERROR.getValue(),
+                    STLConstants.K3043_INVALID_WIZARD_TASK.getValue());
+        }
     }
 
     /*
@@ -440,7 +470,6 @@ public class MultinetWizardController implements IMultinetWizardListener,
      */
     @Override
     public void onFinish() {
-
         configTask = new ConfigureSubnetTask();
         configTask.execute();
     }
@@ -582,6 +611,11 @@ public class MultinetWizardController implements IMultinetWizardListener,
                     wizardModel.getPreferencesModel();
             userSettings.setPreferences(preferencesModel.getPreferencesMap());
 
+            // /////////////////////////DEBUG//////////////////////////
+            // List<String> recipients = new ArrayList<String>();
+            // recipients.add("robert.amato@intel.com");
+            // userSettings.setMailRecipients(recipients);
+            // // ////////////////////////////////////////////////////////
             // Save the user settings to the database
             subnetMgr.saveUserSettings(currentSubnetName, userSettings);
 
@@ -829,7 +863,6 @@ public class MultinetWizardController implements IMultinetWizardListener,
      */
     @Override
     public void deleteSubnet(SubnetDescription subnet) {
-
         try {
             subnetMgr.removeSubnet(subnet);
         } catch (SubnetDataNotFoundException e) {
@@ -1061,30 +1094,6 @@ public class MultinetWizardController implements IMultinetWizardListener,
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.intel.stl.ui.wizards.impl.IWizardListener#saveLoggingConfiguration
-     * (java.util.List)
-     */
-    @Override
-    public void saveLoggingConfiguration(List<AppenderConfig> appenders) {
-
-        subnetMgr.saveLoggingConfiguration(appenders);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.intel.stl.ui.wizards.impl.IWizardListener#getLoggingConfig()
-     */
-    @Override
-    public List<AppenderConfig> getLoggingConfig() {
-
-        return subnetMgr.getLoggingConfig();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see com.intel.stl.ui.wizards.impl.IMultinetWizardListener#getNewSubnet()
      */
     @Override
@@ -1259,6 +1268,18 @@ public class MultinetWizardController implements IMultinetWizardListener,
         subnetMgr.clearSubnetFactories(subnet);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.wizards.impl.IMultinetWizardListener#setDirty(boolean)
+     */
+    @Override
+    public void setDirty(boolean dirty) {
+        view.enableApply(dirty);
+        view.enableReset(dirty);
+    }
+
     private class ConfigureSubnetTask extends
             SwingWorker<Void, ConfigTaskStatus> {
 
@@ -1357,11 +1378,11 @@ public class MultinetWizardController implements IMultinetWizardListener,
      * (non-Javadoc)
      * 
      * @see
-     * com.intel.stl.ui.wizards.impl.IMultinetWizardListener#setDirty(boolean)
+     * com.intel.stl.ui.wizards.impl.IMultinetWizardListener#onEmailTest(java
+     * .lang.String)
      */
     @Override
-    public void setDirty(boolean dirty) {
-        view.enableApply(dirty);
-        view.enableReset(dirty);
+    public void onEmailTest(String recipients) {
+        subnetMgr.onEmailTest(recipients);
     }
 }

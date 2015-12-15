@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:26:53  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/08/17 18:54:02  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/06/25 20:24:57  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on fabric viewer and simple 'static' cards
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/02/05 19:09:22  jijunwan
  *  Archive Log:    fixed a issue reported by klocwork that is actually not a problem
@@ -102,6 +107,10 @@ public class StatusView extends JCardView<IChartStyleListener> {
         getMainComponent();
     }
 
+    protected boolean isConcise() {
+        return false;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -121,7 +130,7 @@ public class StatusView extends JCardView<IChartStyleListener> {
             label.setAlignmentX(0.0f);
             mainPanel.add(label);
 
-            swPanel = new NodeStatusPanel();
+            swPanel = new NodeStatusPanel(isConcise());
             swPanel.setOpaque(false);
             swPanel.setAlignmentX(0.0f);
             mainPanel.add(swPanel);
@@ -133,7 +142,7 @@ public class StatusView extends JCardView<IChartStyleListener> {
             label.setAlignmentX(0.0f);
             mainPanel.add(label);
 
-            fiPanel = new NodeStatusPanel();
+            fiPanel = new NodeStatusPanel(isConcise());
             fiPanel.setOpaque(false);
             fiPanel.setAlignmentX(0.0f);
             mainPanel.add(fiPanel);
@@ -182,15 +191,21 @@ public class StatusView extends JCardView<IChartStyleListener> {
     @Override
     public void setCardListener(final IChartStyleListener listener) {
         super.setCardListener(listener);
-        styleBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                listener.onStyleChange(style);
-            }
-        });
+        if (styleBtn != null) {
+            styleBtn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    listener.onStyleChange(style);
+                }
+            });
+        }
     }
 
     public void setStyle(ChartStyle style) {
+        if (styleBtn == null) {
+            return;
+        }
+
         this.style = style;
         if (style == ChartStyle.BAR) {
             if (pieIcon == null) {

@@ -35,8 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3.2.1  2015/08/12 15:21:40  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.5  2015/08/17 18:48:36  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/07/16 16:33:33  jijunwan
+ *  Archive Log:    PR 129228 - remove PortLTPCRCMode of Al
+ *  Archive Log:    -  removed STL_PORT_LTP_CRC_MODE_ALL and STL_PORT_LINK_MODE_ALL_SUPPORTED
+ *  Archive Log:    - changed to use STLConstants for string print out
  *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/01/21 22:51:00  jijunwan
  *  Archive Log:    improved to throw exception when we encounter unsupported value. This will help us identify problems when it happens.
@@ -62,7 +68,7 @@ import com.intel.stl.api.StringUtils;
 
 /**
  * <pre>
- * ref: /ALL_EMB/IbAccess/Common/Inc/stl_sm.h v1.115
+ * ref: /ALL_EMB/IbAccess/Common/Inc/stl_sm.h v1.148
  * STL Port LTP CRC mode, indicated as follows:
  * values are additive for Supported and Enabled fields
  * 
@@ -70,8 +76,7 @@ import com.intel.stl.api.StringUtils;
  * #define STL_PORT_LTP_CRC_MODE_14    1   // 14-bit LTP CRC mode (optional) 
  * #define STL_PORT_LTP_CRC_MODE_16    2   // 16-bit LTP CRC mode 
  * #define STL_PORT_LTP_CRC_MODE_48    4   // 48-bit LTP CRC mode (optional) 
- * #define STL_PORT_LTP_CRC_MODE_12_16_PER_LANE 8  // 12/16-bit per lane LTP CRC mode 
- * #define STL_PORT_LTP_CRC_MODE_ALL   15
+ * #define STL_PORT_LTP_CRC_MODE_12_16_PER_LANE 8  // 12/16-bit per lane LTP CRC mode
  * 
  * </pre>
  */
@@ -80,12 +85,10 @@ public enum PortLtpCrcMode {
     STL_PORT_LTP_CRC_MODE_14((byte) 0x01), /* 14-bit LTP CRC mode (optional) */
     STL_PORT_LTP_CRC_MODE_16((byte) 0x02), /* 16-bit LTP CRC mode */
     STL_PORT_LTP_CRC_MODE_48((byte) 0x04), /* 48-bit LTP CRC mode (optional) */
-    STL_PORT_LTP_CRC_MODE_12_16_PER_LANE((byte) 0x08), /*
+    STL_PORT_LTP_CRC_MODE_12_16_PER_LANE((byte) 0x08); /*
                                                         * 12/16-bit per lane LTP
                                                         * CRC mode
                                                         */
-    STL_PORT_LTP_CRC_MODE_ALL((byte) 0xff);
-
     private final byte mode;
 
     private PortLtpCrcMode(byte mode) {
@@ -110,9 +113,6 @@ public enum PortLtpCrcMode {
         if (isNoneSupported(mode)) {
             return new PortLtpCrcMode[] { STL_PORT_LTP_CRC_MODE_NONE };
         }
-        if (isAllSupported(mode)) {
-            return new PortLtpCrcMode[] { STL_PORT_LTP_CRC_MODE_ALL };
-        }
         PortLtpCrcMode[] portLtpCrcModes = PortLtpCrcMode.values();
         PortLtpCrcMode[] modes = new PortLtpCrcMode[portLtpCrcModes.length];
         int numModes = 0;
@@ -130,7 +130,4 @@ public enum PortLtpCrcMode {
         return mode == STL_PORT_LTP_CRC_MODE_NONE.mode;
     }
 
-    public static boolean isAllSupported(byte mode) {
-        return (STL_PORT_LTP_CRC_MODE_ALL.mode & mode) == STL_PORT_LTP_CRC_MODE_ALL.mode;
-    }
 }

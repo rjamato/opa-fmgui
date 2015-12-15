@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:26:50  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/09/29 20:54:49  fernande
+ *  Archive Log:    PR130409 - [Dell]: FMGUI Admin Console login fails when switch is configured without username and password. Changes for Protex
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/08/17 18:54:00  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/04/20 14:44:29  rjtierne
  *  Archive Log:    Catch IndexOutOfBoundsExceptions thrown by MxGraph library
@@ -154,7 +158,7 @@ public class TopMarkedEdgesHandler {
                 graph.getView().removeListener(refreshHandler, mxEvent.UP);
             }
         } catch (IndexOutOfBoundsException e) {
-         // MxGraph library may throw this exception when a port goes down
+            // MxGraph library may throw this exception when a port goes down
         }
 
     }
@@ -177,10 +181,31 @@ public class TopMarkedEdgesHandler {
     public synchronized void refresh() {
         TopGraph graph = (TopGraph) graphComponent.getGraph();
 
-        LinkedHashMap<Object, mxCellHandler> oldHandlers = handlers;
         handlers = new LinkedHashMap<Object, mxCellHandler>();
 
-        Rectangle handleBounds = null;
+        Rectangle handlerBounds = calculateHandlerBounds(graph);
+
+        Rectangle dirty = bounds;
+
+        if (handlerBounds != null) {
+            if (dirty != null) {
+                dirty.add(handlerBounds);
+            } else {
+                dirty = handlerBounds;
+            }
+        }
+
+        if (dirty != null) {
+            graphComponent.getGraphControl().repaint(dirty);
+        }
+
+        // Stores current bounds for later use
+        bounds = handlerBounds;
+    }
+
+    private Rectangle calculateHandlerBounds(TopGraph graph) {
+        Rectangle handlerBounds = null;
+        LinkedHashMap<Object, mxCellHandler> oldHandlers = handlers;
         mxIGraphModel model = graph.getModel();
         Object parent = graph.getDefaultParent();
         int count = model.getChildCount(parent);
@@ -200,38 +225,20 @@ public class TopMarkedEdgesHandler {
                     }
 
                     handlers.put(cell, handler);
-                    Rectangle bounds = handler.getBounds();
                     Stroke stroke = handler.getSelectionStroke();
-
-                    if (stroke != null) {
-                        bounds = stroke.createStrokedShape(bounds).getBounds();
-                    }
-
-                    if (handleBounds == null) {
-                        handleBounds = bounds;
+                    Rectangle bounds =
+                            (stroke == null) ? handler.getBounds() : stroke
+                                    .createStrokedShape(handler.getBounds())
+                                    .getBounds();
+                    if (handlerBounds == null) {
+                        handlerBounds = bounds;
                     } else {
-                        handleBounds.add(bounds);
+                        handlerBounds.add(bounds);
                     }
                 }
             }
         }
-
-        Rectangle dirty = bounds;
-
-        if (handleBounds != null) {
-            if (dirty != null) {
-                dirty.add(handleBounds);
-            } else {
-                dirty = handleBounds;
-            }
-        }
-
-        if (dirty != null) {
-            graphComponent.getGraphControl().repaint(dirty);
-        }
-
-        // Stores current bounds for later use
-        bounds = handleBounds;
+        return handlerBounds;
     }
 
     public synchronized void paintHandlers(Graphics g) {

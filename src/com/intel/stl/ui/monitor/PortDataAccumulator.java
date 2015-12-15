@@ -36,8 +36,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:26:58  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.3  2015/08/17 18:53:40  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/05/11 12:35:30  rjtierne
+ *  Archive Log:    PR 128585 - Fix errors found by Klocwork and FindBugs
+ *  Archive Log:    In all increment methods, when wrapping the accumulator back to zero
+ *  Archive Log:    use the class attribute instead of the local parameter.
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2014/06/02 19:58:54  rjtierne
  *  Archive Log:    Initial Version
@@ -56,133 +62,156 @@ public class PortDataAccumulator {
      * Captured packet and data accumulators when querying totals data
      */
     private long rxCumulativePacket = 0;
+
     private long rxCumulativeData = 0;
-    private long txCumulativePacket = 0;    
+
+    private long txCumulativePacket = 0;
+
     private long txCumulativeData = 0;
-    
+
     /**
      * Calculated packet and data accumulators when querying delta data
      */
     private long rxPacketAcc = 0;
+
     private long rxDataAcc = 0;
-    private long txPacketAcc = 0;    
+
+    private long txPacketAcc = 0;
+
     private long txDataAcc = 0;
+
     /**
      * @return the rxCumulativePacket
      */
     public long getRxCumulativePacket() {
         return rxCumulativePacket;
     }
+
     /**
-     * @param rxCumulativePacket the rxCumulativePacket to set
+     * @param rxCumulativePacket
+     *            the rxCumulativePacket to set
      */
     public void setRxCumulativePacket(long rxCumulativePacket) {
         this.rxCumulativePacket = rxCumulativePacket;
     }
+
     /**
      * @return the rxCumulativeData
      */
     public long getRxCumulativeData() {
         return rxCumulativeData;
     }
+
     /**
-     * @param rxCumulativeData the rxCumulativeData to set
+     * @param rxCumulativeData
+     *            the rxCumulativeData to set
      */
     public void setRxCumulativeData(long rxCumulativeData) {
         this.rxCumulativeData = rxCumulativeData;
     }
+
     /**
      * @return the txCumulativePacket
      */
     public long getTxCumulativePacket() {
         return txCumulativePacket;
     }
+
     /**
-     * @param txCumulativePacket the txCumulativePacket to set
+     * @param txCumulativePacket
+     *            the txCumulativePacket to set
      */
     public void setTxCumulativePacket(long txCumulativePacket) {
         this.txCumulativePacket = txCumulativePacket;
     }
+
     /**
      * @return the txCumulativeData
      */
     public long getTxCumulativeData() {
         return txCumulativeData;
     }
+
     /**
-     * @param txCumulativeData the txCumulativeData to set
+     * @param txCumulativeData
+     *            the txCumulativeData to set
      */
     public void setTxCumulativeData(long txCumulativeData) {
         this.txCumulativeData = txCumulativeData;
     }
+
     /**
      * @return the rxPacketAcc
      */
     public long getRxPacketAcc() {
         return rxPacketAcc;
     }
+
     /**
-     * @param rxPacketAcc - value by which to increment accumulator
+     * @param rxPacketAcc
+     *            - value by which to increment accumulator
      */
     public void incRxPacketAcc(long rxPacketAcc) {
         this.rxPacketAcc += rxPacketAcc;
-        rxPacketAcc %= Long.MAX_VALUE;
+        this.rxPacketAcc %= Long.MAX_VALUE;
     }
+
     /**
      * @return the rxDataAcc
      */
     public long getRxDataAcc() {
         return rxDataAcc;
     }
+
     /**
-     * @param rxDataAcc - value by which to increment accumulator
+     * @param rxDataAcc
+     *            - value by which to increment accumulator
      */
     public void incRxDataAcc(long rxDataAcc) {
         this.rxDataAcc += rxDataAcc;
-        rxDataAcc %= Long.MAX_VALUE;
+        this.rxDataAcc %= Long.MAX_VALUE;
     }
+
     /**
      * @return the txPacketAcc
      */
     public long getTxPacketAcc() {
         return txPacketAcc;
     }
+
     /**
-     * @param txPacketAcc - value by which to increment accumulator
+     * @param txPacketAcc
+     *            - value by which to increment accumulator
      */
     public void incTxPacketAcc(long txPacketAcc) {
         this.txPacketAcc += txPacketAcc;
-        txPacketAcc %= Long.MAX_VALUE;
+        this.txPacketAcc %= Long.MAX_VALUE;
     }
+
     /**
      * @return the txDataAcc
      */
     public long getTxDataAcc() {
         return txDataAcc;
     }
+
     /**
-     * @param txDataAcc - value by which to increment accumulator
+     * @param txDataAcc
+     *            - value by which to increment accumulator
      */
     public void incTxDataAcc(long txDataAcc) {
         this.txDataAcc += txDataAcc;
-        txDataAcc %= Long.MAX_VALUE;
+        this.txDataAcc %= Long.MAX_VALUE;
     }
-    
+
     @Override
     public String toString() {
-        return "[rxCumulativePacket="+rxCumulativePacket + ", rxCumulativeData="+rxCumulativeData + 
-              ", txCumulativePacket="+txCumulativePacket + ", txCumulativeData="+txCumulativeData +
-              ", rxPacketAcc="+rxPacketAcc + ", rxDataAcc="+rxDataAcc +
-              ", txPacketAcc="+txPacketAcc + ", txDataAcc="+txDataAcc +"]";
+        return "[rxCumulativePacket=" + rxCumulativePacket
+                + ", rxCumulativeData=" + rxCumulativeData
+                + ", txCumulativePacket=" + txCumulativePacket
+                + ", txCumulativeData=" + txCumulativeData + ", rxPacketAcc="
+                + rxPacketAcc + ", rxDataAcc=" + rxDataAcc + ", txPacketAcc="
+                + txPacketAcc + ", txDataAcc=" + txDataAcc + "]";
     }
-       
-    
-    
-    
-        
-    
-    
-        
-    
-    
+
 }

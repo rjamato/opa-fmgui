@@ -35,8 +35,36 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.19.2.1  2015/08/12 15:22:10  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.29  2015/08/27 19:36:27  fernande
+ *  Archive Log:    PR 128703 - Fail over doesn't work on A0 Fabric. Adding setting to specify the failover timeout
+ *  Archive Log:
+ *  Archive Log:    Revision 1.28  2015/08/17 18:49:07  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.27  2015/05/28 12:06:08  robertja
+ *  Archive Log:    PR128703 Return correct subnet ID when fail-over completes.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.26  2015/05/26 15:40:06  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.25  2015/05/26 14:48:34  robertja
+ *  Archive Log:    PR128703 - Fix check for fail-over in progress.  Also, suppress command response errors during fail-over.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.24  2015/05/18 14:45:10  robertja
+ *  Archive Log:    PR128586 Updates for unit-testing after code review.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.23  2015/05/08 18:28:39  robertja
+ *  Archive Log:    Further code clean-up for fail-over.  Added shutdown of working FailoverManagers on application close.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.22  2015/05/08 15:04:31  robertja
+ *  Archive Log:    Removed debug code.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.21  2015/05/08 13:03:11  robertja
+ *  Archive Log:    Updated after code review.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.20  2015/05/05 18:33:55  robertja
+ *  Archive Log:    Refactored version of FailoverManager.  Converted to singleton and restructured for maintainability.
  *  Archive Log:
  *  Archive Log:    Revision 1.19  2015/04/29 17:30:57  robertja
  *  Archive Log:    Add debug code for "SM unavailable" testing.
@@ -100,13 +128,14 @@ package com.intel.stl.fecdriver.impl;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.channels.ClosedSelectorException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.nio.channels.UnresolvedAddressException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,7 +150,10 @@ import com.intel.stl.api.subnet.impl.SAHelper;
 import com.intel.stl.common.STLMessages;
 import com.intel.stl.fecdriver.ApplicationEvent;
 import com.intel.stl.fecdriver.IFailoverEventListener;
+import com.intel.stl.fecdriver.IFailoverHelper;
 import com.intel.stl.fecdriver.IFailoverManager;
+import com.intel.stl.fecdriver.IFailoverProgressListener;
+import com.intel.stl.fecdriver.dispatcher.SMFailoverException;
 
 /**
  * @author robertja
@@ -138,74 +170,60 @@ public class FailoverManager implements IFailoverManager {
 
     private final int SM_FAILOVER_RETRIES = 12;
 
-    private List<SMRecordBean> subnetManagerRecords = null;
+    private STLConnection originalConnection = null;
 
-    private final STLAdapter adapter;
-
-    private ArrayList<HostChannel> channels = null;
-
-    private SocketChannel channel = null;
+    private List<HostInfo> backupSMs = null;
 
     private Double progressIncrement = null;
 
-    /**
-	 * 
-	 */
-    public FailoverManager(STLAdapter adapter) {
-        this.adapter = adapter;
+    List<SMRecordBean> subnetManagerRecords = null;
+
+    private boolean stopFailover;
+
+    private boolean failoverSuccessful;
+
+    private final boolean FO_DEBUG = false;
+
+    private final IFailoverHelper helper;
+
+    public FailoverManager(IFailoverHelper adapter) {
+        backupSMs = new ArrayList<HostInfo>();
         subnetManagerRecords = new ArrayList<SMRecordBean>();
-        channels = new ArrayList<HostChannel>();
+        failoverSuccessful = false;
+        this.helper = adapter;
     }
 
-    // Class to conveniently associate the HostInfo object with the
-    // SocketChannel
-    // created based on the host/port stored there.
-    private class HostChannel {
-        private final HostInfo hostInfo;
-
-        private final SocketChannel sockChannel;
-
-        protected HostChannel(HostInfo hostInfo, SocketChannel sockChannel) {
-            this.hostInfo = hostInfo;
-            this.sockChannel = sockChannel;
-        }
-
-        protected HostInfo getHostInfo() {
-            return hostInfo;
-        }
-
-        protected SocketChannel getSockChannel() {
-            return sockChannel;
-        }
-
-    }
-
-    public void setSubnetManagerRecords(List<SMRecordBean> subnetManagerRecords) {
-        this.subnetManagerRecords = subnetManagerRecords;
-    }
-
-    public List<SMRecordBean> getSubnetManagerRecords() {
-        return subnetManagerRecords;
-    }
-
-    public void clearSubnetManagerRecords() {
-        subnetManagerRecords.clear();
+    @Override
+    public void stopFailover() {
+        this.stopFailover = true;
     }
 
     @Override
     public long getFailoverTimeout() {
-        return ((SM_FAILOVER_WAIT + SM_SELECTOR_EVENT_TIMEOUT) * SM_FAILOVER_RETRIES);
+        return (SM_FAILOVER_WAIT * SM_FAILOVER_RETRIES);
+    }
+
+    public SubnetDescription getSubnetDescription() {
+        return originalConnection.getConnectionDescription();
     }
 
     @Override
     public SubnetDescription connectionLost(final STLConnection conn) {
-        System.out.println("FailoverManager - connectionLost called: "
-                + System.currentTimeMillis() / 1000);
+        if (FO_DEBUG) {
+            System.out.println("FailoverManager - connectionLost called: "
+                    + System.currentTimeMillis() / 1000);
+        }
 
-        SubnetDescription snDescription = conn.getConnectionDescription();
-        List<HostInfo> backupSMs = snDescription.getFEList();
-        subnetManagerRecords = snDescription.getSMList();
+        SubnetDescription snDescription = null;
+
+        originalConnection = conn;
+        stopFailover = false;
+        SubnetDescription subnetDescn = conn.getConnectionDescription();
+        long subnetID = subnetDescn.getSubnetId();
+        backupSMs = subnetDescn.getFEList();
+        subnetManagerRecords = subnetDescn.getSMList();
         progressIncrement = getProgressIncrement(backupSMs.size());
+        List<STLConnection> connections = null;
 
         IFailoverEventListener listener = new IFailoverEventListener() {
             @Override
@@ -224,292 +242,154 @@ public class FailoverManager implements IFailoverManager {
             }
         };
 
-        Selector selector;
-        SelectionKey key;
-        boolean failoverSuccessful = false;
+        // This is the main fail-over loop. It creates a list of
+        // STLConnections to hosts that are potential new connections to
+        // the subnet. It then walks down that list looking for a working
+        // connection to the correct subnet (with a working PM). It will
+        // continue walking the list until a new subnet connection is found
+        // or re-tries are exhausted.
         int j = 0;
-
-        while ((j++ < SM_FAILOVER_RETRIES) && (failoverSuccessful == false)) {
+        while ((j++ < SM_FAILOVER_RETRIES) && (stopFailover == false)) {
             try {
-                listener.onFailoverProgress(new ApplicationEvent(
-                        "FAILOVER CONNECTION ATTEMPT " + (j + 1)));
-                listener.onFailoverProgress(new ApplicationEvent(
-                        progressIncrement));
-                channels.clear();
-                // Create the selector to monitor connection events on all
-                // SocketChannels.
-                System.out.println("FailoverManager - Create the selector.");
-                selector = Selector.open();
 
-                // Create one SocketChannel per SM back-up.
-                Iterator<HostInfo> backupSMIterator = backupSMs.iterator();
-                while (backupSMIterator.hasNext()) {
-                    HostInfo host = backupSMIterator.next();
-                    // Create regular socketConnection.
-                    System.out
-                            .println("FailoverManager - Create the regular SockectChannel.");
-                    channel = SocketChannel.open();
+                // Create list of STLConnections to back-up FE hosts.
+                connections = fillSTLConnectionList(conn);
 
-                    try {
-                        // Configure socket and connect.
-                        channel.configureBlocking(false);
-                        channel.connect(new InetSocketAddress(host.getHost(),
-                                host.getPort()));
-                    } catch (Exception e) {
-                        channel.close();
-                        System.out
-                                .println("FailoverManager - Unresolved address in list of back-ups.");
-                        log.error(StringUtils.getErrorMessage(e), e);
-                    }
-                    if (channel.isOpen() == true) {
-                        // We care about connection event only.
-                        channel.register(selector, SelectionKey.OP_CONNECT);
-                        channels.add(new HostChannel(host, channel));
-                    } else {
-                        channels.add(new HostChannel(host, channel));
-                    }
-                }
+                // Process the list of STLConnections.
+                if ((connections != null) && (connections.isEmpty() == false)) {
+                    // Walk through each STLConnection looking for a new
+                    // connection to the SM/PM.
+                    Iterator<STLConnection> connIterator =
+                            connections.iterator();
+                    while (connIterator.hasNext() && (stopFailover == false)) {
+                        STLConnection connection = connIterator.next();
 
-                if (channels.isEmpty() == false) {
-                    // We have at least one back-up SM listed.
-                    // Block waiting for a timeout or a connection event.
-                    if (selector.select(SM_SELECTOR_EVENT_TIMEOUT) > 0) {
-                        System.out
-                                .println("FailoverManager - Selector.select returned.");
-                        Set<SelectionKey> selectedKeys =
-                                selector.selectedKeys();
-                        Iterator<SelectionKey> keyIterator =
-                                selectedKeys.iterator();
+                        // Check for presence of correct SM and presence of PM.
+                        failoverSuccessful = processSTLConnection(connection);
 
-                        while (keyIterator.hasNext()
-                                && (failoverSuccessful == false)) {
-                            key = keyIterator.next();
-                            if (key.isConnectable()) {
-                                // A connection was established with a remote
-                                // server.
+                        if (failoverSuccessful == true) {
+                            // Update index in SubnetDescription for return to
+                            // caller.
+                            if (FO_DEBUG) {
                                 System.out
-                                        .println("FailoverManager - Connection isConnectable event.");
-                                SocketChannel socketChannel =
-                                        (SocketChannel) key.channel();
-                                STLConnection connection = null;
-
-                                try {
-                                    if (socketChannel.finishConnect() == true) {
-                                        System.out
-                                                .println("FailoverManager - SocketChannel connection was established with a remote server.");
-                                        // The SocketChannel connection has
-                                        // found an active node. Now
-                                        // we set up an STLConnection to query
-                                        // for SMs.
-
-                                        SubnetDescription testSubnetDescription =
-                                                snDescription;
-                                        // Change current FE in
-                                        // SubnetDescription to get connection
-                                        // to active FE.
-                                        testSubnetDescription
-                                                .setCurrentFEIndex(getHostIndex(socketChannel));
-                                        connection =
-                                                adapter.tryConnect(testSubnetDescription);
-
-                                        System.out
-                                                .println("FailoverManager - tryConnect.");
-
-                                        try {
-                                            if (connection != null
-                                                    && connection
-                                                            .waitForConnect() == true) {
-                                                SAHelper helper =
-                                                        new SAHelper(connection);
-                                                // Send the query for the list
-                                                // of SMs.
-                                                System.out
-                                                        .println("FailoverManager - verify correct subnet connected.");
-                                                List<SMRecordBean> smRecords =
-                                                        helper.getSMs();
-                                                if (foundCorrectSubnet(smRecords) == true) {
-                                                    // Set new current master in
-                                                    // SubnetDescription.
-                                                    System.out
-                                                            .println("FailoverManager - foundCorrectSubnet = true - check for PM.");
-                                                    PAHelper paHelper =
-                                                            new PAHelper(
-                                                                    connection);
-                                                    PMConfigBean configBean =
-                                                            null;
-                                                    configBean =
-                                                            paHelper.getPMConfig();
-                                                    if (configBean != null) {
-                                                        System.out
-                                                                .println("FailoverManager - Updating SubnetDescription.");
-                                                        snDescription
-                                                                .setCurrentFEIndex(getHostIndex(socketChannel));
-                                                        failoverSuccessful =
-                                                                true;
-                                                    }
-                                                } else {
-                                                    System.out
-                                                            .println("FailoverManager - foundCorrectSubnet = false.");
-                                                }
-
-                                            }
-
-                                        } catch (IOException e) {
-                                            System.out
-                                                    .println("FailoverManager - STLConnection waitForConnect Exception.");
-                                            log.error(StringUtils
-                                                    .getErrorMessage(e), e);
-                                            e.printStackTrace();
-                                        } catch (Exception e) {
-                                            System.out
-                                                    .println("FailoverManager - STLConnection getSMs timeout exception.");
-                                            log.error(StringUtils
-                                                    .getErrorMessage(e), e);
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                } catch (IOException e) {
-                                    System.out
-                                            .println("FailoverManager - IOException on SockectChannel.finishConnect().");
-                                    log.error(StringUtils.getErrorMessage(e), e);
-                                    socketChannel.close();
-                                } finally {
-                                    // Clean up STLConnection.
-                                    System.out
-                                            .println("FailoverManager - Clean uo STLConnection.");
-                                    if (connection != null) {
-                                        connection.close();
-                                    }
-
-                                }
-
+                                        .println("FailoverManager - Updating SubnetDescription.");
                             }
-                            System.out
-                                    .println("FailoverManager - End of while (keyIterator.hasNext().");
-                            keyIterator.remove();
+                            snDescription =
+                                    connection.getConnectionDescription();
+                            snDescription.setSubnetId(subnetID);
+                            stopFailover = true;
+                            break;
                         }
-                    } else {
-                        // Timeout has occurred.
-                        System.out
-                                .println("FailoverManager - Selector timeout has occurred.");
                     }
-
-                } else {
-                    // No Back-up SMs were listed.
-                    System.out
-                            .println("FailoverManager - No Back-up SMs were listed.");
                 }
-            } catch (IOException e) {
-                log.error(StringUtils.getErrorMessage(e), e);
-                System.out
-                        .println("FailoverManager - connectionLost IOException..");
+            } catch (Exception e) {
+                if (FO_DEBUG) {
+                    System.out
+                            .println("FailoverManager - Exception in retry loop.");
+                }
                 e.printStackTrace();
             } finally {
-                // Clean up SocketChannels.
-                System.out
-                        .println("FailoverManager - Clean up SocketChannels.");
-                Iterator<HostChannel> channelIterator = channels.iterator();
-                while (channelIterator.hasNext()) {
-                    SocketChannel channel =
-                            channelIterator.next().getSockChannel();
-                    // Close SocketChannel.
+                // Close STLConnections.
+                if (FO_DEBUG) {
                     System.out
-                            .println("FailoverManager - Close SockectChannel.");
-                    try {
-                        channel.close();
-                    } catch (IOException e) {
-                        System.out
-                                .println("FailoverManager - Exception during Close SockectChannel.");
+                            .println("FailoverManager - Clean up STLConnections.");
+                }
+                cleanSTLConnections(connections);
+
+                try {
+                    // Update progress and wait for period before starting the
+                    // loop again.
+                    if (failoverSuccessful == false) {
+
+                        listener.onFailoverProgress(new ApplicationEvent(
+                                STLMessages.STL64002_SM_FAILOVER_CONNECTION_ATTEMPT
+                                        .getDescription(Integer.toString(j))));
+                        listener.onFailoverProgress(new ApplicationEvent(
+                                progressIncrement));
+
+                        if (FO_DEBUG) {
+                            System.out
+                                    .println("FailoverManager - connectionLost sleep: "
+                                            + System.currentTimeMillis() / 1000);
+                        }
+                        Thread.sleep(SM_FAILOVER_WAIT);
                     }
+                } catch (Exception e) {
+                    log.error(StringUtils.getErrorMessage(e), e);
+                    if (FO_DEBUG) {
+                        System.out
+                                .println("FailoverManager - connectionLost InterruptedException.");
+                    }
+                    e.printStackTrace();
                 }
             }
 
-            try {
-                System.out.println("FailoverManager - connectionLost sleep: "
-                        + System.currentTimeMillis() / 1000);
-                Thread.sleep(SM_FAILOVER_WAIT);
-            } catch (InterruptedException e) {
-                log.error(StringUtils.getErrorMessage(e), e);
-                System.out
-                        .println("FailoverManager - connectionLost InterruptedException.");
-            }
         } // End of while ((j < RETRIES) && (failoverSuccessful ==
           // false...
-
-        if (channel.isOpen() == true) {
-            try {
-                channel.close();
-            } catch (IOException e) {
-                System.out
-                        .println("FailoverManager - channel close IOException.");
-            }
-        }
 
         // Take action based on fail-over success or failure. If successful,
         // return SubnetDescriprtion with new current master. Otherwise, throw
         // an exception.
         if (failoverSuccessful == true) {
-            System.out
-                    .println("FailoverManager - Failover successful. Return new SM master.");
+            if (FO_DEBUG) {
+                System.out
+                        .println("FailoverManager - Failover successful. Return new SM master.");
+            }
+            log.info("FailoverManager - Failover successful. Return new SM master.");
             return snDescription;
         } else {
-            System.out
-                    .println("FailoverManager - Failover unsuccessful. Throw exception.");
+            if (FO_DEBUG) {
+                System.out
+                        .println("FailoverManager - Failover unsuccessful. Throw exception.");
+            }
             SMFailoverException fe =
                     new SMFailoverException(
                             STLMessages.STL64000_SM_FAILOVER_UNSUCCESSFUL);
             log.error(StringUtils.getErrorMessage(fe), fe);
             throw fe;
         }
-    }
+    } // End of connectionLost.
 
-    // Find the channels ArrayList HostInfo object associated with the
-    // SocketChannel argument. A return value of null indicates that the
-    // object was not found.
-    protected HostInfo getHostInfo(SocketChannel sock) {
-        HostInfo hostInfo = null;
-        if (channels.isEmpty() == false) {
-            Iterator<HostChannel> iterator = channels.iterator();
-            while (iterator.hasNext()) {
-                HostChannel hostChannel = iterator.next();
-                if (hostChannel.getSockChannel().equals(sock)) {
-                    hostInfo = hostChannel.getHostInfo();
+    // Clean up connection-related infrastructure.
+    protected void cleanSTLConnections(List<STLConnection> conns) {
+        // Close connections.
+        if ((conns != null) && (conns.isEmpty() == false)) {
+            for (STLConnection connection : conns) {
+                if (FO_DEBUG) {
+                    System.out
+                            .println("FailoverManager - Close STLConnection; "
+                                    + connection);
+                }
+                try {
+                    connection.resetConnection(0);
+                } catch (Exception e) {
+                    if (FO_DEBUG) {
+                        System.out
+                                .println("FailoverManager - Exception while closing; "
+                                        + connection);
+                    }
+                    e.printStackTrace();
                 }
             }
+            conns.clear();
         }
-        return hostInfo;
     }
 
-    // Find the channels ArrayList index of the HostInfo object associated
-    // with the SocketChannel argument. A return of -1 indicates that the
-    // object was not found.
-    protected int getHostIndex(SocketChannel sock) {
-        int index = -1;
-        if (channels.isEmpty() == false) {
-            Iterator<HostChannel> iterator = channels.iterator();
-            while (iterator.hasNext()) {
-                HostChannel hostChannel = iterator.next();
-                if (hostChannel.getSockChannel().equals(sock)) {
-                    index = channels.lastIndexOf(hostChannel);
-                }
-            }
-        }
-        return index;
-    }
-
-    // Determine if the information from the connnected subnet matches the
+    // Determine if the information from the connected subnet matches the
     // originally connected subnet.
-    protected boolean foundCorrectSubnet(List<SMRecordBean> smRecords) {
+    protected boolean isCorrectSubnet(List<SMRecordBean> origSmRecords,
+            List<SMRecordBean> smRecords) {
         // Return true if:
-        // - any GUID in smRecords matches a GUID in subnetRecords
-        // - subnetRecords is null
-        // - subnetRecords is empty (we are connecting for the first time.
+        // - any GUID in smRecords matches a GUID in origSmRecords
+        // - origSmRecords is null
+        // - origSmRecords is empty (we are connecting for the first time).
         //
         // Return false otherwise.
         boolean isFound = false;
-        System.out.println("FailoverManager - foundCorrectSubnet called.");
-        if ((subnetManagerRecords != null)
-                && (subnetManagerRecords.isEmpty() == false)) {
+        if (FO_DEBUG) {
+            System.out.println("FailoverManager - foundCorrectSubnet called.");
+        }
+        if ((origSmRecords != null) && (origSmRecords.isEmpty() == false)) {
             if ((smRecords != null) && (smRecords.isEmpty() == false)) {
                 ArrayList<SMRecordBean> smRecordsAL =
                         (ArrayList<SMRecordBean>) smRecords;
@@ -519,7 +399,7 @@ public class FailoverManager implements IFailoverManager {
                 while (smRecordsALIterator.hasNext() && (isFound != true)) {
                     SMRecordBean smRecordsALBean = smRecordsALIterator.next();
                     Iterator<SMRecordBean> subnetManagerRecordsIterator =
-                            subnetManagerRecords.iterator();
+                            origSmRecords.iterator();
                     while (subnetManagerRecordsIterator.hasNext()) {
                         SMRecordBean subnetManagerRecordsBean =
                                 subnetManagerRecordsIterator.next();
@@ -535,22 +415,200 @@ public class FailoverManager implements IFailoverManager {
             }
         } else {
             // First time connecting, we have nothing to compare.
-            System.out
-                    .println("FailoverManager - foundCorrectSubnet isFound = true.");
+            if (FO_DEBUG) {
+                System.out
+                        .println("FailoverManager - foundCorrectSubnet isFound = true.");
+            }
             isFound = true;
         }
 
         return isFound;
     }
 
-    private Double getProgressIncrement(int feListSize) {
-        Double increment;
+    // Calculate increment for progress bar for each pass through re-try loop.
+    protected double getProgressIncrement(int feListSize) {
+        // Note that the total is set in
+        // FabricController->onSubnetManagerConnectionLost.
+        double increment;
         if (feListSize > 0) {
-            increment =
-                    (new Double(feListSize) / new Double(SM_FAILOVER_RETRIES));
+            increment = (double) feListSize / (double) SM_FAILOVER_RETRIES;
         } else {
-            increment = new Double(0);
+            increment = 0.0;
         }
         return increment;
     }
-}
+
+    // Tests the STLConnection to see if an FM exists on the other end.
+    // Returns true if:
+    // A host with an FM on the correct subnet has has been found.
+    // The PM is available and responding to queries.
+    private boolean processSTLConnection(STLConnection connection) {
+        boolean isHostFound = false;
+        try {
+            if (connection != null && connection.isConnected() == true) {
+                SAHelper helper = new SAHelper(connection.createStatement());
+
+                // Once connected, send the query for the list of SMs.
+                if (FO_DEBUG) {
+                    System.out
+                            .println("FailoverManager - verify correct subnet connected.");
+                }
+                List<SMRecordBean> smRecords = helper.getSMs();
+                if (FO_DEBUG) {
+                    System.out
+                            .println("FailoverManager - received list of SMs.");
+                }
+                if (isCorrectSubnet(subnetManagerRecords, smRecords) == true) {
+                    // We are connected to the correct subnet. Now check for
+                    // the availability of the PM.
+                    if (FO_DEBUG) {
+                        System.out
+                                .println("FailoverManager - foundCorrectSubnet = true - check for PM.");
+                    }
+                    PAHelper paHelper =
+                            new PAHelper(connection.createStatement());
+                    PMConfigBean configBean = paHelper.getPMConfig();
+                    if (configBean != null) {
+                        if (FO_DEBUG) {
+                            System.out
+                                    .println("FailoverManager - PM available.");
+                        }
+                        isHostFound = true;
+                    } else {
+                        if (FO_DEBUG) {
+                            System.out
+                                    .println("FailoverManager - PM unavailable.");
+                        }
+                    }
+                } else {
+                    if (FO_DEBUG) {
+                        System.out
+                                .println("FailoverManager - foundCorrectSubnet = false.");
+                    }
+                }
+            } else {
+                if (FO_DEBUG) {
+                    System.out
+                            .println("FailoverManager - processSTLConnection - connection is not connected.");
+                }
+            }
+        } catch (IOException e) {
+            if (FO_DEBUG) {
+                System.out
+                        .println("FailoverManager - processSTLConnection - IOException.");
+            }
+            log.error(StringUtils.getErrorMessage(e), e);
+        } catch (Exception e) {
+            if (FO_DEBUG) {
+                System.out
+                        .println("FailoverManager - processSTLConnection - Exception.");
+            }
+            log.error(StringUtils.getErrorMessage(e), e);
+        }
+        return isHostFound;
+    }
+
+    // From the list of back-up SM's, create a list of STLConnections
+    // to those hosts.
+    protected List<STLConnection> fillSTLConnectionList(
+            STLConnection startingConnection) {
+
+        List<STLConnection> connections = new ArrayList<STLConnection>();
+        int size =
+                startingConnection.getConnectionDescription().getFEList()
+                        .size();
+        STLConnection connection = null;
+
+        for (int i = 0; i < size; i++) {
+            SubnetDescription subnet =
+                    startingConnection.getConnectionDescription().copy();
+            subnet.setCurrentFEIndex(i);
+            if (isConnectableHost(subnet) == true) {
+                if (FO_DEBUG) {
+                    System.out.println("FailoverManager - host is reachable.");
+                }
+                try {
+                    connection = helper.tryConnect(subnet);
+                    if ((connection != null)
+                            && (connection.waitForConnect() == true)) {
+
+                        if (FO_DEBUG) {
+                            System.out
+                                    .println("FailoverManager - add connection to list: "
+                                            + connection);
+                        }
+                        connections.add(connection);
+                    } else {
+                        // If waitForConnect fails, we skip this connection on
+                        // this re-try. With the current implementation of
+                        // tryConnect, we should never get here but we'll do the
+                        // close for completeness.
+                        if (connection != null) {
+                            connection.close();
+                        }
+
+                    }
+                } catch (IOException e) {
+                    if (FO_DEBUG) {
+                        System.out
+                                .println("FailoverManager - fillSTLConnectionList - IOException.");
+                    }
+                    if (connection != null) {
+                        connection.close();
+                    }
+                }
+            }
+        }
+        return connections;
+    }
+
+    @Override
+    public SubnetDescription connectionLost(SubnetDescription subnet,
+            IFailoverProgressListener listener) {
+        return null;
+    }
+
+    protected boolean isConnectableHost(SubnetDescription subnet) {
+
+        boolean connectable = false;
+        Selector selector;
+        SocketChannel socketChannel = null;
+        String host = subnet.getCurrentFE().getHost();
+        int port = subnet.getCurrentFE().getPort();
+
+        try {
+            // Open the selector
+            selector = Selector.open();
+
+            // Create a non-blocking socket channel
+            socketChannel = SocketChannel.open();
+            socketChannel.configureBlocking(false);
+
+            // Register the connect key
+            socketChannel.register(selector, SelectionKey.OP_CONNECT);
+
+            // Attempt to connect
+            socketChannel.connect(new InetSocketAddress(host, port));
+
+            // Wait for the channel to be selected
+            if (selector.select(SM_SELECTOR_EVENT_TIMEOUT) > 0) {
+
+                // Finish the connect operation
+                connectable = socketChannel.finishConnect();
+            }
+
+        } catch (IOException e) {
+        } catch (ClosedSelectorException e) {
+        } catch (UnresolvedAddressException e) {
+        } finally {
+            try {
+                // Close the socket
+                if (socketChannel != null) {
+                    socketChannel.close();
+                }
+            } catch (IOException e) {
+            }
+        }
+        return connectable;
+    }
+} // End of FailoverManager.

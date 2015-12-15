@@ -35,8 +35,19 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:26:42  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.6  2015/08/17 18:53:50  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/07/17 15:41:39  rjtierne
+ *  Archive Log:    PR 129549 - On connectivity table, clicking on cable info for an HFI results in an error
+ *  Archive Log:    In an effort to make the construction of the CategoryProcessorContext more generic and
+ *  Archive Log:    avert the need for an FVResourceNode:
+ *  Archive Log:    	- Added new constructor for setting up a node using input parameter lid
+ *  Archive Log:    	- Added new constructor for setting up a port using input parameters lid and port
+ *  Archive Log:    	- Added new setupForNode() method to get a node using the input parameter lid
+ *  Archive Log:    	- Added new setupForPort() method to get a port using the input parameters lid and portNum
+ *  Archive Log:    	- Added new getPort() method to get a PortRecordBean from the subnet API
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/02/04 21:44:14  jijunwan
  *  Archive Log:    impoved to handle unsigned values
@@ -61,6 +72,8 @@
 
 package com.intel.stl.ui.configuration;
 
+import org.jfree.util.Log;
+
 import com.intel.stl.api.configuration.IConfigurationApi;
 import com.intel.stl.api.performance.IPerformanceApi;
 import com.intel.stl.api.subnet.ISubnetApi;
@@ -79,7 +92,7 @@ import com.intel.stl.ui.monitor.tree.FVResourceNode;
 
 public class CategoryProcessorContext implements ICategoryProcessorContext {
 
-    private final FVResourceNode resourceNode;
+    private FVResourceNode resourceNode;
 
     private final Context context;
 
@@ -123,6 +136,30 @@ public class CategoryProcessorContext implements ICategoryProcessorContext {
                 default:
                     break;
             }
+        } catch (SubnetDataNotFoundException e) {
+            RuntimeException re = new RuntimeException(e.getMessage());
+            re.initCause(e);
+            throw re;
+        }
+    }
+
+    // Constructor for a Node
+    public CategoryProcessorContext(int lid, Context context) {
+        this.context = context;
+        try {
+            setupForNode(lid);
+        } catch (SubnetDataNotFoundException e) {
+            RuntimeException re = new RuntimeException(e.getMessage());
+            re.initCause(e);
+            throw re;
+        }
+    }
+
+    // Constructor for a port
+    public CategoryProcessorContext(int lid, short port, Context context) {
+        this.context = context;
+        try {
+            setupForPort(lid, port);
         } catch (SubnetDataNotFoundException e) {
             RuntimeException re = new RuntimeException(e.getMessage());
             re.initCause(e);
@@ -209,6 +246,14 @@ public class CategoryProcessorContext implements ICategoryProcessorContext {
         }
     }
 
+    protected void setupForNode(int lid) throws SubnetDataNotFoundException {
+        node = getNode(lid);
+        nodeInfo = null;
+        if (node != null) {
+            nodeInfo = node.getNodeInfo();
+        }
+    }
+
     private void setupForSwitch() throws SubnetDataNotFoundException {
         int lid = resourceNode.getId();
         node = getNode(lid);
@@ -270,8 +315,60 @@ public class CategoryProcessorContext implements ICategoryProcessorContext {
         }
     }
 
+    protected void setupForPort(int lid, short portNum)
+            throws SubnetDataNotFoundException {
+
+        node = getNode(lid);
+        portBean = getPort(lid, portNum);
+        nodeInfo = null;
+        portInfo = null;
+        linkBean = null;
+        neighbor = null;
+        endPort = false;
+        if (node != null) {
+            nodeInfo = node.getNodeInfo();
+            NodeType parentType = nodeInfo.getNodeTypeEnum();
+            // According to the IB spec
+            // Endport: A Port which can be a destination of LID-routed
+            // communication within the same Subnet as the sender. All Channel
+            // Adapter ports on the subnet are endports of that subnet, as is
+            // Port 0 of each Switch in the subnet. Switch ports other than Port
+            // 0 may not be endports. When port is used without qualification,
+            // it may be assumed to mean endport whenever the context indicates
+            // that it is a destination of communication.
+            if ((parentType != NodeType.SWITCH)
+                    || (parentType == NodeType.SWITCH && portNum == 0)) {
+                endPort = true;
+            }
+        }
+        if (portBean != null) {
+            portInfo = portBean.getPortInfo();
+        }
+        if (portBean != null) {
+            linkBean = null;
+            if (portNum != 0) {
+                linkBean = getSubnetApi().getLinkBySource(lid, portNum);
+            }
+            if (linkBean != null) {
+                neighbor = getNode(linkBean.getToLID());
+            }
+        }
+    }
+
     private NodeRecordBean getNode(int lid) throws SubnetDataNotFoundException {
         NodeRecordBean node = getSubnetApi().getNode(lid);
         return node;
+    }
+
+    protected PortRecordBean getPort(int lid, short portNum) {
+
+        PortRecordBean portBean = null;
+        try {
+            portBean = getSubnetApi().getPortByPortNum(lid, portNum);
+        } catch (SubnetDataNotFoundException e) {
+            Log.error(e.getMessage());
+        }
+
+        return portBean;
     }
 }

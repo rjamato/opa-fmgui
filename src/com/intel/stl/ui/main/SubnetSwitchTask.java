@@ -35,8 +35,17 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.19.2.1  2015/08/12 15:26:34  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.22  2015/08/17 18:53:38  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.21  2015/05/29 20:43:46  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Second wave of changes: the application can be switched between the old adapter and the new; moved out several initialization pieces out of objects constructor to allow subnet initialization with a UI in place; improved generics definitions for FV commands.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.20  2015/05/12 17:41:15  rjtierne
+ *  Archive Log:    PR 128624 - Klocwork and FindBugs fixes for UI
+ *  Archive Log:    Synchronized blocks in waitForSubtasks() and checkSubtasks() did not modify
+ *  Archive Log:    any mutable state. Now using mutex for wait/notify (FindBugs: Naked Notify).
  *  Archive Log:
  *  Archive Log:    Revision 1.19  2015/04/22 22:31:53  fisherma
  *  Archive Log:    Removing html tags from error messages.
@@ -138,6 +147,8 @@ public class SubnetSwitchTask extends
 
     private final Context newContext;
 
+    private final Object mutex = new Object();
+
     public SubnetSwitchTask(FabricModel model, Context newContext,
             List<IContextAware> contextPages) {
         super(model);
@@ -173,6 +184,11 @@ public class SubnetSwitchTask extends
         oldContext = context;
         previousContextCleared = false;
         newContext.initialize();
+        // Prepare context
+        // - apply random values for demo purpose
+        boolean addRandomValues = model.isAddRandomValues();
+        newContext.setRandom(addRandomValues);
+        newContext.getPerformanceApi().setRandom(addRandomValues);
 
         final FabricController controller = (FabricController) getController();
         SubnetDescription newSubnet = newContext.getSubnetDescription();
@@ -223,9 +239,11 @@ public class SubnetSwitchTask extends
         return newContext;
     }
 
-    private synchronized void waitForSubtasks() {
+    private void waitForSubtasks() {
         try {
-            wait(500L);
+            synchronized (mutex) {
+                mutex.wait(500L);
+            }
         } catch (InterruptedException e) {
         }
     }
@@ -233,8 +251,10 @@ public class SubnetSwitchTask extends
     /**
      * This method is invoked by a ContextSwitchTask to mark its end
      */
-    public synchronized void checkSubtasks() {
-        notify();
+    public void checkSubtasks() {
+        synchronized (mutex) {
+            mutex.notify();
+        }
     }
 
     @Override

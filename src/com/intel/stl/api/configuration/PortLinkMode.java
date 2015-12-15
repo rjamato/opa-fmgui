@@ -35,8 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3.2.1  2015/08/12 15:21:40  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.5  2015/08/17 18:48:36  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/07/16 16:33:33  jijunwan
+ *  Archive Log:    PR 129228 - remove PortLTPCRCMode of Al
+ *  Archive Log:    -  removed STL_PORT_LTP_CRC_MODE_ALL and STL_PORT_LINK_MODE_ALL_SUPPORTED
+ *  Archive Log:    - changed to use STLConstants for string print out
  *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/01/21 22:51:00  jijunwan
  *  Archive Log:    improved to throw exception when we encounter unsupported value. This will help us identify problems when it happens.
@@ -63,7 +69,7 @@ import com.intel.stl.api.StringUtils;
 
 /**
  * <pre>
- * ref: /ALL_EMB/IbAccess/Common/Inc/stl_sm.h v1.115
+ * ref: /ALL_EMB/IbAccess/Common/Inc/stl_sm.h v1.148
  * STL Port link mode, indicated as follows:
  * values are additive for Supported and Enabled fields
  * 
@@ -71,15 +77,13 @@ import com.intel.stl.api.StringUtils;
  * // reserved 1
  * #define STL_PORT_LINK_MODE_ETH  2       // Port mode is ETH (Gateway)
  * #define STL_PORT_LINK_MODE_STL  4       // Port mode is STL
- * #define STL_PORT_LINK_MODE_ALL_SUPPORTED 7
  * 
  * </pre>
  */
 public enum PortLinkMode {
     NOP((byte) 0x00),
     ETH((byte) 0x02),
-    STL((byte) 0x04),
-    ALL_SUPPORTED((byte) 0x07);
+    STL((byte) 0x04);
 
     private final byte mode;
 
@@ -92,9 +96,8 @@ public enum PortLinkMode {
     }
 
     public static PortLinkMode getPortLinkMode(byte mode) {
-        byte sMode = (byte) (mode & ALL_SUPPORTED.mode);
         for (PortLinkMode plm : PortLinkMode.values()) {
-            if (plm.getMode() == sMode) {
+            if (plm.getMode() == mode) {
                 return plm;
             }
         }
@@ -105,9 +108,6 @@ public enum PortLinkMode {
     public static PortLinkMode[] getPortLinkModes(byte mode) {
         if (isNoneSupported(mode)) {
             return new PortLinkMode[] { NOP };
-        }
-        if (isAllSupported(mode)) {
-            return new PortLinkMode[] { ALL_SUPPORTED };
         }
         PortLinkMode[] portLinkModes = PortLinkMode.values();
         PortLinkMode[] modes = new PortLinkMode[portLinkModes.length];
@@ -125,7 +125,4 @@ public enum PortLinkMode {
         return mode == NOP.mode;
     }
 
-    public static boolean isAllSupported(byte mode) {
-        return (ALL_SUPPORTED.mode & mode) == ALL_SUPPORTED.mode;
-    }
 }

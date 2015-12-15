@@ -35,8 +35,18 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.1  2015/08/12 15:26:38  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.8  2015/08/17 18:53:46  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/05/14 14:59:22  rjtierne
+ *  Archive Log:    PR 128682 - Set link quality indicator to "Unknown" on port error
+ *  Archive Log:    - Redefined UNKNOWN to show "Unknown" link quality description and icon instead of excellent
+ *  Archive Log:    - Added RESERVED to indicate "Reserved" link quality received from FM
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/05/14 13:22:13  rjtierne
+ *  Archive Log:    - Redefined UNKNOWN to show "Unknown" link quality description and icon instead of excellent
+ *  Archive Log:    - Added RESERVED to indicate "Reserved" link quality received from FM
  *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/04/16 19:43:47  jijunwan
  *  Archive Log:    updated to handle a bug on DC firmware that provides value 7 not specified in spec, and the meaning of 7 is excellent
@@ -75,7 +85,11 @@ import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UIImages;
 
 public enum LinkQualityViz {
-    UNKNOWN(LinkQuality.UNKNOWN, STLConstants.K1610_QUALITY_EXCELLENT
+    // Unknown is an error condition
+    UNKNOWN(LinkQuality.UNKNOWN, STLConstants.K1609_QUALITY_UNKNOWN.getValue(),
+            STLConstants.K1622_QUALITY_UNKNOWN_DESC.getValue(),
+            UIImages.LINK_QUALITY_UNKNOWN.getImageIcon()),
+    RESERVED(LinkQuality.RESERVED, STLConstants.K1610_QUALITY_EXCELLENT
             .getValue(), STLConstants.K1616_QUALITY_EXCELLENT_DESC.getValue(),
             UIImages.LINK_QUALITY_EXCELLENT.getImageIcon()),
     EXCELLENT(LinkQuality.EXCELLENT, STLConstants.K1610_QUALITY_EXCELLENT

@@ -35,11 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6.2.2  2015/08/12 15:21:46  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.9  2015/08/17 18:48:40  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.6.2.1  2015/05/06 19:33:43  jijunwan
- *  Archive Log:    Adding logging of caller's stack trace when a background task fails
+ *  Archive Log:    Revision 1.8  2015/06/18 21:07:36  fernande
+ *  Archive Log:    PR 128977 Application log needs to support multi-subnet. - Adding support for Logback's Mapped Diagnostic Context
  *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/04/30 17:27:53  fernande
  *  Archive Log:    Adding logging of caller's stack trace when a background task fails.
@@ -71,12 +72,14 @@
 
 package com.intel.stl.configuration;
 
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import com.intel.stl.api.StringUtils;
 import com.intel.stl.common.STLMessages;
@@ -87,8 +90,13 @@ public abstract class AsyncTask<T> implements Callable<T> {
 
     private BaseProcessingService.AsyncFutureTask<T> future;
 
+    private Map<String, String> loggingContextMap;
+
     @Override
     public T call() throws Exception {
+        if (loggingContextMap != null) {
+            MDC.setContextMap(loggingContextMap);
+        }
         try {
             T result = process();
             return result;
@@ -115,6 +123,10 @@ public abstract class AsyncTask<T> implements Callable<T> {
 
     protected void setFuture(BaseProcessingService.AsyncFutureTask<T> future) {
         this.future = future;
+    }
+
+    protected void setLoggingContextMap(Map<String, String> loggingContextMap) {
+        this.loggingContextMap = loggingContextMap;
     }
 
     public void checkArguments(Object... arguments) {

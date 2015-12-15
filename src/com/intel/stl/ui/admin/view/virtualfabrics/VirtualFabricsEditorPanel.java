@@ -35,8 +35,24 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:26:52  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.8  2015/08/17 18:54:01  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/08/04 18:06:13  jijunwan
+ *  Archive Log:    PR 129812 - Continuous "abandon changes" message when a virtual fabric is removed
+ *  Archive Log:    - removed code that reset App names and DG names.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/07/14 17:06:03  jijunwan
+ *  Archive Log:    PR 129541 - Should forbid save or deploy when there is invalid edit on management panel
+ *  Archive Log:    - throw InvalidEditException when there is invalid edit
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/05/14 17:19:46  jijunwan
+ *  Archive Log:    PR 128697 - Handle empty list of items
+ *  Archive Log:    - Added code to handle null item
+ *  Archive Log:    - Added code to clean panel when it gets a null item
+ *  Archive Log:    - Enable/disable buttons properly when we get an empty item list or null item
+ *  Archive Log:    - Improved to handle item selection when the index is invalid, such as -1
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/04/06 11:14:12  jypak
  *  Archive Log:    Klockwork: Front End Critical Without Unit Test. Open issues fixed.
@@ -168,6 +184,26 @@ public class VirtualFabricsEditorPanel extends
             basicPanel.add(qosBox);
         }
         return basicPanel;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.admin.view.AbstractEditorPanel#clear()
+     */
+    @Override
+    public void clear() {
+        super.clear();
+        attrsPanel.removeAll();
+        attrPanels.clear();
+        enableBox.setSelected(false);
+        enableBox.setEnabled(false);
+        securityBox.setSelected(false);
+        securityBox.setEnabled(false);
+        qosBox.setSelected(false);
+        qosBox.setEnabled(false);
+        revalidate();
+        repaint();
     }
 
     /*
@@ -388,6 +424,26 @@ public class VirtualFabricsEditorPanel extends
      */
     public void setDeviceGroupNames(List<String> devicegroups) {
         rendererModel.setDgNames(devicegroups.toArray(new String[0]));
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.admin.view.AbstractEditorPanel#isEditValid()
+     */
+    @Override
+    protected boolean isEditValid() {
+        if (!super.isEditValid()) {
+            return false;
+        }
+
+        for (VirtualFabricAttrPanel attrPanel : attrPanels) {
+            IAttrRenderer<?> renderer = attrPanel.getAttrRenderer();
+            if (renderer != null && !renderer.isEditValid()) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

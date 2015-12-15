@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:22:06  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.3  2015/08/17 18:48:56  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/08/10 17:04:52  robertja
+ *  Archive Log:    PR128974 - Email notification functionality.
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2015/02/04 21:29:36  jijunwan
  *  Archive Log:    added Mail Manager
@@ -60,6 +64,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.NoSuchProviderException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -87,61 +92,119 @@ public class MailSender {
 
     private Future<?> future;
 
+    private Session session;
+
+    private Transport transport;
+
+    private final Object synchronizeUpdateObject = new Object();
+
     /**
      * Description:
      * 
      * @param properties
+     * @throws MessagingException
+     * @throws NoSuchProviderException
      */
-    public MailSender(MailProperties properties) {
+    public MailSender(MailProperties properties)
+            throws NoSuchProviderException, MessagingException {
         super();
+        log.debug("MailSender: constructor called.");
         service = Executors.newSingleThreadExecutor();
-        // fixed size queue because we won't unbounded queue that will eat a lot
-        // memory. And we will throw exception when the queue if full.
+        // We use a fixed-size queue to avoid excessive use of
+        // memory. We will throw exception if the queue is full.
         items = new LinkedBlockingQueue<MessageItem>(QUEUE_SIZE);
-        setProperties(properties);
+        initSender(properties);
     }
 
-    public void setProperties(MailProperties properties) {
-        // nothing to change
-        if (properties == null || properties.equals(this.properties)) {
-            return;
-        }
+    // Used for a temporary test instance.
+    private MailSender() {
+        super();
+        log.debug("MailSender: temoprary test constructor called.");
+        service = null;
+        items = null;
+    }
+
+    public static void sendTestMail(MailProperties properties,
+            String recipient, String messageSubject, String messageBody)
+            throws AddressException, MessagingException {
+        MailSender mailSender = new MailSender();
+        Session session = mailSender.createSession(properties);
+        Transport transport = mailSender.createTransport(session);
+        MessageItem messageItem =
+                mailSender.createMessageItem(properties.getFromAddr(),
+                        recipient, messageSubject, messageBody);
+
+        mailSender.sendMailMessage(session, transport, messageItem);
+    }
+
+    protected void initSender(MailProperties properties)
+            throws NoSuchProviderException, MessagingException {
         if (future != null) {
             future.cancel(true);
         }
 
-        this.properties = properties;
-        try {
-            Runnable task = createTask();
-            future = service.submit(task);
-        } catch (MessagingException e) {
-            e.printStackTrace();
+        updateTransport(properties);
+
+        Runnable task = createSenderTask();
+        future = service.submit(task);
+    }
+
+    // Create the key mail sender infrastructure based on the SMTP
+    // settings in MailProperties.
+    public void updateTransport(MailProperties properties)
+            throws NoSuchProviderException, MessagingException {
+        if (properties != null) {
+            // We synchronize here to prevent sending queued messages
+            // during update.
+            synchronized (synchronizeUpdateObject) {
+                this.properties = properties;
+                session = createSession(properties);
+                transport = createTransport(session);
+            }
         }
     }
 
-    protected Runnable createTask() throws MessagingException {
-        final Session session = createSession();
-        session.setDebug(DEBUG);
-        final Transport transport = session.getTransport("smtp");
+    protected Transport createTransport(Session session)
+            throws NoSuchProviderException, MessagingException {
+        Transport transport = null;
+        transport = session.getTransport("smtp");
         transport.connect();
+        return transport;
+    }
 
+    protected Runnable createSenderTask() throws MessagingException {
+        // Provides thread and blocking queue to send mail as
+        // notifications become available.
         Runnable task = new Runnable() {
 
             @Override
             public void run() {
                 try {
                     while (true) {
+                        // Block here until a notification becomes available.
                         MessageItem item = items.take();
                         try {
-                            sentMessage(session, transport, item);
+                            // We synchronize here in case the user
+                            // updates SMTP settings with notifications
+                            // already in the blocking queue. This gives
+                            // us a chance to update the mail sender before
+                            // the actual send operation.
+                            synchronized (synchronizeUpdateObject) {
+                                sendMailMessage(session, transport, item);
+                            }
                         } catch (AddressException e) {
                             e.printStackTrace();
+                            log.error("MailSender: createSenderTask exception: "
+                                    + e.getMessage());
                         } catch (MessagingException e) {
                             e.printStackTrace();
+                            log.error("MailSender: createSenderTask exception: "
+                                    + e.getMessage());
                         }
                     }
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    log.error("MailSender: createSenderTask exception: "
+                            + e.getMessage());
                 } finally {
                     log.info("To close transport (" + transport + ") for "
                             + properties);
@@ -151,6 +214,8 @@ public class MailSender {
                                 + properties);
                     } catch (MessagingException e) {
                         e.printStackTrace();
+                        log.error("MailSender: createSenderTask exception: "
+                                + e.getMessage());
                     }
                 }
             }
@@ -159,7 +224,8 @@ public class MailSender {
         return task;
     }
 
-    protected Session createSession() {
+    protected Session createSession(MailProperties properties) {
+        final MailProperties mailProperties = properties;
         Properties props = new Properties();
         props.put("mail.smtp.auth", properties.isAuthEnabled());
         props.put("mail.smtp.starttls.enable", properties.isTlsEnabled());
@@ -170,47 +236,58 @@ public class MailSender {
                 Session.getInstance(props, new javax.mail.Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(properties
-                                .getUserName(), new String(properties
+                        return new PasswordAuthentication(mailProperties
+                                .getUserName(), new String(mailProperties
                                 .getPassword()));
                     }
                 });
+        session.setDebug(DEBUG);
         return session;
     }
 
-    protected void sentMessage(Session session, Transport transport,
+    // Package and send the mail message.
+    protected void sendMailMessage(Session session, Transport transport,
             MessageItem item) throws AddressException, MessagingException {
         // Create a default MimeMessage object.
         Message message = new MimeMessage(session);
 
-        // Set From: header field of the header.
-        message.setFrom(new InternetAddress(item.from));
+        if ((item.from != null) && (item.from.isEmpty() == false)
+                && (item.to != null) && (item.to.isEmpty() == false)) {
 
-        // Set To: header field of the header.
-        InternetAddress[] address = { new InternetAddress(item.to) };
-        message.setRecipients(Message.RecipientType.TO, address);
+            // Set From: header field of the header.
+            message.setFrom(new InternetAddress(item.from));
 
-        // Set Subject: header field
-        message.setSubject(item.subject);
+            // Set To: header field of the header.
+            InternetAddress[] address = { new InternetAddress(item.to) };
+            message.setRecipients(Message.RecipientType.TO, address);
 
-        // Now set the actual message
-        message.setText(item.body);
+            // Set Subject: header field
+            message.setSubject(item.subject);
 
-        // Send message
-        transport.sendMessage(message, address);
-        if (DEBUG) {
-            System.out.println("Send Message " + message + " to " + address[0]);
+            // Now set the actual message
+            message.setText(item.body);
+
+            // Send message
+            transport.sendMessage(message, address);
+
+            if (DEBUG) {
+                System.out.println("Send Message " + message + " to "
+                        + address[0]);
+            }
+            log.debug("MailSender: sendMailMessage: " + message + " to "
+                    + address[0]);
         }
     }
 
-    public void submitMessage(String from, String to, String subject,
-            String body) {
-        MessageItem item = new MessageItem(from, to, subject, body);
-        // will throw exception if no space available
+    public void submitMessage(String to, String subject, String body) {
+        MessageItem item =
+                new MessageItem(properties.getFromAddr(), to, subject, body);
+        // Will throw exception if no space available.
         items.add(item);
     }
 
     public void shutdown() {
+        log.debug("MailSender: shutdown called.");
         if (future != null) {
             future.cancel(true);
         }
@@ -226,11 +303,17 @@ public class MailSender {
                 }
             }
         } catch (InterruptedException ie) {
+            log.error("MailSender: shutdown exception: " + ie.getMessage());
             // (Re-)Cancel if current thread also interrupted
             service.shutdownNow();
             // Preserve interrupt status
             Thread.currentThread().interrupt();
         }
+    }
+
+    public MessageItem createMessageItem(String from, String to,
+            String subject, String body) {
+        return new MessageItem(from, to, subject, body);
     }
 
     class MessageItem {

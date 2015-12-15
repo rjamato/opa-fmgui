@@ -24,6 +24,31 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: AppDataUtils.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.18  2015/08/17 18:49:06  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - change backend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.17  2015/06/10 19:36:45  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: Fernando Fernandez
+ * 
+ ******************************************************************************/
 
 package com.intel.stl.common;
 
@@ -75,6 +100,9 @@ import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.util.StatusPrinter;
+
 import com.intel.stl.configuration.AppSettings;
 
 public class AppDataUtils {
@@ -82,6 +110,8 @@ public class AppDataUtils {
     // Do not initialize this Logger here; this class is used to initialize
     // Log4j and that would trigger the Log4j initialization
     private static Logger log;
+
+    private static final boolean DEBUG_LOGGING = false;
 
     // If you change the following two variables, please keep in mind that they
     // are used to build a path to a file system location where this application
@@ -330,8 +360,12 @@ public class AppDataUtils {
         log4jFile = log4jFile.replace("\\", "/");
         System.setProperty(LOGBACK_CONFIGFILE, log4jFile);
         System.setProperty("org.jboss.logging.provider", "slf4j");
-        // LoggerContext context = (LoggerContext)
-        // LoggerFactory.getILoggerFactory();
+
+        if (DEBUG_LOGGING) {
+            LoggerContext context =
+                    (LoggerContext) LoggerFactory.getILoggerFactory();
+            StatusPrinter.print(context);
+        }
         // JoranConfigurator configurator = new JoranConfigurator();
         // configurator.setContext(context);
         // context.reset();

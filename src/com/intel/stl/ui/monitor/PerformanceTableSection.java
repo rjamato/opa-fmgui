@@ -35,10 +35,42 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.27.2.2  2015/08/12 15:26:58  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.37  2015/08/17 18:53:41  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.27.2.1  2015/05/17 18:30:42  jijunwan
+ *  Archive Log:    Revision 1.36  2015/08/05 03:21:13  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - improved port table to update rather than replace data table
+ *  Archive Log:
+ *  Archive Log:    Revision 1.35  2015/06/22 13:11:50  jypak
+ *  Archive Log:    PR 128980 - Be able to search devices by name or lid.
+ *  Archive Log:    New feature added to enable search devices by name, lid or node guid. The search results are displayed as a tree and when a result node from the tree is selected, original tree is expanded and the corresponding node is highlighted.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.34  2015/06/09 18:37:21  jijunwan
+ *  Archive Log:    PR 129069 - Incorrect Help action
+ *  Archive Log:    - moved help action from view to controller
+ *  Archive Log:    - only enable help button when we have HelpID
+ *  Archive Log:    - fixed incorrect HelpIDs
+ *  Archive Log:
+ *  Archive Log:    Revision 1.33  2015/06/01 15:01:17  jypak
+ *  Archive Log:    PR 128823 - Improve performance tables to include all portcounters fields.
+ *  Archive Log:    All port counters fields added to performance table and connectivity table.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.32  2015/05/28 15:29:22  jypak
+ *  Archive Log:    PR 128873 - Add "Flits" in performance table for Data related columns.
+ *  Archive Log:    Added "(MB)" to RcvData, XmitData column header.
+ *  Archive Log:    Added "(MBps)" to data rates.
+ *  Archive Log:    Added data in "Flits" or data rate in "(Flits/sec)" to tool tips.
+ *  Archive Log:    Used the TableDataDescription to convert and format the data.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.31  2015/05/15 14:35:27  rjtierne
+ *  Archive Log:    PR 128682 - Set link quality indicator to "Unknown" on port error
+ *  Archive Log:    - If port counters bean is null in createPortEntry() for VFPortCounterBeans,
+ *  Archive Log:    set the link quality indicator to Unknown  and log the error
+ *  Archive Log:    - Removed null pointer check in updateTable so createPortEntry can handle error
+ *  Archive Log:
+ *  Archive Log:    Revision 1.30  2015/05/14 17:43:07  jijunwan
  *  Archive Log:    PR 127700 - Delta data on host performance display is accumulating
  *  Archive Log:    - corrected delta value calculation
  *  Archive Log:    - changed to display data/pkts rate rather than delta on chart and table
@@ -48,6 +80,15 @@
  *  Archive Log:      PacketChartRangeUpdater -> PacketRateChartRangeUpdater
  *  Archive Log:      DataChartScaleGroupManager -> DataRateChartScaleGroupManager
  *  Archive Log:      PacketChartScaleGroupManager -> PacketRateChartScaleGroupManager
+ *  Archive Log:
+ *  Archive Log:    Revision 1.29  2015/05/14 14:44:25  rjtierne
+ *  Archive Log:    PR 128682 - Set link quality indicator to "Unknown" on port error
+ *  Archive Log:    If port counters bean is null in createPortEntry, set the link quality indicator to Unknown
+ *  Archive Log:    and log the error
+ *  Archive Log:
+ *  Archive Log:    Revision 1.28  2015/05/12 17:41:44  rjtierne
+ *  Archive Log:    PR 128624 - Klocwork and FindBugs fixes for UI
+ *  Archive Log:    Removed unused variables unitDescription, rxUnitDescription, and txUnitDescription
  *  Archive Log:
  *  Archive Log:    Revision 1.27  2015/04/17 18:28:15  rjtierne
  *  Archive Log:    In updateTable(), checking for dataList size > 0 in thread to prevent index
@@ -159,11 +200,16 @@ import java.util.Map;
 
 import net.engio.mbassy.bus.MBassador;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.intel.stl.api.configuration.LinkQuality;
 import com.intel.stl.api.performance.PortCountersBean;
 import com.intel.stl.api.performance.VFPortCountersBean;
 import com.intel.stl.ui.common.BaseSectionController;
 import com.intel.stl.ui.common.ICardController;
 import com.intel.stl.ui.common.STLConstants;
+import com.intel.stl.ui.common.UIConstants;
 import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.common.view.ISectionListener;
 import com.intel.stl.ui.common.view.JSectionView;
@@ -174,6 +220,9 @@ import com.intel.stl.ui.monitor.view.PerformanceXTableView;
 
 public class PerformanceTableSection extends
         BaseSectionController<ISectionListener, JSectionView<ISectionListener>> {
+
+    private final static Logger log = LoggerFactory
+            .getLogger(PerformanceTableSection.class);
 
     /**
      * Performance Table Model
@@ -216,11 +265,16 @@ public class PerformanceTableSection extends
         super(tableSectionView, eventBus);
         this.tableModel = tableModel;
         this.tableView = tableView;
+    }
 
-        HelpAction helpAction = HelpAction.getInstance();
-        helpAction.getHelpBroker().enableHelpOnButton(
-                tableSectionView.getHelpButton(),
-                helpAction.getPerfNodePortsTable(), helpAction.getHelpSet());
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.BaseSectionController#getHelpID()
+     */
+    @Override
+    public String getHelpID() {
+        return HelpAction.getInstance().getPerfNodePortsTable();
     }
 
     /**
@@ -235,21 +289,25 @@ public class PerformanceTableSection extends
         final List<PerformanceTableData> dataList =
                 new ArrayList<PerformanceTableData>();
         for (PortCountersBean bean : beanList) {
-            if (bean != null) {
-                PerformanceTableData portData = createPortEntry(bean);
-                dataList.add(portData);
-            }
+            PerformanceTableData portData = createPortEntry(bean);
+            dataList.add(portData);
         } // for
 
         currentDataList = dataList;
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
-                // TODO update table rather than replace it
+                int oldSize = tableModel.getEntrySize();
                 tableModel.setEntries(dataList);
-                tableModel.fireTableDataChanged();
-                if ((previewPortIndex >= 0) && (dataList.size() > 0)) {
-                    tableView.setSelectedPort(previewPortIndex);
+                if (oldSize == dataList.size()) {
+                    tableModel.fireTableRowsUpdated(0, oldSize - 1);
+                } else {
+                    log.warn("Table changed from " + oldSize + " rows to "
+                            + dataList.size() + " rows!!");
+                    tableModel.fireTableDataChanged();
+                    if ((previewPortIndex >= 0) && (dataList.size() > 0)) {
+                        tableView.setSelectedPort(previewPortIndex);
+                    }
                 }
             }
         });
@@ -266,11 +324,17 @@ public class PerformanceTableSection extends
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
-                // TODO update table rather than replace it
+                int oldSize = tableModel.getEntrySize();
                 tableModel.setEntries(data);
-                tableModel.fireTableDataChanged();
-                if (previewPortIndex >= 0) {
-                    tableView.setSelectedPort(previewPortIndex);
+                if (oldSize == data.size()) {
+                    tableModel.fireTableRowsUpdated(0, oldSize - 1);
+                } else {
+                    log.warn("Table changed from " + oldSize + " rows to "
+                            + data.size() + " rows!!");
+                    tableModel.fireTableDataChanged();
+                    if ((previewPortIndex >= 0) && (data.size() > 0)) {
+                        tableView.setSelectedPort(previewPortIndex);
+                    }
                 }
             }
         });
@@ -288,8 +352,16 @@ public class PerformanceTableSection extends
     public PerformanceTableData createPortEntry(PortCountersBean bean) {
         long rxDataRate = 0;
         long txDataRate = 0;
-        PerformanceTableData portData =
-                new PerformanceTableData(bean.getNodeLid());
+        PerformanceTableData portData = null;
+
+        if (bean != null) {
+            portData = new PerformanceTableData(bean.getNodeLid());
+        } else {
+            log.error(STLConstants.K3047_PORT_BEAN_COUNTERS_NULL.getValue());
+            portData = new PerformanceTableData(-1);
+            portData.setLinkQuality(LinkQuality.UNKNOWN.getValue());
+            return portData;
+        }
 
         // If there is no entry in the accumulator map, create a new entry
         portDataAcc = portDataAccMap.get(bean.getPortNumber());
@@ -313,13 +385,35 @@ public class PerformanceTableSection extends
         portData.setPortNumber(bean.getPortNumber());
         portData.setPortRxRemotePhysicalErrors(bean
                 .getPortRcvRemotePhysicalErrors());
-        portData.setPortRxDataRate(rxDataRate);
-        portData.setPortTxDataRate(txDataRate);
+        portData.setPortRxDataRate(createTableDataDescription(rxDataRate, true));
+        portData.setPortTxDataRate(createTableDataDescription(txDataRate, true));
         portData.setPortRxSwitchRelayErrors(bean.getPortRcvSwitchRelayErrors());
         portData.setPortTxDiscards(bean.getPortXmitDiscards());
         portData.setExcessiveBufferOverruns(bean.getExcessiveBufferOverruns());
         portData.setFmConfigErrors(bean.getFmConfigErrors());
         portData.setLinkQuality(bean.getLinkQualityIndicator());
+
+        portData.setPortMulticastRcvPkts(bean.getPortMulticastRcvPkts());
+        portData.setPortRcvErrors(bean.getPortRcvErrors());
+        portData.setPortRcvConstraintErrors(bean.getPortRcvConstraintErrors());
+        portData.setPortRcvFECN(bean.getPortRcvFECN());
+        portData.setPortRcvBECN(bean.getPortRcvBECN());
+        portData.setPortRcvBubble(bean.getPortRcvBubble());
+
+        portData.setPortMulticastXmitPkts(bean.getPortMulticastXmitPkts());
+        portData.setPortXmitConstraintErrors(bean.getPortXmitConstraintErrors());
+        portData.setPortXmitWait(bean.getPortXmitWait());
+        portData.setPortXmitTimeCong(bean.getPortXmitTimeCong());
+        portData.setPortXmitWastedBW(bean.getPortXmitWastedBW());
+        portData.setPortXmitWaitData(bean.getPortXmitWaitData());
+
+        portData.setLocalLinkIntegrityErrors(bean.getLocalLinkIntegrityErrors());
+
+        portData.setPortMarkFECN(bean.getPortMarkFECN());
+        portData.setLinkErrorRecovery(bean.getLinkErrorRecovery());
+        portData.setLinkDowned(bean.getLinkDowned());
+        portData.setUncorrectableErrors(bean.getUncorrectableErrors());
+        portData.setSwPortCongestion(bean.getSwPortCongestion());
 
         if (bean.isDelta()) {
             // it will be complicate to handle delta style data. To get correct
@@ -345,19 +439,23 @@ public class PerformanceTableSection extends
                                 - lastAccessMap.get(bean.getPortNumber());
                 portData.setPortRxPktsRate((rxPackets - portDataAcc
                         .getRxCumulativePacket()) / deltaTime);
-                portData.setPortRxDataRate((rxData - portDataAcc
-                        .getRxCumulativeData()) / deltaTime);
+                portData.setPortRxDataRate(createTableDataDescription(
+                        (rxData - portDataAcc.getRxCumulativeData())
+                                / deltaTime, true));
                 portData.setPortTxPktsRate((txPackets - portDataAcc
                         .getTxCumulativePacket()) / deltaTime);
-                portData.setPortTxDataRate((txData - portDataAcc
-                        .getTxCumulativeData()) / deltaTime);
+                portData.setPortTxDataRate(createTableDataDescription(
+                        (txData - portDataAcc.getTxCumulativeData())
+                                / deltaTime, true));
             }
 
             // Store the cumulative packets and data
             portData.setPortRxCumulativePkts(rxPackets);
-            portData.setPortRxCumulativeData(rxData);
+            portData.setPortRxCumulativeData(createTableDataDescription(rxData,
+                    false));
             portData.setPortTxCumulativePkts(txPackets);
-            portData.setPortTxCumulativeData(txData);
+            portData.setPortTxCumulativeData(createTableDataDescription(txData,
+                    false));
 
             // Collect the most recent cumulative values
             portDataAcc.setRxCumulativePacket(rxPackets);
@@ -376,8 +474,16 @@ public class PerformanceTableSection extends
     public PerformanceTableData createPortEntry(VFPortCountersBean bean) {
         long rxDataRate = 0;
         long txDataRate = 0;
-        PerformanceTableData portData =
-                new PerformanceTableData(bean.getNodeLid());
+        PerformanceTableData portData = null;
+
+        if (bean != null) {
+            portData = new PerformanceTableData(bean.getNodeLid());
+        } else {
+            log.error(STLConstants.K3047_PORT_BEAN_COUNTERS_NULL.getValue());
+            portData = new PerformanceTableData(-1);
+            portData.setLinkQuality(LinkQuality.UNKNOWN.getValue());
+            return portData;
+        }
 
         // If there is no entry in the accumulator map, create a new entry
         portDataAcc = portDataAccMap.get(bean.getPortNumber());
@@ -400,12 +506,34 @@ public class PerformanceTableSection extends
         // Initialize port values
         portData.setPortNumber(bean.getPortNumber());
         portData.setPortRxRemotePhysicalErrors(-1);
-        portData.setPortRxDataRate(rxDataRate);
-        portData.setPortTxDataRate(txDataRate);
+        portData.setPortRxDataRate(createTableDataDescription(rxDataRate, true));
+        portData.setPortTxDataRate(createTableDataDescription(txDataRate, true));
         portData.setPortRxSwitchRelayErrors(-1);
         portData.setPortTxDiscards(bean.getPortVFXmitDiscards());
         portData.setExcessiveBufferOverruns(-1);
         portData.setFmConfigErrors(-1);
+
+        portData.setPortMulticastRcvPkts(-1);
+        portData.setPortRcvErrors(-1);
+        portData.setPortRcvConstraintErrors(-1);
+        portData.setPortRcvFECN(bean.getPortVFRcvFECN());
+        portData.setPortRcvBECN(bean.getPortVFRcvBECN());
+        portData.setPortRcvBubble(bean.getPortVFRcvBubble());
+
+        portData.setPortMulticastXmitPkts(-1);
+        portData.setPortXmitConstraintErrors(-1);
+        portData.setPortXmitWait(bean.getPortVFXmitWait());
+        portData.setPortXmitTimeCong(bean.getPortVFXmitTimeCong());
+        portData.setPortXmitWastedBW(bean.getPortVFXmitWastedBW());
+        portData.setPortXmitWaitData(bean.getPortVFXmitWaitData());
+
+        portData.setLocalLinkIntegrityErrors(-1);
+
+        portData.setPortMarkFECN(bean.getPortVFMarkFECN());
+        portData.setLinkErrorRecovery(-1);
+        portData.setLinkDowned(-1);
+        portData.setUncorrectableErrors((short) -1);
+        portData.setSwPortCongestion(bean.getSwPortVFCongestion());
 
         if (bean.isDelta()) {
             // it will be complicate to handle delta style data. To get correct
@@ -431,19 +559,23 @@ public class PerformanceTableSection extends
                                 - lastAccessMap.get(bean.getPortNumber());
                 portData.setPortRxPktsRate((rxPackets - portDataAcc
                         .getRxCumulativePacket()) / deltaTime);
-                portData.setPortRxDataRate((rxData - portDataAcc
-                        .getRxCumulativeData()) / deltaTime);
+                portData.setPortRxDataRate(createTableDataDescription(
+                        (rxData - portDataAcc.getRxCumulativeData())
+                                / deltaTime, true));
                 portData.setPortTxPktsRate((txPackets - portDataAcc
                         .getTxCumulativePacket()) / deltaTime);
-                portData.setPortTxDataRate((txData - portDataAcc
-                        .getTxCumulativeData()) / deltaTime);
+                portData.setPortTxDataRate(createTableDataDescription(
+                        (txData - portDataAcc.getTxCumulativeData())
+                                / deltaTime, true));
             }
 
             // Store the cumulative packets and data
             portData.setPortRxCumulativePkts(rxPackets);
-            portData.setPortRxCumulativeData(rxData);
+            portData.setPortRxCumulativeData(createTableDataDescription(rxData,
+                    false));
             portData.setPortTxCumulativePkts(txPackets);
-            portData.setPortTxCumulativeData(txData);
+            portData.setPortTxCumulativeData(createTableDataDescription(txData,
+                    false));
 
             // Collect the most recent cumulative values
             portDataAcc.setRxCumulativePacket(rxPackets);
@@ -459,6 +591,30 @@ public class PerformanceTableSection extends
         return portData;
     } // updatePerformanceTable
 
+    /**
+     * 
+     * <i>Description:</i>Data rate converted from flits to bytes.
+     * 
+     * @param data
+     * @return
+     */
+    private TableDataDescription createTableDataDescription(double data,
+            boolean isRate) {
+        double dataBytes = data * UIConstants.BYTE_PER_FLIT;
+
+        String dataFlits = null;
+        if (isRate) {
+            dataFlits =
+                    Double.toString(data) + " "
+                            + STLConstants.K3222_FPS.getValue();
+        } else {
+            dataFlits =
+                    Long.toString((long) data) + " "
+                            + STLConstants.K0748_FLITS.getValue();
+        }
+        return new TableDataDescription(dataBytes, dataFlits);
+    }
+
     public List<PerformanceTableData> getCurrentDataList() {
         return currentDataList;
     }
@@ -473,8 +629,7 @@ public class PerformanceTableSection extends
             public void run() {
                 portDataAccMap.clear();
                 lastAccessMap.clear();
-                tableModel.clear();
-                tableModel.fireTableDataChanged();
+                // needn't clear tableModel since we will replace it
             }
         });
     }

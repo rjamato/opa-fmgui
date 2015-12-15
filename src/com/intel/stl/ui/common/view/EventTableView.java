@@ -35,8 +35,18 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6.2.1  2015/08/12 15:26:33  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.9  2015/08/18 14:28:33  jijunwan
+ *  Archive Log:    PR 130033 - Fix critical issues found by Klocwork or FindBugs
+ *  Archive Log:    - DateFormat is not thread safe. Changed to create new DateFormat to avoid sharing it among different threads
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/08/17 18:53:36  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/07/21 21:51:45  jijunwan
+ *  Archive Log:    PR 129633 - Incorrect date sort on event table
+ *  Archive Log:    - changed table model to use date as value, and the cell renderer uses string to display date
+ *  Archive Log:    - changed date format to include am/pm
  *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/04/02 13:32:58  jypak
  *  Archive Log:    Klockwork: Front End Critical Without Unit Test. 47 open issues fixed. All of them are for null checks.
@@ -99,6 +109,7 @@ import com.intel.stl.api.configuration.EventType;
 import com.intel.stl.api.notice.NoticeSeverity;
 import com.intel.stl.ui.common.EventTableModel;
 import com.intel.stl.ui.common.UIConstants;
+import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.model.EventTypeViz;
 import com.intel.stl.ui.model.NoticeSeverityViz;
 
@@ -147,6 +158,7 @@ public class EventTableView extends FVTableView {
                 JLabel cell =
                         (JLabel) super.getTableCellRendererComponent(table,
                                 value, isSelected, hasFocus, row, column);
+
                 if (column == EventTableModel.SEVERITY_IDX && value != null) {
                     NoticeSeverityViz nsv =
                             NoticeSeverityViz
@@ -166,6 +178,10 @@ public class EventTableView extends FVTableView {
                         if (ntv != null) {
                             cell.setText(ntv.getName());
                         }
+                    } else if (column == EventTableModel.TIME_IDX
+                            && value != null) {
+                        String timeStr = Util.getYYYYMMDDHHMMSS().format(value);
+                        cell.setText(timeStr);
                     }
                     cell.setForeground(UIConstants.INTEL_DARK_GRAY);
                     cell.setIcon(null);

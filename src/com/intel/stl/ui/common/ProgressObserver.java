@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:27:03  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.6  2015/08/17 18:54:12  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/05/11 12:25:27  rjtierne
+ *  Archive Log:    PR 128585 - Fix errors found by Klocwork and FindBugs
+ *  Archive Log:    In method createSubObservers() changed Math.round() arguments to floating-point
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2014/10/09 12:51:45  fernande
  *  Archive Log:    Defines a page weight that can be assigned to a controller implementing the IContextAware interface. The main issue is that ProgressObservers used to use 100 as the base to calculate the progress of a context switch or a refresh; as this amount was divided up by sub ProgressObservers, the amounts to each observer would be rounded and precision would get lost, resulting in a non-accurate progress bar. The current implementation uses a MainframeController-defined property which is passed from the observers and subobservers to the controller with the exact amount being reported and a more exact progress value can be calculated from the total weight involved.
@@ -70,7 +75,7 @@ public class ProgressObserver implements IProgressObserver {
 
     private final ProgressObserver parent;
 
-    private int estimatedWork;
+    private final int estimatedWork;
 
     private double doneWork;
 
@@ -144,16 +149,18 @@ public class ProgressObserver implements IProgressObserver {
         }
     }
 
+    @Override
     public void onFinish() {
         publishProgress(1.0);
     }
 
+    @Override
     public IProgressObserver[] createSubObservers(int size) {
         IProgressObserver[] res = new IProgressObserver[size];
         int workToBeDone = estimatedWork - (int) doneWork;
         int step;
         if (workToBeDone > size) {
-            step = Math.round(workToBeDone / size);
+            step = Math.round((float) workToBeDone / (float) size);
 
         } else {
             step = 1;

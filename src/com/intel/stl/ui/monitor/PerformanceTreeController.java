@@ -35,8 +35,38 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.43.2.1  2015/08/12 15:26:58  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.51  2015/08/17 18:53:40  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.50  2015/08/11 14:38:23  jijunwan
+ *  Archive Log:    PR 129917 - No update on event statistics
+ *  Archive Log:    - Apply event subscriber on the event card on Performance page
+ *  Archive Log:    - fixed the blink chart issue
+ *  Archive Log:
+ *  Archive Log:    Revision 1.49  2015/08/05 04:04:47  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on Performance Page
+ *  Archive Log:
+ *  Archive Log:    Revision 1.48  2015/06/25 15:27:17  jypak
+ *  Archive Log:    PR 128980 - Be able to search devices by name or lid.
+ *  Archive Log:    Fixes for the FindBugs issues.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.47  2015/06/22 13:11:50  jypak
+ *  Archive Log:    PR 128980 - Be able to search devices by name or lid.
+ *  Archive Log:    New feature added to enable search devices by name, lid or node guid. The search results are displayed as a tree and when a result node from the tree is selected, original tree is expanded and the corresponding node is highlighted.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.46  2015/06/05 16:45:27  jijunwan
+ *  Archive Log:    PR 129089 - Link jumping doesn't keep context
+ *  Archive Log:    - search in current tree and use current node as hint in node search
+ *  Archive Log:
+ *  Archive Log:    Revision 1.45  2015/05/19 19:20:38  jijunwan
+ *  Archive Log:    PR 128797 - Notice update failed to update related notes
+ *  Archive Log:    - some code cleanup
+ *  Archive Log:
+ *  Archive Log:    Revision 1.44  2015/05/12 17:42:30  rjtierne
+ *  Archive Log:    PR 128624 - Klocwork and FindBugs fixes for UI
+ *  Archive Log:    In showNode(), use equals() to compare strings subpage.getName() and currentSubpageName.
  *  Archive Log:
  *  Archive Log:    Revision 1.43  2015/04/24 16:59:19  jypak
  *  Archive Log:    Fix for an issue with selecting an inactive port and then selecting an active port.
@@ -190,6 +220,7 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import net.engio.mbassy.bus.MBassador;
@@ -202,11 +233,13 @@ import com.intel.stl.ui.configuration.view.DevicePropertiesPanel;
 import com.intel.stl.ui.event.JumpDestination;
 import com.intel.stl.ui.framework.IAppEvent;
 import com.intel.stl.ui.main.Context;
+import com.intel.stl.ui.main.UndoableSelection;
 import com.intel.stl.ui.main.view.IPageListener;
 import com.intel.stl.ui.model.ConnectivityTableModel;
 import com.intel.stl.ui.model.DeviceProperties;
 import com.intel.stl.ui.monitor.tree.FVResourceNode;
 import com.intel.stl.ui.monitor.tree.FVTreeManager;
+import com.intel.stl.ui.monitor.tree.FVTreeModel;
 import com.intel.stl.ui.monitor.view.ConnectivitySubpageView;
 import com.intel.stl.ui.monitor.view.PerformanceSubpageView;
 import com.intel.stl.ui.monitor.view.PerformanceTreeView;
@@ -220,10 +253,12 @@ public class PerformanceTreeController extends
      */
     private List<IPerfSubpageController> mSubpages;
 
+    private String previousSubpageName;
+
     /**
      * name of the currently selected subpage
      */
-    private String currentSubageName;
+    private String currentSubpageName;
 
     private IPerfSubpageController currentSubpage;
 
@@ -240,6 +275,8 @@ public class PerformanceTreeController extends
         view.setPageListener(this);
         view.setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         initSubpages();
+
+        new SearchController(view.getSearchView(), eventBus, treeBuilder, this);
     }
 
     @Override
@@ -248,21 +285,20 @@ public class PerformanceTreeController extends
             return;
         }
 
-        if (lastNode != null && lastNode.equals(node)) {
+        view.setNodeName(node);
+        setRunning(true);
+
+        if (lastNode != null && lastNode.equals(node)
+                && lastNode.getRoot() == node.getRoot()) {
             // refresh the subpage
-            setRunning(true);
             currentSubpage.showNode(node, new FinishObserver() {
                 @Override
                 public void onFinish() {
                     setRunning(false);
                 }
             });
-            view.setNodeName(node);
             return;
         }
-
-        view.setNodeName(node);
-        setRunning(true);
 
         // Deregister tasks on all subpages
         for (IPerfSubpageController page : mSubpages) {
@@ -276,23 +312,22 @@ public class PerformanceTreeController extends
             setRunning(false);
             lastNode = null;
         } else {
-            String current = view.getCurrentSubpage();
-            if (current != null) {
-                currentSubageName = current;
-            }
+            previousSubpageName = currentSubpageName;
             int curIndex = -1;
             IPerfSubpageController subpage = null;
-            for (int i = 0; i < subpages.size(); i++) {
-                subpage = subpages.get(i);
-                if (subpage.getName() == currentSubageName) {
-                    curIndex = i;
-                    break;
+            if (currentSubpageName != null) {
+                for (int i = 0; i < subpages.size(); i++) {
+                    subpage = subpages.get(i);
+                    if (subpage.getName().equals(currentSubpageName)) {
+                        curIndex = i;
+                        break;
+                    }
                 }
             }
             if (curIndex == -1) {
                 curIndex = 0;
                 subpage = subpages.get(0);
-                currentSubageName = subpage.getName();
+                currentSubpageName = subpage.getName();
             }
             subpage.showNode(node, new FinishObserver() {
                 @Override
@@ -316,6 +351,39 @@ public class PerformanceTreeController extends
     @Override
     protected void showNodes(FVResourceNode[] node) {
         throw new UnsupportedOperationException();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.monitor.TreeController#getUndoableSelection(com.intel
+     * .stl.ui.monitor.TreeSelection, com.intel.stl.ui.monitor.TreeSelection)
+     */
+    @Override
+    protected UndoableSelection<?> getUndoableSelection(
+            TreeSelection oldSelection, TreeSelection newSelection) {
+        // the new currentSubpageName can be unknown because the real update can
+        // happen after some long time task running on background. Subpage name
+        // is only useful for undo. The redo is fine without subpage name. So
+        // instead of waiting for update to be finished, we immediately return
+        // undoableSelection by using null as the new currentSubpageName
+        TreeSubpageSelection oldTSSelection =
+                new TreeSubpageSelection(oldSelection, previousSubpageName);
+        TreeSubpageSelection newTSSelection =
+                new TreeSubpageSelection(newSelection, null);
+        return new UndoablePerfTreeSelection(this, oldTSSelection,
+                newTSSelection);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.monitor.TreeController#getCurrentNode()
+     */
+    @Override
+    protected FVResourceNode getCurrentNode() {
+        return lastNode;
     }
 
     protected void initSubpages() {
@@ -408,23 +476,13 @@ public class PerformanceTreeController extends
         return pageMap.get(type);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.intel.stl.ui.main.view.IPageListener#canPageChange(int, int)
-     */
     @Override
-    public boolean canPageChange(int oldPageId, int newPageId) {
+    public boolean canPageChange(String oldPage, String newPage) {
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.intel.stl.ui.main.view.IPageListener#onPageChanged(int, int)
-     */
     @Override
-    public synchronized void onPageChanged(int oldPageId, int newPageId) {
+    public synchronized void onPageChanged(String oldPageId, String newPageId) {
         List<IPerfSubpageController> subpages =
                 getSubpagesByType(lastNode.getType());
         if (subpages == null) {
@@ -433,13 +491,24 @@ public class PerformanceTreeController extends
                     + lastNode);
         }
 
-        IPerfSubpageController oldPage = subpages.get(oldPageId);
-        if (oldPage != null) {
-            oldPage.onExit();
+        IPerfSubpageController oldPage = null;
+        for (IPerfSubpageController page : subpages) {
+            if (page.getName().equals(oldPageId)) {
+                oldPage = page;
+                oldPage.onExit();
+                break;
+            }
         }
 
-        IPerfSubpageController newPage = subpages.get(newPageId);
-        if (newPage != null && currentSubageName != newPage.getName()) {
+        IPerfSubpageController newPage = null;
+        for (IPerfSubpageController page : subpages) {
+            if (page.getName().equals(newPageId)) {
+                newPage = page;
+                break;
+            }
+        }
+
+        if (newPage != null && !currentSubpageName.equals(newPage.getName())) {
             setRunning(true);
             newPage.onEnter();
             newPage.showNode(lastNode, new FinishObserver() {
@@ -448,19 +517,34 @@ public class PerformanceTreeController extends
                     setRunning(false);
                 }
             });
-            currentSubageName = newPage.getName();
+            currentSubpageName = newPage.getName();
             currentSubpage = newPage;
+        }
+
+        if (undoHandler != null && !undoHandler.isInProgress()) {
+            UndoableSubpageSelection undoSel =
+                    new UndoableSubpageSelection(view, oldPageId, newPageId);
+            undoHandler.addUndoAction(undoSel);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.intel.stl.ui.monitor.TreeController#getDesiredDestination()
-     */
     @Override
-    protected JumpDestination getDesiredDestination() {
-        return JumpDestination.PERFORMANCE;
+    public String getName() {
+        return JumpDestination.PERFORMANCE.getName();
+    }
+
+    /**
+     * <i>Description:</i>
+     * 
+     * @param treeModel
+     * @param paths
+     * @param expanded
+     * @param subpageName
+     */
+    public void showNode(FVTreeModel treeModel, TreePath[] paths,
+            boolean[] expanded, String subpageName) {
+        currentSubpageName = subpageName;
+        showNode(treeModel, paths, expanded);
     }
 
 }

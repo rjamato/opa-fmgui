@@ -35,8 +35,16 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8.2.1  2015/08/12 15:21:48  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.11  2015/08/17 18:48:43  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/05/26 15:33:38  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/05/19 19:07:19  jijunwan
+ *  Archive Log:    PR 128797 - Notice update failed to update related notes
+ *  Archive Log:    - created a new class NoticeWrapper to store information about related nodes, and then pass this infor to EventDescription that will allow UI to upate related nodes
  *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/03/26 11:09:57  jypak
  *  Archive Log:    PR 126613 Event (State) Severity based on user configuration via setup wizard.
@@ -51,17 +59,16 @@
  ******************************************************************************/
 package com.intel.stl.api.notice;
 
-import com.intel.stl.api.IErrorSupport;
 import com.intel.stl.api.configuration.UserSettings;
 
-public interface INoticeApi extends IErrorSupport {
+public interface INoticeApi {
     void addEventListener(IEventListener<EventDescription> listener);
 
     void removeEventListener(IEventListener<EventDescription> listener);
 
     void cleanup();
 
-    void addNewEventDescriptions(NoticeBean[] data);
+    void addNewEventDescriptions(NoticeWrapper[] data);
 
     void setUserSettings(UserSettings userSettings);
 }

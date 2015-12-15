@@ -35,8 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:26:53  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/08/17 18:54:02  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/08/07 19:11:43  jijunwan
+ *  Archive Log:    PR 129775 - disable node not available on Worst Node Card
+ *  Archive Log:    - improved to display event type
+ *  Archive Log:    - improved to disable jumping buttons when event type is PORT_INACTIVE
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2014/10/23 16:33:21  jijunwan
  *  Archive Log:    minor change on timers - intend to improve timer behavior so the action will be cancelled event if it's already in EDT queue
@@ -89,6 +95,8 @@ public class WorstNodePopup extends JPanel implements MouseListener {
     private JLabel lid;
 
     private JLabel score;
+
+    private JLabel event;
 
     private JXHyperlink[] jumpBtns;
 
@@ -160,6 +168,19 @@ public class WorstNodePopup extends JPanel implements MouseListener {
         contentPanel.add(score, gc);
 
         gc.gridwidth = 1;
+        gc.weightx = 0;
+        label =
+                ComponentFactory.getH5Label(
+                        STLConstants.K0674_EVENT_TYPE.getValue(), Font.BOLD);
+        label.setHorizontalAlignment(JLabel.RIGHT);
+        contentPanel.add(label, gc);
+
+        gc.gridwidth = GridBagConstraints.REMAINDER;
+        gc.weightx = 1;
+        event = ComponentFactory.getH5Label("", Font.PLAIN);
+        contentPanel.add(event, gc);
+
+        gc.gridwidth = 1;
         gc.gridheight = JumpDestination.values().length;
         gc.weightx = 0;
         gc.anchor = GridBagConstraints.NORTH;
@@ -215,6 +236,12 @@ public class WorstNodePopup extends JPanel implements MouseListener {
 
         score.setText(UIConstants.DECIMAL.format(nodeScore.getScore()));
         score.setForeground(nodeScore.getColor());
+
+        event.setText(nodeScore.getEventType().name());
+
+        for (JXHyperlink btn : jumpBtns) {
+            btn.setEnabled(nodeScore.isActive());
+        }
 
         revalidate();
     }

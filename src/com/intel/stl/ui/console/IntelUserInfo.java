@@ -35,8 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:27:18  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.3  2015/08/17 18:54:27  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/05/27 14:34:38  rjtierne
+ *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
+ *  Archive Log:    Stemming from a security problem with JPasswordField(), all password related
+ *  Archive Log:    Strings have been changed to char[]
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2014/09/23 19:46:16  rjtierne
  *  Archive Log:    Initial Version
@@ -55,7 +61,7 @@ import com.jcraft.jsch.UserInfo;
 
 public class IntelUserInfo implements UserInfo, UIKeyboardInteractive {
 
-    private String password;
+    private char[] password;
 
     /**
      * Description:
@@ -115,10 +121,10 @@ public class IntelUserInfo implements UserInfo, UIKeyboardInteractive {
      */
     @Override
     public String getPassword() {
-        return this.password;
+        return new String(this.password);
     }
 
-    public void setPassword(String password) {
+    public void setPassword(char[] password) {
         this.password = password;
     }
 }

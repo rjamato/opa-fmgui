@@ -35,11 +35,82 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.107.2.2  2015/08/12 15:26:34  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.128  2015/09/30 13:26:47  fisherma
+ *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
  *  Archive Log:
- *  Archive Log:    Revision 1.107.2.1  2015/05/06 19:39:13  jijunwan
- *  Archive Log:    changed to directly show exception(s)
+ *  Archive Log:    Revision 1.127  2015/09/26 06:27:35  jijunwan
+ *  Archive Log:    130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
+ *  Archive Log:    - changed to do a full refresh that includes DB data update
+ *  Archive Log:
+ *  Archive Log:    Revision 1.126  2015/09/25 13:40:51  jijunwan
+ *  Archive Log:    PR 130611 - Event Fields missing after closing and reconnecting to the same fabric
+ *  Archive Log:    - changed the code to init event summary panel as well, and also update eventTableController when we reset
+ *  Archive Log:
+ *  Archive Log:    Revision 1.125  2015/09/02 15:57:59  fernande
+ *  Archive Log:    PR 130220 - FM GUI "about" window displays unmatched version and build #. Passing the OPA FM version thru the manifest.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.124  2015/09/01 15:35:45  fernande
+ *  Archive Log:    PR 130220 - FM GUI "about" window displays unmatched version and build #. Changed to incorporate the RELEASE_TAG numbers into the version for the app
+ *  Archive Log:
+ *  Archive Log:    Revision 1.123  2015/08/27 19:40:54  fernande
+ *  Archive Log:    PR 128703 - Fail over doesn't work on A0 Fabric. Fixes for several issues found during testing
+ *  Archive Log:
+ *  Archive Log:    Revision 1.122  2015/08/17 18:53:38  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.121  2015/08/10 17:30:41  robertja
+ *  Archive Log:    PR 128974 - Email notification functionality.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.120  2015/08/05 14:32:56  fernande
+ *  Archive Log:    PR 129631 - Ports table sometimes not getting performance related data. Checking for thread pools not null (created).
+ *  Archive Log:
+ *  Archive Log:    Revision 1.119  2015/08/05 02:47:02  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - introduced UndoHandler to manage undo/redo
+ *  Archive Log:    - added undo/redo to main frame
+ *  Archive Log:    - improved FabricController to support undoHandler and undo action on page selection
+ *  Archive Log:    - improved FabricController to support the new page name based IPageListener
+ *  Archive Log:
+ *  Archive Log:    Revision 1.118  2015/07/14 17:42:45  jijunwan
+ *  Archive Log:    PR 129533 - Close application without confirmation on changes
+ *  Archive Log:    - fixed empty list bug when we close a subnet frame
+ *  Archive Log:
+ *  Archive Log:    Revision 1.117  2015/07/09 17:58:40  jijunwan
+ *  Archive Log:    PR 129509 - Shall refresh UI after failover completed
+ *  Archive Log:    - reset ManagementApi after failover completed
+ *  Archive Log:    - refresh UI after failover completed
+ *  Archive Log:    - updated comments
+ *  Archive Log:
+ *  Archive Log:    Revision 1.116  2015/06/30 17:50:13  fisherma
+ *  Archive Log:    PR 129220 - Improvement on secure FE login.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.115  2015/06/25 21:16:33  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - fixed unit test issue
+ *  Archive Log:
+ *  Archive Log:    Revision 1.114  2015/06/25 20:24:56  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on fabric viewer and simple 'static' cards
+ *  Archive Log:
+ *  Archive Log:    Revision 1.113  2015/06/17 15:40:27  fisherma
+ *  Archive Log:    PR129220 - partial fix for the login changes.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.112  2015/06/10 20:18:49  rjtierne
+ *  Archive Log:    PR 128975 - Can not setup application log
+ *  Archive Log:    Add createLoggingConfigController() method and override for FabricControllerTest
+ *  Archive Log:
+ *  Archive Log:    Revision 1.111  2015/06/10 19:24:38  rjtierne
+ *  Archive Log:    PR 128975 - Can not setup application log
+ *  Archive Log:    - Added showLoggingConfig() method to the interface
+ *  Archive Log:    - Added logging configuration controller listener to respond to logging menu selection
+ *  Archive Log:
+ *  Archive Log:    Revision 1.110  2015/05/29 20:43:46  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Second wave of changes: the application can be switched between the old adapter and the new; moved out several initialization pieces out of objects constructor to allow subnet initialization with a UI in place; improved generics definitions for FV commands.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.109  2015/05/05 21:49:30  rjtierne
+ *  Archive Log:    Added null pointer protection for mainFrame in methods onNoticeTaskStatus
+ *  Archive Log:    and propertyChange
  *  Archive Log:
  *  Archive Log:    Revision 1.108  2015/05/01 21:29:06  jijunwan
  *  Archive Log:    changed to directly show exception(s)
@@ -409,6 +480,7 @@
 
 package com.intel.stl.ui.main;
 
+import static com.intel.stl.api.configuration.AppInfo.PROPERTIES_FM_GUI_APP;
 import static com.intel.stl.ui.common.UILabels.STL60008_CONN_LOST;
 import static com.intel.stl.ui.common.UILabels.STL60009_PRESS_REFRESH;
 
@@ -421,10 +493,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 
+import javax.swing.JFrame;
 import javax.swing.SwingWorker;
 
 import net.engio.mbassy.IPublicationErrorHandler;
@@ -442,7 +516,6 @@ import com.intel.stl.api.configuration.AppInfo;
 import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.ui.admin.impl.AdminPage;
 import com.intel.stl.ui.admin.view.AdminView;
-import com.intel.stl.ui.alert.NoticeEventListener;
 import com.intel.stl.ui.common.EventSummaryBarPanelController;
 import com.intel.stl.ui.common.EventTableController;
 import com.intel.stl.ui.common.IContextAware;
@@ -452,14 +525,19 @@ import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UILabels;
 import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.common.view.EventSummaryBarPanel;
-import com.intel.stl.ui.event.JumpDestination;
-import com.intel.stl.ui.event.NodeSelectedEvent;
-import com.intel.stl.ui.event.PortSelectedEvent;
+import com.intel.stl.ui.email.EmailSettingsController;
+import com.intel.stl.ui.email.IEmailController;
+import com.intel.stl.ui.event.JumpToEvent;
 import com.intel.stl.ui.event.TaskStatusEvent;
 import com.intel.stl.ui.framework.AbstractController;
 import com.intel.stl.ui.framework.IAppEvent;
+import com.intel.stl.ui.framework.IModelListener;
 import com.intel.stl.ui.framework.ITask;
+import com.intel.stl.ui.logger.config.ILoggingControl;
+import com.intel.stl.ui.logger.config.LoggingConfigController;
 import com.intel.stl.ui.main.view.AboutDialog;
+import com.intel.stl.ui.main.view.CredentialsGlassPanel;
+import com.intel.stl.ui.main.view.FVMainFrame;
 import com.intel.stl.ui.main.view.FabricView;
 import com.intel.stl.ui.main.view.HomeView;
 import com.intel.stl.ui.main.view.IFabricView;
@@ -485,6 +563,8 @@ public class FabricController extends
 
     private IFabricView mainFrame;
 
+    private final JFrame viewFrame;
+
     private final List<IPageController> pages =
             new CopyOnWriteArrayList<IPageController>();
 
@@ -492,11 +572,15 @@ public class FabricController extends
 
     private final ISubnetManager subnetMgr;
 
-    private final EventSummaryBarPanel eventSummaryBarPanel;
+    private final ILoggingControl loggingConfigController;
 
-    private final EventSummaryBarPanelController eventSummaryBarPanelController;
+    private final IEmailController emailSettingsController;
 
-    private final EventTableController eventTableController;
+    private EventSummaryBarPanel eventSummaryBarPanel;
+
+    private EventSummaryBarPanelController eventSummaryBarPanelController;
+
+    private EventTableController eventTableController;
 
     private boolean hasEventTableToggled;
 
@@ -506,8 +590,6 @@ public class FabricController extends
             .synchronizedList(new ArrayList<ITask>());
 
     private final FVTreeManager builder;
-
-    private final NoticeEventListener noticeListener;
 
     private int pageLoadWork;
 
@@ -529,6 +611,21 @@ public class FabricController extends
 
     private final HelpAction helpAction;
 
+    private final CertsLoginController certsLoginCtr;
+
+    private final PinBoardController pinBoardCtr;
+
+    private Boolean hideInactiveNodes;
+
+    /**
+     * System update, such as refresh, jumpToEvent etc., will trigger page
+     * selection changes. This attribute tracks when system is updating, so we
+     * know when we should ignore selection on undo track
+     */
+    protected boolean isSystemUpdate;
+
+    private UndoHandler undoHandler;
+
     public FabricController(String subnetName, FabricView view,
             ISubnetManager subnetMgr, MBassador<IAppEvent> eventBus) {
         super(new FabricModel(), view, eventBus);
@@ -536,18 +633,48 @@ public class FabricController extends
         this.subnetName = subnetName;
         setupEventBus();
         this.builder = new FVTreeManager();
-        noticeListener = new NoticeEventListener(eventBus);
         this.mainFrame = view.getView();
+        this.viewFrame = view.getMainFrame();
 
-        eventSummaryBarPanel = mainFrame.getEventSummaryBarPanel();
-        eventSummaryBarPanelController =
-                new EventSummaryBarPanelController(eventSummaryBarPanel);
-        eventSummaryBarPanelController.setEventSummaryBarListener(this);
-
-        eventTableController = mainFrame.getEventTableController();
+        loggingConfigController = createLoggingConfigController();
 
         helpAction = HelpAction.getInstance();
         helpAction.enableHelpKey(view.getMainFrame());
+        certsLoginCtr = createCertsLoginController();
+
+        emailSettingsController =
+                createEmailSettingsController(view.getMainFrame());
+
+        pinBoardCtr = createPinBoardController();
+        addModelListener(new IModelListener<FabricModel>() {
+
+            @Override
+            public void modelChanged(FabricModel model) {
+                if (model.getPreviousSubnet() == null
+                        && model.getCurrentSubnet() != null) {
+                    // first time we get valid model (context). init pin board
+                    // besed on DB
+                    pinBoardCtr.init();
+                }
+            }
+
+            @Override
+            public void modelUpdateFailed(FabricModel model, Throwable caught) {
+            }
+        });
+
+        init();
+    }
+
+    protected CertsLoginController createCertsLoginController() {
+        CredentialsGlassPanel cgp = new CredentialsGlassPanel();
+        CertsLoginController ctr =
+                new CertsLoginController(this, (FVMainFrame) mainFrame, cgp);
+        return ctr;
+    }
+
+    protected PinBoardController createPinBoardController() {
+        return new PinBoardController(view.getPinBoardView(), this);
     }
 
     @Override
@@ -566,12 +693,28 @@ public class FabricController extends
         eventBus.subscribe(this);
     }
 
-    /**
-     * Invoked by the FabricPlugin to initialize the UI
-     */
     @Override
-    public void init() {
+    public JFrame getViewFrame() {
+        return viewFrame;
+    }
+
+    @Override
+    public MBassador<IAppEvent> getEventBus() {
+        return eventBus;
+    }
+
+    private void init() {
+        eventSummaryBarPanel = mainFrame.getEventSummaryBarPanel();
+        eventSummaryBarPanelController =
+                new EventSummaryBarPanelController(eventSummaryBarPanel);
+        eventSummaryBarPanelController.setEventSummaryBarListener(this);
+        mainFrame.showEventSummaryTable();
+        hasEventTableToggled = false;
+
+        eventTableController = mainFrame.getEventTableController();
+
         installPages();
+        installUndoHandler();
     }
 
     /**
@@ -595,6 +738,12 @@ public class FabricController extends
             pageLoadWork += page.getContextSwitchWeight().getWeight();
         }
 
+    }
+
+    protected void installUndoHandler() {
+        undoHandler = new UndoHandler();
+        view.getView().setUndoAction(undoHandler.getUndoAction());
+        view.getView().setRedoAction(undoHandler.getRedoAction());
     }
 
     // The following createXXX methods are overridden in unit tests
@@ -623,8 +772,16 @@ public class FabricController extends
         return new AdminPage(new AdminView((IFabricView) owner), eventBus);
     }
 
-    protected NoticeEventListener getNoticeEventListener() {
-        return noticeListener;
+    protected LoggingConfigController createLoggingConfigController() {
+
+        return LoggingConfigController.getInstance(view.getMainFrame(),
+                subnetMgr);
+
+    }
+
+    protected EmailSettingsController createEmailSettingsController(
+            FVMainFrame owner) {
+        return EmailSettingsController.getInstance(owner, subnetMgr);
     }
 
     protected boolean isAddRandomValues() {
@@ -655,20 +812,12 @@ public class FabricController extends
     public void initializeContext(Context context) {
         this.subnetName = context.getSubnetDescription().getName();
         checkBackgroundTask();
-        context.setOwner(view.getMainFrame());
         // Show progress on UI
         mainFrame.setSubnetName(subnetName);
         mainFrame.setReady(false);
         mainFrame.showProgress(
                 UILabels.STL10104_INIT_SUBNET.getDescription(subnetName), true);
         mainFrame.setProgress(0);
-        // Prepare context
-        // - apply random values for demo purpose
-        boolean addRandomValues = model.isAddRandomValues();
-        context.setRandom(addRandomValues);
-        context.getPerformanceApi().setRandom(addRandomValues);
-        // - set the notice listener
-        context.getNoticeApi().addEventListener(noticeListener);
 
         List<IContextAware> contextPages = new ArrayList<IContextAware>();
         contextPages.add(builder);
@@ -692,7 +841,6 @@ public class FabricController extends
     @Override
     public void resetContext(Context newContext) {
         checkBackgroundTask();
-        newContext.setOwner(view.getMainFrame());
         SubnetDescription subnet = newContext.getSubnetDescription();
         this.subnetName = subnet.getName();
         mainFrame.setSubnetName(subnetName);
@@ -746,17 +894,21 @@ public class FabricController extends
             Util.runInEDT(new Runnable() {
                 @Override
                 public void run() {
-                    mainFrame.setRefreshRunning(false);
+                    if (mainFrame != null) {
+                        mainFrame.setRefreshRunning(false);
+                    }
                 }
             });
         }
     }
 
     public synchronized void onRefresh() {
-        checkBackgroundTask();
+        isSystemUpdate = true;
 
         Context context = getContext();
         if (context != null && context.isValid()) {
+            checkBackgroundTask();
+
             mainFrame.setReady(false);
             mainFrame.showProgress(UILabels.STL10110_REFRESHING_PAGES
                     .getDescription(getCurrentSubnet().getName()), true);
@@ -764,12 +916,30 @@ public class FabricController extends
 
             backgroundTotalWork = pageLoadWork;
             backgroundWork = 0.0;
-            backgroundTask = new SubnetRefreshTask(model, builder, pages);
+            backgroundTask =
+                    new SubnetRefreshTask(model, builder, pages, context);
             backgroundTask.addPropertyChangeListener(this);
             submitTask(backgroundTask);
+        } else if (context == null) {
+            // This is the case where the Controller was never initialized or
+            // there was an error during initialization
+            if (backgroundTask != null && !backgroundTask.isDone()) {
+                // Initialization is running
+                mainFrame.setReady(false);
+                mainFrame.showProgress(UILabels.STL10104_INIT_SUBNET
+                        .getDescription(subnetName), true);
+                backgroundTask.addPropertyChangeListener(this);
+            } else {
+                // There was an error during initialization
+                selectSubnet(subnetName);
+            }
         } else {
+            checkBackgroundTask();
+
             selectSubnet(subnetName);
         }
+
+        certsLoginCtr.sslReconnectCleanup();
     }
 
     private void checkBackgroundTask() {
@@ -813,14 +983,19 @@ public class FabricController extends
             if (percentProgress > 100) {
                 percentProgress = 100.00;
             }
-            mainFrame.setProgress((int) percentProgress);
+
+            if (mainFrame != null) {
+                mainFrame.setProgress((int) percentProgress);
+            }
         } else if (PROGRESS_NOTE_PROPERTY == evt.getPropertyName()) {
             String note = (String) evt.getNewValue();
             if (mainFrame == null) {
                 System.out.println("=========== " + note);
                 return;
             }
-            mainFrame.setProgressNote(note);
+            if (mainFrame != null) {
+                mainFrame.setProgressNote(note);
+            }
         }
     }
 
@@ -889,7 +1064,6 @@ public class FabricController extends
      */
     private void clearContext(Context context) {
         context.getTaskScheduler().clear();
-        context.getNoticeApi().removeEventListener(noticeListener);
     }
 
     /*
@@ -963,6 +1137,7 @@ public class FabricController extends
         this.subnetName = null;
         try {
             resetView();
+            pinBoardCtr.cleanup();
         } finally {
             init();
             eventBus.shutdown();
@@ -986,6 +1161,26 @@ public class FabricController extends
     @Override
     public void showSetupWizard(String subnetName) {
         subnetMgr.showSetupWizard(subnetName, this);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.main.IFabricController#showLoggingConfig()
+     */
+    @Override
+    public void showLoggingConfig() {
+        loggingConfigController.showLoggingConfig();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.main.IFabricController#showEmailSettingsDialog()
+     */
+    @Override
+    public void showEmailSettingsDialog() {
+        emailSettingsController.showEmailSettingsDlg((FVMainFrame) mainFrame);
     }
 
     @Override
@@ -1031,12 +1226,16 @@ public class FabricController extends
 
     private void resetView() {
         try {
-            graphService.shutdown();
+            if (graphService != null) {
+                graphService.shutdown();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         try {
-            outlineService.shutdown();
+            if (outlineService != null) {
+                outlineService.shutdown();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1049,8 +1248,10 @@ public class FabricController extends
             model.setCurrentSubnet(null);
             notifyModelChanged();
         } finally {
-            lastBounds = mainFrame.getFrameBounds();
-            maximized = mainFrame.isFrameMaximized();
+            if (mainFrame != null) {
+                lastBounds = mainFrame.getFrameBounds();
+                maximized = mainFrame.isFrameMaximized();
+            }
         }
     }
 
@@ -1090,43 +1291,62 @@ public class FabricController extends
     public void cleanup() {
         this.subnetName = null;
         eventBus.shutdown();
-        noticeListener.shutdown();
+
+        if (pinBoardCtr != null) {
+            pinBoardCtr.cleanup();
+        }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.intel.stl.ui.main.view.IPageListener#canPageChange(int, int)
-     */
+    protected IPageController getPage(String name) {
+        for (IPageController page : pages) {
+            if (page.getName().equals(name)) {
+                return page;
+            }
+        }
+        throw new IllegalArgumentException("Couldn't find page with name '"
+                + name + "'");
+    }
+
     @Override
-    public boolean canPageChange(int oldPageId, int newPageId) {
-        if (oldPageId >= 0) {
-            IPageController oldPage = pages.get(oldPageId);
+    public boolean canPageChange(String oldPageId, String newPageId) {
+        if (oldPageId != null && !pages.isEmpty()) {
+            IPageController oldPage = getPage(oldPageId);
             return oldPage.canExit();
         }
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.intel.stl.ui.main.view.IPageListener#onPageChanged(int, int)
-     */
+    public void selectPage(IPageController page) {
+        isSystemUpdate = true;
+        mainFrame.setCurrentTab(page);
+    }
+
     @Override
-    public void onPageChanged(int oldPageId, int newPageId) {
-        if (oldPageId >= 0) {
-            if (oldPageId == 0 && !hasEventTableToggled) {
+    public void onPageChanged(String oldPageId, String newPageId) {
+        IPageController oldPage = null;
+        if (oldPageId != null) {
+            oldPage = getPage(oldPageId);
+            if (oldPage == pages.get(0) && !hasEventTableToggled) {
                 mainFrame.hideEventSummaryTable();
             }
-            IPageController oldPage = pages.get(oldPageId);
             oldPage.onExit();
         }
-        if (newPageId >= 0) {
-            if (newPageId == 0 && !hasEventTableToggled) {
+        IPageController newPage = null;
+        if (newPageId != null) {
+            newPage = getPage(newPageId);
+            if (newPage == pages.get(0) && !hasEventTableToggled) {
                 mainFrame.showEventSummaryTable();
             }
-            IPageController newPage = pages.get(newPageId);
             newPage.onEnter();
+        }
+
+        if (!isSystemUpdate && !undoHandler.isInProgress()) {
+            UndoablePageSelection undoSel =
+                    new UndoablePageSelection(this, oldPage, newPage);
+            undoHandler.addUndoAction(undoSel);
+        }
+        if (isSystemUpdate) {
+            isSystemUpdate = false;
         }
     }
 
@@ -1170,26 +1390,14 @@ public class FabricController extends
     }
 
     @Handler
-    protected void onNodeSelected(NodeSelectedEvent event) {
-        jumpToDestination(event.getDestination());
-    }
-
-    @Handler
-    protected void onPortSelected(PortSelectedEvent event) {
-        jumpToDestination(event.getDestination());
-    }
-
-    protected void jumpToDestination(JumpDestination dest) {
-        switch (dest) {
-            case PERFORMANCE:
-                mainFrame.setCurrentTab(pages.get(1));
-                break;
-            case TOPOLOGY:
-                mainFrame.setCurrentTab(pages.get(2));
-                break;
-            default:
-                log.warn("Unsupported destination " + dest);
+    protected void onJumpToEvent(JumpToEvent event) {
+        for (IPageController page : pages) {
+            if (page.getName().equals(event.getDestination())) {
+                selectPage(page);
+                return;
+            }
         }
+        log.warn("Unsupported destination " + event.getDestination());
     }
 
     /*
@@ -1254,12 +1462,14 @@ public class FabricController extends
             context.removeFailoverProgressListener(this);
             TaskScheduler ts = context.getTaskScheduler();
             ts.updateRefreshRate(ts.getRefreshRate());
+            context.getManagementApi().reset();
         }
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
                 mainFrame.showProgress(null, false);
                 mainFrame.setReady(true);
+                onRefresh();
             }
         });
     }
@@ -1292,13 +1502,69 @@ public class FabricController extends
     public void showAboutDialog() {
         if (subnetMgr != null) {
             AppInfo appInfo = subnetMgr.getConfigurationApi().getAppInfo();
-            String appVersion =
-                    appInfo.getAppVersion() + "." + appInfo.getAppRelease()
-                            + "." + appInfo.getAppModLevel();
+            String appVersion = appInfo.getOpaFmVersion();
+            String buildId = appInfo.getAppBuildId();
             AboutDialog.showAboutDialog((javax.swing.JFrame) mainFrame,
-                    appInfo.getAppName(), appVersion, appInfo.getAppBuildId(),
+                    appInfo.getAppName(), appVersion, buildId,
                     appInfo.getAppBuildDate());
         }
+    }
+
+    /**
+     * @return the certsLoginCtr
+     */
+    @Override
+    public CertsLoginController getCertsLoginController() {
+        return certsLoginCtr;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.main.IFabricController#getPinBoardController()
+     */
+    @Override
+    public PinBoardController getPinBoardController() {
+        return pinBoardCtr;
+    }
+
+    /**
+     * @return the undoHandler
+     */
+    @Override
+    public UndoHandler getUndoHandler() {
+        return undoHandler;
+    }
+
+    public void onHideInactiveNodes(boolean hideInactiveNodes) {
+        // Save property state in the AppSettings:
+        AppInfo appInfo = subnetMgr.getConfigurationApi().getAppInfo();
+
+        Properties applicationProperties = new Properties();
+        applicationProperties.put("hide.inactive.nodes",
+                String.valueOf(hideInactiveNodes));
+        appInfo.setProperty(PROPERTIES_FM_GUI_APP, applicationProperties);
+
+        subnetMgr.getConfigurationApi().saveAppInfo(appInfo);
+
+        // update UI:
+        this.hideInactiveNodes = hideInactiveNodes;
+        this.onRefresh();
+    }
+
+    @Override
+    public boolean getHideInactiveNodes() {
+        if (hideInactiveNodes == null) {
+            AppInfo appInfo = subnetMgr.getConfigurationApi().getAppInfo();
+
+            Properties appProps = appInfo.getProperty(PROPERTIES_FM_GUI_APP);
+            String hideNodes = "false";
+            if (appProps != null) {
+                hideNodes = (String) appProps.get("hide.inactive.nodes");
+            }
+            hideInactiveNodes = Boolean.valueOf(hideNodes);
+        }
+        return hideInactiveNodes;
     }
 
 }

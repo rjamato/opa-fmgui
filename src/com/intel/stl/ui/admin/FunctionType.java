@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:27:08  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/08/17 18:54:16  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/08/17 14:22:44  rjtierne
+ *  Archive Log:    PR 128979 - SM Log display
+ *  Archive Log:    This is the first version of the Log Viewer which displays select lines of text from the remote SM log file. Updates include searchable raw text from file, user-defined number of lines to display, refreshing end of file, and paging. This PR is now closed and further updates can be found by referencing PR 130011 - "Enhance SM Log Viewer to include Standard and Advanced requirements".
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/04/08 19:42:44  rjtierne
  *  Archive Log:    Replaced constant K2103_ADM_DGS with K0408_DEVICE_GROUPS
@@ -71,7 +76,7 @@ public enum FunctionType {
     CONSOLE(STLConstants.K2107_ADM_CONSOLE.getValue(),
             STLConstants.K2108_ADM_CONSOLE_DESC.getValue(),
             UIImages.CONSOLE_ICON),
-    LOG(STLConstants.K2109_ADM_LOG.getValue(), STLConstants.K2110_ADM_LOG_DESC
+    LOGS(STLConstants.K2109_ADM_LOG.getValue(), STLConstants.K2110_ADM_LOG_DESC
             .getValue(), UIImages.LOG_ICON);
 
     private final String name;

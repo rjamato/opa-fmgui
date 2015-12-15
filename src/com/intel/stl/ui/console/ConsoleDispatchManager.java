@@ -35,8 +35,18 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.23.2.1  2015/08/12 15:27:18  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.26  2015/09/08 21:46:27  jijunwan
+ *  Archive Log:    PR 130330 - Windows FM GUI - Admin->Console - switching side tabs causes multiple consoles
+ *  Archive Log:    - changed code to distinguish number of connected consoles and number of consoles
+ *  Archive Log:    - changed ConsolePage to use number of consoles, so if we have an unconnected console, it doesn't create another new console.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.25  2015/08/17 18:54:27  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.24  2015/05/27 14:33:56  rjtierne
+ *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
+ *  Archive Log:    Removed loginDialogView and implemented some reorganization to accommodate removal
  *  Archive Log:
  *  Archive Log:    Revision 1.23  2015/04/10 14:07:58  rjtierne
  *  Archive Log:    PR 126675 - User cannot execute commands on duplicate Console numbers beyond 10 consoles.
@@ -145,7 +155,6 @@ import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.console.view.ConsoleSubpageView;
 import com.intel.stl.ui.console.view.ConsoleTerminalView;
 import com.intel.stl.ui.console.view.ConsoleView;
-import com.intel.stl.ui.console.view.LoginDialogView;
 import com.intel.stl.ui.main.Context;
 import com.intel.stl.ui.main.view.IFabricView;
 import com.jcraft.jsch.JSchException;
@@ -159,9 +168,11 @@ public class ConsoleDispatchManager implements IConsoleEventListener {
 
     public final static int SSH_PORT = 22;
 
-    private final ConsoleSubpageView subpageView;
+    public final static int REASON_INIT = 1;
 
-    private final LoginDialogView loginDialogView;
+    public final static int REASON_UNLOCK = 2;
+
+    private final ConsoleSubpageView subpageView;
 
     private Context context;
 
@@ -171,7 +182,9 @@ public class ConsoleDispatchManager implements IConsoleEventListener {
 
     private ConsoleTerminalController console;
 
-    private ConsoleTerminalView consoleView;
+    private ConsoleTerminalView consoleTerminalView;
+
+    private IConsoleLogin consoleLogin;
 
     private final IConsoleEventListener listener = this;
 
@@ -196,7 +209,6 @@ public class ConsoleDispatchManager implements IConsoleEventListener {
 
         this.owner = owner;
         this.subpageView = consoleView.getConsoleSubpageView();
-        this.loginDialogView = consoleView.getLoginDialogView();
     }
 
     /*
@@ -244,10 +256,13 @@ public class ConsoleDispatchManager implements IConsoleEventListener {
                 consoleNum++;
 
                 if (consoleNum <= MAX_NUM_CONSOLES) {
-                    consoleView = new ConsoleTerminalView(owner);
+                    consoleTerminalView =
+                            new ConsoleTerminalView(owner, subpageView);
+                    consoleLogin = consoleTerminalView.getConsoleLogin();
+                    consoleLogin.setConsoleEventListener(listener);
                     displayMaxConsoles(false);
                     console =
-                            new ConsoleTerminalController(consoleView,
+                            new ConsoleTerminalController(consoleTerminalView,
                                     STLConstants.K2107_ADM_CONSOLE.getValue()
                                             + " " + consoleNum + "," + " ",
                                     STLConstants.K2108_ADM_CONSOLE_DESC
@@ -262,22 +277,23 @@ public class ConsoleDispatchManager implements IConsoleEventListener {
                             (consoleNum <= MAX_NUM_CONSOLES);
                     tabListener = subpageView.getNewTabView();
                     tabListener.enableNewTab(newConsolesAllowed);
-                    consoleView.enableNewTab(newConsolesAllowed);
+                    consoleTerminalView.enableNewTab(newConsolesAllowed);
 
                     if (showDialog) {
-                        loginDialogView.showDialog(defaultLoginBean, true,
+                        consoleLogin.showLogin(defaultLoginBean, true,
                                 consoleNum);
                     } else {
                         try {
                             initializeConsole(loginBean, command);
                         } catch (NumberFormatException e) {
-                            loginDialogView
+                            consoleLogin
                                     .showMessage(UILabels.STL80002_INVALID_PORT_NUMBER
                                             .getDescription(loginBean
                                                     .getPortNum()));
-                            loginDialogView.killProgress();
+                            consoleLogin.killProgress();
                         }
                     }
+
                 } else {
                     consoleNum--;
                     displayMaxConsoles(true);
@@ -301,7 +317,7 @@ public class ConsoleDispatchManager implements IConsoleEventListener {
         try {
             tabListener = subpageView.getNewTabView();
             tabListener.enableNewTab(false);
-            consoleView.enableCommanding(false);
+            consoleTerminalView.enableCommanding(false);
             if (command == null) {
                 // Add new console with a new session
                 console.initializeTerminal(loginBean);
@@ -354,7 +370,7 @@ public class ConsoleDispatchManager implements IConsoleEventListener {
     public void onConnect(boolean connected, String command) {
 
         if (connected) {
-            loginDialogView.hideDialog();
+            consoleLogin.hideLogin();
             consoleControllers.put(consoleNum, console);
 
             LoginBean loginBean = console.getLoginInfo();
@@ -381,9 +397,9 @@ public class ConsoleDispatchManager implements IConsoleEventListener {
             }
         }
 
-        loginDialogView.killProgress();
+        consoleLogin.killProgress();
         tabListener.enableNewTab(true);
-        consoleView.enableCommanding(true);
+        consoleTerminalView.enableCommanding(true);
 
         // Use the console initializer to issue a "history" command to the
         // remote host, capture the result, and display it in the command field
@@ -406,10 +422,11 @@ public class ConsoleDispatchManager implements IConsoleEventListener {
      * .Exception)
      */
     @Override
-    public void onConnectFail(ConsoleTerminalController console, Exception e) {
+    public void onConnectFail(ConsoleTerminalController console, int reason,
+            Exception e) {
 
         if (e instanceof NumberFormatException) {
-            loginDialogView.showMessage(UILabels.STL80002_INVALID_PORT_NUMBER
+            consoleLogin.showMessage(UILabels.STL80002_INVALID_PORT_NUMBER
                     .getDescription(defaultLoginBean.getPortNum()));
 
         } else if (e instanceof JSchException) {
@@ -425,19 +442,19 @@ public class ConsoleDispatchManager implements IConsoleEventListener {
                         UILabels.STL80001_CONSOLE_CONNECTION_ERROR
                                 .getDescription()
                                 + " "
-                                + loginDialogView.getHostName()
+                                + consoleLogin.getHostName()
                                 + ": "
                                 + e.getMessage();
             }
-            loginDialogView.showMessage(msg);
+            consoleLogin.showMessage(msg);
         } else {
-            loginDialogView.showMessage(StringUtils.getErrorMessage(e));
+            consoleLogin.showMessage(StringUtils.getErrorMessage(e));
         }
 
-        loginDialogView.killProgress();
+        consoleLogin.killProgress();
         tabListener.enableNewTab(true);
-        consoleView.enableCommanding(true);
-        if (console != null) {
+        consoleTerminalView.enableCommanding(true);
+        if ((console != null) && (reason == REASON_INIT)) {
             console.shutDownConsole();
             closeChannel(console);
             closeSession(console);
@@ -530,9 +547,12 @@ public class ConsoleDispatchManager implements IConsoleEventListener {
      * @see com.intel.stl.ui.console.IConsoleEventListener#getNumConsoles()
      */
     @Override
-    public int getNumConsoles() {
-
-        return consoleControllers.size();
+    public int getNumConsoles(boolean connectedOnly) {
+        if (connectedOnly) {
+            return consoleControllers.size();
+        } else {
+            return consoleNum;
+        }
     }
 
     /*
@@ -542,10 +562,10 @@ public class ConsoleDispatchManager implements IConsoleEventListener {
      */
     @Override
     /**
-     * @return the loginDialogView
+     * @return the consoleLogin
      */
-    public LoginDialogView getLoginDialog() {
-        return loginDialogView;
+    public IConsoleLogin getConsoleLogin() {
+        return consoleLogin;
     }
 
     /*
@@ -566,7 +586,8 @@ public class ConsoleDispatchManager implements IConsoleEventListener {
                 try {
                     initializeConsole(loginBean, command);
                 } catch (Exception e) {
-                    onConnectFail(consoleControllers.get(consoleId), e);
+                    onConnectFail(consoleControllers.get(consoleId),
+                            REASON_INIT, e);
                 }
             }
         });
@@ -582,7 +603,7 @@ public class ConsoleDispatchManager implements IConsoleEventListener {
      * @see com.intel.stl.ui.console.IConsoleEventListener#onUnlock(int)
      */
     @Override
-    public void onUnlockThread(final int consoleId, final String pw) {
+    public void onUnlockThread(final int consoleId, final char[] pw) {
 
         unlockThread = new Thread(new Runnable() {
 
@@ -596,7 +617,7 @@ public class ConsoleDispatchManager implements IConsoleEventListener {
                         console.onUnlock(pw);
                     }
                 } catch (JSchException e) {
-                    onConnectFail(console, e);
+                    onConnectFail(console, REASON_UNLOCK, e);
                 }
             }
         });

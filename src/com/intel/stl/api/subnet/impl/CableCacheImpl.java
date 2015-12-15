@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6.2.1  2015/08/12 15:22:00  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.8  2015/10/01 17:37:10  jypak
+ *  Archive Log:    PR 130608 - Changes made to SC2VL mapping is not reflected in FM GUI's SC2SL Mapping Table.
+ *  Archive Log:    Each cache's refreshCache method is implemented to remove relevant cahce.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/08/17 18:48:53  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/04/24 12:27:54  jypak
  *  Archive Log:    Fixed the logic to return only the results matching with given lid and port number.
@@ -61,15 +66,18 @@
 package com.intel.stl.api.subnet.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.intel.stl.api.notice.impl.NoticeProcess;
 import com.intel.stl.api.subnet.CableRecordBean;
+import com.intel.stl.api.subnet.SubnetDataNotFoundException;
 import com.intel.stl.configuration.CacheManager;
 import com.intel.stl.configuration.MemoryCache;
 
-public class CableCacheImpl extends MemoryCache<List<CableRecordBean>>
-        implements CableCache {
+public class CableCacheImpl extends
+        MemoryCache<Map<Integer, List<CableRecordBean>>> implements CableCache {
 
     private final SAHelper helper;
 
@@ -85,8 +93,31 @@ public class CableCacheImpl extends MemoryCache<List<CableRecordBean>>
      */
     @Override
     public List<CableRecordBean> getCables() {
-        List<CableRecordBean> res = getCachedObject();
-        return res;
+        Map<Integer, List<CableRecordBean>> map = getCachedObject();
+
+        List<CableRecordBean> res = new ArrayList<CableRecordBean>();
+        if (map != null && !map.isEmpty()) {
+            for (List<CableRecordBean> cables : map.values()) {
+                for (CableRecordBean cable : cables) {
+                    res.add(cable);
+                }
+            }
+        }
+
+        if (!res.isEmpty()) {
+            return res;
+        } else {
+            // might be a new
+            try {
+                res = helper.getCables();
+                if (res != null) {
+                    setCacheReady(false); // Force a refresh on next call;
+                }
+                return res;
+            } catch (Exception e) {
+                throw SubnetApi.getSubnetException(e);
+            }
+        }
     }
 
     /*
@@ -96,16 +127,12 @@ public class CableCacheImpl extends MemoryCache<List<CableRecordBean>>
      */
     @Override
     public List<CableRecordBean> getCable(int lid) {
-        List<CableRecordBean> cables = getCables();
+        Map<Integer, List<CableRecordBean>> map = getCachedObject();
         List<CableRecordBean> res = new ArrayList<CableRecordBean>();
-        if (cables != null) {
-            for (CableRecordBean cable : cables) {
-                if (cable.getLid() == lid) {
-                    res.add(cable);
-                }
-            }
+        if (map != null) {
+            res = map.get(lid);
         }
-        if (!res.isEmpty()) {
+        if (res != null && !res.isEmpty()) {
             return res;
         }
 
@@ -125,15 +152,20 @@ public class CableCacheImpl extends MemoryCache<List<CableRecordBean>>
 
     /**
      * Cable info are in two records.
+     * 
+     * @throws SubnetDataNotFoundException
      */
     @Override
     public List<CableRecordBean> getCable(int lid, short portNum) {
-        List<CableRecordBean> cables = getCables();
+        Map<Integer, List<CableRecordBean>> map = getCachedObject();
         List<CableRecordBean> res = new ArrayList<CableRecordBean>();
-        if (cables != null) {
-            for (CableRecordBean cable : cables) {
-                if (cable.getLid() == lid && cable.getPort() == portNum) {
-                    res.add(cable);
+        if (map != null) {
+            List<CableRecordBean> cables = map.get(lid);
+            if (cables != null) {
+                for (CableRecordBean cable : cables) {
+                    if (cable.getLid() == lid && cable.getPort() == portNum) {
+                        res.add(cable);
+                    }
                 }
             }
         }
@@ -163,11 +195,27 @@ public class CableCacheImpl extends MemoryCache<List<CableRecordBean>>
     }
 
     @Override
-    protected List<CableRecordBean> retrieveObjectForCache() throws Exception {
-        List<CableRecordBean> res = helper.getCables();
-        log.info("Retrieve " + (res == null ? 0 : res.size())
+    protected Map<Integer, List<CableRecordBean>> retrieveObjectForCache()
+            throws Exception {
+        List<CableRecordBean> cables = helper.getCables();
+        log.info("Retrieve " + (cables == null ? 0 : cables.size())
                 + " Cable Infos from FE");
-        return res;
+        Map<Integer, List<CableRecordBean>> map = null;
+        if (cables != null) {
+            map = new HashMap<Integer, List<CableRecordBean>>();
+            for (CableRecordBean cable : cables) {
+                int lid = cable.getLid();
+                if (map.containsKey(lid)) {
+                    map.get(lid).add(cable);
+                } else {
+                    List<CableRecordBean> list =
+                            new ArrayList<CableRecordBean>();
+                    list.add(cable);
+                    map.put(cable.getLid(), list);
+                }
+            }
+        }
+        return map;
     }
 
     /*
@@ -180,6 +228,10 @@ public class CableCacheImpl extends MemoryCache<List<CableRecordBean>>
     @Override
     public boolean refreshCache(NoticeProcess notice) throws Exception {
         // No notice applies to this cache
+        Map<Integer, List<CableRecordBean>> map = getCachedObject();
+        if (map != null && !map.isEmpty()) {
+            map.remove(notice.getLid());
+        }
         return true;
     }
 

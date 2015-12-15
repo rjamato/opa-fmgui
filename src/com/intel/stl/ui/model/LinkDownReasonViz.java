@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:26:38  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.6  2015/10/07 15:24:19  jypak
+ *  Archive Log:    PR 130564 - Information missing from device information, but is reported by FF.
+ *  Archive Log:    Changed from 'N/A' to 'None'.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/08/17 18:53:46  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/02/05 23:38:00  jijunwan
  *  Archive Log:    updated link down reason to match FM 325
@@ -61,7 +66,7 @@
 package com.intel.stl.ui.model;
 
 import static com.intel.stl.ui.common.STLConstants.K0016_UNKNOWN;
-import static com.intel.stl.ui.common.STLConstants.K0383_NA;
+import static com.intel.stl.ui.common.STLConstants.K0056_NONE;
 import static com.intel.stl.ui.common.STLConstants.K0460_FM_BOUNCE;
 import static com.intel.stl.ui.common.STLConstants.K0461_RECEIVE_ERROR;
 import static com.intel.stl.ui.common.STLConstants.K0462_BAD_PACKET_LENGTH;
@@ -105,7 +110,7 @@ import com.intel.stl.ui.common.STLConstants;
 
 public enum LinkDownReasonViz {
 
-    NONE(LinkDownReason.NONE, K0383_NA.getValue()),
+    NONE(LinkDownReason.NONE, K0056_NONE.getValue()),
     RCV_ERROR_0(LinkDownReason.RCV_ERROR_0, K0461_RECEIVE_ERROR.getValue()
             + " 0"),
     BAD_PKT_LEN(LinkDownReason.BAD_PKT_LEN, K0462_BAD_PACKET_LENGTH.getValue()),

@@ -32,10 +32,32 @@
  *
  *  File Name: NodeStatesCard.java
  *
- *  Archive Source: 
- *
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.10  2015/08/17 18:53:38  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
  *  Archive Log:
- *
+ *  Archive Log: Revision 1.9  2015/07/17 20:25:04  jijunwan
+ *  Archive Log: PR 129593 - empty health pin card
+ *  Archive Log: - set card size based on original view size
+ *  Archive Log:
+ *  Archive Log: Revision 1.8  2015/06/26 22:36:17  jijunwan
+ *  Archive Log: PR 126755 - Pin Board functionality is not working in FV
+ *  Archive Log: - set new created status view to proper size, so the pin card view has desired size as well
+ *  Archive Log:
+ *  Archive Log: Revision 1.7  2015/06/25 20:24:56  jijunwan
+ *  Archive Log: Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log: - applied pin framework on fabric viewer and simple 'static' cards
+ *  Archive Log:
+ *  Archive Log: Revision 1.6  2015/06/09 18:37:27  jijunwan
+ *  Archive Log: PR 129069 - Incorrect Help action
+ *  Archive Log: - moved help action from view to controller
+ *  Archive Log: - only enable help button when we have HelpID
+ *  Archive Log: - fixed incorrect HelpIDs
+ *  Archive Log:
+ * 
  *  Overview: 
  *
  *  @author: jijunwan
@@ -45,11 +67,14 @@
 package com.intel.stl.ui.main;
 
 import java.util.EnumMap;
+import java.util.Properties;
 
 import net.engio.mbassy.bus.MBassador;
 
 import com.intel.stl.api.notice.NoticeSeverity;
-import com.intel.stl.ui.common.BaseCardController;
+import com.intel.stl.ui.common.IPinProvider;
+import com.intel.stl.ui.common.PinDescription.PinID;
+import com.intel.stl.ui.common.PinnableCardController;
 import com.intel.stl.ui.framework.IAppEvent;
 import com.intel.stl.ui.main.view.IChartStyleListener;
 import com.intel.stl.ui.main.view.StatusView;
@@ -60,20 +85,30 @@ import com.intel.stl.ui.model.ChartStyle;
  * 
  */
 public class StatusCard extends
-        BaseCardController<IChartStyleListener, StatusView> implements
-        IChartStyleListener {
+        PinnableCardController<IChartStyleListener, StatusView> implements
+        IChartStyleListener, IPinProvider {
     private final NodeStatusController swStatusCtl;
 
     private final NodeStatusController fiStatusCtl;
+
+    private NodeStatusController pinSwStatusCtl;
+
+    private NodeStatusController pinFiStatusCtl;
 
     public StatusCard(StatusView view, MBassador<IAppEvent> eventBus) {
         super(view, eventBus);
         swStatusCtl = new NodeStatusController(view.getSwPanel());
         fiStatusCtl = new NodeStatusController(view.getFiPanel());
+    }
 
-        HelpAction helpAction = HelpAction.getInstance();
-        helpAction.getHelpBroker().enableHelpOnButton(view.getHelpButton(),
-                helpAction.getStatus(), helpAction.getHelpSet());
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.ICardController#getHelpID()
+     */
+    @Override
+    public String getHelpID() {
+        return HelpAction.getInstance().getStatus();
     }
 
     /**
@@ -83,11 +118,17 @@ public class StatusCard extends
     public void updateSwStates(EnumMap<NoticeSeverity, Integer> states,
             final int total) {
         swStatusCtl.updateStates(states, total);
+        if (pinSwStatusCtl != null) {
+            pinSwStatusCtl.updateStates(states, total);
+        }
     }
 
     public void updateFiStates(EnumMap<NoticeSeverity, Integer> states,
             final int total) {
         fiStatusCtl.updateStates(states, total);
+        if (pinFiStatusCtl != null) {
+            pinFiStatusCtl.updateStates(states, total);
+        }
     }
 
     /*
@@ -110,6 +151,11 @@ public class StatusCard extends
         view.setStyle(newStyle);
         swStatusCtl.setStyle(newStyle);
         fiStatusCtl.setStyle(newStyle);
+        if (pinView != null) {
+            pinView.setStyle(newStyle);
+            pinSwStatusCtl.setStyle(newStyle);
+            pinFiStatusCtl.setStyle(newStyle);
+        }
     }
 
     /*
@@ -131,6 +177,84 @@ public class StatusCard extends
     public void clear() {
         swStatusCtl.clear();
         fiStatusCtl.clear();
+        if (pinSwStatusCtl != null) {
+            pinSwStatusCtl.clear();
+        }
+        if (pinFiStatusCtl != null) {
+            pinFiStatusCtl.clear();
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.common.PinnableCardController#generateArgument(java.
+     * util.Properties)
+     */
+    @Override
+    protected void generateArgument(Properties arg) {
+        // TODO Auto-generated method stub
+
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.PinnableCardController#createPinView()
+     */
+    @Override
+    protected StatusView createPinView() {
+        StatusView pinView = new StatusView() {
+            private static final long serialVersionUID = 461783273933437225L;
+
+            @Override
+            protected boolean isConcise() {
+                return true;
+            }
+
+        };
+        pinView.setCardListener(getCardListener());
+        pinSwStatusCtl = new NodeStatusController(pinView.getSwPanel());
+        pinFiStatusCtl = new NodeStatusController(pinView.getFiPanel());
+        return pinView;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.PinnableCardController#initPinView()
+     */
+    @Override
+    protected void initPinView() {
+        pinSwStatusCtl.updateStates(swStatusCtl.getLastStates(),
+                swStatusCtl.getLastTotal());
+        pinFiStatusCtl.updateStates(fiStatusCtl.getLastStates(),
+                fiStatusCtl.getLastTotal());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.PinnableCardController#clearPinView()
+     */
+    @Override
+    protected void clearPinView() {
+        super.clearPinView();
+        pinSwStatusCtl.clear();
+        pinSwStatusCtl = null;
+        pinFiStatusCtl.clear();
+        pinFiStatusCtl = null;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.PinnableCardController#getPinID()
+     */
+    @Override
+    public PinID getPinID() {
+        return PinID.STATUS;
     }
 
 }

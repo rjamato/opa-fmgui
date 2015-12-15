@@ -35,8 +35,26 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.1  2015/08/12 15:22:06  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.9  2015/08/17 18:48:56  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/06/26 13:37:20  rjtierne
+ *  Archive Log:    PR 128975 - Can not setup application log
+ *  Archive Log:    Now accesses the root logger level through the rootLogger in the LoggingConfiguration object.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/06/10 19:15:15  rjtierne
+ *  Archive Log:    PR 128975 - Can not setup application log
+ *  Archive Log:    - Add FecDriver to the list of internal logs
+ *  Archive Log:    - Changed references of List<AppenderConfig> to LoggingConfiguration
+ *  Archive Log:    - In getLoggingConfiguration(), initialized list of loggers and root log level
+ *  Archive Log:    in the logging configuration
+ *  Archive Log:    - In updateDocument(), set root logging level. This needs to be updated to also
+ *  Archive Log:    update the list of loggers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/05/12 17:37:17  rjtierne
+ *  Archive Log:    PR 128623 - Klocwork and FindBugs fixes for backend
+ *  Archive Log:    Add setter method used in unit testing for assigning new values to static variables
  *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/02/03 04:44:40  jijunwan
  *  Archive Log:    fixed NPE issues found by clocwork
@@ -92,6 +110,9 @@ import com.intel.stl.api.StringUtils;
 import com.intel.stl.api.configuration.AppenderConfig;
 import com.intel.stl.api.configuration.ConfigurationException;
 import com.intel.stl.api.configuration.ConsoleAppender;
+import com.intel.stl.api.configuration.LoggerConfig;
+import com.intel.stl.api.configuration.LoggingConfiguration;
+import com.intel.stl.api.configuration.LoggingThreshold;
 import com.intel.stl.api.configuration.RollingFileAppender;
 import com.intel.stl.common.AppDataUtils;
 
@@ -114,10 +135,11 @@ public class LogbackConfigurationHelper {
         Set<String> logs = new HashSet<String>();
         logs.add("HibernateSql");
         logs.add("DbMgr");
+        logs.add("FecDriver");
         internalLogs = Collections.unmodifiableSet(logs);
     }
 
-    public static List<AppenderConfig> getLoggingConfiguration(
+    public static LoggingConfiguration getLoggingConfiguration(
             String appDataPath) {
         String logConfigurationFilePath =
                 appDataPath + File.separatorChar + logbackConfigFileName;
@@ -126,16 +148,27 @@ public class LogbackConfigurationHelper {
     }
 
     public static void updateLoggingConfiguration(String appDataPath,
-            List<AppenderConfig> config) {
+            LoggingConfiguration config) {
         String logConfigurationFilePath =
                 appDataPath + File.separatorChar + logbackConfigFileName;
         File configFile = getConfigFile(logConfigurationFilePath);
         saveLoggingConfiguration(config, configFile, appDataPath);
     }
 
-    public static List<AppenderConfig> getLoggingConfiguration(File logConfig) {
+    public static LoggingConfiguration getLoggingConfiguration(File logConfig) {
+        LoggingConfiguration loggingConfig = new LoggingConfiguration();
         List<AppenderConfig> appenders = new ArrayList<AppenderConfig>();
+        List<LoggerConfig> loggers = new ArrayList<LoggerConfig>();
         LogbackConfigFactory factory = new LogbackConfigFactory(logConfig);
+
+        // Get the root log level and create the root logger
+        Node node = factory.getRootLogLevel();
+        LoggingThreshold rootLogLevel =
+                LoggingThreshold.valueOf(node.getNodeValue());
+        LoggerConfig rootLogger = new LoggerConfig("Root", rootLogLevel);
+        loggingConfig.setRootLogger(rootLogger);
+
+        // Get the list of appenders
         NodeList nodes = factory.getAppenders();
         for (int i = 0; i < nodes.getLength(); i++) {
             Element e = (Element) nodes.item(i);
@@ -171,10 +204,25 @@ public class LogbackConfigurationHelper {
                 appenders.add(appender);
             }
         }
-        return appenders;
+        loggingConfig.setAppenders(appenders);
+
+        // Get the list of loggers
+        nodes = factory.getLoggers();
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element e = (Element) nodes.item(i);
+            String loggerName = e.getAttribute("name");
+            String loggerLevel = e.getAttribute("level");
+            LoggerConfig logger =
+                    new LoggerConfig(loggerName,
+                            LoggingThreshold.valueOf(loggerLevel));
+            loggers.add(logger);
+        }
+        loggingConfig.setLoggers(loggers);
+
+        return loggingConfig;
     }
 
-    public static void saveLoggingConfiguration(List<AppenderConfig> config,
+    public static void saveLoggingConfiguration(LoggingConfiguration config,
             File logConfig, String appDataPath) {
         LogbackConfigFactory factory = new LogbackConfigFactory(logConfig);
 
@@ -195,6 +243,7 @@ public class LogbackConfigurationHelper {
         File backupFile = new File(logConfigBackup);
 
         try {
+            @SuppressWarnings("unused")
             boolean renameOK = logConfig.renameTo(backupFile);
             renameOK = tempFile.renameTo(logConfig);
         } catch (SecurityException se) {
@@ -208,14 +257,14 @@ public class LogbackConfigurationHelper {
     }
 
     protected static void updateDocument(LogbackConfigFactory factory,
-            List<AppenderConfig> config, String appDataPath) {
+            LoggingConfiguration config, String appDataPath) {
         if (config == null) {
             return;
         }
         NodeList nodes = factory.getAppenders();
         Map<String, AppenderConfig> appenders =
                 new HashMap<String, AppenderConfig>();
-        for (AppenderConfig appender : config) {
+        for (AppenderConfig appender : config.getAppenders()) {
             String appenderName = appender.getName();
             appenders.put(appenderName, appender);
         }
@@ -229,6 +278,8 @@ public class LogbackConfigurationHelper {
                 AppenderConfig appender = appenders.get(appenderName);
                 if (appender != null) {
                     resetLogDir((RollingFileAppender) appender, appDataPath);
+                    factory.setRootLogLevel(config.getRootLogger().getLevel()
+                            .name());
                 }
                 break;
             }
@@ -314,6 +365,11 @@ public class LogbackConfigurationHelper {
             throw ce;
         }
         return configFile;
+    }
+
+    public static void setLogbackConfigFileName(String logbackConfigFileName) {
+        LogbackConfigurationHelper.logbackConfigFileName =
+                logbackConfigFileName;
     }
 
 }

@@ -24,30 +24,42 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *  
+ * 
  *  Functional Group: Fabric Viewer Application
- *
+ * 
  *  File Name: Util.java
- *
+ * 
  *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.12.2.2  2015/08/12 15:27:03  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.18  2015/08/18 14:28:35  jijunwan
+ *  Archive Log: PR 130033 - Fix critical issues found by Klocwork or FindBugs
+ *  Archive Log: - DateFormat is not thread safe. Changed to create new DateFormat to avoid sharing it among different threads
  *  Archive Log:
- *  Archive Log:    Revision 1.12.2.1  2015/05/06 19:39:19  jijunwan
- *  Archive Log:    changed to directly show exception(s)
+ *  Archive Log: Revision 1.17  2015/08/17 18:54:12  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
  *  Archive Log:
- *
- *  Overview: 
- *
+ *  Archive Log: Revision 1.16  2015/07/28 18:29:10  fisherma
+ *  Archive Log: PR 129219 - Admin page login dialog improvement
+ *  Archive Log:
+ *  Archive Log: Revision 1.15  2015/07/14 17:00:59  jijunwan
+ *  Archive Log: PR 129541 - Should forbid save or deploy when there is invalid edit on management panel
+ *  Archive Log: - removed unnecessary argument for warning message display
+ *  Archive Log:
+ *  Archive Log: Revision 1.14  2015/06/10 19:58:58  jijunwan
+ *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
  *  @author: jijunwan
- *
+ * 
  ******************************************************************************/
-
 package com.intel.stl.ui.common;
 
 import java.awt.Color;
@@ -61,8 +73,10 @@ import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -255,8 +269,7 @@ public class Util {
 
     }
 
-    public static void showWarningMessage(Component parent,
-            final String message, final String title) {
+    public static void showWarningMessage(Component parent, final String message) {
 
         final Component root =
                 parent == null ? null : SwingUtilities.getRoot(parent);
@@ -275,5 +288,21 @@ public class Util {
 
         return DialogFactory.showConfirmDialog(root, message);
 
+    }
+
+    public static final String EMAIL_PATTERN =
+            "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                    + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+    public static final DateFormat getYYMMDD() {
+        return new SimpleDateFormat("yyyy/MM/dd");
+    }
+
+    public static final DateFormat getHHMMSS() {
+        return new SimpleDateFormat("HH:mm:ss");
+    }
+
+    public static final DateFormat getYYYYMMDDHHMMSS() {
+        return new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a, z");
     }
 }

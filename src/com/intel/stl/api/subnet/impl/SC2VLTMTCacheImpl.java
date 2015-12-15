@@ -24,32 +24,54 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ * 
  *  Functional Group: Fabric Viewer Application
- *
+ * 
  *  File Name: SC2VLTMTCacheImpl.java
- *
- *  Overview: 
- *
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.7  2015/10/07 11:39:58  jypak
+ *  Archive Log: PR 130608 - Changes made to SC2VL mapping is not reflected in FM GUI's SC2SL Mapping Table.
+ *  Archive Log: Klocwork issues fixed.
+ *  Archive Log:
+ *  Archive Log: Revision 1.6  2015/10/01 17:37:10  jypak
+ *  Archive Log: PR 130608 - Changes made to SC2VL mapping is not reflected in FM GUI's SC2SL Mapping Table.
+ *  Archive Log: Each cache's refreshCache method is implemented to remove relevant cahce.
+ *  Archive Log:
+ *  Archive Log: Revision 1.5  2015/08/17 18:48:53  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - change backend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.4  2015/06/10 19:36:39  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
  *  @author: jypak
- *
+ * 
  ******************************************************************************/
-
 package com.intel.stl.api.subnet.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.intel.stl.api.notice.impl.NoticeProcess;
 import com.intel.stl.api.subnet.SC2VLMTRecordBean;
 import com.intel.stl.configuration.CacheManager;
 import com.intel.stl.configuration.MemoryCache;
 
-public class SC2VLTMTCacheImpl extends MemoryCache<List<SC2VLMTRecordBean>>
-        implements SC2VLTMTCache {
+public class SC2VLTMTCacheImpl extends
+        MemoryCache<Map<Integer, List<SC2VLMTRecordBean>>> implements
+        SC2VLTMTCache {
 
     private final SAHelper helper;
 
@@ -60,22 +82,41 @@ public class SC2VLTMTCacheImpl extends MemoryCache<List<SC2VLMTRecordBean>>
 
     @Override
     public List<SC2VLMTRecordBean> getSC2VLTMTs() {
-        List<SC2VLMTRecordBean> res = getCachedObject();
-        return res;
+        Map<Integer, List<SC2VLMTRecordBean>> map = getCachedObject();
+
+        List<SC2VLMTRecordBean> res = new ArrayList<SC2VLMTRecordBean>();
+        if (map != null && !map.isEmpty()) {
+            for (List<SC2VLMTRecordBean> sc2vlts : map.values()) {
+                for (SC2VLMTRecordBean sc2vl : sc2vlts) {
+                    res.add(sc2vl);
+                }
+            }
+        }
+
+        if (!res.isEmpty()) {
+            return res;
+        } else {
+            // might be a new
+            try {
+                res = helper.getSC2VLTMTs();
+                if (res != null) {
+                    setCacheReady(false); // Force a refresh on next call;
+                }
+                return res;
+            } catch (Exception e) {
+                throw SubnetApi.getSubnetException(e);
+            }
+        }
     }
 
     @Override
     public List<SC2VLMTRecordBean> getSC2VLTMT(int lid) {
-        List<SC2VLMTRecordBean> sc2vltmts = getSC2VLTMTs();
+        Map<Integer, List<SC2VLMTRecordBean>> map = getCachedObject();
         List<SC2VLMTRecordBean> res = new ArrayList<SC2VLMTRecordBean>();
-        if (sc2vltmts != null) {
-            for (SC2VLMTRecordBean sc2vlt : sc2vltmts) {
-                if (sc2vlt.getLid() == lid) {
-                    res.add(sc2vlt);
-                }
-            }
+        if (map != null) {
+            res = map.get(lid);
         }
-        if (!res.isEmpty()) {
+        if (res != null && !res.isEmpty()) {
             return res;
         }
 
@@ -95,11 +136,14 @@ public class SC2VLTMTCacheImpl extends MemoryCache<List<SC2VLMTRecordBean>>
 
     @Override
     public SC2VLMTRecordBean getSC2VLTMT(int lid, short portNum) {
-        List<SC2VLMTRecordBean> sc2vltmts = getSC2VLTMTs();
-        if (sc2vltmts != null) {
-            for (SC2VLMTRecordBean sc2vlt : sc2vltmts) {
-                if (sc2vlt.getLid() == lid && sc2vlt.getPort() == portNum) {
-                    return sc2vlt;
+        Map<Integer, List<SC2VLMTRecordBean>> map = getCachedObject();
+        if (map != null) {
+            List<SC2VLMTRecordBean> sc2vltmts = map.get(lid);
+            if (sc2vltmts != null) {
+                for (SC2VLMTRecordBean sc2vlt : sc2vltmts) {
+                    if (sc2vlt.getLid() == lid && sc2vlt.getPort() == portNum) {
+                        return sc2vlt;
+                    }
                 }
             }
         }
@@ -127,11 +171,27 @@ public class SC2VLTMTCacheImpl extends MemoryCache<List<SC2VLMTRecordBean>>
     }
 
     @Override
-    protected List<SC2VLMTRecordBean> retrieveObjectForCache() throws Exception {
-        List<SC2VLMTRecordBean> res = helper.getSC2VLTMTs();
-        log.info("Retrieve " + (res == null ? 0 : res.size())
+    protected Map<Integer, List<SC2VLMTRecordBean>> retrieveObjectForCache()
+            throws Exception {
+        List<SC2VLMTRecordBean> sc2vls = helper.getSC2VLTMTs();
+        log.info("Retrieve " + (sc2vls == null ? 0 : sc2vls.size())
                 + " SC2VLTMT Infos from FE");
-        return res;
+        Map<Integer, List<SC2VLMTRecordBean>> map = null;
+        if (sc2vls != null) {
+            map = new HashMap<Integer, List<SC2VLMTRecordBean>>();
+            for (SC2VLMTRecordBean sc2vl : sc2vls) {
+                int lid = sc2vl.getLid();
+                if (map.containsKey(lid)) {
+                    map.get(lid).add(sc2vl);
+                } else {
+                    List<SC2VLMTRecordBean> list =
+                            new ArrayList<SC2VLMTRecordBean>();
+                    list.add(sc2vl);
+                    map.put(sc2vl.getLid(), list);
+                }
+            }
+        }
+        return map;
     }
 
     /*
@@ -144,6 +204,10 @@ public class SC2VLTMTCacheImpl extends MemoryCache<List<SC2VLMTRecordBean>>
     @Override
     public boolean refreshCache(NoticeProcess notice) throws Exception {
         // No notice applies to this cache
+        Map<Integer, List<SC2VLMTRecordBean>> map = getCachedObject();
+        if (map != null && !map.isEmpty()) {
+            map.remove(notice.getLid());
+        }
         return true;
     }
 

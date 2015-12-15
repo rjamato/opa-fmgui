@@ -35,8 +35,29 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.1  2015/08/12 15:22:09  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.11  2015/10/06 15:50:48  rjtierne
+ *  Archive Log:    PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
+ *  Archive Log:    - Added cleanup() to the interface
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/09/28 13:53:23  fisherma
+ *  Archive Log:    PR 130425 - added cancel button to allow user to cancel out of hung or slow ssh logins.  Cancel action terminates sftp connection and closes remote ssh session.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/08/17 18:49:02  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/08/17 17:30:47  jijunwan
+ *  Archive Log:    PR 128973 - Deploy FM conf changes on all SMs
+ *  Archive Log:    - improved FmConfHelper to get ride of ILoginAssistence and deploy with password
+ *  Archive Log:    - added tmp FM conf helper that deal with conf file with temporary connection
+ *  Archive Log:    - renamed testConnection to fetchConfigFile
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/07/28 18:20:25  fisherma
+ *  Archive Log:    PR 129219 - Admin page login dialog improvement.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/07/09 17:55:44  jijunwan
+ *  Archive Log:    PR 129509 - Shall refresh UI after failover completed
+ *  Archive Log:    - added reset method to ManagermentApi so we can reset after failover completed
  *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/04/28 21:55:00  jijunwan
  *  Archive Log:    improved LoginAssistant to support setting owner
@@ -67,33 +88,96 @@
 
 package com.intel.stl.api.management;
 
-import com.intel.stl.api.ILoginAssistant;
-import com.intel.stl.api.management.applications.IApplicationManangement;
+import com.intel.stl.api.management.applications.IApplicationManagement;
 import com.intel.stl.api.management.devicegroups.IDeviceGroupManagement;
 import com.intel.stl.api.management.virtualfabrics.IVirtualFabricManagement;
+import com.intel.stl.api.subnet.HostInfo;
+import com.intel.stl.api.subnet.SubnetDescription;
 
-public interface IManagementApi extends IApplicationManangement,
+public interface IManagementApi extends IApplicationManagement,
         IDeviceGroupManagement, IVirtualFabricManagement {
-    void setLoginAssistant(ILoginAssistant loginAssistant);
-
-    ILoginAssistant getLoginAssistant();
 
     /**
      * 
-     * <i>Description:</i> reload file remotely from FM. We shall do this after
-     * FM restart. Since we can not directly know whether FM restated, we can do
-     * this every time after we established a FE connection
+     * <i>Description:</i> reset the ManagementApi so that when we need to get
+     * opafm.xml it will try to get a fresh copy from FM. Typical use case is
+     * that after a fail over, we reset this ManagementApi.
      * 
-     * @throws Exception
      */
-    void refresh() throws Exception;
+    void reset();
 
     /**
      * 
-     * <i>Description:</i> deploy local opafm.xml to SMs
+     * <i>Description:</i> indicate whether there are changes on opafm.xml
      * 
+     * @return
+     */
+    boolean hasChanges();
+
+    /**
+     * 
+     * <i>Description:</i> deploy local opafm.xml to current SM
+     * 
+     * @param password
      * @param restart
      *            indicate whether we restart FM after copy file to SMs
      */
-    void deploy(boolean restart) throws Exception;
+    void deploy(char[] password, boolean restart) throws Exception;
+
+    /**
+     * 
+     * <i>Description:</i> deploy conf changes to a specified SM
+     * 
+     * @param password
+     * @param target
+     * @throws Exception
+     */
+    void deployTo(char[] password, HostInfo target) throws Exception;
+
+    /**
+     * 
+     * <i>Description:</i> get SubnetDescription
+     */
+    public SubnetDescription getSubnetDescription();
+
+    /**
+     * 
+     * <i>Description:</i> returns true if opafm.xml config file from server is
+     * present in the FMConfHelper
+     */
+    public boolean isConfigReady();
+
+    /**
+     * 
+     * <i>Description:</i> return true if we already have a valid ssh connection
+     * with the subnet
+     * 
+     * @return
+     */
+    public boolean hasSession();
+
+    /**
+     * 
+     * <i>Description:</i> Try to ssh to the server and cache opafm.xml in
+     * FMConfHelper
+     * 
+     * @param password
+     *            password to use for the ssh connection
+     */
+    public void fetchConfigFile(char[] password) throws Exception;
+
+    /**
+     * <i>Description:</i> call this method on login cancellation by user to
+     * terminate ssh/ftp/sftp connection which might be still in progress
+     * 
+     */
+    public void onCancelFetchConfig(SubnetDescription subnet);
+
+    /**
+     * 
+     * <i>Description: Shut down the session when the subnet is closed </i>
+     * 
+     */
+    public void cleanup();
+
 }

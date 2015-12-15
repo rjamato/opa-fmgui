@@ -25,7 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
  *	
@@ -36,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7.2.1  2015/08/12 15:27:06  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.9  2015/08/17 18:54:15  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/08/05 04:09:30  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on Topology Page
  *  Archive Log:
  *  Archive Log:    Revision 1.7  2014/11/05 16:37:15  jijunwan
  *  Archive Log:    renamed ResoureLinkCard to ResourceLinkSection since it a section now
@@ -78,61 +82,38 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 
-import com.intel.stl.ui.network.ResourceAllSection;
-import com.intel.stl.ui.network.ResourceLinkSection;
 import com.intel.stl.ui.network.ResourceScopeType;
-import com.intel.stl.ui.network.ResourceNodeSection;
+import com.intel.stl.ui.network.ResourceSection;
 
 public class ResourceView extends JPanel {
-    
+
     /**
      * Serial Version UID
      */
     private static final long serialVersionUID = 2769989356451342557L;
-    
+
     private CardLayout layout;
 
     public ResourceView() {
         initComponents();
     }
-    
-    
+
     private void initComponents() {
         layout = new CardLayout();
         setLayout(layout);
     }
-    
-    
-    public void initializeViews(Map<ResourceScopeType, Object> cardMap) {
-        
-        Object obj = cardMap.get(ResourceScopeType.ALL);        
-        if (obj instanceof ResourceAllSection) {
-            add(((ResourceAllSection)obj).getView(), ResourceScopeType.ALL.name());
+
+    public void initializeViews(
+            Map<ResourceScopeType, ResourceSection<?>> cardMap) {
+        for (ResourceScopeType type : cardMap.keySet()) {
+            add(cardMap.get(type).getView(), type.name());
         }
-        
-        obj = cardMap.get(ResourceScopeType.NODE);
-        if (obj instanceof ResourceNodeSection) {
-            add(((ResourceNodeSection)obj).getView(), ResourceScopeType.NODE.name());            
-        }
-        
-        obj = cardMap.get(ResourceScopeType.LINK);
-        if (obj instanceof ResourceLinkSection) {
-            add(((ResourceLinkSection)obj).getView(), ResourceScopeType.LINK.name());
-        }
-        
-        obj = cardMap.get(ResourceScopeType.PATH);
-        if (obj instanceof ResourceLinkSection) {
-            add(((ResourceLinkSection)obj).getView(), ResourceScopeType.PATH.name());
-        }
-        
+
         layout.show(this, ResourceScopeType.ALL.name());
     }
-    
-    
+
     public void showLayout(ResourceScopeType type) {
         layout.show(this, type.name());
     }
-    
-    
 
 }

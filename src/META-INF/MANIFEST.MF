@@ -1,13 +1,14 @@
 Manifest-Version: 1.0
 Ant-Version: Apache Ant 1.9.3
 Created-By: 1.7.0_71-b14 (Oracle Corporation)
-Application-Name: Intel Fabric Manager GUI 1.0
+Application-Name: Intel Fabric Manager GUI 10.0
 Implementation-Title: Intel Fabric Manager GUI
 Implementation-Vendor: Intel Corporation
-Implementation-Version: 1.0.0
-Schema-Version: 27
-Intel-Build-Id: 10_0_0_0_2
-Intel-Build-Date: 2015-08-13 17:49:06
+Implementation-Version: 10.0.0
+Schema-Version: 36
+Intel-OPAFM-Version: 10.0.0.0.635
+Intel-Build-Id: 10_0_0_0_635
+Intel-Build-Date: 2015-11-13 04:33:07
 Main-Class: com.intel.stl.main.FMGuiApp
 Class-Path: . lib/antlr-2.7.7.jar lib/dom4j-1.6.1.jar lib/gritty-0.02.
  jar lib/hibernate-commons-annotations-4.0.4.Final.jar lib/hibernate-c
@@ -25,16 +26,16 @@ Class-Path: . lib/antlr-2.7.7.jar lib/dom4j-1.6.1.jar lib/gritty-0.02.
 Name: com/intel/stl/
 Implementation-Vendor: Intel Corporation
 Implementation-Title: Intel Fabric Manager GUI Core
-Implementation-Version: 1.0.0
+Implementation-Version: 10.0.0
 Specification-Vendor: Intel Corporation
 Specification-Title: com.intel.stl
-Specification-Version: 1.0.0
+Specification-Version: 10.0.0
 
 Name: com/intel/stl/ui/
 Implementation-Vendor: Intel Corporation
 Implementation-Title: Intel Fabric Manager GUI GUI
-Implementation-Version: 1.0.0
+Implementation-Version: 10.0.0
 Specification-Vendor: Intel Corporation
 Specification-Title: com.intel.stl.ui
-Specification-Version: 1.0.0
+Specification-Version: 10.0.0
 

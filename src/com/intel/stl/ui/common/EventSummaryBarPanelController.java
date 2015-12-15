@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7.2.1  2015/08/12 15:27:03  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.9  2015/08/17 18:54:12  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/08/11 14:14:58  jijunwan
+ *  Archive Log:    PR 129917 - No update on event statistics
+ *  Archive Log:    - Apply event subscriber on EventSummaryBar and HomePage to periodically update. Both will update either by event or period updating.
  *  Archive Log:
  *  Archive Log:    Revision 1.7  2014/12/08 16:00:02  robertja
  *  Archive Log:    Set new context after removing any listeners to old context.
@@ -79,7 +84,13 @@ import com.intel.stl.api.notice.NoticeSeverity;
 import com.intel.stl.ui.common.view.EventSummaryBarPanel;
 import com.intel.stl.ui.main.Context;
 import com.intel.stl.ui.model.StateSummary;
+import com.intel.stl.ui.publisher.CallbackAdapter;
+import com.intel.stl.ui.publisher.ICallback;
 import com.intel.stl.ui.publisher.IStateChangeListener;
+import com.intel.stl.ui.publisher.Task;
+import com.intel.stl.ui.publisher.TaskScheduler;
+import com.intel.stl.ui.publisher.subscriber.EventSubscriber;
+import com.intel.stl.ui.publisher.subscriber.SubscriberType;
 
 public class EventSummaryBarPanelController implements IContextAware,
         IStateChangeListener {
@@ -91,6 +102,12 @@ public class EventSummaryBarPanelController implements IContextAware,
     private Context context;
 
     private IEventSummaryBarListener iEventSummaryBarListener;
+
+    private EventSubscriber eventSubscriber;
+
+    private ICallback<StateSummary> stateSummaryCallback;
+
+    private Task<StateSummary> stateSummaryTask;
 
     public EventSummaryBarPanelController(
             EventSummaryBarPanel eventSummaryBarPanel) {
@@ -109,14 +126,31 @@ public class EventSummaryBarPanelController implements IContextAware,
      */
     @Override
     public void setContext(Context context, IProgressObserver observer) {
-        if (this.context != null) {
-            this.context.getEvtCal().removeListener(this);
-        }
+        clear();
 
         this.context = context;
-
         this.context.getEvtCal().addListener(this);
 
+        TaskScheduler scheduler = this.context.getTaskScheduler();
+        eventSubscriber =
+                (EventSubscriber) scheduler.getSubscriber(SubscriberType.EVENT);
+        stateSummaryCallback = new CallbackAdapter<StateSummary>() {
+            /*
+             * (non-Javadoc)
+             * 
+             * @see
+             * com.intel.hpc.stl.ui.publisher.CallBackAdapter#onDone(java.lang
+             * .Object)
+             */
+            @Override
+            public synchronized void onDone(StateSummary result) {
+                if (result != null) {
+                    onStateChange(result);
+                }
+            }
+        };
+        stateSummaryTask =
+                eventSubscriber.registerStateSummary(stateSummaryCallback);
     }
 
     @Override
@@ -151,6 +185,17 @@ public class EventSummaryBarPanelController implements IContextAware,
         if (summary != null) {
             // System.out.println("EventSummary.onStateChange called.");
             processStateSummary(summary);
+        }
+    }
+
+    protected void clear() {
+        if (context != null && context.getEvtCal() != null) {
+            context.getEvtCal().removeListener(this);
+        }
+
+        if (eventSubscriber != null && stateSummaryTask != null) {
+            eventSubscriber.deregisterStateSummary(stateSummaryTask,
+                    stateSummaryCallback);
         }
     }
 

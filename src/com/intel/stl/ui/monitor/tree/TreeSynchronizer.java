@@ -35,8 +35,16 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3.2.1  2015/08/12 15:27:10  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.6  2015/09/30 13:26:45  fisherma
+ *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/08/17 18:54:19  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/05/20 17:05:20  jijunwan
+ *  Archive Log:    PR 128797 - Notice update failed to update related notes
+ *  Archive Log:    - improved to fire tree update event at port level, so if we select a port that is under change, the port will still get selected and updated
  *  Archive Log:
  *  Archive Log:    Revision 1.3  2014/10/09 12:36:03  fernande
  *  Archive Log:    Adding IContextAware interface to generalize context operations (setContext) and changes to the IProgressObserver interface
@@ -99,8 +107,8 @@ public abstract class TreeSynchronizer<E> {
         int oldIndex = 0;
         int newIndex = 0;
         FVResourceNode oldNode =
-                oldIndex >= parent.getChildCount() ? null : parent
-                        .getChildAt(oldIndex);
+                oldIndex >= parent.getModelChildCount() ? null : parent
+                        .getModelChildAt(oldIndex);
         E element = elements[newIndex];
         while (oldNode != null || element != null) {
             int comp =
@@ -110,8 +118,8 @@ public abstract class TreeSynchronizer<E> {
                 updateNode(oldNode, parent, monitors, observer);
                 oldIndex += 1;
                 oldNode =
-                        oldIndex >= parent.getChildCount() ? null : parent
-                                .getChildAt(oldIndex);
+                        oldIndex >= parent.getModelChildCount() ? null : parent
+                                .getModelChildAt(oldIndex);
                 newIndex += 1;
                 element =
                         newIndex >= elements.length ? null : elements[newIndex];
@@ -124,18 +132,19 @@ public abstract class TreeSynchronizer<E> {
             } else {
                 removeNode(oldIndex, oldNode, parent, monitors, observer);
                 oldNode =
-                        oldIndex >= parent.getChildCount() ? null : parent
-                                .getChildAt(oldIndex);
+                        oldIndex >= parent.getModelChildCount() ? null : parent
+                                .getModelChildAt(oldIndex);
             }
         }
 
         if (removeEmptyGroup) {
-            for (int i = 0; i < parent.getChildCount(); i++) {
-                FVResourceNode node = parent.getChildAt(i);
-                if (node.getChildCount() == 0) {
+            for (int i = 0; i < parent.getModelChildCount(); i++) {
+                FVResourceNode node = parent.getModelChildAt(i);
+                if (node.getModelChildCount() == 0) {
                     parent.removeChild(i);
                     if (monitors != null) {
-                        fireNodesRemoved(monitors, parent, i, node);
+                        int viewIndex = parent.getViewIndex(i);
+                        fireNodesRemoved(monitors, parent, viewIndex, node);
                     }
                     i -= 1;
                 }
@@ -212,6 +221,15 @@ public abstract class TreeSynchronizer<E> {
             IProgressObserver observer);
 
     protected void fireNodesUpdated(final List<ITreeMonitor> monitors,
+            final FVResourceNode parent, final int childIndex,
+            final FVResourceNode child) {
+        for (ITreeMonitor monitor : monitors) {
+            monitor.fireTreeNodesChanged(this, parent.getPath().getPath(),
+                    new int[] { childIndex }, new FVResourceNode[] { child });
+        }
+    }
+
+    protected void fireStructureChanged(final List<ITreeMonitor> monitors,
             final FVResourceNode node) {
         for (ITreeMonitor monitor : monitors) {
             monitor.fireTreeStructureChanged(this, node.getPath());

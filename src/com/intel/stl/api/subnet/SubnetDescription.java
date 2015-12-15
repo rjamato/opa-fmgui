@@ -24,12 +24,42 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: SubnetDescription.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.31  2015/08/17 18:48:38  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - change backend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.30  2015/06/11 17:44:50  fernande
+ *  Archive Log: PR 129034 Support secure FE. Adding currentFEIndex to the toString output
+ *  Archive Log:
+ *  Archive Log: Revision 1.29  2015/06/10 19:36:30  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: jijunwan
+ * 
+ ******************************************************************************/
 package com.intel.stl.api.subnet;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import com.intel.stl.api.IConnectionAssistant;
 
 /**
  * NOTE: the way we calculate hashcode and equals have two defects:
@@ -71,6 +101,8 @@ public class SubnetDescription implements Serializable {
     private boolean topologyUpdated;
 
     private AtomicBoolean failoverInProgress = new AtomicBoolean(false);
+
+    private IConnectionAssistant connectionAssistant;
 
     private List<SMRecordBean> smList;
 
@@ -242,6 +274,14 @@ public class SubnetDescription implements Serializable {
         return feList.get(index);
     }
 
+    public IConnectionAssistant getConnectionAssistant() {
+        return connectionAssistant;
+    }
+
+    public void setConnectionAssistant(IConnectionAssistant connectionAssistant) {
+        this.connectionAssistant = connectionAssistant;
+    }
+
     private void checkIndex(int index) {
         if (!(index >= 0 && (index < feList.size()))) {
             throw new IllegalArgumentException("Invalid index '" + index
@@ -264,6 +304,8 @@ public class SubnetDescription implements Serializable {
         subnet.lastStatus = lastStatus;
         subnet.statusTimestamp = statusTimestamp;
         subnet.topologyUpdated = topologyUpdated;
+        subnet.failoverInProgress = failoverInProgress;
+        subnet.connectionAssistant = connectionAssistant;
         return subnet;
     }
 
@@ -285,6 +327,8 @@ public class SubnetDescription implements Serializable {
         lastStatus = subnet.lastStatus;
         feList = subnet.feList;
         currentUser = subnet.currentUser;
+        failoverInProgress = subnet.failoverInProgress;
+        connectionAssistant = subnet.connectionAssistant;
     }
 
     /*
@@ -295,9 +339,9 @@ public class SubnetDescription implements Serializable {
     @Override
     public String toString() {
         return "SubnetDescription [id=" + subnetId + ", name=" + name
-                + ", list FEs=" + feList + ", autoConnect=" + autoConnect
-                + ", topologyUpdated=" + topologyUpdated + ", lastStatus="
-                + lastStatus + "]";
+                + ", currentFEIndex=" + currentFEIndex + ", list FEs=" + feList
+                + ", autoConnect=" + autoConnect + ", topologyUpdated="
+                + topologyUpdated + ", lastStatus=" + lastStatus + "]";
     }
 
     @Override
@@ -310,15 +354,19 @@ public class SubnetDescription implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         SubnetDescription other = (SubnetDescription) obj;
-        if (subnetId != other.subnetId)
+        if (subnetId != other.subnetId) {
             return false;
+        }
         return true;
     }
 

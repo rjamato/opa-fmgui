@@ -35,8 +35,25 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.21.2.1  2015/08/12 15:22:43  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.26  2015/09/08 18:34:12  jijunwan
+ *  Archive Log:    PR 130277 - FM GUI Locked up due to [AWT-EventQueue-0] ERROR - Unsupported MTUSize 0x0d java.lang.IllegalArgumentException: Unsupported MTUSize 0x0d
+ *  Archive Log:    - moved isDev to FMGuiPlugin so both backend and frontend can access it
+ *  Archive Log:
+ *  Archive Log:    Revision 1.25  2015/09/08 14:58:36  jijunwan
+ *  Archive Log:    PR 130277 - FM GUI Locked up due to [AWT-EventQueue-0] ERROR - Unsupported MTUSize 0x0d java.lang.IllegalArgumentException: Unsupported MTUSize 0x0d
+ *  Archive Log:    - moved isDev logic to backend
+ *  Archive Log:    - when isDev, we try to check whether we are querying FE from EDT and print out stack trace
+ *  Archive Log:
+ *  Archive Log:    Revision 1.24  2015/08/31 15:47:53  jijunwan
+ *  Archive Log:    PR 130204 - Shortcut launch results in meaningless error and forces me to reboot my machine
+ *  Archive Log:    - added another exit on errors to ensure shutdown hook get called
+ *  Archive Log:
+ *  Archive Log:    Revision 1.23  2015/08/17 18:49:31  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.22  2015/06/18 21:08:18  fernande
+ *  Archive Log:    PR 128977 Application log needs to support multi-subnet. - Adding support for Logback's Mapped Diagnostic Context
  *  Archive Log:
  *  Archive Log:    Revision 1.21  2015/04/27 17:49:08  jijunwan
  *  Archive Log:    added os, build id and build date info in log file
@@ -60,10 +77,13 @@
 package com.intel.stl.main;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+
+import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,14 +141,16 @@ public class FMGuiApp {
     protected void initApp() {
         AppDataUtils.initializeLogging();
         log = LoggerFactory.getLogger(FMGuiApp.class);
-        log.error("===============================");
-        log.error("Start Application " + getClass().getName() + " at "
+        char[] delim = new char[80];
+        Arrays.fill(delim, '=');
+        log.info(new String(delim));
+        log.info("Starting application " + getClass().getName() + " at "
                 + (new Date()) + " on " + System.getProperty("os.name"));
         registry = AppConfig.getAppComponentRegistry();
         try {
             registry.initialize();
             AppSettings as = registry.getAppSettings();
-            log.error("Application build id: " + as.getAppBuildId()
+            log.info("Application build id: " + as.getAppBuildId()
                     + " build date: " + as.getAppBuildDate());
         } catch (AppConfigurationException e) {
             log.error("Application configuration exception", e);
@@ -218,12 +240,19 @@ public class FMGuiApp {
                         100);
                 ui.showErrors(errors);
                 ui.shutdown();
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.exit(1);
+                    }
+                });
             } else {
                 System.err.println(STLMessages.STL10010_ERROR_DURING_INIT
                         .getDescription());
                 for (Throwable error : errors) {
                     System.err.println("  " + error.getMessage());
                 }
+                System.exit(1);
             }
         }
     }

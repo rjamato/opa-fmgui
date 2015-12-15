@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6.2.1  2015/08/12 15:21:59  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.8  2015/09/08 18:34:13  jijunwan
+ *  Archive Log:    PR 130277 - FM GUI Locked up due to [AWT-EventQueue-0] ERROR - Unsupported MTUSize 0x0d java.lang.IllegalArgumentException: Unsupported MTUSize 0x0d
+ *  Archive Log:    - moved isDev to FMGuiPlugin so both backend and frontend can access it
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/08/17 18:48:51  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/04/22 16:51:16  fernande
  *  Archive Log:    Reorganized the startup sequence so that the UI plugin could initialize its own CertsAssistant. This way, autoconnect subnets would require a password using the UI CertsAssistant instead of the default CertsAssistant.
@@ -67,11 +72,20 @@ package com.intel.stl.api;
 
 public abstract class FMGuiPlugin implements FMGui {
 
+    private final static String DEV_NAME = "dev";
+
+    public static boolean IS_DEV = false;
+
     private AppContext appContext;
 
     @Override
     public void init(AppContext appContext) {
         this.appContext = appContext;
+
+        String devValue = System.getProperty(DEV_NAME);
+        if (devValue != null) {
+            IS_DEV = devValue.isEmpty() || devValue.equalsIgnoreCase("true");
+        }
     }
 
     @Override

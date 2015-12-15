@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:26:45  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.3  2015/08/17 18:53:54  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/06/25 11:54:55  jypak
+ *  Archive Log:    PR 129073 - Add help action for Admin Page.
+ *  Archive Log:    The help action is added to App, DG, VF,Console page and Console terminal. For now, a help ID and a content are being used as a place holder for each page. Once we get the help contents delivered by technical writer team, the HelpAction will be updated with correct help ID.
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2015/03/27 15:47:47  jijunwan
  *  Archive Log:    first version of VirtualFabric UI
@@ -67,6 +72,7 @@ import com.intel.stl.ui.admin.view.ValidationDialog;
 import com.intel.stl.ui.admin.view.virtualfabrics.VirtualFabricsEditorPanel;
 import com.intel.stl.ui.common.IProgressObserver;
 import com.intel.stl.ui.main.Context;
+import com.intel.stl.ui.main.HelpAction;
 
 public class VirtualFabricsPageController extends
         ConfPageController<VirtualFabric, VirtualFabricsEditorPanel> {
@@ -84,6 +90,11 @@ public class VirtualFabricsPageController extends
             ImageIcon icon,
             AbstractConfView<VirtualFabric, VirtualFabricsEditorPanel> view) {
         super(name, description, icon, view);
+    }
+
+    @Override
+    public String getHelpID() {
+        return HelpAction.getInstance().getAdminVf();
     }
 
     /*

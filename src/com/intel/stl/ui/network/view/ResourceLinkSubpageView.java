@@ -35,8 +35,17 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.10.2.1  2015/08/12 15:27:06  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.13  2015/08/17 18:54:15  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.12  2015/08/05 04:09:30  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on Topology Page
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/05/12 17:42:44  rjtierne
+ *  Archive Log:    PR 128624 - Klocwork and FindBugs fixes for UI
+ *  Archive Log:    Provide null pointer protection to getCurrentSubpage() before attempting to dereference it.
  *  Archive Log:
  *  Archive Log:    Revision 1.10  2015/04/03 21:06:29  jijunwan
  *  Archive Log:    Introduced canExit to IPageController, and canPageChange to IPageListener to allow us do some checking before we switch to another page. Fixed the following bugs
@@ -113,6 +122,8 @@ import javax.swing.event.ListSelectionListener;
 
 import org.jdesktop.swingx.JXList;
 import org.jdesktop.swingx.rollover.RolloverProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UIConstants;
@@ -122,14 +133,19 @@ import com.intel.stl.ui.common.view.ButtonPopup;
 import com.intel.stl.ui.common.view.ISectionListener;
 import com.intel.stl.ui.common.view.IntelTabbedPaneUI;
 import com.intel.stl.ui.common.view.JSectionView;
+import com.intel.stl.ui.main.view.IPageListener;
 import com.intel.stl.ui.network.ResourceLinkPage;
 
-public class ResourceLinkSubpageView extends JSectionView<ISectionListener> {
+public class ResourceLinkSubpageView extends JSectionView<ISectionListener>
+        implements ChangeListener {
 
     /**
      * Serial Version UID
      */
     private static final long serialVersionUID = -8162278424319448619L;
+
+    private static Logger log = LoggerFactory
+            .getLogger(ResourceLinkSubpageView.class);
 
     private static final int MAX_TABS = 5;
 
@@ -142,6 +158,10 @@ public class ResourceLinkSubpageView extends JSectionView<ISectionListener> {
     private PopupPanel popupPanel;
 
     private ButtonPopup popup;
+
+    private IPageListener listener;
+
+    private String currentTab;
 
     public ResourceLinkSubpageView(String title, Icon icon) {
         super(title, icon);
@@ -244,7 +264,31 @@ public class ResourceLinkSubpageView extends JSectionView<ISectionListener> {
         }
     }
 
-    public synchronized void setTabs(ResourceLinkPage[] subpages, int selection) {
+    public void setPageListener(final IPageListener listener) {
+        this.listener = listener;
+        tabbedPane.addChangeListener(this);
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        if (listener == null) {
+            return;
+        }
+
+        // only fire onPageChanged when we have valid oldPageId and
+        // newPageId
+        String oldTab = currentTab;
+        int index = tabbedPane.getSelectedIndex();
+        currentTab = tabbedPane.getTitleAt(index);
+        if (oldTab != null && currentTab != null) {
+            listener.onPageChanged(oldTab, currentTab);
+        }
+    }
+
+    public synchronized void setTabs(ResourceLinkPage[] subpages,
+            String desiredSubpage) {
+        tabbedPane.removeChangeListener(this);
+
         popupPanel.setItems(subpages);
 
         // remove all old tabs
@@ -259,12 +303,17 @@ public class ResourceLinkSubpageView extends JSectionView<ISectionListener> {
         }
 
         // Set the selected tab
-        if (tabbedPane.getTabCount() > 0) {
+        if (popupPanel.getPage(desiredSubpage) != null) {
+            setCurrentSubpage(desiredSubpage);
+        } else if (tabbedPane.getTabCount() > 0) {
             tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
         }
+        int index = tabbedPane.getSelectedIndex();
+        currentTab = tabbedPane.getTitleAt(index);
 
         // Highlight the tabs
         highlightTabs();
+        tabbedPane.addChangeListener(this);
     }
 
     protected void addTab(ResourceLinkPage page) {
@@ -294,12 +343,17 @@ public class ResourceLinkSubpageView extends JSectionView<ISectionListener> {
     }
 
     public void updateTab(String title, String[] nodeNames) {
+
         ResourceLinkTabView tab = new ResourceLinkTabView(nodeNames);
+        String subpageTitle = getCurrentSubpage();
 
-        boolean highlight = (getCurrentSubpage() == title);
-        tab.setLabelProperties(highlight);
-
-        tabbedPane.setTabComponentAt(tabbedPane.indexOfTab(title), tab);
+        if (subpageTitle != null) {
+            boolean highlight = (subpageTitle.equals(title));
+            tab.setLabelProperties(highlight);
+            tabbedPane.setTabComponentAt(tabbedPane.indexOfTab(title), tab);
+        } else {
+            log.error(STLConstants.K3046_LINK_SUBPAGE_NULL.getValue());
+        }
     }
 
     public void highlightTabs() {
@@ -315,6 +369,16 @@ public class ResourceLinkSubpageView extends JSectionView<ISectionListener> {
         }
     }
 
+    public void setCurrentSubpage(String name) {
+        ResourceLinkPage page = popupPanel.getPage(name);
+        if (page != null) {
+            if (!selectTab(page)) {
+                addTab(page);
+            }
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
     class PopupPanel extends JPanel implements ListCellRenderer {
         private static final long serialVersionUID = 2314564428422180815L;
 
@@ -374,12 +438,24 @@ public class ResourceLinkSubpageView extends JSectionView<ISectionListener> {
             add(scroll, BorderLayout.CENTER);
         }
 
+        @SuppressWarnings("unchecked")
         public void setItems(ResourceLinkPage[] pages) {
             clear();
             for (ResourceLinkPage page : pages) {
                 model.addElement(page);
             }
             list.setVisibleRowCount(Math.min(10, pages.length));
+        }
+
+        public ResourceLinkPage getPage(String name) {
+            for (int i = 0; i < model.getSize(); i++) {
+                ResourceLinkPage page =
+                        (ResourceLinkPage) model.getElementAt(i);
+                if (page.getName().equals(name)) {
+                    return page;
+                }
+            }
+            return null;
         }
 
         public void addSelection(String name) {

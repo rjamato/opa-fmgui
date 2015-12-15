@@ -35,8 +35,16 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6.2.1  2015/08/12 15:27:10  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.9  2015/09/30 13:26:45  fisherma
+ *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/08/17 18:54:19  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/05/20 17:05:20  jijunwan
+ *  Archive Log:    PR 128797 - Notice update failed to update related notes
+ *  Archive Log:    - improved to fire tree update event at port level, so if we select a port that is under change, the port will still get selected and updated
  *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/02/05 21:21:44  jijunwan
  *  Archive Log:    fixed NPE issues found by klocwork
@@ -70,6 +78,7 @@
 
 package com.intel.stl.ui.monitor.tree;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -158,7 +167,6 @@ public class CreationBasedNodesSynchronizer extends TreeSynchronizer<Integer> {
     @Override
     protected void updateNode(FVResourceNode node, FVResourceNode parent,
             List<ITreeMonitor> monitors, IProgressObserver observer) {
-        boolean hasChanged = false;
         NodeRecordBean bean = nodeMap.get(node.getId());
         if (bean == null) {
             log.warn("Couldn't update tree because no node " + node.getId()
@@ -166,26 +174,29 @@ public class CreationBasedNodesSynchronizer extends TreeSynchronizer<Integer> {
             return;
         }
 
+        Map<Integer, FVResourceNode> updated =
+                new HashMap<Integer, FVResourceNode>();
+        boolean hasStructureChange = false;
         int numPorts = bean.getNodeInfo().getNumPorts();
         if (node.getType() == TreeNodeType.SWITCH) {
             numPorts += 1; // count in internal port
         }
-        int toUpdate = Math.min(numPorts, node.getChildCount());
+        int toUpdate = Math.min(numPorts, node.getModelChildCount());
         for (int i = 0; i < toUpdate; i++) {
             // update ports
-            FVResourceNode port = node.getChildAt(i);
+            FVResourceNode port = node.getModelChildAt(i);
             boolean statusChanged = setPortStatus(node, port);
-            if (statusChanged && !hasChanged) {
-                hasChanged = true;
+            if (statusChanged) {
+                updated.put(i, port);
             }
         }
-        if (toUpdate < node.getChildCount()) {
+        if (toUpdate < node.getModelChildCount()) {
             // remove ports
-            while (node.getChildCount() > toUpdate) {
+            while (node.getModelChildCount() > toUpdate) {
                 node.removeChild(toUpdate);
-            }
-            if (!hasChanged) {
-                hasChanged = true;
+                if (!hasStructureChange) {
+                    hasStructureChange = true;
+                }
             }
         } else if (toUpdate < numPorts) {
             // add ports
@@ -202,13 +213,24 @@ public class CreationBasedNodesSynchronizer extends TreeSynchronizer<Integer> {
                 // otherwise make it inactive
                 setPortStatus(node, port);
                 node.addChild(port);
-            }
-            if (!hasChanged) {
-                hasChanged = true;
+                if (!hasStructureChange) {
+                    hasStructureChange = true;
+                }
             }
         }
-        if (hasChanged && monitors != null) {
-            fireNodesUpdated(monitors, node);
+
+        if (monitors == null) {
+            return;
+        }
+
+        if (hasStructureChange) {
+            fireStructureChanged(monitors, node);
+        } else if (!updated.isEmpty()) {
+            for (Integer childIndex : updated.keySet()) {
+                int viewIndex = node.getViewIndex(childIndex);
+                fireNodesUpdated(monitors, node, viewIndex,
+                        updated.get(childIndex));
+            }
         }
     }
 

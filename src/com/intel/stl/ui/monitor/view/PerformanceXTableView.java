@@ -35,10 +35,26 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.16.2.3  2015/08/12 15:27:16  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.23  2015/08/17 18:54:25  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.16.2.2  2015/05/17 18:30:44  jijunwan
+ *  Archive Log:    Revision 1.22  2015/08/05 04:04:48  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on Performance Page
+ *  Archive Log:
+ *  Archive Log:    Revision 1.21  2015/06/01 15:01:20  jypak
+ *  Archive Log:    PR 128823 - Improve performance tables to include all portcounters fields.
+ *  Archive Log:    All port counters fields added to performance table and connectivity table.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.20  2015/05/28 15:29:21  jypak
+ *  Archive Log:    PR 128873 - Add "Flits" in performance table for Data related columns.
+ *  Archive Log:    Added "(MB)" to RcvData, XmitData column header.
+ *  Archive Log:    Added "(MBps)" to data rates.
+ *  Archive Log:    Added data in "Flits" or data rate in "(Flits/sec)" to tool tips.
+ *  Archive Log:    Used the TableDataDescription to convert and format the data.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.19  2015/05/14 17:43:09  jijunwan
  *  Archive Log:    PR 127700 - Delta data on host performance display is accumulating
  *  Archive Log:    - corrected delta value calculation
  *  Archive Log:    - changed to display data/pkts rate rather than delta on chart and table
@@ -49,7 +65,12 @@
  *  Archive Log:      DataChartScaleGroupManager -> DataRateChartScaleGroupManager
  *  Archive Log:      PacketChartScaleGroupManager -> PacketRateChartScaleGroupManager
  *  Archive Log:
- *  Archive Log:    Revision 1.16.2.1  2015/05/14 18:17:01  jijunwan
+ *  Archive Log:    Revision 1.18  2015/05/14 14:44:38  rjtierne
+ *  Archive Log:    PR 128682 - Set link quality indicator to "Unknown" on port error
+ *  Archive Log:    On Performance Port Table, change cell renderer to display the link quality description as the tool tip
+ *  Archive Log:    instead of just the value
+ *  Archive Log:
+ *  Archive Log:    Revision 1.17  2015/05/13 20:54:52  jijunwan
  *  Archive Log:    PR 128671 - Wrong data sorting on ports performance table
  *  Archive Log:    - removed the wrong sorter that overrides our value based sorter
  *  Archive Log:
@@ -152,6 +173,7 @@ import com.intel.stl.ui.model.PerformanceTableColumns;
 import com.intel.stl.ui.model.PerformanceTableModel;
 import com.intel.stl.ui.monitor.IPortSelectionListener;
 import com.intel.stl.ui.monitor.PerformanceTableData;
+import com.intel.stl.ui.monitor.TableDataDescription;
 
 public class PerformanceXTableView extends FVXTableView<PerformanceTableModel> {
     /**
@@ -194,16 +216,54 @@ public class PerformanceXTableView extends FVXTableView<PerformanceTableModel> {
                 return Double.compare(o1.doubleValue(), o2.doubleValue());
             }
         };
+        Comparator<TableDataDescription> tableDataComparator =
+                new Comparator<TableDataDescription>() {
+                    @Override
+                    public int compare(TableDataDescription o1,
+                            TableDataDescription o2) {
+                        return Double.compare(o1.getData(), o2.getData());
+                    }
+                };
         for (int i = 0; i < mTable.getColumnCount(); i++) {
             mTable.getColumnModel().getColumn(i)
                     .setHeaderRenderer(headerRenderer);
             TableColumnExt col = mTable.getColumnExt(i);
-            col.setComparator(numberComparator);
 
-            if (PerformanceTableColumns.values()[i] != PerformanceTableColumns.LINK_QUALITY) {
+            if (PerformanceTableColumns.values()[i] == PerformanceTableColumns.RX_DATA
+                    || PerformanceTableColumns.values()[i] == PerformanceTableColumns.RX_DATA_RATE
+                    || PerformanceTableColumns.values()[i] == PerformanceTableColumns.TX_DATA
+                    || PerformanceTableColumns.values()[i] == PerformanceTableColumns.TX_DATA_RATE) {
+                col.setComparator(tableDataComparator);
+                col.setCellRenderer(new FVTableRenderer() {
+                    private static final long serialVersionUID =
+                            -3747347169291822762L;
+
+                    @Override
+                    public Component getTableCellRendererComponent(
+                            JTable table, Object value, boolean isSelected,
+                            boolean hasFocus, int row, int column) {
+                        JLabel renderer =
+                                (JLabel) super.getTableCellRendererComponent(
+                                        table, value, isSelected, hasFocus,
+                                        row, column);
+
+                        TableDataDescription data =
+                                (TableDataDescription) value;
+                        if (data != null) {
+                            renderer.setText(data.getFormattedData());
+                            renderer.setToolTipText(data.getDescription());
+                        }
+                        setHorizontalAlignment(JLabel.LEFT);
+                        return this;
+                    }
+                });
+
+            } else if (PerformanceTableColumns.values()[i] != PerformanceTableColumns.LINK_QUALITY) {
+                col.setComparator(numberComparator);
                 // For all but LINK_QUALITY column use tableRenderer
                 col.setCellRenderer(tableRenderer);
             } else {
+                col.setComparator(numberComparator);
                 /**
                  * For LINK_QUALITY column use special renderer to display
                  * center-aligned icon corresponding to the link quality,
@@ -247,7 +307,7 @@ public class PerformanceXTableView extends FVXTableView<PerformanceTableModel> {
 
         PerformanceTableColumns[] toHide =
                 new PerformanceTableColumns[] {
-                        PerformanceTableColumns.BUFFER_OVERRUNS,
+                        PerformanceTableColumns.EXCESSIVE_BUFFER_OVERRUNS,
                         PerformanceTableColumns.FM_CONFIG_ERRORS,
                         PerformanceTableColumns.RX_PACKETS,
                         PerformanceTableColumns.RX_DATA,
@@ -255,7 +315,25 @@ public class PerformanceXTableView extends FVXTableView<PerformanceTableModel> {
                         PerformanceTableColumns.RX_SWITCH_ERRORS,
                         PerformanceTableColumns.TX_DISCARDS,
                         PerformanceTableColumns.TX_PACKETS,
-                        PerformanceTableColumns.TX_DATA
+                        PerformanceTableColumns.TX_DATA,
+                        PerformanceTableColumns.RX_MC_PACKETS,
+                        PerformanceTableColumns.RX_ERRORS,
+                        PerformanceTableColumns.RX_CONSTRAINT,
+                        PerformanceTableColumns.RX_FECN,
+                        PerformanceTableColumns.RX_BECN,
+                        PerformanceTableColumns.RX_BUBBLE,
+                        PerformanceTableColumns.TX_MC_PACKETS,
+                        PerformanceTableColumns.TX_CONSTRAINT,
+                        PerformanceTableColumns.TX_WAIT,
+                        PerformanceTableColumns.TX_TIME_CONG,
+                        PerformanceTableColumns.TX_WASTED_BW,
+                        PerformanceTableColumns.TX_WAIT_DATA,
+                        PerformanceTableColumns.LOCAL_LINK_INTEGRITY,
+                        PerformanceTableColumns.MARK_FECN,
+                        PerformanceTableColumns.LINK_ERROR_RECOVERIES,
+                        PerformanceTableColumns.LINK_DOWNED,
+                        PerformanceTableColumns.UNCORRECTABLE_ERRORS,
+                        PerformanceTableColumns.SW_PORT_CONGESTION
 
                 // PerformanceTableColumns.LINK_QUALITY,
                 // PerformanceTableColumns.RX_DELTA_PACKETS,
@@ -344,7 +422,8 @@ public class PerformanceXTableView extends FVXTableView<PerformanceTableModel> {
                             PerformanceTableData perfData =
                                     model.getEntry(mRow);
                             listener.onJumpToPort(perfData.getNodeLid(),
-                                    perfData.getPortNumber(), destination);
+                                    perfData.getPortNumber(),
+                                    destination.getName());
                         }
                     }
 
@@ -359,7 +438,7 @@ public class PerformanceXTableView extends FVXTableView<PerformanceTableModel> {
         ListSelectionListener selectionListener = new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if (listener == null) {
+                if (listener == null || e.getValueIsAdjusting()) {
                     return;
                 }
 
@@ -402,7 +481,7 @@ public class PerformanceXTableView extends FVXTableView<PerformanceTableModel> {
                         // default destination is.
                         listener.onJumpToPort(perfData.getNodeLid(),
                                 perfData.getPortNumber(),
-                                JumpDestination.PERFORMANCE);
+                                JumpDestination.PERFORMANCE.getName());
                     }
                 }
             }
@@ -418,6 +497,7 @@ public class PerformanceXTableView extends FVXTableView<PerformanceTableModel> {
     public void setSelectedPort(final int portIndex) {
         int vId = mTable.convertRowIndexToView(portIndex);
         mTable.setRowSelectionInterval(vId, vId);
+        mTable.scrollRowToVisible(vId);
     }
 
 }

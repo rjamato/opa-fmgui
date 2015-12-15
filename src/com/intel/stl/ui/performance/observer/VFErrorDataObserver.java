@@ -25,7 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
  *	
@@ -36,8 +35,22 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3.2.1  2015/08/12 15:27:11  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.6  2015/08/17 18:54:20  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/06/25 20:42:16  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improved PerformanceItem to support port counters
+ *  Archive Log:    - improved PerformanceItem to use generic ISource to describe data source
+ *  Archive Log:    - improved PerformanceItem to use enum DataProviderName to describe data provider name
+ *  Archive Log:    - improved PerformanceItem to support creating a copy of PerformanceItem
+ *  Archive Log:    - improved TrendItem to share scale with other charts
+ *  Archive Log:    - improved SimpleDataProvider to support hsitory data
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/06/08 17:43:45  jijunwan
+ *  Archive Log:    Bug 129119 - Wrong history data on VF error counters
+ *  Archive Log:    - use time from FM
  *  Archive Log:
  *  Archive Log:    Revision 1.3  2014/08/05 13:37:35  jijunwan
  *  Archive Log:    added null check
@@ -62,49 +75,55 @@ import java.util.Date;
 import com.intel.stl.api.performance.ErrStatBean;
 import com.intel.stl.api.performance.VFInfoBean;
 import com.intel.stl.ui.model.DataType;
+import com.intel.stl.ui.performance.GroupSource;
 import com.intel.stl.ui.performance.item.TrendItem;
 
-public abstract class VFErrorDataObserver extends AbstractDataObserver<VFInfoBean[], TrendItem> {
+public abstract class VFErrorDataObserver extends
+        AbstractDataObserver<VFInfoBean[], TrendItem<GroupSource>> {
 
-    public VFErrorDataObserver(TrendItem controller) {
+    public VFErrorDataObserver(TrendItem<GroupSource> controller) {
         this(controller, DataType.ALL);
     }
-    
+
     /**
-     * Description: 
-     *
+     * Description:
+     * 
      * @param controller
-     * @param type 
+     * @param type
      */
-    public VFErrorDataObserver(TrendItem controller, DataType type) {
+    public VFErrorDataObserver(TrendItem<GroupSource> controller, DataType type) {
         super(controller, type);
     }
 
-    /* (non-Javadoc)
-     * @see com.intel.stl.ui.common.performance.IDataObserver#processData(java.lang.Object)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.common.performance.IDataObserver#processData(java.lang
+     * .Object)
      */
     @Override
     public void processData(VFInfoBean[] data) {
-        if (data==null || data.length==0) {
+        if (data == null || data.length == 0) {
             return;
         }
-        
+
         for (VFInfoBean bean : data) {
-            if (bean==null) {
+            if (bean == null) {
                 continue;
             }
-            
-            // TODO should use time fetched from ImageInfo
-            Date time = new Date();
+
+            Date time = bean.getTimestampDate();
             ErrStatBean[] errors = getErrStatBeans(bean, type);
             long value = 0;
             for (ErrStatBean error : errors) {
                 value += getValue(error);
             }
-            controller.updateTrend(value, time, bean.getVfName());
+            GroupSource sourceName = new GroupSource(bean.getVfName());
+            controller.updateTrend(value, time, sourceName);
         }
     }
-    
+
     protected abstract long getValue(ErrStatBean error);
 
 }

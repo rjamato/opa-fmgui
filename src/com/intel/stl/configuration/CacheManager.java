@@ -35,8 +35,16 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.15.2.1  2015/08/12 15:21:45  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.18  2015/09/26 06:17:08  jijunwan
+ *  Archive Log:    130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
+ *  Archive Log:    - added reset to clear all caches and update DB topology
+ *  Archive Log:
+ *  Archive Log:    Revision 1.17  2015/08/17 18:48:40  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.16  2015/07/10 20:45:27  fernande
+ *  Archive Log:    PR 129522 - Notice is not written to database due to topology not found. Moved FE Helpers to the session object and changed the order of initialization for the SubnetContext.
  *  Archive Log:
  *  Archive Log:    Revision 1.15  2015/03/27 20:42:26  fernande
  *  Archive Log:    Changed to use the new SerialProcessingService interface
@@ -116,21 +124,10 @@ import com.intel.stl.api.subnet.impl.SMCache;
 import com.intel.stl.api.subnet.impl.SwitchCache;
 import com.intel.stl.api.subnet.impl.VLArbTableCache;
 import com.intel.stl.datamanager.DatabaseManager;
-import com.intel.stl.fecdriver.impl.FEHelper;
 
 public interface CacheManager {
 
-    public static final String SA_HELPER = "SAHelper";
-
-    public static final String PA_HELPER = "PAHelper";
-
     public static final String TOPOLOGY_UPDATE_TASK = "TopologyUpdate";
-
-    FEHelper getHelper(String helperName);
-
-    SAHelper getSAHelper();
-
-    PAHelper getPAHelper();
 
     SerialProcessingService getProcessingService();
 
@@ -168,7 +165,13 @@ public interface CacheManager {
 
     SC2VLNTMTCache acquireSC2VLNTMTCache();
 
+    SAHelper getSAHelper();
+
+    PAHelper getPAHelper();
+
     void updateCaches(NoticeProcess notice) throws Exception;
+
+    void reset();
 
     void cleanup();
 }

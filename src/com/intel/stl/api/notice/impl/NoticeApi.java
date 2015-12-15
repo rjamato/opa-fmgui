@@ -35,11 +35,28 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.28.2.2  2015/08/12 15:22:21  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.36  2015/09/10 15:27:35  fernande
+ *  Archive Log:    PR 129940 - Persisted notices have no time stamp data. Added timestamp to NoticeBean
  *  Archive Log:
- *  Archive Log:    Revision 1.28.2.1  2015/05/06 19:26:32  jijunwan
- *  Archive Log:    fixed confusion method name issue found by FinfBug
+ *  Archive Log:    Revision 1.35  2015/08/17 18:49:13  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.34  2015/07/10 20:43:33  fernande
+ *  Archive Log:    PR 129522 - Notice is not written to database due to topology not found. Moved FE Helpers to the session object and changed the order of initialization for the SubnetContext.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.33  2015/06/18 21:05:21  fernande
+ *  Archive Log:    PR 128977 Application log needs to support multi-subnet. -  Deleting non used file HostSelector.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.32  2015/05/29 20:34:19  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Second wave of changes: the application can be switched between the old adapter and the new; moved out several initialization pieces out of objects constructor to allow subnet initialization with a UI in place; improved generics definitions for FV commands.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.31  2015/05/26 15:34:02  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.30  2015/05/19 19:07:18  jijunwan
+ *  Archive Log:    PR 128797 - Notice update failed to update related notes
+ *  Archive Log:    - created a new class NoticeWrapper to store information about related nodes, and then pass this infor to EventDescription that will allow UI to upate related nodes
  *  Archive Log:
  *  Archive Log:    Revision 1.29  2015/05/01 21:37:41  jijunwan
  *  Archive Log:    fixed typo found by FindBug
@@ -152,10 +169,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.intel.stl.api.BaseApi;
+import org.slf4j.MDC;
+
 import com.intel.stl.api.configuration.EventRule;
 import com.intel.stl.api.configuration.EventType;
 import com.intel.stl.api.configuration.UserSettings;
+import com.intel.stl.api.configuration.impl.SubnetContextImpl;
 import com.intel.stl.api.notice.EventDescription;
 import com.intel.stl.api.notice.FESource;
 import com.intel.stl.api.notice.GenericNoticeAttrBean;
@@ -165,6 +184,7 @@ import com.intel.stl.api.notice.INoticeApi;
 import com.intel.stl.api.notice.NodeSource;
 import com.intel.stl.api.notice.NoticeBean;
 import com.intel.stl.api.notice.NoticeSeverity;
+import com.intel.stl.api.notice.NoticeWrapper;
 import com.intel.stl.api.notice.PortSource;
 import com.intel.stl.api.notice.TrapLinkBean;
 import com.intel.stl.api.notice.TrapSwitchPKeyBean;
@@ -178,14 +198,14 @@ import com.intel.stl.api.subnet.SubnetDataNotFoundException;
 import com.intel.stl.api.subnet.SubnetException;
 import com.intel.stl.api.subnet.impl.NodeCache;
 import com.intel.stl.configuration.CacheManager;
-import com.intel.stl.fecdriver.ConnectionEvent;
-import com.intel.stl.fecdriver.IConnection;
 import com.intel.stl.fecdriver.messages.adapter.sa.trap.TrapDetail;
 
-public class NoticeApi extends BaseApi implements INoticeApi {
+public class NoticeApi implements INoticeApi {
+    private static final String THREAD_NAME_PREFIX = "nedthread-";
+
     private static boolean DEBUG = false;
 
-    private final IConnection conn;
+    private final SubnetContextImpl subnetContext;
 
     private final CacheManager cacheMgr;
 
@@ -194,30 +214,33 @@ public class NoticeApi extends BaseApi implements INoticeApi {
     private final Map<EventType, NoticeSeverity> eventSeverityMap =
             new HashMap<EventType, NoticeSeverity>();
 
-    public NoticeApi(IConnection conn, CacheManager cacheMgr) {
+    public NoticeApi(SubnetContextImpl subnetContext) {
         worker = new EventDispatcher();
-        this.conn = conn;
-        this.cacheMgr = cacheMgr;
-        conn.addConnectionEventListener(this);
+        this.subnetContext = subnetContext;
+        this.cacheMgr = subnetContext.getCacheManager();
 
         startWorker();
     }
 
     protected void startWorker() {
+        MDC.put("subnet", subnetContext.getSubnetDescription().getName());
+        worker.setLoggingContextMap(MDC.getCopyOfContextMap());
         worker.setDaemon(true);
+        worker.setName(THREAD_NAME_PREFIX
+                + subnetContext.getSubnetDescription().getSubnetId());
         worker.start();
     }
 
     @Override
-    public void addNewEventDescriptions(NoticeBean[] data) {
+    public void addNewEventDescriptions(NoticeWrapper[] data) {
         if (DEBUG) {
-            for (NoticeBean bean : data) {
+            for (NoticeWrapper bean : data) {
                 System.out.println(bean);
             }
         }
         List<EventDescription> events = new ArrayList<EventDescription>();
-        for (NoticeBean notice : data) {
-            EventDescription eventDescription = asEventDescription(notice);
+        for (NoticeWrapper nw : data) {
+            EventDescription eventDescription = asEventDescription(nw);
             events.add(eventDescription);
         }
         worker.addEvents(events);
@@ -255,12 +278,15 @@ public class NoticeApi extends BaseApi implements INoticeApi {
     @Override
     public void cleanup() {
         worker.cleanup();
+        worker.setStop(true);
     }
 
-    protected EventDescription asEventDescription(NoticeBean bean) {
+    protected EventDescription asEventDescription(NoticeWrapper noticeWrapper) {
+        NoticeBean bean = noticeWrapper.getNotice();
         EventDescription res = new EventDescription();
         res.setId(bean.getId());
-        res.setDate(new Date());
+        res.setDate(new Date(bean.getReceiveTimestamp()));
+        res.setRelatedNodes(noticeWrapper.getRelatedNodes());
         GenericNoticeAttrBean attr =
                 (GenericNoticeAttrBean) bean.getAttributes();
         TrapType trap = TrapType.getTrapType(attr.getTrapNumber());
@@ -342,7 +368,7 @@ public class NoticeApi extends BaseApi implements INoticeApi {
     }
 
     protected FESource getFESource(NoticeBean bean) {
-        HostInfo hi = conn.getConnectionDescription().getCurrentFE();
+        HostInfo hi = subnetContext.getSubnetDescription().getCurrentFE();
         return new FESource(hi.getHost(), hi.getPort());
     }
 
@@ -375,30 +401,6 @@ public class NoticeApi extends BaseApi implements INoticeApi {
         NodeType type = NodeType.getNodeType(node.getNodeInfo().getNodeType());
         return new PortSource(link.getLid(), node.getNodeDesc(), type,
                 link.getPort());
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.intel.stl.fecdriver.IConnectionEventListener#connectionOnClose(com
-     * .intel.stl.fecdriver.ConnectionEvent)
-     */
-    @Override
-    public void connectionClose(ConnectionEvent event) {
-        worker.setStop(true);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.intel.stl.fecdriver.IConnectionEventListener#connectionErrorOccurred
-     * (com.intel.stl.fecdriver.ConnectionEvent)
-     */
-    @Override
-    public void connectionError(ConnectionEvent event) {
-        // ignore
     }
 
     /*

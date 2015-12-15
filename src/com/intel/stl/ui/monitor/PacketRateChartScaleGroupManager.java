@@ -25,7 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
  *	
@@ -36,10 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.3  2015/08/12 15:26:58  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.3  2015/08/17 18:53:40  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.1.2.2  2015/05/17 18:30:42  jijunwan
+ *  Archive Log:    Revision 1.2  2015/06/25 20:53:46  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improved to share scale between all chart (include pinned chart) with the same data type
+ *  Archive Log:
+ *  Archive Log:    Revision 1.1  2015/05/14 17:43:07  jijunwan
  *  Archive Log:    PR 127700 - Delta data on host performance display is accumulating
  *  Archive Log:    - corrected delta value calculation
  *  Archive Log:    - changed to display data/pkts rate rather than delta on chart and table
@@ -73,32 +77,46 @@ import org.jfree.data.time.TimeSeriesCollection;
 import com.intel.stl.ui.main.view.IChartRangeUpdater;
 import com.intel.stl.ui.main.view.PacketRateChartRangeUpdater;
 
-public class PacketRateChartScaleGroupManager extends ChartScaleGroupManager<TimeSeriesCollection> {
+public class PacketRateChartScaleGroupManager extends
+        ChartScaleGroupManager<TimeSeriesCollection> {
+    private final static PacketRateChartScaleGroupManager instance =
+            new PacketRateChartScaleGroupManager();
 
-    /* (non-Javadoc)
-     * @see com.intel.stl.ui.monitor.ChartScaleGroupManager#getChartRangeUpdater()
+    public static PacketRateChartScaleGroupManager getInstance() {
+        return instance;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.monitor.ChartScaleGroupManager#getChartRangeUpdater()
      */
     @Override
     IChartRangeUpdater getChartRangeUpdater() {
         return new PacketRateChartRangeUpdater();
     }
 
-    /* (non-Javadoc)
-     * @see com.intel.stl.ui.monitor.ChartScaleGroupManager#getMin(org.jfree.data.general.Dataset)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.monitor.ChartScaleGroupManager#getMin(org.jfree.data
+     * .general.Dataset)
      */
     @Override
     long[] getMinMax(TimeSeriesCollection dataset) {
         long lower = Long.MAX_VALUE;
         long upper = Long.MIN_VALUE;
-        
-        for(int i=0; i<dataset.getSeriesCount(); i++){
+
+        for (int i = 0; i < dataset.getSeriesCount(); i++) {
             TimeSeries series = dataset.getSeries(i);
-            
-            lower = (long)Math.min(lower, series.getMinY());
-            upper = (long)Math.max(upper, series.getMaxY());     
+
+            lower = (long) Math.min(lower, series.getMinY());
+            upper = (long) Math.max(upper, series.getMaxY());
         }
-        
-        return new long[]{lower, upper};
+
+        return new long[] { lower, upper };
     }
 
 }

@@ -35,8 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7.2.1  2015/08/12 15:26:38  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.9  2015/08/17 18:53:46  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/06/09 18:37:26  jijunwan
+ *  Archive Log:    PR 129069 - Incorrect Help action
+ *  Archive Log:    - moved help action from view to controller
+ *  Archive Log:    - only enable help button when we have HelpID
+ *  Archive Log:    - fixed incorrect HelpIDs
  *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/02/05 19:57:09  jijunwan
  *  Archive Log:    fixed NPE issues found by klocwork
@@ -111,6 +118,14 @@ public enum PropertyGroupViz {
         }
     };
 
+    private final static Map<String, PropertyGroupViz> groupTitleMap =
+            new HashMap<String, PropertyGroupViz>();
+    static {
+        for (PropertyGroupViz pgv : PropertyGroupViz.values()) {
+            groupTitleMap.put(pgv.getTitle(), pgv);
+        }
+    };
+
     private final STLConstants title;
 
     private PropertyGroupViz(STLConstants title) {
@@ -131,4 +146,14 @@ public enum PropertyGroupViz {
         }
     }
 
+    public static PropertyGroupViz getPropertyGroupVizByTitle(String title) {
+        PropertyGroupViz res = groupTitleMap.get(title);
+        if (res != null) {
+            return res;
+        } else {
+            throw new IllegalArgumentException(
+                    "Couldn't find PropertyGroup with title '" + groupTitleMap
+                            + "'");
+        }
+    }
 }

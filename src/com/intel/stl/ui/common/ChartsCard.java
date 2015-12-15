@@ -35,8 +35,20 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:27:03  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.7  2015/08/17 18:54:12  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/08/05 03:00:43  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on charts to track chart  change, jump event
+ *  Archive Log:    - applied undo mechanism on chart section to track group change
+ *  Archive Log:    - improved OptionChartsView to support undoable data type and history selection
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/06/25 20:50:04  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on dynamic cards that can have different data sources
+ *  Archive Log:    - change to use port counter performance item
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2014/09/18 14:59:33  jijunwan
  *  Archive Log:    Added jumping to destination support to TopN chart via popup menu
@@ -95,14 +107,23 @@ import net.engio.mbassy.bus.MBassador;
 import com.intel.stl.ui.common.view.ChartsView;
 import com.intel.stl.ui.common.view.IChartsCardListener;
 import com.intel.stl.ui.event.JumpDestination;
-import com.intel.stl.ui.event.PortSelectedEvent;
+import com.intel.stl.ui.event.JumpToEvent;
+import com.intel.stl.ui.event.PortsSelectedEvent;
 import com.intel.stl.ui.framework.IAppEvent;
+import com.intel.stl.ui.main.UndoHandler;
 import com.intel.stl.ui.model.DatasetDescription;
 import com.intel.stl.ui.model.PortEntry;
+import com.intel.stl.ui.performance.ChartArgument;
 
 public class ChartsCard extends
         BaseCardController<IChartsCardListener, ChartsView> implements
         IChartsCardListener {
+    private IPinDelegator pinDelegator;
+
+    private UndoHandler undoHandler;
+
+    private JumpToEvent origin;
+
     private String currentChart;
 
     public ChartsCard(ChartsView view, MBassador<IAppEvent> eventBus,
@@ -115,6 +136,23 @@ public class ChartsCard extends
         view.setChart(currentChart);
     }
 
+    /**
+     * @param undoHandler
+     *            the undoHandler to set
+     */
+    public void setUndoHandler(UndoHandler undoHandler, JumpToEvent source) {
+        this.undoHandler = undoHandler;
+        this.origin = source;
+    }
+
+    /**
+     * @param origin
+     *            the origin to set
+     */
+    public void setOrigin(JumpToEvent origin) {
+        this.origin = origin;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -122,8 +160,26 @@ public class ChartsCard extends
      */
     @Override
     public void onSelectChart(String name) {
+        String oldChart = currentChart;
         currentChart = name;
         view.setChart(currentChart);
+
+        if (undoHandler != null && !undoHandler.isInProgress()) {
+            UndoableChartSelection undoSel =
+                    new UndoableChartSelection(this, oldChart, name);
+            undoHandler.addUndoAction(undoSel);
+        }
+    }
+
+    public void selectChart(String name) {
+        view.selectChart(name);
+    }
+
+    /**
+     * @return the currentChart
+     */
+    public String getCurrentChart() {
+        return currentChart;
     }
 
     /*
@@ -140,10 +196,44 @@ public class ChartsCard extends
     public void jumpTo(Object content, JumpDestination destination) {
         if (content instanceof PortEntry) {
             PortEntry pe = (PortEntry) content;
-            PortSelectedEvent event =
-                    new PortSelectedEvent(pe.getNodeLid(), pe.getPortNum(),
-                            this, destination);
+            PortsSelectedEvent event =
+                    new PortsSelectedEvent(pe.getNodeLid(), pe.getPortNum(),
+                            this, destination.getName());
             eventBus.publish(event);
+
+            if (undoHandler != null && !undoHandler.isInProgress()) {
+                UndoableJumpEvent undoSel =
+                        new UndoableJumpEvent(eventBus, origin, event);
+                undoHandler.addUndoAction(undoSel);
+            }
         }
     }
+
+    /**
+     * @param pinDelegator
+     *            the pinDelegator to set
+     */
+    public void setPinDelegator(IPinDelegator pinDelegator) {
+        this.pinDelegator = pinDelegator;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.BaseCardController#onPin()
+     */
+    @Override
+    public void onPin() {
+        if (pinDelegator != null) {
+            PinArgument arg = getChartProperties();
+            pinDelegator.addPin(currentChart, arg);
+        }
+    }
+
+    protected PinArgument getChartProperties() {
+        PinArgument res = new PinArgument();
+        res.put(ChartArgument.NAME, currentChart);
+        return res;
+    }
+
 }

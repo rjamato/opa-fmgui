@@ -25,7 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
  *	
@@ -36,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:26:38  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/08/31 22:01:43  jijunwan
+ *  Archive Log:    PR 130197 - Calculated fabric health above 100% when entire fabric is rebooted
+ *  Archive Log:    - changed to only use information from ImageInfo for calculation
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/08/17 18:53:46  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2014/05/19 22:08:56  jijunwan
  *  Archive Log:    moved filter from EventCalculator to StateSummary, so we can have better consistent result
@@ -58,20 +62,77 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 import com.intel.stl.api.notice.NoticeSeverity;
+import com.intel.stl.api.subnet.NodeType;
 import com.intel.stl.ui.publisher.IEventFilter;
 import com.intel.stl.ui.publisher.NodeEvents;
 
 public class StateSummary implements Serializable {
     private static final long serialVersionUID = 8192055300607833656L;
-    
+
+    private final Map<NodeType, Integer> baseNodesDist;
+
+    private int baseTotalSWs, baseTotalHFIs, baseTotalNodes;
+
     private TimedScore healthScore;
+
     private EnumMap<NoticeSeverity, Integer> switchStates;
+
     private EnumMap<NoticeSeverity, Integer> hfiStates;
+
     private NodeScore[] worstNodes;
+
     private List<NodeEvents> events;
-    
+
+    /**
+     * Description:
+     * 
+     * @param baseNodesDist
+     */
+    public StateSummary(Map<NodeType, Integer> baseNodesDist) {
+        super();
+        this.baseNodesDist = baseNodesDist;
+        for (NodeType type : baseNodesDist.keySet()) {
+            Integer count = baseNodesDist.get(type);
+            if (type == NodeType.SWITCH) {
+                baseTotalSWs = count;
+            } else if (type == NodeType.HFI) {
+                baseTotalHFIs = count;
+            }
+            baseTotalNodes += count;
+        }
+    }
+
+    /**
+     * @return the baseNodesDist
+     */
+    public Map<NodeType, Integer> getBaseNodesDist() {
+        return baseNodesDist;
+    }
+
+    /**
+     * @return the baseTotalSWs
+     */
+    public int getBaseTotalSWs() {
+        return baseTotalSWs;
+    }
+
+    /**
+     * @return the baseTotalHFIs
+     */
+    public int getBaseTotalHFIs() {
+        return baseTotalHFIs;
+    }
+
+    /**
+     * @return the baseTotalNodes
+     */
+    public int getBaseTotalNodes() {
+        return baseTotalNodes;
+    }
+
     /**
      * @return the healthScore
      */
@@ -80,7 +141,8 @@ public class StateSummary implements Serializable {
     }
 
     /**
-     * @param healthScore the healthScore to set
+     * @param healthScore
+     *            the healthScore to set
      */
     public void setHealthScore(TimedScore healthScore) {
         this.healthScore = healthScore;
@@ -94,7 +156,8 @@ public class StateSummary implements Serializable {
     }
 
     /**
-     * @param switchStates the switchStates to set
+     * @param switchStates
+     *            the switchStates to set
      */
     public void setSwitchStates(EnumMap<NoticeSeverity, Integer> switchStates) {
         this.switchStates = switchStates;
@@ -108,7 +171,8 @@ public class StateSummary implements Serializable {
     }
 
     /**
-     * @param hfiStates the hfiStates to set
+     * @param hfiStates
+     *            the hfiStates to set
      */
     public void setHfiStates(EnumMap<NoticeSeverity, Integer> hfiStates) {
         this.hfiStates = hfiStates;
@@ -122,7 +186,8 @@ public class StateSummary implements Serializable {
     }
 
     /**
-     * @param worstNodes the worstNodes to set
+     * @param worstNodes
+     *            the worstNodes to set
      */
     public void setWorstNodes(NodeScore[] worstNodes) {
         this.worstNodes = worstNodes;
@@ -136,7 +201,8 @@ public class StateSummary implements Serializable {
     }
 
     /**
-     * @param events the events to set
+     * @param events
+     *            the events to set
      */
     public void setEvents(List<NodeEvents> events) {
         this.events = events;
@@ -144,38 +210,41 @@ public class StateSummary implements Serializable {
 
     /**
      * 
-     *  Description: get custom states
-     *  
-     *  @param filter the filter applied to indicate the nodes we are interested in.
-     *  <code>null</code> means accept all nodes.  
-     *  @return
+     * Description: get custom states
+     * 
+     * @param filter
+     *            the filter applied to indicate the nodes we are interested in.
+     *            <code>null</code> means accept all nodes.
+     * @return
      */
     public EnumMap<NoticeSeverity, Integer> getStates(IEventFilter filter) {
-        EnumMap<NoticeSeverity, Integer> res = 
+        EnumMap<NoticeSeverity, Integer> res =
                 new EnumMap<NoticeSeverity, Integer>(NoticeSeverity.class);
         int[] counts = new int[NoticeSeverity.values().length];
         for (NodeEvents e : events) {
-            if (filter==null || filter.accept(e.getLid(), e.getNodeType())) {
+            if (filter == null || filter.accept(e.getLid(), e.getNodeType())) {
                 NoticeSeverity overallSeverity = e.getOverallSeverity();
-                if (overallSeverity!=null) {
+                if (overallSeverity != null) {
                     counts[overallSeverity.ordinal()] += 1;
                 }
             }
         }
-        for (int i=0; i<counts.length; i++) {
+        for (int i = 0; i < counts.length; i++) {
             res.put(NoticeSeverity.values()[i], counts[i]);
         }
         return res;
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
         return "StateSummary [healthScore=" + healthScore + ", switchStates="
                 + switchStates + ", hfiStates=" + hfiStates + ", worstNodes="
-                + Arrays.toString(worstNodes) + ", events="+events+"]";
+                + Arrays.toString(worstNodes) + ", events=" + events + "]";
     }
 
 }

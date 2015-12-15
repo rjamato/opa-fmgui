@@ -35,8 +35,32 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3.2.1  2015/08/12 15:27:10  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.10  2015/09/30 13:26:45  fisherma
+ *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/09/08 14:59:54  jijunwan
+ *  Archive Log:    PR 130277 - FM GUI Locked up due to [AWT-EventQueue-0] ERROR - Unsupported MTUSize 0x0d java.lang.IllegalArgumentException: Unsupported MTUSize 0x0d
+ *  Archive Log:    - change to update tree on background thread and update rendering on EDT
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/08/17 18:54:19  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/08/05 03:18:19  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - improved tree navigation to search a group node
+ *  Archive Log:    - fixed issue on port navigation that use a port node as device node by mistake
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/07/15 19:05:39  fernande
+ *  Archive Log:    PR 129199 - Checking copyright test as part of the build step. Fixed year appearing in copyright notice
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/06/05 16:45:29  jijunwan
+ *  Archive Log:    PR 129089 - Link jumping doesn't keep context
+ *  Archive Log:    - search in current tree and use current node as hint in node search
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/05/20 17:05:20  jijunwan
+ *  Archive Log:    PR 128797 - Notice update failed to update related notes
+ *  Archive Log:    - improved to fire tree update event at port level, so if we select a port that is under change, the port will still get selected and updated
  *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/02/04 21:44:20  jijunwan
  *  Archive Log:    impoved to handle unsigned values
@@ -84,6 +108,8 @@
  ******************************************************************************/
 package com.intel.stl.ui.monitor.tree;
 
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Vector;
 
 import javax.swing.event.TreeModelEvent;
@@ -92,6 +118,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.monitor.TreeNodeType;
 
 /**
@@ -126,6 +153,11 @@ public class FVTreeModel implements TreeModel, ITreeMonitor {
      */
     @Override
     public Object getChild(Object pParent, int pIndex) {
+        if (pIndex == -1) {
+            // handle the case we have invisible node which will have a index of
+            // -1
+            return null;
+        }
         TreeNode parent = (TreeNode) pParent;
         return parent.getChildAt(pIndex);
     }
@@ -234,6 +266,10 @@ public class FVTreeModel implements TreeModel, ITreeMonitor {
         FVResourceNode tmp = null;
 
         FVResourceNode parent = node.getParent();
+        if (node.isPort()) {
+            // get node since we are searching node by lid
+            parent = parent.getParent();
+        }
         if (parent == null) {
             return null;
         }
@@ -285,6 +321,9 @@ public class FVTreeModel implements TreeModel, ITreeMonitor {
         FVResourceNode tmp =
                 navigateTree(hint == null ? mRootNode : hint, lid,
                         TreeNodeType.NODE);
+        if (tmp == null && hint != null) {
+            tmp = siblingSearch(hint, lid, TreeNodeType.NODE);
+        }
         if (tmp == null) {
             return null;
         }
@@ -302,34 +341,114 @@ public class FVTreeModel implements TreeModel, ITreeMonitor {
         return tmp.getPath();
     }
 
+    /**
+     * <i>Description:</i> search by matching name and type from root
+     * 
+     * @param name
+     * @param type
+     * @return
+     */
+    public TreePath getTreePath(String name, TreeNodeType type) {
+        FVResourceNode res = navigateTree(name, type);
+        if (res != null) {
+            return res.getPath();
+        } else {
+            return null;
+        }
+    }
+
+    // breadth first search
+    protected FVResourceNode navigateTree(String name, TreeNodeType type) {
+        if (mRootNode.getTitle().equals(name) && mRootNode.getType() == type) {
+            return mRootNode;
+        }
+
+        Queue<FVResourceNode> toDo = new LinkedList<FVResourceNode>();
+        toDo.add(mRootNode);
+        while (!toDo.isEmpty()) {
+            FVResourceNode node = toDo.poll();
+            if (node.getChildCount() > 0) {
+                for (FVResourceNode child : node.getChildren()) {
+                    System.out.println(child.getName() + " " + child.getType());
+                    if (child.getTitle().equals(name)
+                            && child.getType() == type) {
+                        return child;
+                    } else {
+                        toDo.add(child);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     public void fireTreeNodesRemoved(Object source, Object[] path,
             int[] childIndices, Object[] children) {
-        TreeModelEvent e =
+        final TreeModelEvent e =
                 new TreeModelEvent(source, path, childIndices, children);
         // System.out.println("TreeNodesRemoved " + e);
-        for (TreeModelListener listener : mListeners) {
-            listener.treeNodesRemoved(e);
-        }
+        Util.runInEDT(new Runnable() {
+            @Override
+            public void run() {
+                for (TreeModelListener listener : mListeners) {
+                    listener.treeNodesRemoved(e);
+                }
+            }
+        });
     }
 
     @Override
     public void fireTreeNodesInserted(Object source, Object[] path,
             int[] childIndices, Object[] children) {
-        TreeModelEvent e =
+        final TreeModelEvent e =
                 new TreeModelEvent(source, path, childIndices, children);
         // System.out.println("TreeNodesInserted " + e);
-        for (TreeModelListener listener : mListeners) {
-            listener.treeNodesInserted(e);
-        }
+        Util.runInEDT(new Runnable() {
+            @Override
+            public void run() {
+                for (TreeModelListener listener : mListeners) {
+                    listener.treeNodesInserted(e);
+                }
+            }
+        });
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.monitor.tree.ITreeMonitor#fireTreeNodesChanged(java.
+     * lang.Object, java.lang.Object[], int[], java.lang.Object[])
+     */
+    @Override
+    public void fireTreeNodesChanged(Object source, Object[] path,
+            int[] childIndices, Object[] children) {
+        final TreeModelEvent e =
+                new TreeModelEvent(source, path, childIndices, children);
+        // System.out.println("TreeNodesChaneed " + e);
+        Util.runInEDT(new Runnable() {
+            @Override
+            public void run() {
+                for (TreeModelListener listener : mListeners) {
+                    listener.treeNodesChanged(e);
+                }
+            }
+        });
     }
 
     @Override
     public void fireTreeStructureChanged(Object source, TreePath path) {
-        TreeModelEvent e = new TreeModelEvent(source, path);
+        final TreeModelEvent e = new TreeModelEvent(source, path);
         // System.out.println("TreeStructureChanged " + e);
-        for (TreeModelListener listener : mListeners) {
-            listener.treeStructureChanged(e);
-        }
+        Util.runInEDT(new Runnable() {
+            @Override
+            public void run() {
+                for (TreeModelListener listener : mListeners) {
+                    listener.treeStructureChanged(e);
+                }
+            }
+        });
     }
+
 }

@@ -35,8 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:21:40  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/08/17 18:48:36  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/06/10 19:14:39  rjtierne
+ *  Archive Log:    PR 128975 - Can not setup application log
+ *  Archive Log:    - Corrected enumeration order to match logback levels
+ *  Archive Log:    - Removed enum FATAL left over from log4j
+ *  Archive Log:    - Added enum INHERITED for logback internal logs
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2014/12/19 17:49:57  rjtierne
  *  Archive Log:    Changed order of enumerations and added id's
@@ -55,13 +62,16 @@ package com.intel.stl.api.configuration;
 
 public enum LoggingThreshold {
 
-    OFF(0),
-    INFO(1),
+    ALL(0),
+    TRACE(1),
     DEBUG(2),
-    WARN(3),
-    ERROR(4),
-    FATAL(5),
-    ALL(6);
+    INFO(3),
+    WARN(4),
+    ERROR(5),
+    OFF(6),
+
+    // Used internally by logback
+    INHERITED(7);
 
     private final int id;
 

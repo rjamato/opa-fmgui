@@ -35,8 +35,17 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:21:43  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/08/17 18:48:39  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/08/17 17:33:05  jijunwan
+ *  Archive Log:    PR 128973 - Deploy FM conf changes on all SMs
+ *  Archive Log:    - fixed typo on interface name IApplicationManagement
+ *  Archive Log:    - improved management to maintain changes and be able apply changes on another FM ocnf file
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/07/28 18:20:28  fisherma
+ *  Archive Log:    PR 129219 - Admin page login dialog improvement.
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2015/03/16 22:01:00  jijunwan
  *  Archive Log:    changed package name from application to applications, and from devicegroup to devicegroups
@@ -72,8 +81,10 @@ import static com.intel.stl.api.management.XMLConstants.APPLICATIONS;
 import static com.intel.stl.api.management.XMLConstants.NAME;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
@@ -101,10 +112,10 @@ import com.intel.stl.api.management.XMLUtils;
 import com.intel.stl.api.management.applications.Application;
 import com.intel.stl.api.management.applications.ApplicationException;
 import com.intel.stl.api.management.applications.Applications;
-import com.intel.stl.api.management.applications.IApplicationManangement;
+import com.intel.stl.api.management.applications.IApplicationManagement;
 import com.intel.stl.common.STLMessages;
 
-public class ApplicationManagement implements IApplicationManangement {
+public class ApplicationManagement implements IApplicationManagement {
     private final static Logger log = LoggerFactory
             .getLogger(ApplicationManagement.class);
 
@@ -121,6 +132,8 @@ public class ApplicationManagement implements IApplicationManangement {
     };
 
     private final FMConfHelper confHelp;
+
+    private final Set<String> changes = new HashSet<String>();
 
     /**
      * Description:
@@ -147,7 +160,7 @@ public class ApplicationManagement implements IApplicationManangement {
     public synchronized List<Application> getApplications()
             throws ApplicationException {
         try {
-            File confFile = confHelp.getConfFile(false);
+            File confFile = confHelp.getConfFile();
             Applications apps = unmarshal(confFile);
             log.info("Fetch " + apps.getApplications().size()
                     + " applications from host '" + confHelp.getHost() + "'");
@@ -168,7 +181,7 @@ public class ApplicationManagement implements IApplicationManangement {
     public synchronized Application getApplication(String name)
             throws ApplicationException {
         try {
-            File confFile = confHelp.getConfFile(false);
+            File confFile = confHelp.getConfFile();
             Applications apps = unmarshal(confFile);
             return apps.getApplication(name);
         } catch (Exception e) {
@@ -201,11 +214,12 @@ public class ApplicationManagement implements IApplicationManangement {
     public synchronized void addApplication(Application app)
             throws ApplicationException {
         try {
-            File confFile = confHelp.getConfFile(false);
+            File confFile = confHelp.getConfFile();
             uniqueNameCheck(null, app.getName());
             // TODO loop check
             addApplication(confFile, confFile, app);
             log.info("Added application " + app);
+            changes.add(app.getName());
         } catch (Exception e) {
             throw createApplicationException(STLMessages.STL63002_ADD_APP_ERR,
                     e, app.getName(), confHelp.getHost(),
@@ -246,10 +260,11 @@ public class ApplicationManagement implements IApplicationManangement {
     public synchronized void removeApplication(String name)
             throws ApplicationException {
         try {
-            File confFile = confHelp.getConfFile(false);
+            File confFile = confHelp.getConfFile();
             referenceCheck(null, name);
             removeApplication(confFile, confFile, name);
             log.info("Removed application '" + name + "'");
+            changes.add(name);
         } catch (Exception e) {
             throw createApplicationException(
                     STLMessages.STL63003_REMOVE_APP_ERR, e, name,
@@ -282,7 +297,7 @@ public class ApplicationManagement implements IApplicationManangement {
     public synchronized void updateApplication(String oldName, Application app)
             throws ApplicationException {
         try {
-            File confFile = confHelp.getConfFile(false);
+            File confFile = confHelp.getConfFile();
             if (!oldName.equals(app.getName())) {
                 Applications apps = unmarshal(confFile);
                 uniqueNameCheck(apps, app.getName());
@@ -291,6 +306,8 @@ public class ApplicationManagement implements IApplicationManangement {
             // TODO loop check
             updateApplication(confFile, confFile, oldName, app, false);
             log.info("Updated application " + app);
+            changes.add(oldName);
+            changes.add(app.getName());
         } catch (Exception e) {
             throw createApplicationException(
                     STLMessages.STL63004_UPDATE_APP_ERR, e, app.getName(),
@@ -302,11 +319,17 @@ public class ApplicationManagement implements IApplicationManangement {
     public synchronized void addOrUpdateApplication(String oldName,
             Application app) throws ApplicationException {
         try {
-            File confFile = confHelp.getConfFile(false);
-            referenceCheck(null, oldName);
+            File confFile = confHelp.getConfFile();
+            if (!oldName.equals(app.getName())) {
+                Applications apps = unmarshal(confFile);
+                uniqueNameCheck(apps, app.getName());
+                referenceCheck(apps, oldName);
+            }
             // TODO loop check
             updateApplication(confFile, confFile, oldName, app, true);
             log.info("Added or updated application " + app);
+            changes.add(oldName);
+            changes.add(app.getName());
         } catch (Exception e) {
             throw createApplicationException(
                     STLMessages.STL63005_ADDUPDATE_APP_ERR, e, app.getName(),
@@ -348,7 +371,7 @@ public class ApplicationManagement implements IApplicationManangement {
     protected void referenceCheck(Applications apps, String name)
             throws Exception {
         if (apps == null) {
-            File confFile = confHelp.getConfFile(false);
+            File confFile = confHelp.getConfFile();
             apps = unmarshal(confFile);
         }
         List<Application> refs = apps.getReferencedApplications(name);
@@ -364,7 +387,7 @@ public class ApplicationManagement implements IApplicationManangement {
     protected void uniqueNameCheck(Applications apps, String name)
             throws Exception {
         if (apps == null) {
-            File confFile = confHelp.getConfFile(false);
+            File confFile = confHelp.getConfFile();
             apps = unmarshal(confFile);
         }
         for (Application app : apps.getApplications()) {
@@ -395,4 +418,34 @@ public class ApplicationManagement implements IApplicationManangement {
         return new ApplicationException(msg, error, args);
     }
 
+    /**
+     * 
+     * <i>Description:</i>
+     * 
+     * @return the names of the applications changed
+     */
+    public Set<String> getChanges() {
+        return changes;
+    }
+
+    public void resetChanges() {
+        changes.clear();
+    }
+
+    public void applyChangesTo(ApplicationManagement target)
+            throws ApplicationException {
+        List<Application> apps = getApplications();
+        Map<String, Application> map = new HashMap<String, Application>();
+        for (Application app : apps) {
+            map.put(app.getName(), app);
+        }
+        for (String change : changes) {
+            Application cur = map.get(change);
+            if (cur == null) {
+                target.removeApplication(change);
+            } else {
+                target.addOrUpdateApplication(change, cur);
+            }
+        }
+    }
 }

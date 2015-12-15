@@ -35,8 +35,28 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:27:17  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.10  2015/09/28 17:54:14  fisherma
+ *  Archive Log:    PR 130425 - added cancel button to the Admin tab login page to allow user to cancel out of hung or slow ssh logins.  Cancel action terminates sftp connection and closes remote ssh session. This fix also addresses PR 130386 and 130390.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/08/17 18:53:52  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/08/17 17:43:16  jijunwan
+ *  Archive Log:    PR 128973 - Deploy FM conf changes on all SMs
+ *  Archive Log:    - improved AbstractConfView to support deploy card
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/08/05 02:52:56  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - apply undo mechanism on Admin page to track tab selection
+ *  Archive Log:    - improved ConfPageController to check change when we exit one tab
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/07/28 18:29:09  fisherma
+ *  Archive Log:    PR 129219 - Admin page login dialog improvement
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/06/25 11:54:58  jypak
+ *  Archive Log:    PR 129073 - Add help action for Admin Page.
+ *  Archive Log:    The help action is added to App, DG, VF,Console page and Console terminal. For now, a help ID and a content are being used as a place holder for each page. Once we get the help contents delivered by technical writer team, the HelpAction will be updated with correct help ID.
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/04/18 01:40:00  fisherma
  *  Archive Log:    PR 127653 - FM GUI errors after connection loss.  The code changes address issue #2 reported in the bug.  Adding common dialog to display errors.  Needs further appearance improvements.
@@ -60,17 +80,19 @@
 package com.intel.stl.ui.admin.view;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.ListModel;
 
+import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.ui.admin.IConfListener;
 import com.intel.stl.ui.admin.IItemListListener;
 import com.intel.stl.ui.admin.Item;
@@ -81,10 +103,16 @@ import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.common.view.ComponentFactory;
 
 public abstract class AbstractConfView<T, E extends AbstractEditorPanel<T>>
-        extends JPanel {
+        extends JPanel implements ILoginListener {
     private static final long serialVersionUID = 8561299073984852795L;
 
-    private final String name;
+    private static final String DEPLOY = "deploy";
+
+    private static final String LOGIN = "login";
+
+    private final String mainCardName;
+
+    private String currentCard = null;
 
     protected ItemListPanel<T> selectionPanel;
 
@@ -92,9 +120,19 @@ public abstract class AbstractConfView<T, E extends AbstractEditorPanel<T>>
 
     protected JPanel ctrPanel;
 
+    protected JPanel mainPanel;
+
+    private JPanel loginCardPanel;
+
     protected JButton deployBtn;
 
     private IConfListener listener;
+
+    private LoginPanel loginPanel;
+
+    private JPanel deployCardPanel;
+
+    private DeployPanel deployPanel;
 
     /**
      * Description:
@@ -102,38 +140,136 @@ public abstract class AbstractConfView<T, E extends AbstractEditorPanel<T>>
      */
     public AbstractConfView(String name) {
         super();
-        this.name = name;
-        initComponent();
+        this.setLayout(new CardLayout());
+
+        this.mainCardName = name;
+        JPanel panel = getEditorCardPanel();
+        addViewCard(panel, mainCardName);
+
+        panel = getLoginCardPanel();
+        addViewCard(panel, LOGIN);
+
+        panel = getDeployCardPanel();
+        addViewCard(panel, DEPLOY);
+
+        setViewCard(mainCardName);
     }
 
-    protected void initComponent() {
-        setLayout(new BorderLayout(5, 5));
+    protected JPanel getEditorCardPanel() {
+        if (mainPanel == null) {
+            mainPanel = new JPanel(new BorderLayout(5, 5));
 
-        JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        selectionPanel = createItemSelectionPanel();
-        selectionPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        pane.setLeftComponent(selectionPanel);
+            JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+            selectionPanel = createItemSelectionPanel();
+            selectionPanel.setBorder(BorderFactory
+                    .createEmptyBorder(5, 5, 5, 5));
+            pane.setLeftComponent(selectionPanel);
 
-        JPanel panel = new JPanel(new BorderLayout(5, 5));
-        panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        panel.setOpaque(false);
-        editorPanel = createrEditorPanel();
-        editorPanel.setBorder(BorderFactory.createLineBorder(
-                UIConstants.INTEL_TABLE_BORDER_GRAY, 1, true));
-        panel.add(editorPanel, BorderLayout.CENTER);
+            JPanel panel = new JPanel(new BorderLayout(5, 5));
+            panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            panel.setOpaque(false);
+            editorPanel = createrEditorPanel();
+            editorPanel.setBorder(BorderFactory.createLineBorder(
+                    UIConstants.INTEL_TABLE_BORDER_GRAY, 1, true));
+            panel.add(editorPanel, BorderLayout.CENTER);
 
-        ctrPanel = new JPanel();
-        ctrPanel.setOpaque(false);
-        installButtons(ctrPanel);
-        panel.add(ctrPanel, BorderLayout.SOUTH);
+            ctrPanel = new JPanel();
+            ctrPanel.setOpaque(false);
+            installButtons(ctrPanel);
+            panel.add(ctrPanel, BorderLayout.SOUTH);
 
-        pane.setRightComponent(panel);
+            pane.setRightComponent(panel);
 
-        add(pane, BorderLayout.CENTER);
+            mainPanel.add(pane, BorderLayout.CENTER);
+        }
+        return mainPanel;
+    }
+
+    private JPanel getLoginCardPanel() {
+        if (loginCardPanel == null) {
+            loginCardPanel = new JPanel(new FlowLayout());
+            loginCardPanel.setBackground(UIConstants.INTEL_WHITE);
+            loginPanel = new LoginPanel(this);
+            loginCardPanel.add(loginPanel);
+        }
+        return loginCardPanel;
+    }
+
+    private JPanel getDeployCardPanel() {
+        if (deployCardPanel == null) {
+            deployCardPanel = new JPanel(new BorderLayout());
+            deployCardPanel.setBackground(UIConstants.INTEL_WHITE);
+            deployPanel = new DeployPanel();
+            deployCardPanel.add(deployPanel, BorderLayout.NORTH);
+        }
+        return deployCardPanel;
+    }
+
+    /**
+     * @return the deployPanel
+     */
+    public DeployPanel getDeployPanel() {
+        return deployPanel;
+    }
+
+    public void setHostNameField(String host) {
+        loginPanel.setHostNameField(host);
+    }
+
+    public void setUserNameField(String userName) {
+        loginPanel.setUserNameField(userName);
+    }
+
+    public String getUserNameFieldStr() {
+        return loginPanel.getUserNameFieldStr();
+    }
+
+    public String getPortFieldStr() {
+        return loginPanel.getPortFieldStr();
+    }
+
+    // Allow a different panel to be added to the card layout -
+    // Right now this is used to show the login
+    // credentials or other data which is required to be passed to the main
+    // panel
+    protected void addViewCard(Component card, String name) {
+        this.add(card, name);
+    }
+
+    protected void setViewCard(String name) {
+        CardLayout cl = (CardLayout) (this.getLayout());
+        cl.show(this, name);
+
+        repaint();
+    }
+
+    // Notification from the loginPanel that user has provided credentials
+    // to be used to ssh to FM to obtain configuration file.
+    @Override
+    public void credentialsReady() {
+        // Call to re-trigger initData
+        // for now this is needed to load applications from the server with
+        // credentials provided in the login panel card.
+        if (listener != null) {
+            listener.prepare(loginPanel.getCredentials());
+        }
+    }
+
+    @Override
+    public void cancelLogin() {
+        if (listener != null) {
+            listener.onCancelLogin();
+        }
+    }
+
+    // Returns the name of the main card of this view
+    @Override
+    public String getName() {
+        return mainCardName;
     }
 
     protected ItemListPanel<T> createItemSelectionPanel() {
-        return new ItemListPanel<T>(name);
+        return new ItemListPanel<T>(mainCardName);
     }
 
     protected abstract E createrEditorPanel();
@@ -158,6 +294,14 @@ public abstract class AbstractConfView<T, E extends AbstractEditorPanel<T>>
      */
     public E getEditorPanel() {
         return editorPanel;
+    }
+
+    public void enableHelp(boolean b) {
+        editorPanel.enableHelp(b);
+    }
+
+    public JButton getHelpButton() {
+        return editorPanel.getHelpButton();
     }
 
     public void addItemListListener(IItemListListener listener) {
@@ -203,6 +347,63 @@ public abstract class AbstractConfView<T, E extends AbstractEditorPanel<T>>
     public int confirmDiscard() {
         return Util.showConfirmDialog(this,
                 UILabels.STL50081_ABANDON_CHANGES_MESSAGE.getDescription());
+    }
+
+    /*
+     * Show login card
+     */
+    public void showLoginCard() {
+        CardLayout cl = (CardLayout) (this.getLayout());
+        loginPanel.showProgress(false);
+        loginPanel.setMessage(null);
+        cl.show(this, LOGIN);
+        currentCard = LOGIN;
+        repaint();
+    }
+
+    public void showDeployCard(SubnetDescription subnet) {
+        deployPanel.setSubnet(subnet);
+        CardLayout cl = (CardLayout) (this.getLayout());
+        cl.show(this, DEPLOY);
+        currentCard = DEPLOY;
+        repaint();
+    }
+
+    public boolean isShowingDeployCard() {
+        return currentCard == DEPLOY;
+    }
+
+    /*
+     * Show editor card
+     */
+    public void showEditorCard() {
+        CardLayout cl = (CardLayout) (this.getLayout());
+        cl.show(this, mainCardName);
+        currentCard = mainCardName;
+        repaint();
+    }
+
+    /**
+     * @return the currentCard
+     */
+    public String getCurrentCard() {
+        return currentCard;
+    }
+
+    /**
+     * <i>Description:</i> Clear the password text field and the password data
+     * saved in the LoginBean credentials.
+     * 
+     */
+    public void clearLoginCard() {
+        loginPanel.clearLoginData();
+    }
+
+    //
+    // Set message text to appear at the top of the login panel.
+    //
+    public void setMessage(String msg) {
+        loginPanel.setMessage(msg);
     }
 
 }

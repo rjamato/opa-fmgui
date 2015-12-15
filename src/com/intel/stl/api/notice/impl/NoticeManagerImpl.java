@@ -35,8 +35,30 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.19.2.1  2015/08/12 15:22:21  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.26  2015/08/17 18:49:13  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.25  2015/07/20 17:18:52  jijunwan
+ *  Archive Log:    PR 126645 - Topology Page does not show correct data after port disable/enable event
+ *  Archive Log:    - improved to notify UI after DB task is done
+ *  Archive Log:
+ *  Archive Log:    Revision 1.24  2015/07/19 20:54:50  jijunwan
+ *  Archive Log:    PR 126645 - Topology Page does not show correct data after port disable/enable event
+ *  Archive Log:    - fixed sync issue on DB update and cached node distribution
+ *  Archive Log:
+ *  Archive Log:    Revision 1.23  2015/07/10 20:43:33  fernande
+ *  Archive Log:    PR 129522 - Notice is not written to database due to topology not found. Moved FE Helpers to the session object and changed the order of initialization for the SubnetContext.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.22  2015/05/29 20:34:19  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Second wave of changes: the application can be switched between the old adapter and the new; moved out several initialization pieces out of objects constructor to allow subnet initialization with a UI in place; improved generics definitions for FV commands.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.21  2015/05/26 15:34:02  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.20  2015/05/19 19:07:17  jijunwan
+ *  Archive Log:    PR 128797 - Notice update failed to update related notes
+ *  Archive Log:    - created a new class NoticeWrapper to store information about related nodes, and then pass this infor to EventDescription that will allow UI to upate related nodes
  *  Archive Log:
  *  Archive Log:    Revision 1.19  2015/04/27 21:45:53  rjtierne
  *  Archive Log:    - Added topologyUpdateTask() to the processingService if exception is thrown due to
@@ -66,6 +88,7 @@
 
 package com.intel.stl.api.notice.impl;
 
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
@@ -78,15 +101,16 @@ import com.intel.stl.api.notice.IEventListener;
 import com.intel.stl.api.notice.INoticeApi;
 import com.intel.stl.api.notice.INoticeManager;
 import com.intel.stl.api.notice.NoticeBean;
+import com.intel.stl.api.notice.NoticeWrapper;
 import com.intel.stl.api.subnet.SubnetDataNotFoundException;
 import com.intel.stl.api.subnet.SubnetException;
 import com.intel.stl.api.subnet.impl.SAHelper;
 import com.intel.stl.api.subnet.impl.TopologyUpdateTask;
+import com.intel.stl.configuration.BaseCache;
 import com.intel.stl.configuration.CacheManager;
 import com.intel.stl.configuration.ResultHandler;
 import com.intel.stl.configuration.SerialProcessingService;
 import com.intel.stl.datamanager.DatabaseManager;
-import com.intel.stl.fecdriver.IConnection;
 
 public class NoticeManagerImpl implements INoticeManager,
         IEventListener<NoticeBean>, Runnable {
@@ -95,9 +119,9 @@ public class NoticeManagerImpl implements INoticeManager,
 
     private static boolean DEBUG = false;
 
-    private final String subnetName;
+    private String subnetName;
 
-    private final IConnection conn;
+    private SAHelper saHelper;
 
     private final DatabaseManager dbMgr;
 
@@ -115,21 +139,14 @@ public class NoticeManagerImpl implements INoticeManager,
 
     private Long randomSeed;
 
-    private final SAHelper saHelper;
-
-    public NoticeManagerImpl(IConnection conn, CacheManager cacheMgr,
-            INoticeApi noticeApi, SAHelper saHelper) {
-        this.subnetName = conn.getConnectionDescription().getName();
-        this.conn = conn;
+    public NoticeManagerImpl(CacheManager cacheMgr, INoticeApi noticeApi) {
         this.dbMgr = cacheMgr.getDatabaseManager();
         this.processingService = cacheMgr.getProcessingService();
         this.cacheMgr = cacheMgr;
         this.noticeApi = noticeApi;
-        this.saHelper = saHelper;
         // FE will talk to STLConnection and STLConnection will call onNewEvent
         // below.
         this.queue = new ArrayBlockingQueue<NoticeBean[]>(1024);
-        this.conn.addNoticeListener(this);
     }
 
     @Override
@@ -164,7 +181,6 @@ public class NoticeManagerImpl implements INoticeManager,
         if (simulator != null) {
             simulator.stop();
         }
-        conn.removeNoticeListener(this);
     }
 
     /**
@@ -183,7 +199,6 @@ public class NoticeManagerImpl implements INoticeManager,
             // in the run() method and return here without processing the
             // rest. That's a clean way to stop this thread rather than
             // interrupting it.
-
             if (noticeData.length == 0) {
                 setShutdown(true);
                 return;
@@ -270,7 +285,7 @@ public class NoticeManagerImpl implements INoticeManager,
         // It's an asynchronous task so even though there is
         // processing speed difference between
         // NoticeSaveTask and NoticeProcessTask, we don't care.
-        NoticeProcessTask noticeProcessTask =
+        final NoticeProcessTask noticeProcessTask =
                 new NoticeProcessTask(subnetName, dbMgr, cacheMgr);
 
         // Note that the NoticeProcessTask runs in the serial
@@ -290,11 +305,20 @@ public class NoticeManagerImpl implements INoticeManager,
                             Future<Future<Boolean>> processResult) {
                         try {
                             Future<Boolean> dbFuture = processResult.get();
-                            noticeApi.addNewEventDescriptions(notices);
-
                             Boolean topologyChanged = dbFuture.get();
+                            // Special case for DBNodeCahce that the
+                            // Node distribution depends on nodes in DB.
+                            // So we must update after the DB
+                            // updatetopologyChanged.
+                            ((BaseCache) cacheMgr.acquireNodeCache())
+                                    .setCacheReady(false);
                             log.info("Topology changed as a result of processing notices: "
                                     + topologyChanged);
+                            // notify after DB is ready
+                            List<NoticeWrapper> noticeWrappers =
+                                    noticeProcessTask.getNoticeWrappers();
+                            noticeApi.addNewEventDescriptions(noticeWrappers
+                                    .toArray(new NoticeWrapper[0]));
                         } catch (InterruptedException e) {
                             log.error("notice process task was interrupted", e);
                         } catch (ExecutionException e) {
@@ -329,6 +353,8 @@ public class NoticeManagerImpl implements INoticeManager,
      */
     @Override
     public void run() {
+        this.saHelper = cacheMgr.getSAHelper();
+        this.subnetName = saHelper.getSubnetDescription().getName();
         // even before waiting for notice, update NOTICES table
         // to set 'processed' flag to true.
         initializeNotices();
@@ -375,7 +401,6 @@ public class NoticeManagerImpl implements INoticeManager,
         // System.out.println("Notice manager being shutdown");
         try {
             queue.put(shutdownNotice);
-            this.conn.removeNoticeListener(this);
         } catch (InterruptedException e) {
             log.error("BlockingQueue put operation exception: shutdown", e);
         }

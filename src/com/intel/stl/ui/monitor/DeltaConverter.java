@@ -35,19 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.3  2015/08/12 15:26:58  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.3  2015/08/17 18:53:40  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.1.2.2  2015/05/17 18:30:42  jijunwan
- *  Archive Log:    PR 127700 - Delta data on host performance display is accumulating
- *  Archive Log:    - corrected delta value calculation
- *  Archive Log:    - changed to display data/pkts rate rather than delta on chart and table
- *  Archive Log:    - updated chart unit to show rate
- *  Archive Log:    - renamed the following classes to reflect we are dealing with rate
- *  Archive Log:      DataChartRangeUpdater -> DataRateChartRangeUpdater
- *  Archive Log:      PacketChartRangeUpdater -> PacketRateChartRangeUpdater
- *  Archive Log:      DataChartScaleGroupManager -> DataRateChartScaleGroupManager
- *  Archive Log:      PacketChartScaleGroupManager -> PacketRateChartScaleGroupManager
+ *  Archive Log:    Revision 1.2  2015/06/25 21:39:35  jijunwan
+ *  Archive Log:    PR 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - finished fixing on this PR
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2015/05/14 17:43:07  jijunwan
  *  Archive Log:    PR 127700 - Delta data on host performance display is accumulating
@@ -94,7 +88,7 @@ public class DeltaConverter {
     public DeltaConverter(String name) {
         super();
         this.name = name;
-        // debug = name.equals("rxData");
+        // debug = name.equals("Received Packets Rate");
     }
 
     public synchronized Delta addValue(long cummValue, Date timestamp) {

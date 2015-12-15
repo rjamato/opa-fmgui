@@ -35,8 +35,28 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.1  2015/08/12 15:26:50  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.10  2015/08/18 14:29:41  jijunwan
+ *  Archive Log:    PR 130033 - Fix critical issues found by Klocwork or FindBugs
+ *  Archive Log:    - fixed null pointer issue
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/08/17 18:54:00  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/08/06 17:26:23  jijunwan
+ *  Archive Log:    PR 129825 - Topology summary doesn't catch down graded ports
+ *  Archive Log:    - improved to display "abnormal" ports
+ *  Archive Log:    - added undo navigation support
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/08/05 04:09:31  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on Topology Page
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/06/09 18:37:25  jijunwan
+ *  Archive Log:    PR 129069 - Incorrect Help action
+ *  Archive Log:    - moved help action from view to controller
+ *  Archive Log:    - only enable help button when we have HelpID
+ *  Archive Log:    - fixed incorrect HelpIDs
  *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/03/10 18:43:14  jypak
  *  Archive Log:    JavaHelp System introduced to enable online help.
@@ -110,7 +130,6 @@ import javax.swing.Icon;
 import net.engio.mbassy.bus.MBassador;
 
 import com.intel.stl.api.subnet.ISubnetApi;
-import com.intel.stl.ui.common.BaseSectionController;
 import com.intel.stl.ui.common.ICancelIndicator;
 import com.intel.stl.ui.common.ICardController;
 import com.intel.stl.ui.common.IProgressObserver;
@@ -122,9 +141,11 @@ import com.intel.stl.ui.configuration.view.PropertyVizStyle;
 import com.intel.stl.ui.framework.IAppEvent;
 import com.intel.stl.ui.main.Context;
 import com.intel.stl.ui.main.HelpAction;
+import com.intel.stl.ui.main.UndoHandler;
 import com.intel.stl.ui.model.PropertySet;
 import com.intel.stl.ui.model.SimplePropertyCategory;
 import com.intel.stl.ui.model.SimplePropertyGroup;
+import com.intel.stl.ui.monitor.tree.FVResourceNode;
 import com.intel.stl.ui.network.view.ResourceAllView;
 import com.intel.stl.ui.network.view.TopSummaryGroupPanel;
 import com.intel.stl.ui.publisher.CallbackAdapter;
@@ -132,9 +153,8 @@ import com.intel.stl.ui.publisher.CancellableCall;
 import com.intel.stl.ui.publisher.ICallback;
 import com.intel.stl.ui.publisher.SingleTaskManager;
 
-public class ResourceAllSection extends
-        BaseSectionController<ISectionListener, ResourceAllView> implements
-        IPropertyListener {
+public class ResourceAllSection extends ResourceSection<ResourceAllView>
+        implements IPropertyListener {
     private final String SUBNET_SUMMARY = STLConstants.K2063_OVERALL_SUMMARY
             .getValue();
 
@@ -151,6 +171,10 @@ public class ResourceAllSection extends
 
     private final SingleTaskManager taskMgr;
 
+    private FVResourceNode[] selectedResources;
+
+    protected UndoHandler undoHandler;
+
     public ResourceAllSection(ResourceAllView view,
             MBassador<IAppEvent> eventBus) {
         super(view, eventBus);
@@ -158,14 +182,58 @@ public class ResourceAllSection extends
         view.setInitialStyle(style.isShowBorder(), style.isAlternatRows());
         view.setStyleListener(this);
         taskMgr = new SingleTaskManager();
-
-        HelpAction helpAction = HelpAction.getInstance();
-        helpAction.getHelpBroker().enableHelpOnButton(view.getHelpButton(),
-                helpAction.getNameOfSubnet(), helpAction.getHelpSet());
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.BaseSectionController#getHelpID()
+     */
+    @Override
+    public String getHelpID() {
+        return HelpAction.getInstance().getNameOfSubnet();
+    }
+
+    @Override
     public void setContext(Context context, IProgressObserver observer) {
-        subnetApi = context.getSubnetApi();
+        if (context != null) {
+            subnetApi = context.getSubnetApi();
+            if (context.getController() != null) {
+                undoHandler = context.getController().getUndoHandler();
+            }
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.network.ResourceSection#setCurrentSubpage(java.lang.
+     * String)
+     */
+    @Override
+    public void setCurrentSubpage(String subpageName) {
+        // do nothing
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.network.ResourceSection#getPreviousSubpage()
+     */
+    @Override
+    public String getPreviousSubpage() {
+        return null;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.network.ResourceSection#getCurrentSubpage()
+     */
+    @Override
+    public String getCurrentSubpage() {
+        return null;
     }
 
     /*
@@ -178,9 +246,11 @@ public class ResourceAllSection extends
         return view;
     }
 
-    public void showAll(final String name, final Icon icon,
+    public void showAll(final FVResourceNode[] selectedResources,
+            final String name, final Icon icon,
             final TopologyTreeModel topArch, final TopGraph graph,
             final TopGraph fullGraph) {
+        this.selectedResources = selectedResources;
         CancellableCall<PropertySet<SimplePropertyGroup>> caller =
                 new CancellableCall<PropertySet<SimplePropertyGroup>>() {
                     @Override
@@ -208,20 +278,21 @@ public class ResourceAllSection extends
                     @Override
                     public void onDone(PropertySet<SimplePropertyGroup> result) {
                         view.setTitle(name, icon);
-                        updateMode(result);
+                        updateMode(selectedResources, result);
                     }
                 };
         taskMgr.submit(caller, callback);
     }
 
-    protected void updateMode(PropertySet<SimplePropertyGroup> model) {
+    protected void updateMode(FVResourceNode[] selResources,
+            PropertySet<SimplePropertyGroup> model) {
         this.model = model;
         view.clearPanel();
         for (SimplePropertyGroup group : model.getGroups()) {
             if (group.getGroupName() == SUBNET_SUMMARY) {
                 updateSubnetSummaryModel(group);
             } else if (group.getGroupName() == TOP_SUMMARY) {
-                updateTopSummaryModel(group);
+                updateTopSummaryModel(selResources, group);
             }
         }
         view.setModel(model);
@@ -233,6 +304,7 @@ public class ResourceAllSection extends
                         style);
         groupPanel.setModel(model);
 
+        groupPanel.enableHelp(true);
         HelpAction helpAction = HelpAction.getInstance();
         helpAction.getHelpBroker().enableHelpOnButton(
                 groupPanel.getHelpButton(), helpAction.getOverallSummary(),
@@ -248,11 +320,15 @@ public class ResourceAllSection extends
         return model;
     }
 
-    protected void updateTopSummaryModel(SimplePropertyGroup model) {
+    protected void updateTopSummaryModel(FVResourceNode[] selResources,
+            SimplePropertyGroup model) {
         TopSummaryGroupPanel groupPanel = new TopSummaryGroupPanel(style);
+
+        // help already set in the TopSummaryGroupController
         TopSummaryGroupController groupController =
-                new TopSummaryGroupController(groupPanel);
-        groupController.setModel(model);
+                new TopSummaryGroupController(groupPanel, eventBus, undoHandler);
+        groupController.setModel(selResources, model);
+
         view.addPropertyGroupPanel(groupPanel);
     }
 
@@ -286,7 +362,7 @@ public class ResourceAllSection extends
     @Override
     public void onShowBorder(boolean b) {
         style.setShowBorder(b);
-        updateMode(model);
+        updateMode(selectedResources, model);
     }
 
     /*
@@ -299,7 +375,7 @@ public class ResourceAllSection extends
     @Override
     public void onShowAlternation(boolean b) {
         style.setAlternateRows(b);
-        updateMode(model);
+        updateMode(selectedResources, model);
     }
 
     /*

@@ -35,8 +35,26 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.27.2.1  2015/08/12 15:22:01  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.32  2015/09/26 06:17:06  jijunwan
+ *  Archive Log:    130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
+ *  Archive Log:    - added reset to clear all caches and update DB topology
+ *  Archive Log:
+ *  Archive Log:    Revision 1.31  2015/09/08 15:58:49  jijunwan
+ *  Archive Log:    PR 130326 - Performance enhancement on "large" fabric
+ *  Archive Log:    - apply the SimpleCache on port cache
+ *  Archive Log:    - split port cache to cache active ports (NodeState) and port info separately
+ *  Archive Log:
+ *  Archive Log:    Revision 1.30  2015/08/17 18:48:53  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.29  2015/08/11 17:37:19  jijunwan
+ *  Archive Log:    PR 126645 - Topology Page does not show correct data after port disable/enable event
+ *  Archive Log:    - improved to get distribution data with argument "refresh". When it's true, calculate distribution rather than get it from cache
+ *  Archive Log:
+ *  Archive Log:    Revision 1.28  2015/05/07 14:08:33  jypak
+ *  Archive Log:    PR 128562 - Port Cache synchronization issue:
+ *  Archive Log:    Introduced a ConcurrentHashMap to replace the HashMap to avoid the ConcurrentModificationException.
  *  Archive Log:
  *  Archive Log:    Revision 1.27  2015/02/23 22:22:19  jijunwan
  *  Archive Log:    improved to include/exclude inactive nodes/links in query
@@ -140,16 +158,13 @@
 
 package com.intel.stl.api.subnet.impl;
 
-import java.lang.ref.SoftReference;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.intel.stl.api.NodeState;
 import com.intel.stl.api.StringUtils;
 import com.intel.stl.api.notice.impl.NoticeProcess;
 import com.intel.stl.api.subnet.NodeRecordBean;
@@ -158,19 +173,20 @@ import com.intel.stl.api.subnet.PortRecordBean;
 import com.intel.stl.api.subnet.SubnetDataNotFoundException;
 import com.intel.stl.api.subnet.impl.PortCacheImpl.PortArray;
 import com.intel.stl.common.STLMessages;
+import com.intel.stl.common.SimpleCache;
 import com.intel.stl.configuration.CacheManager;
 import com.intel.stl.configuration.MemoryCache;
 
-public class PortCacheImpl extends
-        MemoryCache<Map<Integer, SoftReference<PortArray>>> implements
-        PortCache {
+public class PortCacheImpl extends MemoryCache<SimpleCache<Integer, PortArray>>
+        implements PortCache {
+    private final SimpleCache<Integer, NodeState> portsStates;
+
+    private final SimpleCache<Integer, PortArray> portsCache;
 
     // distribution on all ports include the inactive ones
     private final AtomicReference<EnumMap<NodeType, Long>> portsTypeDist;
 
     private final AtomicReference<Long> subnetPrefix;
-
-    private final AtomicBoolean isPartialData;
 
     private final SAHelper helper;
 
@@ -178,87 +194,66 @@ public class PortCacheImpl extends
         super(cacheMgr);
         this.portsTypeDist = new AtomicReference<EnumMap<NodeType, Long>>(null);
         this.subnetPrefix = new AtomicReference<Long>(null);
-        this.isPartialData = new AtomicBoolean(true);
         this.helper = cacheMgr.getSAHelper();
+
+        portsCache = createPortsCache();
+        portsStates = createPortsStatesCache();
+    }
+
+    protected SimpleCache<Integer, PortArray> createPortsCache() {
+        return new SimpleCache<Integer, PortArray>(100, getTickResolution());
+    }
+
+    protected SimpleCache<Integer, NodeState> createPortsStatesCache() {
+        return new SimpleCache<Integer, NodeState>(5000, 10 * 60 * 1000);
     }
 
     @Override
     public List<PortRecordBean> getPorts() throws SubnetDataNotFoundException {
-        if (isPartialData.get()) {
-            // Do not let anybody acquire the cache until it's updated
-            setCacheReady(false);
-            updateCache();
-        }
-
-        Map<Integer, SoftReference<PortArray>> portsMap = getCachedObject();
-
-        if (!portsMap.isEmpty()) {
-            List<PortRecordBean> ports = new ArrayList<PortRecordBean>();
-            for (SoftReference<PortArray> lst : portsMap.values()) {
-                if (lst != null) {
-                    PortArray portArray = lst.get();
-                    if (portArray != null && portArray.getPorts() != null) {
-                        PortRecordBean[] portBeans = portArray.getPorts();
-                        for (PortRecordBean bean : portBeans) {
-                            if (bean != null) {
-                                ports.add(bean);
-                            }
-                        }
-                    }
-                }
+        try {
+            List<PortRecordBean> ports = helper.getPorts();
+            refresh(ports);
+            if (ports != null) {
+                return ports;
             }
-            return Collections.unmodifiableList(ports);
-        } else {
-            throw new SubnetDataNotFoundException(
-                    STLMessages.STL30062_PORT_NOT_FOUND_CACHE_ALL);
+        } catch (Exception e) {
+            throw SubnetApi.getSubnetException(e);
         }
+        throw new SubnetDataNotFoundException(
+                STLMessages.STL30062_PORT_NOT_FOUND_CACHE_ALL);
     }
 
     @Override
     public PortRecordBean getPortByPortNum(int lid, short portNum)
             throws SubnetDataNotFoundException {
-        Map<Integer, SoftReference<PortArray>> portsMap = getCachedObject();
-
-        boolean isRecentData = false;
-        if (!portsMap.isEmpty()) {
-            SoftReference<PortArray> portsRef = portsMap.get(lid);
-            if (portsRef != null) {
-                PortArray portArray = portsRef.get();
-                if (portArray != null) {
-                    isRecentData =
-                            portArray.isRecentRecord(getTickResolution());
-                    if (isRecentData) {
-                        PortRecordBean[] portBeans = portArray.getPorts();
-                        if (portNum < portBeans.length
-                                && portBeans[portNum] != null) {
-                            return portBeans[portNum];
+        PortArray portArray = portsCache.get(lid);
+        if (portArray != null) {
+            PortRecordBean res = portArray.getPort(portNum);
+            if (res != null) {
+                return res;
+            }
+        } else {
+            try {
+                List<PortRecordBean> ports = helper.getPorts(lid);
+                if (ports != null && !ports.isEmpty()) {
+                    short maxPort = 0;
+                    PortRecordBean res = null;
+                    for (PortRecordBean port : ports) {
+                        if (port.getPortNum() == portNum) {
+                            res = port;
+                        }
+                        if (port.getPortNum() > maxPort) {
+                            maxPort = port.getPortNum();
                         }
                     }
-                }
-            }
-        }
-
-        // might be a new active switch port
-        log.info("Couldn't find port Lid=" + StringUtils.intHexString(lid)
-                + " PortNum=" + portNum + " in cache");
-        if (isRecentData) {
-            throw new SubnetDataNotFoundException(
-                    STLMessages.STL30063_PORT_NOT_FOUND_CACHE,
-                    StringUtils.intHexString(lid), portNum);
-        }
-
-        try {
-            List<PortRecordBean> ports = helper.getPorts(lid);
-            if (ports != null && !ports.isEmpty()) {
-                partialRefresh(lid, ports);
-                for (PortRecordBean port : ports) {
-                    if (port.getPortNum() == portNum) {
-                        return port;
+                    portsCache.push(lid, new PortArray(ports, maxPort));
+                    if (res != null) {
+                        return res;
                     }
                 }
+            } catch (Exception e) {
+                throw SubnetApi.getSubnetException(e);
             }
-        } catch (Exception e) {
-            throw SubnetApi.getSubnetException(e);
         }
 
         throw new SubnetDataNotFoundException(
@@ -269,49 +264,34 @@ public class PortCacheImpl extends
     @Override
     public PortRecordBean getPortByLocalPortNum(int lid, short localPortNum)
             throws SubnetDataNotFoundException {
-        Map<Integer, SoftReference<PortArray>> portsMap = getCachedObject();
-
-        boolean isRecentData = false;
-        if (!portsMap.isEmpty()) {
-            SoftReference<PortArray> portsRef = portsMap.get(lid);
-            if (portsRef != null) {
-                PortArray portArray = portsRef.get();
-                if (portArray != null) {
-                    PortRecordBean[] portBeans = portArray.getPorts();
-                    isRecentData =
-                            portArray.isRecentRecord(getTickResolution());
-                    if (isRecentData) {
-                        for (PortRecordBean port : portBeans) {
-                            if (port != null
-                                    && port.getPortInfo().getLocalPortNum() == localPortNum) {
-                                return port;
-                            }
+        PortArray portArray = portsCache.get(lid);
+        if (portArray != null) {
+            PortRecordBean res = portArray.getPortByLocalPortNum(localPortNum);
+            if (res != null) {
+                return res;
+            }
+        } else {
+            try {
+                List<PortRecordBean> ports = helper.getPorts(lid);
+                if (ports != null && !ports.isEmpty()) {
+                    short maxPort = 0;
+                    PortRecordBean res = null;
+                    for (PortRecordBean port : ports) {
+                        if (port.getPortInfo().getLocalPortNum() == localPortNum) {
+                            res = port;
+                        }
+                        if (port.getPortNum() > maxPort) {
+                            maxPort = port.getPortNum();
                         }
                     }
-                }
-            }
-        }
-        // might be a new active HFI port
-        log.info("Couldn't find port Lid=" + lid + " LocaPortNum="
-                + localPortNum + " in cache");
-        if (isRecentData) {
-            throw new SubnetDataNotFoundException(
-                    STLMessages.STL30064_PORT_NOT_FOUND_CACHE_LOCAL, lid,
-                    localPortNum);
-        }
-
-        try {
-            List<PortRecordBean> ports = helper.getPorts(lid);
-            if (ports != null && !ports.isEmpty()) {
-                partialRefresh(lid, ports);
-                for (PortRecordBean port : ports) {
-                    if (port.getPortInfo().getLocalPortNum() == localPortNum) {
-                        return port;
+                    portsCache.push(lid, new PortArray(ports, maxPort));
+                    if (res != null) {
+                        return res;
                     }
                 }
+            } catch (Exception e) {
+                throw SubnetApi.getSubnetException(e);
             }
-        } catch (Exception e) {
-            throw SubnetApi.getSubnetException(e);
         }
 
         throw new SubnetDataNotFoundException(
@@ -321,69 +301,135 @@ public class PortCacheImpl extends
 
     @Override
     public boolean hasPort(int lid, short portNum) {
-        try {
-            PortRecordBean port = getPortByPortNum(lid, portNum);
-            return port != null;
-        } catch (Exception e) {
-            return false;
+        boolean res = false;
+        NodeState nodeState = portsStates.get(lid);
+        if (nodeState != null) {
+            res = nodeState.isActivePort(portNum);
+        } else {
+            try {
+                NodeCache nodeCache = cacheMgr.acquireNodeCache();
+                NodeRecordBean node = nodeCache.getNode(lid);
+                List<PortRecordBean> ports = helper.getPorts(lid);
+                if (ports != null && !ports.isEmpty()) {
+                    nodeState =
+                            new NodeState(node.getNodeType(), node
+                                    .getNodeInfo().getNumPorts());
+                    portsStates.push(lid, nodeState);
+                    for (PortRecordBean port : ports) {
+                        nodeState.setActivePort(port.getPortNum());
+                        if (port.getPortNum() == portNum) {
+                            res = true;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+
+        return res;
     }
 
     @Override
     public boolean hasLocalPort(int lid, short localPortNum) {
-        try {
-            PortRecordBean port = getPortByLocalPortNum(lid, localPortNum);
-            return port != null;
-        } catch (Exception e) {
-            return false;
+        boolean res = false;
+        NodeState nodeState = portsStates.get(lid);
+        if (nodeState != null) {
+            res = nodeState.isActivePort(localPortNum);
+        } else {
+            try {
+                NodeCache nodeCache = cacheMgr.acquireNodeCache();
+                NodeRecordBean node = nodeCache.getNode(lid);
+                List<PortRecordBean> ports = helper.getPorts(lid);
+                if (ports != null && !ports.isEmpty()) {
+                    nodeState =
+                            new NodeState(node.getNodeType(), node
+                                    .getNodeInfo().getNumPorts());
+                    portsStates.push(lid, nodeState);
+                    for (PortRecordBean port : ports) {
+                        short lpc = port.getPortInfo().getLocalPortNum();
+                        nodeState.setActivePort(lpc);
+                        if (lpc == localPortNum) {
+                            res = true;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+
+        return res;
     }
 
     @Override
-    public EnumMap<NodeType, Long> getPortsTypeDist(boolean countInternalMgrPort)
+    public EnumMap<NodeType, Long> getPortsTypeDist(
+            boolean countInternalMgrPort, boolean refresh)
             throws SubnetDataNotFoundException {
-        if (portsTypeDist.get() == null) {
-            EnumMap<NodeType, Long> portsTypeDistMap =
-                    new EnumMap<NodeType, Long>(NodeType.class);
-            NodeCache nodeCache = cacheMgr.acquireNodeCache();
+        if (refresh || portsTypeDist.get() == null) {
             List<PortRecordBean> ports = getPorts();
-            Map<Integer, NodeType> processed = new HashMap<Integer, NodeType>();
-            long desiredTotalPorts = 0;
-            long realTotalPorts = 0;
-            for (PortRecordBean port : ports) {
-                int lid = port.getEndPortLID();
-                NodeType type = processed.get(lid);
-                if (type == null) {
-                    NodeRecordBean node = nodeCache.getNode(lid);
-                    type = node.getNodeType();
-                    processed.put(lid, type);
-                    switch (type) {
-                        case SWITCH:
-                            desiredTotalPorts +=
-                                    node.getNodeInfo().getNumPorts();
-                            if (countInternalMgrPort) {
-                                desiredTotalPorts += 1;
-                            }
-                            break;
-                        case HFI:
-                            desiredTotalPorts += 1;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                if (countInternalMgrPort || type != NodeType.SWITCH
-                        || port.getPortNum() > 0) {
-                    Long count = portsTypeDistMap.get(type);
-                    portsTypeDistMap.put(type, count == null ? 1 : (count + 1));
-                    realTotalPorts += 1;
-                }
-            }
-            portsTypeDistMap.put(NodeType.OTHER, desiredTotalPorts
-                    - realTotalPorts);
-            portsTypeDist.set(portsTypeDistMap);
+            refresh(ports);
         }
         return portsTypeDist.get();
+    }
+
+    /**
+     * 
+     * <i>Description:</i> calculate ports type distribution with
+     * InternalMgrPort and update ports state cache
+     * 
+     * @param ports
+     * @return
+     * @throws SubnetDataNotFoundException
+     */
+    protected synchronized void refresh(List<PortRecordBean> ports)
+            throws SubnetDataNotFoundException {
+        if (ports == null) {
+            portsStates.clear();
+            portsTypeDist.set(null);
+            return;
+        }
+
+        NodeCache nodeCache = cacheMgr.acquireNodeCache();
+        EnumMap<NodeType, Long> portsTypeDistMap =
+                new EnumMap<NodeType, Long>(NodeType.class);
+        Map<Integer, NodeState> processed = new HashMap<Integer, NodeState>();
+        long desiredTotalPorts = 0;
+        long realTotalPorts = 0;
+        for (PortRecordBean port : ports) {
+            int lid = port.getEndPortLID();
+            NodeState state = processed.get(lid);
+            if (state == null) {
+                NodeRecordBean node = nodeCache.getNode(lid);
+                NodeType type = node.getNodeType();
+                state = new NodeState(type, node.getNodeInfo().getNumPorts());
+                processed.put(lid, state);
+                portsStates.push(lid, state);
+                switch (type) {
+                    case SWITCH:
+                        desiredTotalPorts +=
+                                node.getNodeInfo().getNumPorts() + 1;
+                        break;
+                    case HFI:
+                        desiredTotalPorts += 1;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            NodeType type = state.getType();
+            Long count = portsTypeDistMap.get(type);
+            portsTypeDistMap.put(type, count == null ? 1 : (count + 1));
+            realTotalPorts += 1;
+            if (type == NodeType.HFI) {
+                state.setActivePort(port.getPortInfo().getLocalPortNum());
+            } else {
+                state.setActivePort(port.getPortNum());
+            }
+        }
+        portsTypeDistMap
+                .put(NodeType.OTHER, desiredTotalPorts - realTotalPorts);
+        portsTypeDist.set(portsTypeDistMap);
     }
 
     @Override
@@ -406,82 +452,24 @@ public class PortCacheImpl extends
     }
 
     @Override
-    protected Map<Integer, SoftReference<PortArray>> retrieveObjectForCache()
+    protected SimpleCache<Integer, PortArray> retrieveObjectForCache()
             throws Exception {
-        Map<Integer, SoftReference<PortArray>> res;
-        List<PortRecordBean> ports = helper.getPorts();
-        if (ports == null) {
-            res = new HashMap<Integer, SoftReference<PortArray>>();
-        } else {
-            log.info("Retrieve " + ports.size() + " ports from FE");
-            Map<Integer, List<PortRecordBean>> portMap =
-                    new HashMap<Integer, List<PortRecordBean>>();
-            Map<Integer, Short> maxPortPerLid = new HashMap<Integer, Short>();
-            for (PortRecordBean port : ports) {
-                int lid = port.getEndPortLID();
-                List<PortRecordBean> lst = portMap.get(lid);
-                if (lst == null) {
-                    lst = new ArrayList<PortRecordBean>();
-                    portMap.put(lid, lst);
-                }
-                Short maxPort = maxPortPerLid.get(lid);
-                if (maxPort == null) {
-                    maxPort = 0;
-                    maxPortPerLid.put(lid, maxPort);
-                }
-                lst.add(port);
-                if (port.getPortNum() > maxPort) {
-                    maxPortPerLid.put(lid, port.getPortNum());
-                }
-            }
-            res =
-                    new HashMap<Integer, SoftReference<PortArray>>(
-                            portMap.size());
-            for (int lid : portMap.keySet()) {
-                PortArray portArray =
-                        new PortArray(res, lid, portMap.get(lid),
-                                maxPortPerLid.get(lid));
-                res.put(lid, new SoftReference<PortArray>(portArray));
-            }
-        }
-        isPartialData.set(false);
-        portsTypeDist.set(null);
-        return res;
+        // do not get ports here, we will do it when we really need it
+        return portsCache;
     }
 
-    /**
-     * <i>Description:</i> Given one subnet may have huge number of ports, it's
-     * too expensive to do a full refresh. Hence we support partial refresh
-     * here.
+    /*
+     * (non-Javadoc)
      * 
-     * @param lid
-     * @param newPorts
+     * @see com.intel.stl.configuration.MemoryCache#reset()
      */
-    protected void partialRefresh(int lid, List<PortRecordBean> newPorts) {
-
-        // Add original
-        Map<Integer, SoftReference<PortArray>> portsMap = getCachedObject();
-        Map<Integer, SoftReference<PortArray>> newPortsMap =
-                new HashMap<Integer, SoftReference<PortArray>>(portsMap);
-        // Add new ports to refresh or if it's null, remove it from
-        // memory cache.
-        if (newPorts != null) {
-            Short maxPort = 0;
-            for (PortRecordBean port : newPorts) {
-                if (port.getPortNum() > maxPort) {
-                    maxPort = port.getPortNum();
-                }
-            }
-            PortArray portArray =
-                    new PortArray(newPortsMap, lid, newPorts, maxPort);
-            newPortsMap.put(lid, new SoftReference<PortArray>(portArray));
-        } else {
-            newPortsMap.remove(lid);
-        }
-
-        setCachedObject(newPortsMap);
-        // force a update on type distribution
+    @Override
+    public void reset() {
+        super.reset();
+        portsStates.clear();
+        portsCache.clear();
         portsTypeDist.set(null);
+        subnetPrefix.set(null); // should be unnecessary
     }
 
     /**
@@ -491,7 +479,9 @@ public class PortCacheImpl extends
      */
     @Override
     public boolean refreshCache(NoticeProcess notice) throws Exception {
-        partialRefresh(notice.getLid(), notice.getPorts());
+        portsStates.remove(notice.getLid());
+        portsCache.remove(notice.getLid());
+        portsTypeDist.set(null);
         return true;
     }
 
@@ -501,49 +491,37 @@ public class PortCacheImpl extends
     }
 
     protected class PortArray {
-        private final Map<Integer, SoftReference<PortArray>> container;
-
-        private final int lid;
-
         private final PortRecordBean[] ports;
 
-        private final long timestamp;
-
-        public PortArray(Map<Integer, SoftReference<PortArray>> portMap,
-                int lid, List<PortRecordBean> beans, Short maxPort) {
-            container = portMap;
-            this.lid = lid;
+        public PortArray(List<PortRecordBean> beans, Short maxPort) {
             ports = new PortRecordBean[maxPort + 1];
             for (PortRecordBean bean : beans) {
                 ports[bean.getPortNum()] = bean;
             }
-            timestamp = System.currentTimeMillis();
         }
 
-        public PortRecordBean getPortRecordBean(short portNum) {
-            return ports[portNum];
+        public PortRecordBean getPort(short portNum) {
+            if (portNum < ports.length) {
+                return ports[portNum];
+            } else {
+                return null;
+            }
+        }
+
+        public PortRecordBean getPortByLocalPortNum(short localPortNum) {
+            for (PortRecordBean port : ports) {
+                if (port != null
+                        && port.getPortInfo().getLocalPortNum() == localPortNum) {
+                    return port;
+                }
+            }
+            return null;
         }
 
         public PortRecordBean[] getPorts() {
             return ports;
         }
 
-        public boolean isRecentRecord(long tolerance) {
-            return System.currentTimeMillis() - timestamp < tolerance;
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.lang.Object#finalize()
-         */
-        @Override
-        protected void finalize() throws Throwable {
-            // System.out.println("Release node " + lid);
-            container.remove(lid);
-            isPartialData.set(true);
-            super.finalize();
-        }
-
     }
+
 }

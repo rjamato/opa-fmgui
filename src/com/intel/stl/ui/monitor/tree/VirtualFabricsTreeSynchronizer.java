@@ -35,8 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.1  2015/08/12 15:27:10  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.8  2015/09/30 13:26:45  fisherma
+ *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/08/17 18:54:19  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/07/21 21:54:18  jijunwan
+ *  Archive Log:    added null check
  *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/04/09 03:33:41  jijunwan
  *  Archive Log:    updated to match FM 390
@@ -206,6 +213,10 @@ public class VirtualFabricsTreeSynchronizer extends TreeSynchronizer<String> {
     protected void updateNode(FVResourceNode node, FVResourceNode parent,
             List<ITreeMonitor> monitors, IProgressObserver observer) {
         List<VFConfigRspBean> vfConfig = perfApi.getVFConfig(node.getName());
+        if (vfConfig == null) {
+            return;
+        }
+
         Set<Integer> elements = new HashSet<Integer>();
         for (VFConfigRspBean bean : vfConfig) {
             int lid = bean.getPort().getNodeLid();
@@ -226,10 +237,10 @@ public class VirtualFabricsTreeSynchronizer extends TreeSynchronizer<String> {
             nodesUpdater.updateTree(node, members, monitors, observer);
         } else {
             FVResourceNode[] children =
-                    new FVResourceNode[node.getChildCount()];
-            int[] childIndex = new int[node.getChildCount()];
+                    new FVResourceNode[node.getModelChildCount()];
+            int[] childIndex = new int[node.getModelChildCount()];
             int index = 0;
-            while (node.getChildCount() > 0) {
+            while (node.getModelChildCount() > 0) {
                 childIndex[index] = index;
                 children[index++] = node.removeChild(0);
             }

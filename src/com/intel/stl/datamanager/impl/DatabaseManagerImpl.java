@@ -24,28 +24,45 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *  
+ * 
  *  Functional Group: Fabric Viewer Application
- *
+ * 
  *  File Name: DatabaseManagerImpl.java
- *
+ * 
  *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.41.2.2  2015/08/12 15:22:08  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.49  2015/09/02 15:56:22  fernande
+ *  Archive Log: PR 130220 - FM GUI "about" window displays unmatched version and build #. Passing the OPA FM version thru the manifest.
  *  Archive Log:
- *  Archive Log:    Revision 1.41.2.1  2015/05/06 19:27:43  jijunwan
- *  Archive Log:    fixed string compare issue found bu FindBugs
+ *  Archive Log: Revision 1.48  2015/08/19 19:27:16  fernande
+ *  Archive Log: PR 128703 - Fail over doesn't work on A0 Fabric. Adding shutdown method to AppComponent interface for application shutdown.
  *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
+ *  Archive Log: Revision 1.47  2015/08/18 21:04:27  fernande
+ *  Archive Log: PR 128703 - Fail over doesn't work on A0 Fabric. Fixed schema update because FE list is not copied over to new database
+ *  Archive Log:
+ *  Archive Log: Revision 1.46  2015/08/17 18:49:00  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - change backend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.45  2015/08/10 17:04:53  robertja
+ *  Archive Log: PR128974 - Email notification functionality.
+ *  Archive Log:
+ *  Archive Log: Revision 1.44  2015/07/09 18:53:33  fernande
+ *  Archive Log: PR 129447 - Database size increases a lot over a short period of time. Added purge function to delete GroupInfo records older than a specified timestamp
+ *  Archive Log:
+ *  Archive Log: Revision 1.43  2015/06/10 19:36:53  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: 
+ * 
  ******************************************************************************/
 
 package com.intel.stl.datamanager.impl;
@@ -175,6 +192,11 @@ public class DatabaseManagerImpl implements DatabaseManager, AppComponent {
     }
 
     @Override
+    public void shutdown() {
+        close();
+    }
+
+    @Override
     public void close() {
         try {
             if (scheduler != null) {
@@ -199,7 +221,7 @@ public class DatabaseManagerImpl implements DatabaseManager, AppComponent {
     @Override
     public void saveAppProperties(Map<String, Properties> appProperties) {
         AppInfo appInfo = engine.getAppInfo();
-        appInfo.setProperties(appProperties);
+        appInfo.setPropertiesMap(appProperties);
         engine.saveAppInfo(appInfo);
     }
 
@@ -714,6 +736,24 @@ public class DatabaseManagerImpl implements DatabaseManager, AppComponent {
     }
 
     @Override
+    public int purgeGroupInfos(final String subnetName, final long ago) {
+        DatabaseCall<Integer> call = new DatabaseCallImpl<Integer>() {
+
+            @Override
+            public Integer execute(DatabaseContext ctx) throws Exception {
+                GroupDAO groupDao = ctx.getGroupDAO();
+                int deleted =
+                        groupDao.purgeGroupInfos(ctx.getSubnet(subnetName), ago);
+
+                return deleted;
+            }
+
+        };
+        scheduler.enqueue(call);
+        return call.getResult();
+    }
+
+    @Override
     public void saveImageInfos(final String subnetName,
             final List<ImageInfoBean> imageInfoBeans) {
         DatabaseCall<Void> call = new DatabaseCallImpl<Void>() {
@@ -869,7 +909,6 @@ public class DatabaseManagerImpl implements DatabaseManager, AppComponent {
             throws AppConfigurationException {
         int schemaLevel = settings.getAppSchemaLevel();
         log.info(STL30010_STARTING_SCHEMA_UPDATE.getDescription(schemaLevel));
-        System.out.println("Updating schema...");
         if (appInfo == null) {
             appInfo = new AppInfo();
         }
@@ -883,9 +922,8 @@ public class DatabaseManagerImpl implements DatabaseManager, AppComponent {
             em.clear();
             em.close();
         } catch (Exception e) {
-            System.out
-                    .println("Could not retrieve previous database definitions: "
-                            + StringUtils.getErrorMessage(e));
+            log.error("Could not retrieve previous database definitions: "
+                    + StringUtils.getErrorMessage(e));
         }
 
         try {
@@ -921,11 +959,10 @@ public class DatabaseManagerImpl implements DatabaseManager, AppComponent {
                 }
             }
         } catch (Exception e) {
-            System.out.println("Could not save previous database definitions: "
-                    + StringUtils.getErrorMessage(e));
-            e.printStackTrace();
+            log.error("Could not save previous database definitions: "
+                    + StringUtils.getErrorMessage(e), e);
         }
-        System.out.println("Schema updated.");
+        log.info("Schema updated.");
     }
 
     private void saveAppInfo(AppInfo appInfo, AppSettings settings)
@@ -937,6 +974,7 @@ public class DatabaseManagerImpl implements DatabaseManager, AppComponent {
         appInfo.setAppVersion(settings.getAppVersion());
         appInfo.setAppRelease(settings.getAppRelease());
         appInfo.setAppModLevel(settings.getAppModLevel());
+        appInfo.setOpaFmVersion(settings.getOpaFmVersion());
         appInfo.setAppBuildId(settings.getAppBuildId());
         appInfo.setAppBuildDate(settings.getAppBuildDate());
         appInfo.setAppSchemaLevel(settings.getAppSchemaLevel());

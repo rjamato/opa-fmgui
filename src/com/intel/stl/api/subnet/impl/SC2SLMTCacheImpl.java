@@ -24,31 +24,49 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ * 
  *  Functional Group: Fabric Viewer Application
- *
+ * 
  *  File Name: SC2SLMTCacheImpl.java
- *
- *  Overview: 
- *
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.4  2015/10/01 17:37:10  jypak
+ *  Archive Log: PR 130608 - Changes made to SC2VL mapping is not reflected in FM GUI's SC2SL Mapping Table.
+ *  Archive Log: Each cache's refreshCache method is implemented to remove relevant cahce.
+ *  Archive Log:
+ *  Archive Log: Revision 1.3  2015/08/17 18:48:53  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - change backend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.2  2015/06/10 19:36:39  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
  *  @author: jypak
- *
+ * 
  ******************************************************************************/
-
 package com.intel.stl.api.subnet.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.intel.stl.api.notice.impl.NoticeProcess;
 import com.intel.stl.api.subnet.SC2SLMTRecordBean;
 import com.intel.stl.configuration.CacheManager;
 import com.intel.stl.configuration.MemoryCache;
 
-public class SC2SLMTCacheImpl extends MemoryCache<List<SC2SLMTRecordBean>>
-        implements SC2SLMTCache {
+public class SC2SLMTCacheImpl extends
+        MemoryCache<Map<Integer, SC2SLMTRecordBean>> implements SC2SLMTCache {
 
     private final SAHelper helper;
 
@@ -59,19 +77,36 @@ public class SC2SLMTCacheImpl extends MemoryCache<List<SC2SLMTRecordBean>>
 
     @Override
     public List<SC2SLMTRecordBean> getSC2SLMTs() {
-        List<SC2SLMTRecordBean> res = getCachedObject();
-        return res;
+        Map<Integer, SC2SLMTRecordBean> map = getCachedObject();
+
+        List<SC2SLMTRecordBean> res = new ArrayList<SC2SLMTRecordBean>();
+        if (map != null && !map.isEmpty()) {
+            for (SC2SLMTRecordBean sc2sl : map.values()) {
+                res.add(sc2sl);
+            }
+        }
+        if (!res.isEmpty()) {
+            return res;
+        } else {
+
+            // might be a new
+            try {
+                res = helper.getSC2SLMTs();
+                if (res != null) {
+                    setCacheReady(false); // Force a refresh on next call;
+                }
+                return res;
+            } catch (Exception e) {
+                throw SubnetApi.getSubnetException(e);
+            }
+        }
     }
 
     @Override
     public SC2SLMTRecordBean getSC2SLMT(int lid) {
-        List<SC2SLMTRecordBean> sc2slmts = getSC2SLMTs();
-        if (sc2slmts != null) {
-            for (SC2SLMTRecordBean sc2sl : sc2slmts) {
-                if (sc2sl.getLid() == lid) {
-                    return sc2sl;
-                }
-            }
+        Map<Integer, SC2SLMTRecordBean> map = getCachedObject();
+        if (map != null) {
+            return map.get(lid);
         }
 
         // might be a new node
@@ -90,11 +125,19 @@ public class SC2SLMTCacheImpl extends MemoryCache<List<SC2SLMTRecordBean>>
     }
 
     @Override
-    protected List<SC2SLMTRecordBean> retrieveObjectForCache() throws Exception {
-        List<SC2SLMTRecordBean> res = helper.getSC2SLMTs();
-        log.info("Retrieve " + (res == null ? 0 : res.size())
+    protected Map<Integer, SC2SLMTRecordBean> retrieveObjectForCache()
+            throws Exception {
+        List<SC2SLMTRecordBean> sc2sls = helper.getSC2SLMTs();
+        log.info("Retrieve " + (sc2sls == null ? 0 : sc2sls.size())
                 + " SC2SLMT Infos from FE");
-        return res;
+        Map<Integer, SC2SLMTRecordBean> map = null;
+        if (sc2sls != null) {
+            map = new HashMap<Integer, SC2SLMTRecordBean>();
+            for (SC2SLMTRecordBean sc2sl : sc2sls) {
+                map.put(sc2sl.getLid(), sc2sl);
+            }
+        }
+        return map;
     }
 
     /*
@@ -107,6 +150,10 @@ public class SC2SLMTCacheImpl extends MemoryCache<List<SC2SLMTRecordBean>>
     @Override
     public boolean refreshCache(NoticeProcess notice) throws Exception {
         // No notice applies to this cache
+        Map<Integer, SC2SLMTRecordBean> map = getCachedObject();
+        if (map != null && !map.isEmpty()) {
+            map.remove(notice.getLid());
+        }
         return true;
     }
 

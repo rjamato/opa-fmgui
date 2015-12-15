@@ -35,11 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.34.2.2  2015/08/12 15:22:29  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.37  2015/08/17 18:49:34  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.34.2.1  2015/05/06 19:28:16  jijunwan
- *  Archive Log:    fixed typo found by FindBugs
+ *  Archive Log:    Revision 1.36  2015/08/11 17:39:14  jijunwan
+ *  Archive Log:    PR 126645 - Topology Page does not show correct data after port disable/enable event
+ *  Archive Log:    - changed to copy active state as well when we copy a topology
  *  Archive Log:
  *  Archive Log:    Revision 1.35  2015/05/01 21:42:44  jijunwan
  *  Archive Log:    fixed typo found by FindBug.
@@ -1061,6 +1063,7 @@ public class SubnetDAOImpl extends BaseDAO implements SubnetDAO {
                     if (topoNode.getLid() != newNode.getLid()) {
                         topoNode.setLid(newNode.getLid());
                         topoNode.setLidChanged(true);
+                        topoNode.setActive(newNode.isActive());
                     }
                     found = true;
                     break;
@@ -1123,6 +1126,7 @@ public class SubnetDAOImpl extends BaseDAO implements SubnetDAO {
             newId.setTopologyNode(topoNode.getId().getTopologyNode());
             newTopoNode.setId(newId);
             newTopoNode.setLid(topoNode.getLid());
+            newTopoNode.setActive(topoNode.isActive());
             em.persist(newTopoNode);
             updates++;
             if (updates >= BATCH_SIZE) {

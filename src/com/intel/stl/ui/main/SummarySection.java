@@ -32,10 +32,27 @@
  *
  *  File Name: SummarySection.java
  *
- *  Archive Source: 
- *
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.18  2015/09/25 20:51:38  fernande
+ *  Archive Log: PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
  *  Archive Log:
- *
+ *  Archive Log: Revision 1.17  2015/08/17 18:53:38  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.16  2015/06/25 20:24:56  jijunwan
+ *  Archive Log: Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log: - applied pin framework on fabric viewer and simple 'static' cards
+ *  Archive Log:
+ *  Archive Log: Revision 1.15  2015/06/09 18:37:27  jijunwan
+ *  Archive Log: PR 129069 - Incorrect Help action
+ *  Archive Log: - moved help action from view to controller
+ *  Archive Log: - only enable help button when we have HelpID
+ *  Archive Log: - fixed incorrect HelpIDs
+ *  Archive Log:
+ * 
  *  Overview: 
  *
  *  @author: jijunwan
@@ -80,10 +97,16 @@ public class SummarySection extends
         healthHistoryCard =
                 new HealthHistoryCard(view.getHealthView(), eventBus);
         worstNodesCard = new WorstNodesCard(view.getWorstNodesView(), eventBus);
+    }
 
-        HelpAction helpAction = HelpAction.getInstance();
-        helpAction.getHelpBroker().enableHelpOnButton(view.getHelpButton(),
-                helpAction.getSubnetSummary(), helpAction.getHelpSet());
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.BaseSectionController#getHelpID()
+     */
+    @Override
+    public String getHelpID() {
+        return HelpAction.getInstance().getSubnetSummary();
     }
 
     /**
@@ -152,7 +175,7 @@ public class SummarySection extends
     public void updateHealthScore(TimedScore score) {
         if (score != null) {
             healthHistoryCard.updateHealthScore(score.getScore(), new Date(
-                    score.getTime()));
+                    score.getTime()), score.getTip());
         }
     }
 
@@ -186,9 +209,11 @@ public class SummarySection extends
         return this;
     }
 
-    // Push latest context to Health History Card to give it access
-    // to latest refresh rate.
     public void setContext(Context context) {
-        healthHistoryCard.updateContext(context);
+        // Push latest context to Health History Card to give it access
+        // to latest refresh rate.
+        healthHistoryCard.setContext(context);
+        statusCard.setContext(context);
+        worstNodesCard.setContext(context);
     }
 }

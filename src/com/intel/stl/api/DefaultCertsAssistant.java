@@ -35,8 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8.2.1  2015/08/12 15:21:59  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.11  2015/08/17 18:48:51  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/05/29 20:33:35  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Second wave of changes: the application can be switched between the old adapter and the new; moved out several initialization pieces out of objects constructor to allow subnet initialization with a UI in place; improved generics definitions for FV commands.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/05/26 15:32:38  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
  *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/04/06 21:12:01  fernande
  *  Archive Log:    Improving the handling of connection errors
@@ -99,7 +106,7 @@ import com.intel.stl.api.subnet.HostInfo;
 import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.common.STLMessages;
 
-public class DefaultCertsAssistant extends BaseCertsAssistant {
+public class DefaultCertsAssistant implements ICertsAssistant {
 
     public static final int MAX_TRIES = 5;
 
@@ -128,12 +135,17 @@ public class DefaultCertsAssistant extends BaseCertsAssistant {
     public SSLEngine getSSLEngine(SubnetDescription subnet) throws Exception {
         // HostInfo in the SubnetDescription may change during fail over, so it
         // must be retrieved from the description.
-        HostInfo hostInfo = subnet.getCurrentFE();
-        String host = hostInfo.getHost();
-        int port = hostInfo.getPort();
-        KeyManagerFactory kmf = getKeyManagerFactory(subnet);
-        TrustManagerFactory tmf = getTrustManagerFactory(subnet);
-        SSLEngine engine = createSSLEngine(host, port, kmf, tmf);
+        HostInfo host = subnet.getCurrentFE();
+        return getSSLEngine(host);
+    }
+
+    @Override
+    public SSLEngine getSSLEngine(HostInfo host) throws Exception {
+        String hostname = host.getHost();
+        int port = host.getPort();
+        KeyManagerFactory kmf = getKeyManagerFactory(host);
+        TrustManagerFactory tmf = getTrustManagerFactory(host);
+        SSLEngine engine = Utils.createSSLEngine(hostname, port, kmf, tmf);
         return engine;
     }
 
@@ -142,7 +154,11 @@ public class DefaultCertsAssistant extends BaseCertsAssistant {
         if (subnet == null) {
             return null;
         }
-        CertsDescription certs = subnet.getCurrentFE().getCertsDescription();
+        return getKeyManagerFactory(subnet.getCurrentFE());
+    }
+
+    public KeyManagerFactory getKeyManagerFactory(HostInfo host) {
+        CertsDescription certs = host.getCertsDescription();
         if (certs == null) {
             return null;
         }
@@ -155,7 +171,11 @@ public class DefaultCertsAssistant extends BaseCertsAssistant {
         if (subnet == null) {
             return null;
         }
-        CertsDescription certs = subnet.getCurrentFE().getCertsDescription();
+        return getTrustManagerFactory(subnet.getCurrentFE());
+    }
+
+    public TrustManagerFactory getTrustManagerFactory(HostInfo host) {
+        CertsDescription certs = host.getCertsDescription();
         if (certs == null) {
             return null;
         }
@@ -227,8 +247,9 @@ public class DefaultCertsAssistant extends BaseCertsAssistant {
             KeyManagerFactory kmf = null;
             try {
                 kmf =
-                        getKeyManagerFactory(currCerts.get().getKeyStoreFile(),
-                                currCerts.get().getKeyStorePwd());
+                        Utils.createKeyManagerFactory(currCerts.get()
+                                .getKeyStoreFile(), currCerts.get()
+                                .getKeyStorePwd());
                 this.kmf = kmf;
             } catch (Exception e) {
                 errors.add(e);
@@ -240,7 +261,7 @@ public class DefaultCertsAssistant extends BaseCertsAssistant {
             TrustManagerFactory tmf = null;
             try {
                 tmf =
-                        getTrustManagerFactory(currCerts.get()
+                        Utils.createTrustManagerFactory(currCerts.get()
                                 .getTrustStoreFile(), currCerts.get()
                                 .getTrustStorePwd());
                 this.tmf = tmf;

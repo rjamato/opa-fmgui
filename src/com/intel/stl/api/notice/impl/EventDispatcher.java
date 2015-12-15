@@ -35,8 +35,22 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6.2.1  2015/08/12 15:22:21  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.10  2015/08/17 18:49:13  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/07/19 21:14:23  jijunwan
+ *  Archive Log:    PR 129578 - Event table entries dont obviously correspond to log file
+ *  Archive Log:    - added event to log file at info level
+ *  Archive Log:    - improved toString for EventDescription and PortSource
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/06/18 21:05:21  fernande
+ *  Archive Log:    PR 128977 Application log needs to support multi-subnet. -  Deleting non used file HostSelector.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/05/12 17:37:33  rjtierne
+ *  Archive Log:    PR 128623 - Klocwork and FindBugs fixes for backend
+ *  Archive Log:    Synchronized blocks in addEvents(), cleanup(), and run() did not modify
+ *  Archive Log:    any mutable state. Now synchronizing on mutex instead of "this" (FindBugs: Naked Notify).
  *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/02/10 19:29:46  fernande
  *  Archive Log:    SubnetContext are now created after a successful connection is made to the Fabric Executive, otherwise a SubnetConnectionException is triggered. Also, waitForConnect has been postponed until the UI invokes SubnetContext.initialize (thru Context.initialize). This way the UI shows up faster and the UI progress bar reflects more closely the process.
@@ -68,10 +82,12 @@ package com.intel.stl.api.notice.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import com.intel.stl.api.notice.EventDescription;
 import com.intel.stl.api.notice.IEventListener;
@@ -79,6 +95,8 @@ import com.intel.stl.api.notice.IEventListener;
 public class EventDispatcher extends Thread {
     private final static Logger log = LoggerFactory
             .getLogger(EventDispatcher.class);
+
+    private final Object mutex = new Object();
 
     private boolean stop = false;
 
@@ -88,10 +106,11 @@ public class EventDispatcher extends Thread {
     private final List<IEventListener<EventDescription>> eventListeners =
             new CopyOnWriteArrayList<IEventListener<EventDescription>>();
 
+    private Map<String, String> loggingContextMap;
+
     public void addEvents(List<EventDescription> newEvents) {
         if (newEvents == null || newEvents.isEmpty()) {
             return;
-
         }
 
         try {
@@ -99,8 +118,8 @@ public class EventDispatcher extends Thread {
                 events.addAll(newEvents);
             }
         } finally {
-            synchronized (this) {
-                notify();
+            synchronized (mutex) {
+                mutex.notify();
             }
         }
 
@@ -135,8 +154,8 @@ public class EventDispatcher extends Thread {
         synchronized (events) {
             events.clear();
         }
-        synchronized (this) {
-            notify();
+        synchronized (mutex) {
+            mutex.notify();
         }
     }
 
@@ -147,6 +166,9 @@ public class EventDispatcher extends Thread {
      */
     @Override
     public void run() {
+        if (loggingContextMap != null) {
+            MDC.setContextMap(loggingContextMap);
+        }
         log.info("Notice EventDispather '" + getName() + "' started");
         stop = false;
         while (!stop) {
@@ -156,22 +178,29 @@ public class EventDispatcher extends Thread {
                 events.clear();
             }
             if (toProcess != null && toProcess.length > 0) {
+                for (EventDescription event : toProcess) {
+                    log.info("Notify event: " + event);
+                }
                 for (IEventListener<EventDescription> listener : eventListeners) {
                     listener.onNewEvent(toProcess);
                 }
             } else {
-                synchronized (this) {
+                synchronized (mutex) {
                     try {
                         if (!stop) {
-                            wait();
+                            mutex.wait();
                         }
                     } catch (InterruptedException e) {
-                        log.warn("EventDispatcher interrupted!");
+                        log.warn("Notice EventDispatcher interrupted!");
                     }
                 }
             }
         }
         log.info("Notice EventDispather '" + getName() + "' stopped");
+    }
+
+    public void setLoggingContextMap(Map<String, String> loggingContextMap) {
+        this.loggingContextMap = loggingContextMap;
     }
 
 }

@@ -35,8 +35,27 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7.2.1  2015/08/12 15:26:58  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.12  2015/08/17 18:53:40  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/08/04 23:00:34  jijunwan
+ *  Archive Log:    PR 129821 - connectivity table has no Link Width Down Grade data
+ *  Archive Log:    - added related data to data table
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/07/17 15:40:33  rjtierne
+ *  Archive Log:    PR 129547 - Need to add Node type and lid to the Connectivity
+ *  Archive Log:    - Added node type to the class attributes to be displayed in the connectivity table
+ *  Archive Log:    - nodeLidValue was already available and just had to be used by ConnectivityTableModel#getValueAt()
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/07/13 21:57:00  rjtierne
+ *  Archive Log:    PR 129355 - Ability to click on cables to get cable info
+ *  Archive Log:    - Added the cableInfo attribute to the connectivity table data
+ *  Archive Log:    - Changed deviceName to nodeName to reflect text on table displayed
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/06/01 15:01:17  jypak
+ *  Archive Log:    PR 128823 - Improve performance tables to include all portcounters fields.
+ *  Archive Log:    All port counters fields added to performance table and connectivity table.
  *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/02/26 20:07:36  fisherma
  *  Archive Log:    Changes to display Link Quality data to port's Performance tab and switch/port configuration table.
@@ -73,6 +92,7 @@ import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.intel.stl.api.StringUtils;
+import com.intel.stl.api.subnet.NodeType;
 import com.intel.stl.ui.common.STLConstants;
 
 public class ConnectivityTableData implements Serializable {
@@ -86,17 +106,21 @@ public class ConnectivityTableData implements Serializable {
 
     private final int nodeLidValue;
 
+    private final NodeType nodeType;
+
     private final short portNumValue;
 
     private boolean slowLinkState;
 
     private final boolean isNeighbor;
 
-    private String deviceName;
+    private String nodeName;
 
     private final String nodeGUID;
 
     private String portNumber;
+
+    private String cableInfo;
 
     private String linkState; // TODO Don't know where to get this
 
@@ -108,6 +132,14 @@ public class ConnectivityTableData implements Serializable {
 
     private String supportedLinkWidth;
 
+    private String activeLinkWidthDnGrdTx;
+
+    private String activeLinkWidthDnGrdRx;
+
+    private String enabledLinkWidthDnGrd;
+
+    private String supportedLinkWidthDnGrd;
+
     private String activeLinkSpeed;
 
     private String enabledLinkSpeed;
@@ -117,15 +149,16 @@ public class ConnectivityTableData implements Serializable {
     private final AtomicReference<PerformanceData> performance;
 
     private int linkQuality;
-    
+
     /**
      * Description:
      * 
      */
     public ConnectivityTableData(int nodeLid, long nodeGuidValue,
-            short portNumValue, boolean isNeighbor) {
+            NodeType nodeType, short portNumValue, boolean isNeighbor) {
         super();
         this.nodeLidValue = nodeLid;
+        this.nodeType = nodeType;
         this.nodeGuidValue = nodeGuidValue;
         this.portNumValue = portNumValue;
         this.isNeighbor = isNeighbor;
@@ -162,16 +195,16 @@ public class ConnectivityTableData implements Serializable {
     /**
      * @return the deviceName
      */
-    public String getDeviceName() {
-        return deviceName;
+    public String getNodeName() {
+        return nodeName;
     }
 
     /**
-     * @param deviceName
+     * @param nodeName
      *            the deviceName to set
      */
-    public void setDeviceName(String deviceName) {
-        this.deviceName = deviceName;
+    public void setNodeName(String nodeName) {
+        this.nodeName = nodeName;
     }
 
     /**
@@ -179,6 +212,13 @@ public class ConnectivityTableData implements Serializable {
      */
     public int getNodeLidValue() {
         return nodeLidValue;
+    }
+
+    /**
+     * @return the nodeType
+     */
+    public NodeType getNodeType() {
+        return nodeType;
     }
 
     /**
@@ -200,6 +240,23 @@ public class ConnectivityTableData implements Serializable {
      */
     public short getPortNumValue() {
         return portNumValue;
+    }
+
+    /**
+     * 
+     * @return the cableInfo
+     */
+    public String getCableInfo() {
+        return cableInfo;
+    }
+
+    /**
+     * 
+     * @param cableInfo
+     *            - the cableInfo to set
+     */
+    public void setCableInfo(String cableInfo) {
+        this.cableInfo = cableInfo;
     }
 
     /**
@@ -278,6 +335,66 @@ public class ConnectivityTableData implements Serializable {
     }
 
     /**
+     * @return the activeLinkWidthDnGrdTx
+     */
+    public String getActiveLinkWidthDnGrdTx() {
+        return activeLinkWidthDnGrdTx;
+    }
+
+    /**
+     * @param activeLinkWidthDnGrdTx
+     *            the activeLinkWidthDnGrdTx to set
+     */
+    public void setActiveLinkWidthDnGrdTx(String activeLinkWidthDnGrdTx) {
+        this.activeLinkWidthDnGrdTx = activeLinkWidthDnGrdTx;
+    }
+
+    /**
+     * @return the activeLinkWidthDnGrdRx
+     */
+    public String getActiveLinkWidthDnGrdRx() {
+        return activeLinkWidthDnGrdRx;
+    }
+
+    /**
+     * @param activeLinkWidthDnGrdRx
+     *            the activeLinkWidthDnGrdRx to set
+     */
+    public void setActiveLinkWidthDnGrdRx(String activeLinkWidthDnGrdRx) {
+        this.activeLinkWidthDnGrdRx = activeLinkWidthDnGrdRx;
+    }
+
+    /**
+     * @return the enabledLinkWidthDnGrd
+     */
+    public String getEnabledLinkWidthDnGrd() {
+        return enabledLinkWidthDnGrd;
+    }
+
+    /**
+     * @param enabledLinkWidthDnGrd
+     *            the enabledLinkWidthDnGrd to set
+     */
+    public void setEnabledLinkWidthDnGrd(String enabledLinkWidthDnGrd) {
+        this.enabledLinkWidthDnGrd = enabledLinkWidthDnGrd;
+    }
+
+    /**
+     * @return the supportedLinkWidthDnGrd
+     */
+    public String getSupportedLinkWidthDnGrd() {
+        return supportedLinkWidthDnGrd;
+    }
+
+    /**
+     * @param supportedLinkWidthDnGrd
+     *            the supportedLinkWidthDnGrd to set
+     */
+    public void setSupportedLinkWidthDnGrd(String supportedLinkWidthDnGrd) {
+        this.supportedLinkWidthDnGrd = supportedLinkWidthDnGrd;
+    }
+
+    /**
      * @return the activeLinkSpeed
      */
     public String getActiveLinkSpeed() {
@@ -329,23 +446,27 @@ public class ConnectivityTableData implements Serializable {
     public void setPerformanceData(PerformanceData perfData) {
         performance.set(perfData);
     }
-    
-    public void setLinkQualityData(int linkQuality){
-    	this.linkQuality = linkQuality;
+
+    public void setLinkQualityData(int linkQuality) {
+        this.linkQuality = linkQuality;
     }
-    
-    public int getLinkQualityData(){
+
+    public int getLinkQualityData() {
         return linkQuality;
     }
 
     public void clear() {
         slowLinkState = false;
-        deviceName = "";
+        nodeName = "";
         linkState = "";
         physicalLinkState = "";
         activeLinkWidth = "";
         enabledLinkWidth = "";
         supportedLinkWidth = "";
+        activeLinkWidthDnGrdTx = "";
+        activeLinkWidthDnGrdRx = "";
+        enabledLinkWidthDnGrd = "";
+        supportedLinkWidthDnGrd = "";
         activeLinkSpeed = "";
         enabledLinkSpeed = "";
         supportedLinkSpeed = "";
@@ -406,6 +527,10 @@ public class ConnectivityTableData implements Serializable {
 
         private long rxPackets;
 
+        private long portXmitData;
+
+        private long portRcvData;
+
         private long numSymbolErrors; // TODO Don't know where to get this
 
         private long numLinkRecoveries; // TODO Don't know where to get this
@@ -429,6 +554,32 @@ public class ConnectivityTableData implements Serializable {
         private long rxConstraints;
 
         private long vl15Dropped; // TODO Don't know where to get this
+
+        private long fmConfigErrors;
+
+        private long portMulticastRcvPkts;
+
+        private long portRcvFECN;
+
+        private long portRcvBECN;
+
+        private long portRcvBubble;
+
+        private long portMulticastXmitPkts;
+
+        private long portXmitWait;
+
+        private long portXmitTimeCong;
+
+        private long portXmitWastedBW;
+
+        private long portXmitWaitData;
+
+        private long portMarkFECN;
+
+        private short uncorrectableErrors; // unsigned byte
+
+        private long swPortCongestion;
 
         /**
          * @return the tx32BitWords
@@ -670,6 +821,231 @@ public class ConnectivityTableData implements Serializable {
             this.vl15Dropped = vl15Dropped;
         }
 
+        /**
+         * @return the portXmitData
+         */
+        public long getPortXmitData() {
+            return portXmitData;
+        }
+
+        /**
+         * @return the portRcvData
+         */
+        public long getPortRcvData() {
+            return portRcvData;
+        }
+
+        /**
+         * @return the fmConfigErrors
+         */
+        public long getFmConfigErrors() {
+            return fmConfigErrors;
+        }
+
+        /**
+         * @return the portMulticastRcvPkts
+         */
+        public long getPortMulticastRcvPkts() {
+            return portMulticastRcvPkts;
+        }
+
+        /**
+         * @return the portRcvFECN
+         */
+        public long getPortRcvFECN() {
+            return portRcvFECN;
+        }
+
+        /**
+         * @return the portRcvBECN
+         */
+        public long getPortRcvBECN() {
+            return portRcvBECN;
+        }
+
+        /**
+         * @return the portRcvBubble
+         */
+        public long getPortRcvBubble() {
+            return portRcvBubble;
+        }
+
+        /**
+         * @return the portMulticastXmitPkts
+         */
+        public long getPortMulticastXmitPkts() {
+            return portMulticastXmitPkts;
+        }
+
+        /**
+         * @return the portXmitWait
+         */
+        public long getPortXmitWait() {
+            return portXmitWait;
+        }
+
+        /**
+         * @return the portXmitTimeCong
+         */
+        public long getPortXmitTimeCong() {
+            return portXmitTimeCong;
+        }
+
+        /**
+         * @return the portXmitWastedBW
+         */
+        public long getPortXmitWastedBW() {
+            return portXmitWastedBW;
+        }
+
+        /**
+         * @return the portXmitWaitData
+         */
+        public long getPortXmitWaitData() {
+            return portXmitWaitData;
+        }
+
+        /**
+         * @return the portMarkFECN
+         */
+        public long getPortMarkFECN() {
+            return portMarkFECN;
+        }
+
+        /**
+         * @return the uncorrectableErrors
+         */
+        public short getUncorrectableErrors() {
+            return uncorrectableErrors;
+        }
+
+        /**
+         * @return the swPortCongestion
+         */
+        public long getSwPortCongestion() {
+            return swPortCongestion;
+        }
+
+        /**
+         * @param portXmitData
+         *            the portXmitData to set
+         */
+        public void setPortXmitData(long portXmitData) {
+            this.portXmitData = portXmitData;
+        }
+
+        /**
+         * @param portRcvData
+         *            the portRcvData to set
+         */
+        public void setPortRcvData(long portRcvData) {
+            this.portRcvData = portRcvData;
+        }
+
+        /**
+         * @param fmConfigErrors
+         *            the fmConfigErrors to set
+         */
+        public void setFmConfigErrors(long fmConfigErrors) {
+            this.fmConfigErrors = fmConfigErrors;
+        }
+
+        /**
+         * @param portMulticastRcvPkts
+         *            the portMulticastRcvPkts to set
+         */
+        public void setPortMulticastRcvPkts(long portMulticastRcvPkts) {
+            this.portMulticastRcvPkts = portMulticastRcvPkts;
+        }
+
+        /**
+         * @param portRcvFECN
+         *            the portRcvFECN to set
+         */
+        public void setPortRcvFECN(long portRcvFECN) {
+            this.portRcvFECN = portRcvFECN;
+        }
+
+        /**
+         * @param portRcvBECN
+         *            the portRcvBECN to set
+         */
+        public void setPortRcvBECN(long portRcvBECN) {
+            this.portRcvBECN = portRcvBECN;
+        }
+
+        /**
+         * @param portRcvBubble
+         *            the portRcvBubble to set
+         */
+        public void setPortRcvBubble(long portRcvBubble) {
+            this.portRcvBubble = portRcvBubble;
+        }
+
+        /**
+         * @param portMulticastXmitPkts
+         *            the portMulticastXmitPkts to set
+         */
+        public void setPortMulticastXmitPkts(long portMulticastXmitPkts) {
+            this.portMulticastXmitPkts = portMulticastXmitPkts;
+        }
+
+        /**
+         * @param portXmitWait
+         *            the portXmitWait to set
+         */
+        public void setPortXmitWait(long portXmitWait) {
+            this.portXmitWait = portXmitWait;
+        }
+
+        /**
+         * @param portXmitTimeCong
+         *            the portXmitTimeCong to set
+         */
+        public void setPortXmitTimeCong(long portXmitTimeCong) {
+            this.portXmitTimeCong = portXmitTimeCong;
+        }
+
+        /**
+         * @param portXmitWastedBW
+         *            the portXmitWastedBW to set
+         */
+        public void setPortXmitWastedBW(long portXmitWastedBW) {
+            this.portXmitWastedBW = portXmitWastedBW;
+        }
+
+        /**
+         * @param portXmitWaitData
+         *            the portXmitWaitData to set
+         */
+        public void setPortXmitWaitData(long portXmitWaitData) {
+            this.portXmitWaitData = portXmitWaitData;
+        }
+
+        /**
+         * @param portMarkFECN
+         *            the portMarkFECN to set
+         */
+        public void setPortMarkFECN(long portMarkFECN) {
+            this.portMarkFECN = portMarkFECN;
+        }
+
+        /**
+         * @param uncorrectableErrors
+         *            the uncorrectableErrors to set
+         */
+        public void setUncorrectableErrors(short uncorrectableErrors) {
+            this.uncorrectableErrors = uncorrectableErrors;
+        }
+
+        /**
+         * @param swPortCongestion
+         *            the swPortCongestion to set
+         */
+        public void setSwPortCongestion(long swPortCongestion) {
+            this.swPortCongestion = swPortCongestion;
+        }
+
         public void clear() {
             tx32BitWords = 0;
             rx32BitWords = 0;
@@ -687,6 +1063,19 @@ public class ConnectivityTableData implements Serializable {
             txConstraints = 0;
             rxConstraints = 0;
             vl15Dropped = 0;
+            fmConfigErrors = 0;
+            portMulticastRcvPkts = 0;
+            portRcvFECN = 0;
+            portRcvBECN = 0;
+            portRcvBubble = 0;
+            portMulticastXmitPkts = 0;
+            portXmitWait = 0;
+            portXmitTimeCong = 0;
+            portXmitWastedBW = 0;
+            portXmitWaitData = 0;
+            portMarkFECN = 0;
+            uncorrectableErrors = 0;
+            swPortCongestion = 0;
         }
     }
 

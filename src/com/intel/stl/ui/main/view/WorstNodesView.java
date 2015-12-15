@@ -24,6 +24,40 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: WorstNodesView.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.16  2015/08/17 18:54:02  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.15  2015/08/07 19:00:23  jijunwan
+ *  Archive Log: PR 129679 - Worst Nodes 'More...' button not working correctly
+ *  Archive Log: - removed "more" button
+ *  Archive Log: - improved to put nodes in a scroll pane so we needn't more button any more
+ *  Archive Log:
+ *  Archive Log: Revision 1.14  2015/06/25 20:24:57  jijunwan
+ *  Archive Log: Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log: - applied pin framework on fabric viewer and simple 'static' cards
+ *  Archive Log:
+ *  Archive Log: Revision 1.13  2015/06/10 19:58:57  jijunwan
+ *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: jijunwan
+ * 
+ ******************************************************************************/
 package com.intel.stl.ui.main.view;
 
 import java.awt.Component;
@@ -41,16 +75,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-
-import org.jdesktop.swingx.JXHyperlink;
 
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UIConstants;
@@ -71,7 +104,7 @@ public class WorstNodesView extends JCardView<IWorstNodesListener> implements
     // Fixed interval value close to typical ClickInterval on Windows platform
     // Needed to work around bug in JDK on Mac OS X.
     private static int clickInterval = 200;
-    
+
     private final static String NODE_SCORE = "NodeScore";
 
     public static final int NUM_NODES = 10;
@@ -80,7 +113,7 @@ public class WorstNodesView extends JCardView<IWorstNodesListener> implements
 
     private JPanel nodesPanel;
 
-    private JXHyperlink moreBtn;
+    // private JXHyperlink moreBtn;
 
     private final WorstNodePopup popupComp;
 
@@ -102,17 +135,18 @@ public class WorstNodesView extends JCardView<IWorstNodesListener> implements
      */
     public WorstNodesView() {
         super(STLConstants.K0106_WORST_NODES.getValue());
-        
+
         try {
-        	clickInterval = ((Integer) Toolkit
-                    .getDefaultToolkit().getDesktopProperty("awt.multiClickInterval")).intValue();
+            clickInterval =
+                    ((Integer) Toolkit.getDefaultToolkit().getDesktopProperty(
+                            "awt.multiClickInterval")).intValue();
         } catch (Exception e) {
-                // On some platforms this property is not set in AWT, so
-                // continue execution with initially set value of 200
-                System.err.println("awt.multiClickInterval is not available on " 
-                                   + System.getProperty("os.name"));
-        } 
-        
+            // On some platforms this property is not set in AWT, so
+            // continue execution with initially set value of 200
+            System.err.println("awt.multiClickInterval is not available on "
+                    + System.getProperty("os.name"));
+        }
+
         // this is unnecessary, but can stop klocwork from complaining
         getMainComponent();
         factory = PopupFactory.getSharedInstance();
@@ -126,7 +160,7 @@ public class WorstNodesView extends JCardView<IWorstNodesListener> implements
      * @see com.intel.hpc.stl.ui.common.JCard#getMainPanel()
      */
     @Override
-    protected JPanel getMainComponent() {
+    protected JComponent getMainComponent() {
         if (mainPanel != null) {
             return mainPanel;
         }
@@ -144,27 +178,31 @@ public class WorstNodesView extends JCardView<IWorstNodesListener> implements
         JPanel panel = getNodesPanel();
         mainPanel.add(panel, gc);
 
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.insets = new Insets(2, 1, 5, 5);
-        gc.weightx = 0;
-        gc.weighty = 0;
-        moreBtn =
-                new JXHyperlink(new AbstractAction(
-                        STLConstants.K0036_MORE.getValue()) {
-                    private static final long serialVersionUID =
-                            4612692450375442721L;
+        // gc.fill = GridBagConstraints.NONE;
+        // gc.anchor = GridBagConstraints.EAST;
+        // gc.insets = new Insets(2, 1, 5, 5);
+        // gc.weightx = 0;
+        // gc.weighty = 0;
+        // moreBtn =
+        // new JXHyperlink(new AbstractAction(
+        // STLConstants.K0036_MORE.getValue()) {
+        // private static final long serialVersionUID =
+        // 4612692450375442721L;
+        //
+        // @Override
+        // public void actionPerformed(ActionEvent e) {
+        // listener.onMore();
+        // }
+        //
+        // });
+        // moreBtn.setUnclickedColor(UIConstants.INTEL_BLUE);
+        // mainPanel.add(moreBtn, gc);
 
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        listener.onMore();
-                    }
-
-                });
-        moreBtn.setUnclickedColor(UIConstants.INTEL_BLUE);
-        mainPanel.add(moreBtn, gc);
-
-        return mainPanel;
+        JScrollPane pane = new JScrollPane(mainPanel);
+        pane.getViewport().getView().setBackground(getBackground());
+        pane.setBorder(BorderFactory.createEmptyBorder(2, 0, 5, 0));
+        pane.setPreferredSize(new Dimension(10, 10));
+        return pane;
     }
 
     /*
@@ -268,6 +306,7 @@ public class WorstNodesView extends JCardView<IWorstNodesListener> implements
         gc.weighty = 1;
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.CENTER;
+        gc.insets = new Insets(2, 0, 2, 0);
         for (int i = 0; i < nodes.length; i++) {
             NodeScore node = nodes[i];
             JLabel label = new JLabel(node.getIcon());
@@ -316,8 +355,8 @@ public class WorstNodesView extends JCardView<IWorstNodesListener> implements
                     ((i + 1) % columns == 0) ? GridBagConstraints.REMAINDER : 1;
             nodesPanel.add(label, gc);
         }
-        validate();
-        repaint();
+        nodesPanel.validate();
+        nodesPanel.repaint();
     }
 
     @Override

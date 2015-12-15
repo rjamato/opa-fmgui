@@ -35,8 +35,22 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.18.2.1  2015/08/12 15:26:50  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.22  2015/08/17 18:54:00  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.21  2015/08/07 14:57:55  jypak
+ *  Archive Log:    PR 129397 -gaps in cableinfo output and handling.
+ *  Archive Log:    Updates on the formats of the cableinfo output and also new enums were defined for different output values.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.20  2015/08/06 17:26:23  jijunwan
+ *  Archive Log:    PR 129825 - Topology summary doesn't catch down graded ports
+ *  Archive Log:    - improved to display "abnormal" ports
+ *  Archive Log:    - added undo navigation support
+ *  Archive Log:
+ *  Archive Log:    Revision 1.19  2015/08/05 04:09:31  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on Topology Page
  *  Archive Log:
  *  Archive Log:    Revision 1.18  2015/02/18 19:32:02  jijunwan
  *  Archive Log:    PR 127102 - Overall summary of Switches under Topology page does not report correct number of switch ports
@@ -143,8 +157,10 @@ public class ResourceController {
 
     private ResourceLinkSection pathSubpageCard;
 
-    private Map<ResourceScopeType, Object> cards =
-            new HashMap<ResourceScopeType, Object>();
+    private Map<ResourceScopeType, ResourceSection<?>> cards =
+            new HashMap<ResourceScopeType, ResourceSection<?>>();
+
+    private ResourceScopeType currentResourceType;
 
     private final MBassador<IAppEvent> eventBus;
 
@@ -155,7 +171,7 @@ public class ResourceController {
         this.view.initializeViews(cards);
     }
 
-    protected Map<ResourceScopeType, Object> getCards() {
+    protected Map<ResourceScopeType, ResourceSection<?>> getCards() {
         allCard =
                 new ResourceAllSection(new ResourceAllView(
                         STLConstants.K1033_TOP_OVERVIEW.getValue()), eventBus);
@@ -183,51 +199,58 @@ public class ResourceController {
     }
 
     public void setContext(Context context, IProgressObserver observer) {
-        IProgressObserver[] subObservers = observer.createSubObservers(4);
+        IProgressObserver[] subObservers =
+                observer.createSubObservers(cards.size());
         // Pass the context to the cards for this view
-        ((ResourceAllSection) cards.get(ResourceScopeType.ALL)).setContext(
-                context, subObservers[0]);
-        subObservers[0].onFinish();
-        ((ResourceNodeSection) cards.get(ResourceScopeType.NODE)).setContext(
-                context, subObservers[1]);
-        subObservers[1].onFinish();
-        ((ResourceLinkSection) cards.get(ResourceScopeType.LINK)).setContext(
-                context, subObservers[2]);
-        subObservers[2].onFinish();
-        ((ResourceLinkSection) cards.get(ResourceScopeType.PATH)).setContext(
-                context, subObservers[3]);
-        subObservers[3].onFinish();
+        int i = 0;
+        for (ResourceSection<?> card : cards.values()) {
+            card.setContext(context, subObservers[i]);
+            subObservers[i++].onFinish();
+        }
     }
 
-    public void showAll(final String name, final Icon icon,
+    public void showAll(final FVResourceNode[] selectedResources,
+            final String name, final Icon icon,
             final TopologyTreeModel topArch, final TopGraph graph) {
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
+                currentResourceType = ResourceScopeType.ALL;
                 // Clear subpages on all other views
                 pathSubpageCard.clearSubpages();
                 linkSubpageCard.clearSubpages();
 
-                view.showLayout(ResourceScopeType.ALL);
-                ((ResourceAllSection) cards.get(ResourceScopeType.ALL))
-                        .showAll(name, icon, topArch, graph, graph);
+                view.showLayout(currentResourceType);
+                ResourceAllSection resourceAllSelection =
+                        (ResourceAllSection) cards.get(currentResourceType);
+                if (resourceAllSelection != null) {
+                    resourceAllSelection.showAll(selectedResources, name, icon,
+                            topArch, graph, graph);
+                }
             }
         });
     }
 
-    public void showGroup(final String name, final Icon icon,
+    public void showGroup(final FVResourceNode[] selectedResources,
+            final String name, final Icon icon,
             final TopologyTreeModel topArch, final TopGraph graph,
             final TopGraph fullGraph) {
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
+                currentResourceType = ResourceScopeType.ALL;
                 // Clear subpages on all other views
                 pathSubpageCard.clearSubpages();
                 linkSubpageCard.clearSubpages();
 
-                view.showLayout(ResourceScopeType.ALL);
-                ((ResourceAllSection) cards.get(ResourceScopeType.ALL))
-                        .showAll(name, icon, topArch, graph, fullGraph);
+                view.showLayout(currentResourceType);
+
+                ResourceAllSection resourceAllSelection =
+                        (ResourceAllSection) cards.get(currentResourceType);
+                if (resourceAllSelection != null) {
+                    resourceAllSelection.showAll(selectedResources, name, icon,
+                            topArch, graph, fullGraph);
+                }
             }
         });
     }
@@ -236,13 +259,18 @@ public class ResourceController {
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
+                currentResourceType = ResourceScopeType.NODE;
                 // Clear subpages on all other views
                 pathSubpageCard.clearSubpages();
                 linkSubpageCard.clearSubpages();
 
-                view.showLayout(ResourceScopeType.NODE);
-                ((ResourceNodeSection) cards.get(ResourceScopeType.NODE))
-                        .showNode(source, node);
+                view.showLayout(currentResourceType);
+
+                ResourceNodeSection resourceNodeSection =
+                        (ResourceNodeSection) cards.get(currentResourceType);
+                if (resourceNodeSection != null) {
+                    resourceNodeSection.showNode(source, node);
+                }
             }
         });
     }
@@ -251,12 +279,17 @@ public class ResourceController {
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
+                currentResourceType = ResourceScopeType.LINK;
                 // Clear subpages on all other views
                 pathSubpageCard.clearSubpages();
 
-                view.showLayout(ResourceScopeType.LINK);
-                ((ResourceLinkSection) cards.get(ResourceScopeType.LINK))
-                        .showLinks(links);
+                view.showLayout(currentResourceType);
+
+                ResourceLinkSection resourceLinkSection =
+                        (ResourceLinkSection) cards.get(currentResourceType);
+                if (resourceLinkSection != null) {
+                    resourceLinkSection.showLinks(links);
+                }
             }
         });
     }
@@ -265,12 +298,17 @@ public class ResourceController {
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
+                currentResourceType = ResourceScopeType.PATH;
                 // Clear subpages on all other views
                 linkSubpageCard.clearSubpages();
 
-                view.showLayout(ResourceScopeType.PATH);
-                ((ResourceLinkSection) cards.get(ResourceScopeType.PATH))
-                        .showPath(traceMap);
+                view.showLayout(currentResourceType);
+
+                ResourceLinkSection resourceLinkSection =
+                        (ResourceLinkSection) cards.get(currentResourceType);
+                if (resourceLinkSection != null) {
+                    resourceLinkSection.showPath(traceMap);
+                }
             }
         });
     }
@@ -279,4 +317,30 @@ public class ResourceController {
         return this.view;
     }
 
+    /**
+     * <i>Description:</i>
+     * 
+     * @param subpageName
+     */
+    public void setCurrentSubpage(String subpageName) {
+        for (ResourceSection<?> rs : cards.values()) {
+            rs.setCurrentSubpage(subpageName);
+        }
+    }
+
+    public String getPreviousSubpage() {
+        ResourceSection<?> rs = cards.get(currentResourceType);
+        if (rs != null) {
+            return rs.getPreviousSubpage();
+        }
+        return null;
+    }
+
+    public String getCurrentSubpage() {
+        ResourceSection<?> rs = cards.get(currentResourceType);
+        if (rs != null) {
+            return rs.getCurrentSubpage();
+        }
+        return null;
+    }
 }

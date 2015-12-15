@@ -35,8 +35,16 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.11.2.1  2015/08/12 15:26:34  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.14  2015/08/17 18:53:38  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.13  2015/08/10 17:30:41  robertja
+ *  Archive Log:    PR 128974 - Email notification functionality.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.12  2015/06/10 19:24:48  rjtierne
+ *  Archive Log:    PR 128975 - Can not setup application log
+ *  Archive Log:    Changed references of List<AppenderConfig> to LoggingConfiguration
  *  Archive Log:
  *  Archive Log:    Revision 1.11  2015/03/31 19:54:54  fisherma
  *  Archive Log:    Added method to get app info for the about dialog.
@@ -84,9 +92,9 @@ package com.intel.stl.ui.main;
 
 import java.util.List;
 
-import com.intel.stl.api.configuration.AppenderConfig;
 import com.intel.stl.api.configuration.ConfigurationException;
 import com.intel.stl.api.configuration.IConfigurationApi;
+import com.intel.stl.api.configuration.LoggingConfiguration;
 import com.intel.stl.api.configuration.UserNotFoundException;
 import com.intel.stl.api.configuration.UserSettings;
 import com.intel.stl.api.performance.PMConfigBean;
@@ -136,9 +144,9 @@ public interface ISubnetManager {
 
     void cleanup();
 
-    void saveLoggingConfiguration(List<AppenderConfig> appenders);
+    void saveLoggingConfiguration(LoggingConfiguration loggingConfig);
 
-    List<AppenderConfig> getLoggingConfig();
+    LoggingConfiguration getLoggingConfig();
 
     public String getHostIp(String hostName) throws SubnetConnectionException;
 
@@ -150,5 +158,20 @@ public interface ISubnetManager {
     public void clearSubnetFactories(SubnetDescription subnet);
 
     public IConfigurationApi getConfigurationApi();
+
+    /**
+     * <i>Description:</i>
+     * 
+     * @param subnetName
+     * @return
+     */
+    SubnetDescription getSubnet(String subnetName);
+
+    /**
+     * <i>Description: Send test email to addresses listed in recipients.</i>
+     * 
+     * @param recipients
+     */
+    void onEmailTest(String recipients);
 
 }

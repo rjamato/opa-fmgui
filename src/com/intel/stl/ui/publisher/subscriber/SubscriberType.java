@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:26:39  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.3  2015/08/17 18:53:39  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/08/11 14:10:34  jijunwan
+ *  Archive Log:    PR 129917 - No update on event statistics
+ *  Archive Log:    - Added a new subscriber to allow periodically getting state summary
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2015/02/02 15:36:15  rjtierne
  *  Archive Log:    Initial Version
@@ -50,14 +55,14 @@
 package com.intel.stl.ui.publisher.subscriber;
 
 public enum SubscriberType {
-
     PORT_COUNTER(0),
     VF_PORT_COUNTER(1),
     GROUP_INFO(2),
     VF_INFO(3),
     IMAGE_INFO(4),
     FOCUS_PORTS(5),
-    VF_FOCUS_PORTS(6);
+    VF_FOCUS_PORTS(6),
+    EVENT(7);
 
     private final int id;
 

@@ -35,8 +35,17 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:22:14  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/08/17 18:49:46  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/08/17 17:33:04  jijunwan
+ *  Archive Log:    PR 128973 - Deploy FM conf changes on all SMs
+ *  Archive Log:    - fixed typo on interface name IApplicationManagement
+ *  Archive Log:    - improved management to maintain changes and be able apply changes on another FM ocnf file
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/07/28 18:20:27  fisherma
+ *  Archive Log:    PR 129219 - Admin page login dialog improvement.
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2015/03/25 19:10:03  jijunwan
  *  Archive Log:    first version of VirtualFabric support
@@ -55,8 +64,10 @@ import static com.intel.stl.api.management.XMLConstants.VIRTUAL_FABRIC;
 import static com.intel.stl.api.management.XMLConstants.VIRTUAL_FABRICS;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
@@ -101,6 +112,8 @@ public class VirtualFabricManagement implements IVirtualFabricManagement {
 
     private final FMConfHelper confHelp;
 
+    private final Set<String> changes = new HashSet<String>();
+
     /**
      * Description:
      * 
@@ -134,7 +147,7 @@ public class VirtualFabricManagement implements IVirtualFabricManagement {
     public List<VirtualFabric> getVirtualFabrics()
             throws VirtualFabricException {
         try {
-            File confFile = confHelp.getConfFile(false);
+            File confFile = confHelp.getConfFile();
             VirtualFabrics vfs = unmarshal(confFile);
             log.info("Fetch " + vfs.getVFs().size()
                     + " Device Groups from host '" + confHelp.getHost() + "'");
@@ -157,7 +170,7 @@ public class VirtualFabricManagement implements IVirtualFabricManagement {
     public VirtualFabric getVirtualFabric(String name)
             throws VirtualFabricException {
         try {
-            File confFile = confHelp.getConfFile(false);
+            File confFile = confHelp.getConfFile();
             VirtualFabrics vfs = unmarshal(confFile);
             return vfs.getVF(name);
         } catch (Exception e) {
@@ -205,10 +218,11 @@ public class VirtualFabricManagement implements IVirtualFabricManagement {
     public void addVirtualFabric(VirtualFabric vf)
             throws VirtualFabricException {
         try {
-            File confFile = confHelp.getConfFile(false);
+            File confFile = confHelp.getConfFile();
             uniqueNameCheck(null, vf.getName());
             addVirtualFabric(confFile, confFile, vf);
             log.info("Added Virtual Fabric " + vf);
+            changes.add(vf.getName());
         } catch (Exception e) {
             throw createVirtualFabricException(STLMessages.STL63022_ADD_VF_ERR,
                     e, vf.getName(), confHelp.getHost(),
@@ -255,9 +269,10 @@ public class VirtualFabricManagement implements IVirtualFabricManagement {
     @Override
     public void removeVirtualFabric(String name) throws VirtualFabricException {
         try {
-            File confFile = confHelp.getConfFile(false);
+            File confFile = confHelp.getConfFile();
             removeVirtualFabric(confFile, confFile, name);
             log.info("Removed application '" + name + "'");
+            changes.add(name);
         } catch (Exception e) {
             throw createVirtualFabricException(
                     STLMessages.STL63023_REMOVE_VF_ERR, e, name,
@@ -298,13 +313,15 @@ public class VirtualFabricManagement implements IVirtualFabricManagement {
     public void updateVirtualFabric(String oldName, VirtualFabric vf)
             throws VirtualFabricException {
         try {
-            File confFile = confHelp.getConfFile(false);
+            File confFile = confHelp.getConfFile();
             if (!oldName.equals(vf.getName())) {
                 VirtualFabrics groups = unmarshal(confFile);
                 uniqueNameCheck(groups, vf.getName());
             }
             updateVirtualFabric(confFile, confFile, oldName, vf, false);
             log.info("Updated Virtual Fabric " + vf);
+            changes.add(oldName);
+            changes.add(vf.getName());
         } catch (Exception e) {
             throw createVirtualFabricException(
                     STLMessages.STL63024_UPDATE_VF_ERR, e, vf.getName(),
@@ -324,9 +341,11 @@ public class VirtualFabricManagement implements IVirtualFabricManagement {
     public void addOrUpdateVirtualFabric(String oldName, VirtualFabric vf)
             throws VirtualFabricException {
         try {
-            File confFile = confHelp.getConfFile(false);
+            File confFile = confHelp.getConfFile();
             updateVirtualFabric(confFile, confFile, oldName, vf, true);
             log.info("Added or updated Virtual Fabric " + vf);
+            changes.add(oldName);
+            changes.add(vf.getName());
         } catch (Exception e) {
             throw createVirtualFabricException(
                     STLMessages.STL63025_ADDUPDATE_VF_ERR, e, vf.getName(),
@@ -369,7 +388,7 @@ public class VirtualFabricManagement implements IVirtualFabricManagement {
     protected void uniqueNameCheck(VirtualFabrics vfs, String name)
             throws Exception {
         if (vfs == null) {
-            File confFile = confHelp.getConfFile(false);
+            File confFile = confHelp.getConfFile();
             vfs = unmarshal(confFile);
         }
         for (VirtualFabric group : vfs.getVFs()) {
@@ -398,5 +417,36 @@ public class VirtualFabricManagement implements IVirtualFabricManagement {
     protected VirtualFabricException createVirtualFabricException(IMessage msg,
             Throwable error, Object... args) {
         return new VirtualFabricException(msg, error, args);
+    }
+
+    /**
+     * 
+     * <i>Description:</i>
+     * 
+     * @return the names of the VF changed
+     */
+    public Set<String> getChanges() {
+        return changes;
+    }
+
+    public void resetChanges() {
+        changes.clear();
+    }
+
+    public void applyChangesTo(VirtualFabricManagement target)
+            throws VirtualFabricException {
+        List<VirtualFabric> vfs = getVirtualFabrics();
+        Map<String, VirtualFabric> map = new HashMap<String, VirtualFabric>();
+        for (VirtualFabric vf : vfs) {
+            map.put(vf.getName(), vf);
+        }
+        for (String change : changes) {
+            VirtualFabric cur = map.get(change);
+            if (cur == null) {
+                target.removeVirtualFabric(change);
+            } else {
+                target.addOrUpdateVirtualFabric(change, cur);
+            }
+        }
     }
 }

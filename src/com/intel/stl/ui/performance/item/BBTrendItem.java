@@ -35,8 +35,22 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:26:55  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/08/17 18:53:43  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/06/30 22:28:49  jijunwan
+ *  Archive Log:    PR 129215 - Need short chart name to support pin capability
+ *  Archive Log:    - introduced short name to performance items
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/06/25 20:42:13  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improved PerformanceItem to support port counters
+ *  Archive Log:    - improved PerformanceItem to use generic ISource to describe data source
+ *  Archive Log:    - improved PerformanceItem to use enum DataProviderName to describe data provider name
+ *  Archive Log:    - improved PerformanceItem to support creating a copy of PerformanceItem
+ *  Archive Log:    - improved TrendItem to share scale with other charts
+ *  Archive Log:    - improved SimpleDataProvider to support hsitory data
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2015/01/30 04:12:58  jijunwan
  *  Archive Log:    PR 126775 - "Bubble" error metric graph is not being plotted even though "opatop" shows bubble errors
@@ -59,16 +73,17 @@ package com.intel.stl.ui.performance.item;
 
 import com.intel.stl.api.performance.ErrStatBean;
 import com.intel.stl.ui.common.STLConstants;
-import com.intel.stl.ui.monitor.TreeNodeType;
+import com.intel.stl.ui.performance.GroupSource;
 import com.intel.stl.ui.performance.observer.ErrorDataObserver;
 import com.intel.stl.ui.performance.observer.VFErrorDataObserver;
 import com.intel.stl.ui.performance.provider.CombinedGroupInfoProvider;
 import com.intel.stl.ui.performance.provider.CombinedVFInfoProvider;
+import com.intel.stl.ui.performance.provider.DataProviderName;
 
 /**
  * Bubble Errors Trend
  */
-public class BBTrendItem extends TrendItem {
+public class BBTrendItem extends TrendItem<GroupSource> {
 
     /**
      * Description:
@@ -86,7 +101,12 @@ public class BBTrendItem extends TrendItem {
      * @param maxDataPoints
      */
     public BBTrendItem(int maxDataPoints) {
-        super(STLConstants.K0487_BUBBLE_ERROR.getValue(), maxDataPoints);
+        super(STLConstants.K0861_SHORT_BUBBLE_TREND.getValue(),
+                STLConstants.K0876_BUBBLE_TREND.getValue(), maxDataPoints);
+    }
+
+    public BBTrendItem(BBTrendItem item) {
+        super(item);
     }
 
     @Override
@@ -98,8 +118,7 @@ public class BBTrendItem extends TrendItem {
                 return error.getErrorMaximums().getBubbleErrors();
             }
         };
-        registerDataProvider(TreeNodeType.DEVICE_GROUP.name(), provider,
-                observer);
+        registerDataProvider(DataProviderName.PORT_GROUP, provider, observer);
 
         CombinedVFInfoProvider vfProvider = new CombinedVFInfoProvider();
         VFErrorDataObserver vfObserver = new VFErrorDataObserver(this) {
@@ -108,7 +127,17 @@ public class BBTrendItem extends TrendItem {
                 return error.getErrorMaximums().getBubbleErrors();
             }
         };
-        registerDataProvider(TreeNodeType.VIRTUAL_FABRIC.name(), vfProvider,
+        registerDataProvider(DataProviderName.VIRTUAL_FABRIC, vfProvider,
                 vfObserver);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.performance.item.IPerformanceItem#copy()
+     */
+    @Override
+    public IPerformanceItem<GroupSource> copy() {
+        return new BBTrendItem(this);
     }
 }

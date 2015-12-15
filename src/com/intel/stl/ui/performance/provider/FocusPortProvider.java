@@ -35,8 +35,18 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6.2.1  2015/08/12 15:27:14  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.8  2015/08/17 18:54:06  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/06/25 20:42:14  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improved PerformanceItem to support port counters
+ *  Archive Log:    - improved PerformanceItem to use generic ISource to describe data source
+ *  Archive Log:    - improved PerformanceItem to use enum DataProviderName to describe data provider name
+ *  Archive Log:    - improved PerformanceItem to support creating a copy of PerformanceItem
+ *  Archive Log:    - improved TrendItem to share scale with other charts
+ *  Archive Log:    - improved SimpleDataProvider to support hsitory data
  *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/02/02 15:38:26  rjtierne
  *  Archive Log:    New TaskScheduler architecture; now employs subscribers to submit
@@ -70,16 +80,18 @@
 package com.intel.stl.ui.performance.provider;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 import com.intel.stl.api.performance.FocusPortsRspBean;
 import com.intel.stl.api.subnet.Selection;
+import com.intel.stl.ui.performance.GroupSource;
 import com.intel.stl.ui.publisher.ICallback;
 import com.intel.stl.ui.publisher.Task;
 import com.intel.stl.ui.publisher.subscriber.FocusPortCounterSubscriber;
 import com.intel.stl.ui.publisher.subscriber.SubscriberType;
 
 public class FocusPortProvider extends
-        SimpleDataProvider<List<FocusPortsRspBean>> {
+        SimpleDataProvider<List<FocusPortsRspBean>, GroupSource> {
 
     private final Selection selection;
 
@@ -105,9 +117,9 @@ public class FocusPortProvider extends
      * .lang.String)
      */
     @Override
-    protected List<FocusPortsRspBean> refresh(String sourceName) {
-        return scheduler.getPerformanceApi().getFocusPorts(sourceName,
-                selection, range);
+    protected List<FocusPortsRspBean> refresh(GroupSource sourceName) {
+        return scheduler.getPerformanceApi().getFocusPorts(
+                sourceName.getGroup(), selection, range);
     }
 
     /*
@@ -118,14 +130,14 @@ public class FocusPortProvider extends
      * com.intel.stl.ui.publisher.ICallback)
      */
     @Override
-    protected Task<List<FocusPortsRspBean>> registerTask(String sourceName,
-            ICallback<List<FocusPortsRspBean>> callback) {
+    protected Task<List<FocusPortsRspBean>> registerTask(
+            GroupSource sourceName, ICallback<List<FocusPortsRspBean>> callback) {
 
         FocusPortCounterSubscriber focusPortCounterSubscriber =
                 (FocusPortCounterSubscriber) scheduler
                         .getSubscriber(SubscriberType.FOCUS_PORTS);
-        return focusPortCounterSubscriber.registerFocusPorts(sourceName,
-                selection, range, callback);
+        return focusPortCounterSubscriber.registerFocusPorts(
+                sourceName.getGroup(), selection, range, callback);
     }
 
     /*
@@ -143,6 +155,19 @@ public class FocusPortProvider extends
                 (FocusPortCounterSubscriber) scheduler
                         .getSubscriber(SubscriberType.FOCUS_PORTS);
         focusPortCounterSubscriber.deregisterFocusPorts(task, callback);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.performance.provider.SimpleDataProvider#initHistory(
+     * java.lang.String, com.intel.stl.ui.publisher.ICallback)
+     */
+    @Override
+    protected Future<Void> initHistory(GroupSource sourceName,
+            ICallback<List<FocusPortsRspBean>[]> callback) {
+        throw new UnsupportedOperationException();
     }
 
 }

@@ -35,8 +35,17 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.26.2.1  2015/08/12 15:27:16  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.29  2015/08/17 18:54:24  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.28  2015/08/05 04:04:48  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on Performance Page
+ *  Archive Log:
+ *  Archive Log:    Revision 1.27  2015/06/22 13:11:53  jypak
+ *  Archive Log:    PR 128980 - Be able to search devices by name or lid.
+ *  Archive Log:    New feature added to enable search devices by name, lid or node guid. The search results are displayed as a tree and when a result node from the tree is selected, original tree is expanded and the corresponding node is highlighted.
  *  Archive Log:
  *  Archive Log:    Revision 1.26  2015/04/10 20:19:04  fernande
  *  Archive Log:    Changed TopologyView to be passed two background services (graphService and outlineService) which now reside in FabricController and can be properly shutdown when an error occurs.
@@ -148,15 +157,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.EnumMap;
-import java.util.Enumeration;
 
-import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -171,9 +174,8 @@ import javax.swing.tree.TreePath;
 
 import com.intel.stl.ui.common.IBackgroundService;
 import com.intel.stl.ui.common.UIConstants;
-import com.intel.stl.ui.common.UIImages;
 import com.intel.stl.ui.common.Util;
-import com.intel.stl.ui.common.view.ComponentFactory;
+import com.intel.stl.ui.common.view.IntelSplitPaneUI;
 import com.intel.stl.ui.monitor.TreeTypeEnum;
 import com.intel.stl.ui.monitor.tree.FVResourceNode;
 import com.intel.stl.ui.monitor.tree.FVTreeModel;
@@ -182,7 +184,8 @@ import com.intel.stl.ui.monitor.tree.FVTreeModel;
  * @author tierney
  * 
  */
-public abstract class TreeView extends JPanel implements TreeViewInterface {
+public abstract class TreeView extends JPanel implements TreeViewInterface,
+        IStack {
 
     private static final long serialVersionUID = 849119323304459300L;
 
@@ -201,6 +204,8 @@ public abstract class TreeView extends JPanel implements TreeViewInterface {
     protected final IBackgroundService graphService;
 
     protected final IBackgroundService outlineService;
+
+    private SearchView searchView;
 
     /**
      * 
@@ -235,7 +240,9 @@ public abstract class TreeView extends JPanel implements TreeViewInterface {
         JSplitPane splpnTree = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splpnTree.setMinimumSize(new Dimension(250, 300));
         splpnTree.setResizeWeight(.8);
-        splpnTree.setDividerSize(5);
+        splpnTree.setDividerSize(15);
+        splpnTree.setUI(new IntelSplitPaneUI());
+        splpnTree.setOneTouchExpandable(true);
 
         // Create the tree panel
         mPnlTree = new JPanel(new GridBagLayout());
@@ -263,16 +270,8 @@ public abstract class TreeView extends JPanel implements TreeViewInterface {
         scrpnTree.getVerticalScrollBar().setUnitIncrement(10);
         scrpnTree.setLayout(spTreeLayout);
 
-        // Create the tree history panel
-        JPanel pnlTreeHistory = new JPanel();
-        BoxLayout boxLayout = new BoxLayout(pnlTreeHistory, BoxLayout.Y_AXIS);
-        pnlTreeHistory.add(Box.createHorizontalGlue());
-        pnlTreeHistory.setLayout(boxLayout);
-        pnlTreeHistory.setBackground(UIConstants.INTEL_WHITE);
-
-        // Add the tree history panel to the bottom component of the tree
-        // split pane
-        splpnTree.setBottomComponent(pnlTreeHistory);
+        searchView = new SearchView();
+        splpnTree.setBottomComponent(searchView);
 
         // Add the tree panel to the tree scroll pane, and add the tree
         // scroll pane to the top component of the tree split pane.
@@ -295,6 +294,10 @@ public abstract class TreeView extends JPanel implements TreeViewInterface {
 
     } // initialize
 
+    public SearchView getSearchView() {
+        return searchView;
+    }
+
     protected JComponent getDataComponent() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setOpaque(false);
@@ -308,11 +311,11 @@ public abstract class TreeView extends JPanel implements TreeViewInterface {
         EnumMap<TreeTypeEnum, StackPanel> panels =
                 new EnumMap<TreeTypeEnum, StackPanel>(TreeTypeEnum.class);
         panels.put(TreeTypeEnum.DEVICE_TYPES_TREE, new StackPanel(
-                TreeTypeEnum.DEVICE_TYPES_TREE, createTree()));
+                TreeTypeEnum.DEVICE_TYPES_TREE, createTree(), this));
         panels.put(TreeTypeEnum.DEVICE_GROUPS_TREE, new StackPanel(
-                TreeTypeEnum.DEVICE_GROUPS_TREE, createTree()));
+                TreeTypeEnum.DEVICE_GROUPS_TREE, createTree(), this));
         panels.put(TreeTypeEnum.VIRTUAL_FABRICS_TREE, new StackPanel(
-                TreeTypeEnum.VIRTUAL_FABRICS_TREE, createTree()));
+                TreeTypeEnum.VIRTUAL_FABRICS_TREE, createTree(), this));
         // panels.put(TreeTypeEnum.TOP_10_CONGESTED_TREE, new StackPanel(
         // TreeTypeEnum.TOP_10_CONGESTED_TREE, null));
         return panels;
@@ -324,7 +327,8 @@ public abstract class TreeView extends JPanel implements TreeViewInterface {
         return res;
     }
 
-    protected void stackChange(TreeTypeEnum stack, boolean opened) {
+    @Override
+    public void stackChange(TreeTypeEnum stack) {
         for (TreeTypeEnum id : stackPanels.keySet()) {
             if (id != stack) {
                 stackPanels.get(id).close();
@@ -425,12 +429,13 @@ public abstract class TreeView extends JPanel implements TreeViewInterface {
     }
 
     public void setTreeSelection(final FVTreeModel model, final TreePath[] paths) {
+        final boolean[] isExpanded = new boolean[paths.length];
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
                 for (StackPanel sp : stackPanels.values()) {
                     if (sp.getTreeModel() == model) {
-                        sp.select(paths);
+                        sp.select(paths, isExpanded);
                     }
                 }
             }
@@ -467,16 +472,16 @@ public abstract class TreeView extends JPanel implements TreeViewInterface {
     }
 
     @Override
-    public void expandAndSelectTreePath(FVTreeModel model, TreePath path) {
+    public void expandAndSelectTreePath(FVTreeModel model, TreePath[] paths,
+            boolean[] isExpanded) {
         for (StackPanel sp : stackPanels.values()) {
             if (sp.getTreeModel() == model) {
-                if (!sp.opened) {
+                if (!sp.isOpened()) {
                     sp.open();
                 }
-                sp.expand(path);
-                TreePath[] paths = new TreePath[1];
-                paths[0] = path;
-                sp.select(paths);
+                sp.select(paths, isExpanded);
+            } else {
+                sp.close();
             }
         }
     }
@@ -497,209 +502,7 @@ public abstract class TreeView extends JPanel implements TreeViewInterface {
     @Override
     public void clear() {
         setTreeSelection(TreeTypeEnum.DEVICE_TYPES_TREE, 0);
-        stackChange(TreeTypeEnum.DEVICE_TYPES_TREE, true);
+        stackChange(TreeTypeEnum.DEVICE_TYPES_TREE);
     }
-
-    private class StackPanel extends JPanel {
-        private static final long serialVersionUID = -2905931691586163645L;
-
-        private final TreeTypeEnum id;
-
-        private final JPanel headerPanel;
-
-        private final JLabel nameLabel;
-
-        private final JLabel arrowLabel;
-
-        private JTree tree;
-
-        private JLabel txtLabel;
-
-        private boolean opened = false;
-
-        public StackPanel(TreeTypeEnum type, JTree tree) {
-            super(new GridBagLayout());
-            this.id = type;
-
-            setOpaque(false);
-            headerPanel = new JPanel(new BorderLayout());
-            headerPanel.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory
-                            .createLineBorder(UIConstants.INTEL_BORDER_GRAY),
-                    BorderFactory.createEmptyBorder(0, 5, 0, 5)));
-            headerPanel.setPreferredSize(new Dimension(200, 30));
-            headerPanel.setBackground(UIConstants.INTEL_WHITE);
-            nameLabel = ComponentFactory.getH4Label(id.getName(), Font.BOLD);
-            headerPanel.add(nameLabel, BorderLayout.WEST);
-            arrowLabel = new JLabel(UIImages.DOWN_ICON.getImageIcon());
-            headerPanel.add(arrowLabel, BorderLayout.EAST);
-            headerPanel.addMouseListener(new MouseAdapter() {
-                /*
-                 * (non-Javadoc)
-                 * 
-                 * @see java.awt.event.MouseAdapter#mouseClicked(java.awt.event.
-                 * MouseEvent)
-                 */
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    if (opened) {
-                        close();
-                    } else {
-                        open();
-                    }
-                    stackChange(id, opened);
-                }
-            });
-
-            GridBagConstraints gc = new GridBagConstraints();
-            gc.fill = GridBagConstraints.HORIZONTAL;
-            gc.insets = new Insets(2, 2, 2, 2);
-            gc.weightx = 1;
-            gc.gridwidth = GridBagConstraints.REMAINDER;
-            add(headerPanel, gc);
-
-            gc.fill = GridBagConstraints.BOTH;
-            gc.insets = new Insets(2, 5, 5, 5);
-            if (tree != null) {
-                tree.setName(type.getName());
-                tree.setCellRenderer(new NodeRenderer());
-                tree.setVisible(false);
-                this.tree = tree;
-                add(tree, gc);
-            } else {
-                txtLabel = new JLabel("Tree is unavailable at this time!");
-                txtLabel.setVisible(false);
-                add(txtLabel, gc);
-            }
-        }
-
-        public void setTreeModel(TreeModel pModel) {
-            if (tree != null) {
-                TreePath[] selections = null;
-                Enumeration<TreePath> expanedPaths = null;
-                if (tree.getModel() != null
-                        && tree.getModel().getRoot().equals(pModel.getRoot())) {
-                    selections = tree.getSelectionPaths();
-                    expanedPaths =
-                            tree.getExpandedDescendants(tree.getPathForRow(0));
-                }
-                tree.setModel(pModel);
-                if (expanedPaths != null) {
-                    while (expanedPaths.hasMoreElements()) {
-                        tree.expandPath(expanedPaths.nextElement());
-                    }
-                }
-                if (selections != null) {
-                    tree.setSelectionPaths(selections);
-                }
-            }
-        }
-
-        public TreeModel getTreeModel() {
-            if (tree != null) {
-                return tree.getModel();
-            } else {
-                return null;
-            }
-        }
-
-        public void open() {
-            if (tree != null) {
-                tree.setVisible(true);
-                TreePath[] currentPaths = tree.getSelectionPaths();
-                if (currentPaths != null && currentPaths.length > 0) {
-                    // force reselect a node, so we can update
-                    // charts/tables from Tree Controller
-                    tree.removeSelectionPaths(currentPaths);
-                    tree.setSelectionPaths(currentPaths);
-                } else {
-                    tree.setSelectionRow(0);
-                    tree.scrollRowToVisible(0);
-                }
-            } else {
-                txtLabel.setVisible(true);
-            }
-            arrowLabel.setIcon(UIImages.UP_ICON.getImageIcon());
-            opened = true;
-        }
-
-        public void close() {
-            if (!opened) {
-                return;
-            }
-
-            if (tree != null) {
-                tree.setVisible(false);
-            } else {
-                txtLabel.setVisible(false);
-            }
-            arrowLabel.setIcon(UIImages.DOWN_ICON.getImageIcon());
-            opened = false;
-        }
-
-        public void setSelectionMode(int selectionMode) {
-            if (tree != null) {
-                tree.getSelectionModel().setSelectionMode(selectionMode);
-            }
-        }
-
-        public void select(int index) {
-            if (tree != null) {
-                tree.setSelectionRow(index);
-            }
-        }
-
-        public void select(TreePath[] paths) {
-            if (tree != null) {
-                tree.setSelectionPaths(paths);
-                if (paths.length > 0) {
-                    for (TreePath path : paths) {
-                        tree.makeVisible(path);
-                    }
-                    int row = tree.getRowForPath(paths[0]);
-                    row += 5;
-                    if (row > tree.getRowCount()) {
-                        row = tree.getRowCount() - 1;
-                    }
-                    tree.scrollRowToVisible(row);
-                    // row -= 10;
-                    // if (row<0) {
-                    // row = 0;
-                    // }
-                    // tree.scrollRowToVisible(row);
-                }
-            }
-        }
-
-        public void clearSelection() {
-            if (tree != null) {
-                tree.clearSelection();
-            }
-        }
-
-        /**
-         * Description:
-         * 
-         * @param paths
-         */
-        public void collapse(TreePath path) {
-            if (tree != null) {
-                tree.collapsePath(path);
-            }
-        }
-
-        public void expand(TreePath path) {
-            if (tree != null) {
-                tree.expandPath(path);
-            }
-        }
-
-        public void addTreeListener(TreeSelectionListener treeListener) {
-            if (tree != null) {
-                tree.addTreeSelectionListener(treeListener);
-            }
-        }
-
-    } // class StackPanel
 
 } // TreeView

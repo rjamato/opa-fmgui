@@ -35,8 +35,18 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8.2.1  2015/08/12 15:27:03  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.11  2015/08/17 18:54:12  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/07/21 21:51:44  jijunwan
+ *  Archive Log:    PR 129633 - Incorrect date sort on event table
+ *  Archive Log:    - changed table model to use date as value, and the cell renderer uses string to display date
+ *  Archive Log:    - changed date format to include am/pm
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/06/29 15:05:43  jypak
+ *  Archive Log:    PR 129284 - Incorrect QSFP field name.
+ *  Archive Log:    Field name fix has been implemented. Also, introduced a conversion to Date object to add flexibility to display date code.
  *  Archive Log:
  *  Archive Log:    Revision 1.8  2014/12/10 20:52:20  rjtierne
  *  Archive Log:    Support for new Setup Wizard
@@ -81,8 +91,6 @@
  ******************************************************************************/
 
 package com.intel.stl.ui.common;
-
-import java.text.SimpleDateFormat;
 
 import com.intel.stl.api.notice.EventDescription;
 import com.intel.stl.api.notice.IEventSource;
@@ -161,10 +169,7 @@ public class EventTableModel extends FVTableModel<EventDescription> {
         switch (pCol) {
 
             case TIME_IDX:
-                SimpleDateFormat dateTime =
-                        new SimpleDateFormat("yyyy-MM-dd hh:mm:ss z");
-                String timeStr = dateTime.format(eventMsg.getDate());
-                value = timeStr;
+                value = eventMsg.getDate();
                 break;
 
             case SEVERITY_IDX:

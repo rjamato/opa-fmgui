@@ -35,8 +35,26 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:26:33  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.7  2015/10/06 20:19:41  fernande
+ *  Archive Log:    PR130749 - FM GUI virtual fabric information doesn't match opafm.xml file. A previous fix disabled the update of most fields used in the Admin configuration editor. Restored the updating capability in those fields
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/08/17 18:53:36  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/07/16 21:22:53  jijunwan
+ *  Archive Log:    PR 129528 - input validation improvement
+ *  Archive Log:    - extended SafeTextField to apply rules in name check
+ *  Archive Log:    - moved valid chars to UIConstants
+ *  Archive Log:    - made FieldPair more generic and flexible
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/07/14 17:02:38  jijunwan
+ *  Archive Log:    PR 129541 - Should forbid save or deploy when there is invalid edit on management panel
+ *  Archive Log:    - Introduce isEditValid for attribute renders
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/07/13 18:37:24  jijunwan
+ *  Archive Log:    PR 129528 - input validation improvement
+ *  Archive Log:    - updated generic classes to use the new text field
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/04/09 16:39:12  jijunwan
  *  Archive Log:    improved to support decimal for long value
@@ -63,15 +81,16 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.math.BigInteger;
+import java.text.ParseException;
 
-import javax.swing.InputVerifier;
-import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import com.intel.stl.api.StringUtils;
 import com.intel.stl.ui.common.UIConstants;
+import com.intel.stl.ui.common.UILabels;
+import com.intel.stl.ui.common.view.SafeTextField.SafeStringFormatter;
 
 /**
  * Field for a user to input hex value
@@ -79,21 +98,21 @@ import com.intel.stl.ui.common.UIConstants;
 public class HexField<E extends Number> extends JPanel {
     private static final long serialVersionUID = 7780981211073008225L;
 
-    private final Class<?> type;
+    // private final Class<?> type;
 
     private final String name;
 
-    protected JTextField field;
+    protected JFormattedTextField field;
 
     private E lastValue;
 
     public HexField(String name, E defaultValue) {
         super();
         this.name = name;
-        this.type = defaultValue.getClass();
+        lastValue = defaultValue;
+        // this.type = defaultValue.getClass();
         setName(name);
         initComponent();
-        lastValue = defaultValue;
         setValue(defaultValue);
     }
 
@@ -125,106 +144,20 @@ public class HexField<E extends Number> extends JPanel {
         add(field, gc);
     }
 
-    protected JTextField createTextField() {
-        JTextField res = new JTextField();
-        res.setInputVerifier(new InputVerifier() {
-
-            @Override
-            public boolean verify(JComponent input) {
-                JTextField field = (JTextField) input;
-                String txt = field.getText();
-                boolean isValid = isValid(txt);
-                if (isValid) {
-                    input.setBackground(UIConstants.INTEL_WHITE);
-                } else {
-                    input.setBackground(UIConstants.INTEL_LIGHT_RED);
-                }
-                return isValid;
-            }
-
-        });
+    protected JFormattedTextField createTextField() {
+        HexFormatter<E> formatter = new HexFormatter<E>(lastValue);
+        ExFormattedTextField res = new ExFormattedTextField(formatter);
+        formatter.setParent(res);
         return res;
     }
 
-    @SuppressWarnings("unchecked")
-    protected boolean isValid(String txt) {
-        if (txt.isEmpty()) {
-            return true;
-        }
-        try {
-            Object val = parseValue(txt);
-            setValue((E) val);
-            return true;
-        } catch (Exception e) {
-            // e.printStackTrace();
-            return false;
-        }
-    }
-
-    protected Object parseValue(String txt) throws Exception {
-        if (type == Long.class) {
-            int radix = 10;
-            if (txt.startsWith("0x") || txt.startsWith("0X")) {
-                txt = txt.substring(2, txt.length());
-                radix = 16;
-            }
-            BigInteger bi = new BigInteger(txt, radix);
-            if (bi.bitLength() > 64) {
-                throw new IllegalArgumentException("Invalid range");
-            }
-            return bi.longValue();
-        } else if (type == Integer.class) {
-            long val = Long.decode(txt);
-            if (val > Integer.MAX_VALUE * 2 + 1 || val < Integer.MIN_VALUE) {
-                throw new IllegalArgumentException("Invalid range");
-            }
-            return (int) val;
-        } else if (type == Short.class) {
-            int val = Integer.decode(txt);
-            if (val > Short.MAX_VALUE * 2 + 1 || val < Short.MIN_VALUE) {
-                throw new IllegalArgumentException("Invalid range");
-            }
-            return (short) val;
-        } else if (type == Byte.class) {
-            short val = Short.decode(txt);
-            if (val > Byte.MAX_VALUE * 2 + 1 || val < Byte.MIN_VALUE) {
-                throw new IllegalArgumentException("Invalid range");
-            }
-            return (byte) val;
-        } else {
-            throw new UnsupportedOperationException();
-        }
-    }
-
     public void setValue(E val) {
-        String txt = getValueString(val);
-        field.setText(txt);
-    }
-
-    protected String getValueString(E value) {
-        if (value instanceof Long) {
-            return StringUtils.longHexString((Long) value);
-        } else if (value instanceof Integer) {
-            return StringUtils.intHexString((Integer) value);
-        } else if (value instanceof Short) {
-            return StringUtils.shortHexString((Short) value);
-        } else if (value instanceof Byte) {
-            return StringUtils.byteHexString((Byte) value);
-        } else {
-            throw new UnsupportedOperationException();
-        }
+        field.setValue(val);
     }
 
     @SuppressWarnings("unchecked")
     public E getValue() {
-        String text = field.getText();
-        Object val;
-        try {
-            val = parseValue(text);
-            lastValue = (E) val;
-        } catch (Exception e) {
-            // e.printStackTrace();
-        }
+        lastValue = (E) field.getValue();
         return lastValue;
     }
 
@@ -241,5 +174,108 @@ public class HexField<E extends Number> extends JPanel {
 
     public void setEditable(boolean b) {
         field.setEditable(b);
+    }
+
+    public boolean isEditValid() {
+        return field.isEditValid();
+    }
+
+    public class HexFormatter<N extends Number> extends SafeStringFormatter {
+        private static final long serialVersionUID = -233085733398543484L;
+
+        /**
+         * Description:
+         * 
+         */
+        public HexFormatter(N defaultValue) {
+            super(true);
+            if (defaultValue != null) {
+                setValueClass(defaultValue.getClass());
+            }
+            setValidCharacters(UIConstants.HEX_CHARS);
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see com.intel.stl.ui.common.view.SafeTextField.SafeStringFormatter#
+         * stringToValue(java.lang.String)
+         */
+        @Override
+        public Object stringToValue(String txt) throws ParseException {
+            checkEmpty(txt);
+            checkLength(txt);
+            checkValidChar(txt);
+
+            try {
+                Class<?> type = getValueClass();
+                if (type == Long.class) {
+                    setValidationTooltip(UILabels.STL81021_RANGE1_VALIDATION
+                            .getDescription("0x0", "0xFFFFFFFFFFFFFFFF"));
+                    int radix = 10;
+                    if (txt.startsWith("0x") || txt.startsWith("0X")) {
+                        txt = txt.substring(2, txt.length());
+                        radix = 16;
+                    }
+                    BigInteger bi = new BigInteger(txt, radix);
+                    if (bi.bitLength() > 64) {
+                        throw new IllegalArgumentException("Invalid range");
+                    }
+                    return bi.longValue();
+                } else if (type == Integer.class) {
+                    setValidationTooltip(UILabels.STL81021_RANGE1_VALIDATION
+                            .getDescription("0x0", "0xFFFFFFFF"));
+                    long val = Long.decode(txt);
+                    if (val > Integer.MAX_VALUE * 2 + 1
+                            || val < Integer.MIN_VALUE) {
+                        throw new IllegalArgumentException("Invalid range");
+                    }
+                    return (int) val;
+                } else if (type == Short.class) {
+                    setValidationTooltip(UILabels.STL81021_RANGE1_VALIDATION
+                            .getDescription("0x0", "0xFFFF"));
+                    int val = Integer.decode(txt);
+                    if (val > Short.MAX_VALUE * 2 + 1 || val < Short.MIN_VALUE) {
+                        throw new IllegalArgumentException("Invalid range");
+                    }
+                    return (short) val;
+                } else if (type == Byte.class) {
+                    setValidationTooltip(UILabels.STL81021_RANGE1_VALIDATION
+                            .getDescription("0x0", "0xFF"));
+                    short val = Short.decode(txt);
+                    if (val > Byte.MAX_VALUE * 2 + 1 || val < Byte.MIN_VALUE) {
+                        throw new IllegalArgumentException("Invalid range");
+                    }
+                    return (byte) val;
+                } else {
+                    throw new UnsupportedOperationException();
+                }
+            } catch (Exception e) {
+                throw new ParseException(e.getMessage(), 0);
+            }
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see
+         * javax.swing.text.DefaultFormatter#valueToString(java.lang.Object)
+         */
+        @Override
+        public String valueToString(Object value) throws ParseException {
+            if (value == null) {
+                return null;
+            }
+            if (value instanceof Long) {
+                return StringUtils.longHexString((Long) value);
+            } else if (value instanceof Integer) {
+                return StringUtils.intHexString((Integer) value);
+            } else if (value instanceof Short) {
+                return StringUtils.shortHexString((Short) value);
+            } else if (value instanceof Byte) {
+                return StringUtils.byteHexString((Byte) value);
+            }
+            return null;
+        }
     }
 }

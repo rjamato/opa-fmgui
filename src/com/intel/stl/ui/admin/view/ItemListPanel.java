@@ -35,8 +35,16 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:27:17  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/08/17 18:53:52  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/05/14 17:19:47  jijunwan
+ *  Archive Log:    PR 128697 - Handle empty list of items
+ *  Archive Log:    - Added code to handle null item
+ *  Archive Log:    - Added code to clean panel when it gets a null item
+ *  Archive Log:    - Enable/disable buttons properly when we get an empty item list or null item
+ *  Archive Log:    - Improved to handle item selection when the index is invalid, such as -1
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/03/10 22:45:37  jijunwan
  *  Archive Log:    improved to do and show validation before we save an application
@@ -168,10 +176,8 @@ public class ItemListPanel<T> extends JPanel {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 Item<?> item = (Item<?>) itemList.getSelectedValue();
-                if (item != null) {
-                    removeBtn.setEnabled(item.isEditable());
-                    fireItemSelected(item);
-                }
+                removeBtn.setEnabled(item != null && item.isEditable());
+                fireItemSelected(item);
             }
         });
         JScrollPane pane = new JScrollPane(itemList);
@@ -212,14 +218,21 @@ public class ItemListPanel<T> extends JPanel {
      */
     public void setListModel(ListModel<Item<T>> model) {
         itemList.setModel(model);
+        boolean hasEditable = false;
+        int size = model.getSize();
+        for (int i = 0; i < size; i++) {
+            Item<T> item = model.getElementAt(i);
+            if (item.isEditable()) {
+                hasEditable = true;
+                break;
+            }
+        }
+        removeBtn.setEnabled(hasEditable);
     }
 
     protected void fireItemSelected(Object selectedValue) {
-        if (selectedValue == null) {
-            return;
-        }
-
-        long id = ((Item<?>) selectedValue).getId();
+        long id =
+                selectedValue == null ? -1 : ((Item<?>) selectedValue).getId();
         for (IItemListListener listener : listeners) {
             listener.onSelect(id);
         }
@@ -266,7 +279,7 @@ public class ItemListPanel<T> extends JPanel {
             public void run() {
                 itemList.setSelectedIndex(index);
                 Item<?> item = (Item<?>) itemList.getSelectedValue();
-                removeBtn.setEnabled(item.isEditable());
+                removeBtn.setEnabled(item != null && item.isEditable());
                 revalidate();
                 repaint();
             }

@@ -24,12 +24,43 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: NodeScore.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.9  2015/08/17 18:53:46  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.8  2015/08/07 19:11:45  jijunwan
+ *  Archive Log: PR 129775 - disable node not available on Worst Node Card
+ *  Archive Log: - improved to display event type
+ *  Archive Log: - improved to disable jumping buttons when event type is PORT_INACTIVE
+ *  Archive Log:
+ *  Archive Log: Revision 1.7  2015/06/10 19:58:50  jijunwan
+ *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: jijunwan
+ * 
+ ******************************************************************************/
 package com.intel.stl.ui.model;
 
 import java.io.Serializable;
 
 import javax.swing.ImageIcon;
 
+import com.intel.stl.api.configuration.EventType;
 import com.intel.stl.api.subnet.NodeType;
 import com.intel.stl.ui.common.UIConstants;
 import com.intel.stl.ui.common.UILabels;
@@ -48,12 +79,15 @@ public class NodeScore extends TimedScore implements Comparable<NodeScore>,
 
     private final int lid;
 
-    public NodeScore(String name, NodeType type, int lid, long time,
-            double score) {
+    private final EventType eventType;
+
+    public NodeScore(String name, NodeType type, int lid, EventType eventType,
+            long time, double score) {
         super(time, score);
         this.name = name;
         this.type = type;
         this.lid = lid;
+        this.eventType = eventType;
     }
 
     /**
@@ -75,6 +109,20 @@ public class NodeScore extends TimedScore implements Comparable<NodeScore>,
      */
     public int getLid() {
         return lid;
+    }
+
+    /**
+     * @return the isActive
+     */
+    public boolean isActive() {
+        return eventType != EventType.PORT_INACTIVE;
+    }
+
+    /**
+     * @return the eventType
+     */
+    public EventType getEventType() {
+        return eventType;
     }
 
     /*
@@ -102,7 +150,7 @@ public class NodeScore extends TimedScore implements Comparable<NodeScore>,
     public String getDescription() {
         double score = getScore();
         return UILabels.STL10211_WORST_NODE.getDescription(name,
-                UIConstants.DECIMAL.format(score));
+                eventType.name(), UIConstants.DECIMAL.format(score));
     }
 
     /*

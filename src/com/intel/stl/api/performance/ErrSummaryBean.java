@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:21:44  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.6  2015/10/08 16:19:57  fernande
+ *  Archive Log:    PR130760 - Update FV GUI to reflect Changes to vol1g1 spec introduced in DN 0507. Changed commands to match FM spec
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/08/17 18:48:41  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/02/04 21:37:53  jijunwan
  *  Archive Log:    impoved to handle unsigned values
@@ -75,15 +79,7 @@ public class ErrSummaryBean implements Serializable {
 
     private long routingErrors; // unsigned int
 
-    private int congInefficiencyPct10; // promote to handle unsigned short
-
-    private int waitInefficiencyPct10; // promote to handle unsigned short
-
-    private int bubbleInefficiencyPct10; // promote to handle unsigned short
-
     private int discardsPct10; // promote to handle unsigned short
-
-    private int congestionDiscardsPct10; // promote to handle unsigned short
 
     private int utilizationPct10; // promote to handle unsigned short
 
@@ -226,21 +222,6 @@ public class ErrSummaryBean implements Serializable {
     }
 
     /**
-     * @return the congInefficiencyPct10
-     */
-    public int getCongInefficiencyPct10() {
-        return congInefficiencyPct10;
-    }
-
-    /**
-     * @param congInefficiencyPct10
-     *            the congInefficiencyPct10 to set
-     */
-    public void setCongInefficiencyPct10(int congInefficiencyPct10) {
-        this.congInefficiencyPct10 = congInefficiencyPct10;
-    }
-
-    /**
      * @return the discarddPct10
      */
     public int getDiscardsPct10() {
@@ -253,51 +234,6 @@ public class ErrSummaryBean implements Serializable {
      */
     public void setDiscardsPct10(int discardsPct10) {
         this.discardsPct10 = discardsPct10;
-    }
-
-    /**
-     * @return the congestionDiscardsPct10
-     */
-    public int getCongestionDiscardsPct10() {
-        return congestionDiscardsPct10;
-    }
-
-    /**
-     * @param congestionDiscardsPct10
-     *            the congestionDiscardsPct10 to set
-     */
-    public void setCongestionDiscardsPct10(int congestionDiscardsPct10) {
-        this.congestionDiscardsPct10 = congestionDiscardsPct10;
-    }
-
-    /**
-     * @return the waitInefficiencyPct10
-     */
-    public int getWaitInefficiencyPct10() {
-        return waitInefficiencyPct10;
-    }
-
-    /**
-     * @param waitInefficiencyPct10
-     *            the waitInefficiencyPct10 to set
-     */
-    public void setWaitInefficiencyPct10(int waitInefficiencyPct10) {
-        this.waitInefficiencyPct10 = waitInefficiencyPct10;
-    }
-
-    /**
-     * @return the bubbleInefficiencyPct10
-     */
-    public int getBubbleInefficiencyPct10() {
-        return bubbleInefficiencyPct10;
-    }
-
-    /**
-     * @param bubbleInefficiencyPct10
-     *            the bubbleInefficiencyPct10 to set
-     */
-    public void setBubbleInefficiencyPct10(int bubbleInefficiencyPct10) {
-        this.bubbleInefficiencyPct10 = bubbleInefficiencyPct10;
     }
 
     /**
@@ -327,12 +263,8 @@ public class ErrSummaryBean implements Serializable {
                 + ", smaCongestionErrors=" + smaCongestionErrors
                 + ", bubbleErrors=" + bubbleErrors + ", securityErrors="
                 + securityErrors + ", routingErrors=" + routingErrors
-                + ", congInefficiencyPct10=" + congInefficiencyPct10
-                + ", waitInefficiencyPct10=" + waitInefficiencyPct10
-                + ", bubbleInefficiencyPct10=" + bubbleInefficiencyPct10
-                + ", discardsPct10=" + discardsPct10
-                + ", congestionDiscardsPct10=" + congestionDiscardsPct10
-                + ", utilizationPct10=" + utilizationPct10 + "]";
+                + ", discardsPct10=" + discardsPct10 + ", utilizationPct10="
+                + utilizationPct10 + "]";
     }
 
 }

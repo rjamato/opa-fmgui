@@ -35,8 +35,19 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.16.2.1  2015/08/12 15:21:59  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.20  2015/08/17 18:48:51  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.19  2015/08/17 14:22:57  rjtierne
+ *  Archive Log:    PR 128979 - SM Log display
+ *  Archive Log:    This is the first version of the Log Viewer which displays select lines of text from the remote SM log file. Updates include searchable raw text from file, user-defined number of lines to display, refreshing end of file, and paging. This PR is now closed and further updates can be found by referencing PR 130011 - "Enhance SM Log Viewer to include Standard and Advanced requirements".
+ *  Archive Log:
+ *  Archive Log:    Revision 1.18  2015/07/30 19:29:34  fernande
+ *  Archive Log:    PR 129592 - removing a subnet a user is monitoring cause internal DB exception. Added flag to SubnetContext indicating the subnet has been deleted. If the flag is set, no saving of subnet information occurs.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.17  2015/07/09 18:39:44  fernande
+ *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Added method to expose application settings in the settings.xml file to higher levels in the app
  *  Archive Log:
  *  Archive Log:    Revision 1.16  2015/04/27 21:45:12  rjtierne
  *  Archive Log:    Removed method setUserSettings() from interface
@@ -109,6 +120,7 @@ import java.beans.PropertyChangeListener;
 import com.intel.stl.api.configuration.IConfigurationApi;
 import com.intel.stl.api.configuration.UserNotFoundException;
 import com.intel.stl.api.configuration.UserSettings;
+import com.intel.stl.api.logs.ILogApi;
 import com.intel.stl.api.management.IManagementApi;
 import com.intel.stl.api.notice.INoticeApi;
 import com.intel.stl.api.performance.IPerformanceApi;
@@ -118,40 +130,195 @@ import com.intel.stl.api.subnet.SubnetDescription;
 
 public interface SubnetContext {
 
-    public IConfigurationApi getConfigurationApi();
+    /**
+     * 
+     * <i>Description:</i> returns the Configuration API
+     * 
+     * @return {@link com.intel.stl.api.configuration.IConfigurationApi}
+     */
+    IConfigurationApi getConfigurationApi();
 
-    public ISubnetApi getSubnetApi();
+    /**
+     * 
+     * <i>Description:</i> returns the Subnet API
+     * 
+     * @return {@link com.intel.stl.api.subnet.ISubnetApi}
+     */
+    ISubnetApi getSubnetApi();
 
-    public IPerformanceApi getPerformanceApi();
+    /**
+     * 
+     * <i>Description:</i> returns the Performance API
+     * 
+     * @return {@link com.intel.stl.api.performance.IPerformanceApi}
+     */
+    IPerformanceApi getPerformanceApi();
 
-    public INoticeApi getNoticeApi();
+    /**
+     * 
+     * <i>Description:</i> returns the Notice API
+     * 
+     * @return {@link com.intel.stl.api.notice.INoticeApi}
+     */
+    INoticeApi getNoticeApi();
 
-    public IManagementApi getManagementApi();
+    /**
+     * 
+     * <i>Description:</i> returns the Management API
+     * 
+     * @return {@link com.intel.stl.api.management.IManagementApi}
+     */
+    IManagementApi getManagementApi();
 
-    public SubnetDescription getSubnetDescription();
+    /**
+     * 
+     * <i>Description: returns the Log API</i>
+     * 
+     * @return {@link com.intel.stl.api.logs.ILogApi}
+     */
+    public ILogApi getLogApi();
 
-    public UserSettings getUserSettings(String userName)
-            throws UserNotFoundException;
+    /**
+     * 
+     * <i>Description:</i> returns the subnet description for this context
+     * 
+     * @return {@link com.intel.stl.api.subnet.SubnetDescription}
+     */
+    SubnetDescription getSubnetDescription();
 
-    // retrieve user setting fresh out of database
-    public void refreshUserSettings(String userName)
-            throws UserNotFoundException;
+    /**
+     * 
+     * <i>Description:</i> returns the user settings for the specified user name
+     * 
+     * @param userName
+     * @return {@link com.intel.stl.api.configuration.UserSettings}
+     * @throws UserNotFoundException
+     */
+    UserSettings getUserSettings(String userName) throws UserNotFoundException;
 
-    public void initialize() throws SubnetConnectionException;
+    /**
+     * 
+     * <i>Description:</i> refreshes the user settings in this SubnetContext to
+     * those of the specified user
+     * 
+     * @param userName
+     *            the user name
+     * @throws UserNotFoundException
+     */
+    void refreshUserSettings(String userName) throws UserNotFoundException;
 
-    public void setRandom(boolean random);
+    /**
+     * 
+     * <i>Description:</i> gets the specified application setting name for the
+     * application, returning the provided default value if not defined.
+     * Application settings are defined through the settings.xml file; they are
+     * used to fine tune the application.
+     * 
+     * @param settingName
+     * @param defaultValue
+     *            the default value if the setting has not been defined
+     * @return the setting value
+     */
+    String getAppSetting(String settingName, String defaultValue);
 
+    /**
+     * 
+     * <i>Description:</i> initializes this SubnetContext. This method should be
+     * invoked only once.
+     * 
+     * @throws SubnetConnectionException
+     */
+    void initialize() throws SubnetConnectionException;
+
+    /**
+     * 
+     * <i>Description:</i> starts or stops the notice simulator to simulate
+     * fabric activity and showcase the UI.
+     * 
+     * @param random
+     *            a boolean; a value of true starts the notice simulator and a
+     *            value of false stops it
+     */
+    void setRandom(boolean random);
+
+    /**
+     * 
+     * <i>Description:</i> adds a subnet event listener interested on subnet
+     * events
+     * 
+     * @param listener
+     */
     void addSubnetEventListener(ISubnetEventListener listener);
 
+    /**
+     * 
+     * <i>Description:</i> removes the subnet event listener
+     * 
+     * @param listener
+     */
     void removeSubnetEventListener(ISubnetEventListener listener);
 
+    /**
+     * 
+     * <i>Description:</i> adds a failover progress listener; this listener
+     * receives events related to a failover. A failover occurs when the Subnet
+     * Manager and/or its components become unresponsive and the application
+     * needs to use one of the secondary managers.
+     * 
+     * @param listener
+     */
     void addFailoverProgressListener(PropertyChangeListener listener);
 
+    /**
+     * 
+     * <i>Description:</i> remove a failover progress listener.
+     * 
+     * @param listener
+     */
     void removeFailoverProgressListener(PropertyChangeListener listener);
 
-    public void cleanup();
+    /**
+     * 
+     * <i>Description:</i> cleans up this SubnetContext. This usually happens
+     * when the UI viewer closes
+     * 
+     */
+    void cleanup();
 
-    public boolean isValid();
+    /**
+     * 
+     * <i>Description:</i> sets the deleted flag
+     * 
+     * @param deleted
+     */
+    void setDeleted(boolean deleted);
 
+    /**
+     * 
+     * <i>Description:</i> indicates whether this SubnetContext is valid.
+     * Typically, communications errors with the FE may render a SubnetContext
+     * invalid.
+     * 
+     * @return valid flag
+     */
+    boolean isValid();
+
+    /**
+     * 
+     * <i>Description:</i> indicates whether the FE session has been closed.
+     * This usually happens when the UI viewer for this subnet is closed.
+     * 
+     * @return closed flag
+     */
     boolean isClosed();
+
+    /**
+     * 
+     * <i>Description:</i> indicates whether the subnet definition associated
+     * with this SubnetContext has been deleted. This happens when the user
+     * deletes the definition through the Setup Wizard.
+     * 
+     * @return deleted flag
+     */
+    boolean isDeleted();
 }
