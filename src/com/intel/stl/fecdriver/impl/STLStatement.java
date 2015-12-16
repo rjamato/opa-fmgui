@@ -24,9 +24,39 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+/*******************************************************************************
+ * I N T E L C O R P O R A T I O N
+ * 
+ * Functional Group: Fabric Viewer Application
+ * 
+ * File Name: STLStatement.java
+ * 
+ * Archive Source: $Source$
+ * 
+ * Archive Log: $Log$
+ * Archive Log: Revision 1.17  2015/08/17 18:49:07  jijunwan
+ * Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ * Archive Log: - change backend files' headers
+ * Archive Log:
+ * Archive Log: Revision 1.16  2015/06/10 20:39:37  fernande
+ * Archive Log: PR 129034 Support secure FE. Removed println statements and leftovers from debugging.
+ * Archive Log:
+ * Archive Log: Revision 1.15  2015/06/05 19:10:18  jijunwan
+ * Archive Log: PR 129096 - Some old files have no copyright text
+ * Archive Log: - added Intel copyright text
+ * Archive Log:
+ * 
+ * Overview:
+ * 
+ * @author: jijunwan
+ * 
+ ******************************************************************************/
+
 package com.intel.stl.fecdriver.impl;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -34,14 +64,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.intel.stl.fecdriver.IConnection;
+import com.intel.stl.api.subnet.SubnetDescription;
+import com.intel.stl.fecdriver.ICommand;
+import com.intel.stl.fecdriver.IResponse;
 import com.intel.stl.fecdriver.IStatement;
+import com.intel.stl.fecdriver.MultipleResponseCommand;
+import com.intel.stl.fecdriver.SingleResponseCommand;
 import com.intel.stl.fecdriver.messages.adapter.OobPacket;
 import com.intel.stl.fecdriver.messages.adapter.RmppMad;
-import com.intel.stl.fecdriver.messages.command.FVCommand;
 
-public class STLStatement implements IStatement<FVCommand<?, ?>> {
+public class STLStatement implements IStatement {
     private static Logger log = LoggerFactory.getLogger(STLStatement.class);
+
+    private static boolean DEBUG = false;
 
     protected static final int DEFAULT_TIMEOUT = 30000; // in milliseconds
 
@@ -49,7 +84,7 @@ public class STLStatement implements IStatement<FVCommand<?, ?>> {
 
     private final AtomicBoolean isClosed = new AtomicBoolean(false);
 
-    private STLConnection conn = null;
+    private final STLConnection conn;
 
     public STLStatement(STLConnection conn) {
         this.conn = conn;
@@ -77,60 +112,86 @@ public class STLStatement implements IStatement<FVCommand<?, ?>> {
     }
 
     @Override
-    public boolean execute(FVCommand<?, ?> cmd) throws Exception {
-        if (isClosed.get()) {
-            cmd.getResponse().setError(
-                    new RuntimeException("Statement is closed"));
-            return false;
-        }
-        log.info("execute cmd " + cmd + " with argument " + cmd.getInput());
-        cmd.setSubmittingStatement(this);
+    public <F, E extends IResponse<F>> List<F> execute(
+            MultipleResponseCommand<F, E> cmd) throws Exception {
+        List<F> result = null;
         submit(cmd);
-        log.info("waiting for response for cmd " + cmd);
-        // When the FE is up but the SM is down, the response might take very
-        // long. We set a timeout value that can be extended if necessary.
         try {
-            cmd.getResponse().get(getTimeout(), TimeUnit.MILLISECONDS);
+            result = cmd.getResults(getTimeout(), TimeUnit.MILLISECONDS);
         } catch (TimeoutException toe) {
             log.info("timeout waiting for response for cmd " + cmd);
             // Tell the STLAdapter about this
             conn.fireOnTimeout();
             // This timeout will be reset by FailoverManager. If it times out
             // again, caller will get it
-            cmd.getResponse().get(getTimeout(), TimeUnit.MILLISECONDS);
+            result = cmd.getResults(getTimeout(), TimeUnit.MILLISECONDS);
         }
-        return true;
+        debugResponse(cmd);
+        return result;
     }
 
     @Override
-    public boolean submit(FVCommand<?, ?> cmd) throws IOException {
-        if (isClosed.get()) {
-            cmd.getResponse().setError(
-                    new RuntimeException("Statement is closed"));
-            return false;
+    public <F, E extends IResponse<F>> F execute(SingleResponseCommand<F, E> cmd)
+            throws Exception {
+        F result = null;
+        submit(cmd);
+        try {
+            result = cmd.getResult(getTimeout(), TimeUnit.MILLISECONDS);
+        } catch (TimeoutException toe) {
+            log.info("timeout waiting for response for cmd " + cmd);
+            // Tell the STLAdapter about this
+            conn.fireOnTimeout();
+            // This timeout will be reset by FailoverManager. If it times out
+            // again, caller will get it
+            result = cmd.getResult(getTimeout(), TimeUnit.MILLISECONDS);
         }
-        log.info("submit cmd " + cmd + " with argument " + cmd.getInput());
-        OobPacket sendPacket = createSendPacket(cmd);
-        long id = sendPacket.getRmppMad().getCommonMad().getTransactionId();
-        conn.submitCmd(id, sendPacket, cmd);
-        return true;
+        debugResponse(cmd);
+        return result;
     }
 
-    protected OobPacket createSendPacket(FVCommand<?, ?> cmd) {
+    @Override
+    public <E extends IResponse<F>, F> void submit(ICommand<E, F> cmd)
+            throws IOException {
+        if (isClosed.get()) {
+            RuntimeException rte = new RuntimeException("Statement is closed");
+            cmd.getResponse().setError(rte);
+            throw rte;
+        }
+        // log.info("submit cmd " + cmd + " with argument " + cmd.getInput());
+        OobPacket sendPacket = createSendPacket(cmd);
+        long id = sendPacket.getRmppMad().getCommonMad().getTransactionId();
+        cmd.setPacket(sendPacket);
+        cmd.setStatement(this);
+        conn.submitCmd(id, sendPacket, cmd);
+    }
+
+    protected OobPacket createSendPacket(ICommand<?, ?> cmd) {
         OobPacket sendPacket = new OobPacket();
         sendPacket.build(true);
         RmppMad rmppMad = cmd.prepareMad();
         sendPacket.setRmppMad(rmppMad);
         sendPacket.fillPayloadSize();
         sendPacket.setExpireTime(System.currentTimeMillis() + timeout * 1000);
-        long id = rmppMad.getCommonMad().getTransactionId();
-        cmd.setMessageID(id);
         return sendPacket;
     }
 
     @Override
-    public IConnection getConnection() {
-        return conn;
+    public SubnetDescription getSubnetDescription() {
+        return conn.getConnectionDescription();
+    }
+
+    private <E extends IResponse<F>, F> void debugResponse(ICommand<E, F> cmd) {
+        E response = cmd.getResponse();
+        List<F> results;
+        try {
+            results = response.get();
+            if (DEBUG && results != null) {
+                for (int i = 0; i < results.size(); i++) {
+                    System.out.println(i + " " + results.get(i));
+                }
+            }
+        } catch (Exception e) {
+        }
     }
 
 }

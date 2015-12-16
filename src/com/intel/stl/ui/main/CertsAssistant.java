@@ -35,8 +35,29 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.10.2.1  2015/08/12 15:26:34  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.17  2015/10/06 20:20:20  fernande
+ *  Archive Log:    PR130749 - FM GUI virtual fabric information doesn't match opafm.xml file. Removed System.out.println statement
+ *  Archive Log:
+ *  Archive Log:    Revision 1.16  2015/08/17 18:53:38  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.15  2015/06/22 13:11:55  jypak
+ *  Archive Log:    PR 128980 - Be able to search devices by name or lid.
+ *  Archive Log:    New feature added to enable search devices by name, lid or node guid. The search results are displayed as a tree and when a result node from the tree is selected, original tree is expanded and the corresponding node is highlighted.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.14  2015/06/17 15:40:27  fisherma
+ *  Archive Log:    PR129220 - partial fix for the login changes.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.13  2015/05/29 20:43:46  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Second wave of changes: the application can be switched between the old adapter and the new; moved out several initialization pieces out of objects constructor to allow subnet initialization with a UI in place; improved generics definitions for FV commands.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.12  2015/05/26 15:53:23  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/05/11 12:26:35  rjtierne
+ *  Archive Log:    PR 128585 - Fix errors found by Klocwork and FindBugs
+ *  Archive Log:    For calls to remove key 0 from a map in clearSubnetFactories(), force the argument 0 to be a long.
  *  Archive Log:
  *  Archive Log:    Revision 1.10  2015/04/08 15:20:39  fernande
  *  Archive Log:    Changes to allow for failover to work when the current (initial) FE is not available.
@@ -78,6 +99,7 @@
 
 package com.intel.stl.ui.main;
 
+import java.awt.Component;
 import java.awt.Frame;
 import java.awt.Window;
 import java.security.UnrecoverableKeyException;
@@ -92,26 +114,29 @@ import java.util.concurrent.TimeoutException;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.TrustManagerFactory;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.intel.stl.api.BaseCertsAssistant;
 import com.intel.stl.api.CertsDescription;
 import com.intel.stl.api.FMKeyStoreException;
 import com.intel.stl.api.FMTrustStoreException;
+import com.intel.stl.api.ICertsAssistant;
+import com.intel.stl.api.SSLStoreCredentialsDeniedException;
 import com.intel.stl.api.StringUtils;
+import com.intel.stl.api.Utils;
 import com.intel.stl.api.configuration.IConfigurationApi;
 import com.intel.stl.api.subnet.HostInfo;
 import com.intel.stl.api.subnet.SubnetDataNotFoundException;
 import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UILabels;
+import com.intel.stl.ui.common.view.DialogFactory;
 import com.intel.stl.ui.main.view.CertsPanel;
+import com.intel.stl.ui.wizards.view.MultinetWizardView;
 
-public class CertsAssistant extends BaseCertsAssistant {
+public class CertsAssistant implements ICertsAssistant {
     private static Logger log = LoggerFactory.getLogger(CertsAssistant.class);
 
     public static final int MAX_TRIES = 5;
@@ -146,8 +171,13 @@ public class CertsAssistant extends BaseCertsAssistant {
         int port = hostInfo.getPort();
         KeyManagerFactory kmf = getKeyManagerFactory(subnet);
         TrustManagerFactory tmf = getTrustManagerFactory(subnet);
-        SSLEngine engine = createSSLEngine(host, port, kmf, tmf);
+        SSLEngine engine = Utils.createSSLEngine(host, port, kmf, tmf);
         return engine;
+    }
+
+    @Override
+    public SSLEngine getSSLEngine(HostInfo hostInfo) throws Exception {
+        return null;
     }
 
     @Override
@@ -175,8 +205,6 @@ public class CertsAssistant extends BaseCertsAssistant {
     @Override
     public void clearSubnetFactories(SubnetDescription subnet) {
 
-        System.out.println("CertsAssistant: clearSubnetFactories()");
-
         if (subnet != null) {
             // Remove the key file factories for the subnet provided
             List<String> keyNameList =
@@ -192,7 +220,7 @@ public class CertsAssistant extends BaseCertsAssistant {
 
             // Remove the key file factories for subnet with id 0 (temporary
             // connections)
-            keyNameList = subnetKeyMap.remove(0);
+            keyNameList = subnetKeyMap.remove(0L);
             if (keyNameList != null) {
                 synchronized (keyNameList) {
                     for (String name : keyNameList) {
@@ -216,7 +244,7 @@ public class CertsAssistant extends BaseCertsAssistant {
 
             // Remove the trust file factories for subnet with id 0 (temporary
             // connections)
-            trustNameList = subnetTrustMap.remove(0);
+            trustNameList = subnetTrustMap.remove(0L);
             if (trustNameList != null) {
                 synchronized (trustNameList) {
                     for (String name : trustNameList) {
@@ -295,11 +323,15 @@ public class CertsAssistant extends BaseCertsAssistant {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        CertsDescription certs =
-                                getNewCerts(host, currCerts, errors);
+                        CertsDescription certs;
                         try {
+                            certs = getNewCerts(host, currCerts, errors, null);
+
                             xchgr.exchange(certs, TIME_OUT,
                                     TimeUnit.MILLISECONDS);
+                        } catch (SSLStoreCredentialsDeniedException e1) {
+                            // TODO Auto-generated catch block
+                            errors.add(e1);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         } catch (TimeoutException e) {
@@ -311,11 +343,17 @@ public class CertsAssistant extends BaseCertsAssistant {
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        CertsDescription certs =
-                                getNewCerts(host, currCerts, null);
                         try {
-                            xchgr.exchange(certs, TIME_OUT,
-                                    TimeUnit.MILLISECONDS);
+                            CertsDescription certs =
+                                    getNewCerts(host, currCerts, null, null);
+                            if (xchgr != null) {
+
+                                xchgr.exchange(certs, TIME_OUT,
+                                        TimeUnit.MILLISECONDS);
+                            }
+                        } catch (SSLStoreCredentialsDeniedException e1) {
+                            // TODO Auto-generated catch block
+                            errors.add(e1);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         } catch (TimeoutException e) {
@@ -339,7 +377,9 @@ public class CertsAssistant extends BaseCertsAssistant {
             KeyManagerFactory kmf = null;
             try {
                 String keyFile = newCerts.getKeyStoreFile();
-                kmf = getKeyManagerFactory(keyFile, newCerts.getKeyStorePwd());
+                kmf =
+                        Utils.createKeyManagerFactory(keyFile,
+                                newCerts.getKeyStorePwd());
                 cachedKeyFactories.put(keyFile, kmf);
                 List<String> subnetKeyList =
                         subnetKeyMap.get(subnet.getSubnetId());
@@ -368,7 +408,7 @@ public class CertsAssistant extends BaseCertsAssistant {
             try {
                 String trustFile = newCerts.getTrustStoreFile();
                 tmf =
-                        getTrustManagerFactory(trustFile,
+                        Utils.createTrustManagerFactory(trustFile,
                                 newCerts.getTrustStorePwd());
                 cachedTrustFactories.put(trustFile, tmf);
                 List<String> subnetTrustList =
@@ -404,9 +444,9 @@ public class CertsAssistant extends BaseCertsAssistant {
 
     }
 
-    private CertsDescription getNewCerts(String host,
-            CertsDescription curCerts, List<Throwable> errors) {
-
+    public CertsDescription getNewCerts(String host, CertsDescription curCerts,
+            List<Throwable> errors, Component subnetWindow)
+            throws SSLStoreCredentialsDeniedException {
         if (errors == null || errors.isEmpty()) {
             panel.reset();
         }
@@ -438,29 +478,53 @@ public class CertsAssistant extends BaseCertsAssistant {
             }
         }
 
+        Window multiNetWizardWindow = null;
+
         Window[] wins = Frame.getWindows();
         List<Window> toChange = new ArrayList<Window>();
         for (Window win : wins) {
+            if (win instanceof MultinetWizardView) {
+                multiNetWizardWindow = win;
+            }
+
             if (win.isAlwaysOnTop()) {
                 win.setAlwaysOnTop(false);
             }
         }
         try {
+            Component parentComponent = subnetWindow;
+            if (multiNetWizardWindow != null
+                    && multiNetWizardWindow.isVisible()) {
+                // the password dialog request is from the wizard
+                parentComponent = multiNetWizardWindow;
+            }
             int option =
-                    JOptionPane.showConfirmDialog(null, panel,
+                    DialogFactory.showPasswordDialog(parentComponent,
                             STLConstants.K2000_CERT_CONF.getValue() + host,
-                            JOptionPane.OK_CANCEL_OPTION,
-                            JOptionPane.PLAIN_MESSAGE);
-            if (option == JOptionPane.OK_OPTION) {
+                            panel);
+
+            if (option == DialogFactory.OK_OPTION) {
                 CertsDescription newCerts =
                         new CertsDescription(panel.getKeyStoreLocation(),
                                 panel.getTrustStoreLocation());
                 newCerts.setKeyStorePwd(panel.getKeyStorePwd());
                 newCerts.setTrustStorePwd(panel.getTrustStorePwd());
                 return newCerts;
+            } else { // (option == DialogFactory.CANCEL_OPTION){
+                     // Need to throw exception here
+                     // throw new Exception ("Certs cancelled exception");
+                throw new SSLStoreCredentialsDeniedException(
+                        UILabels.STL10114_USER_CANCELLED);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            if (e instanceof SSLStoreCredentialsDeniedException
+                    && errors != null) {
+                errors.add(e);
+                // re-throw
+                throw e;
+            } else {
+                e.printStackTrace();
+            }
         } finally {
             for (Window win : toChange) {
                 win.setAlwaysOnTop(true);

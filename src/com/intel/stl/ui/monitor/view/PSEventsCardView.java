@@ -35,8 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7.2.1  2015/08/12 15:27:16  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.9  2015/08/17 18:54:25  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/06/25 20:50:01  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on dynamic cards that can have different data sources
+ *  Archive Log:    - change to use port counter performance item
  *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/02/05 19:09:20  jijunwan
  *  Archive Log:    fixed a issue reported by klocwork that is actually not a problem
@@ -132,7 +138,7 @@ public class PSEventsCardView extends JCardView<ICardListener> {
         gc.fill = GridBagConstraints.NONE;
         gc.weightx = 0;
 
-        piePanel = new NodeStatesPie();
+        piePanel = new NodeStatesPie(false);
         piePanel.setOpaque(false);
         mainPanel.add(piePanel, gc);
 

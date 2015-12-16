@@ -35,8 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:22:06  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.6  2015/08/17 18:48:56  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/06/10 19:14:55  rjtierne
+ *  Archive Log:    PR 128975 - Can not setup application log
+ *  Archive Log:    - Parsed loggers and root level logger from config file and provided getter methods
+ *  Archive Log:    - In rolling appender method updateNode(), only set logging threshold if not NULL
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/01/20 19:10:26  rjtierne
  *  Archive Log:    Change maxNumOfBackup to String type so blank strings can be detected in wizard
@@ -64,6 +70,7 @@ import static com.intel.stl.api.configuration.impl.SupportedAppenderType.ROLLING
 import static com.intel.stl.common.AppDataUtils.FM_GUI_DIR;
 import static com.intel.stl.common.STLMessages.STL50001_ERROR_PARSING_LOGGING_CONFIG;
 import static com.intel.stl.common.STLMessages.STL50011_INVALID_XPATH_EXPRESSION;
+import static javax.xml.xpath.XPathConstants.NODE;
 import static javax.xml.xpath.XPathConstants.NODESET;
 
 import java.io.File;
@@ -111,6 +118,10 @@ public class LogbackConfigFactory implements ILogConfigFactory {
 
     private static final String XPATH_ALL_APPENDERS = "/configuration/appender";
 
+    private static final String XPATH_ROOT_LOG = "configuration/root";
+
+    private static final String XPATH_ROOT_LOG_LEVEL = "level";
+
     private static final String XML_APPENDER = "appender";
 
     private static final String XPATH_APPENDER_PATTERN = "encoder/pattern";
@@ -127,6 +138,8 @@ public class LogbackConfigFactory implements ILogConfigFactory {
 
     private static final String XPATH_FILEAPPENDER_NAMEPATTERN =
             "rollingPolicy/FileNamePattern";
+
+    private static final String XPATH_ALL_LOGGERS = "/configuration/logger";
 
     private static final String LOGBACK_FILTER_CLASS =
             "ch.qos.logback.classic.filter.ThresholdFilter";
@@ -186,6 +199,75 @@ public class LogbackConfigFactory implements ILogConfigFactory {
 
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.api.configuration.ILogConfigFactory#getLoggers()
+     */
+    @Override
+    public NodeList getLoggers() {
+        Document config = getConfig();
+        try {
+            return (NodeList) xPath
+                    .evaluate(XPATH_ALL_LOGGERS, config, NODESET);
+        } catch (XPathExpressionException e) {
+            ConfigurationException ce =
+                    new ConfigurationException(
+                            STL50011_INVALID_XPATH_EXPRESSION,
+                            XPATH_ALL_LOGGERS);
+            log.error(ce.getMessage(), e);
+            throw ce;
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.api.configuration.ILogConfigFactory#getRootLevel()
+     */
+    @Override
+    public Node getRootLogLevel() {
+
+        Document config = getConfig();
+        try {
+            Node rootNode = (Node) xPath.evaluate(XPATH_ROOT_LOG, config, NODE);
+            return rootNode.getAttributes().getNamedItem(XPATH_ROOT_LOG_LEVEL);
+        } catch (XPathExpressionException e) {
+            ConfigurationException ce =
+                    new ConfigurationException(
+                            STL50011_INVALID_XPATH_EXPRESSION, XPATH_ROOT_LOG);
+            log.error(ce.getMessage(), e);
+            throw ce;
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.api.configuration.ILogConfigFactory#setRootLogLevel(org
+     * .w3c.dom.Node)
+     */
+    @Override
+    public void setRootLogLevel(String value) {
+
+        Document config = getConfig();
+        try {
+            Node rootNode = (Node) xPath.evaluate(XPATH_ROOT_LOG, config, NODE);
+            rootNode.setNodeValue(value);
+            rootNode.getAttributes().getNamedItem(XPATH_ROOT_LOG_LEVEL)
+                    .setNodeValue(value);
+
+            // rootNode.getAttributes().setNamedItem(rootNode);
+        } catch (XPathExpressionException e) {
+            ConfigurationException ce =
+                    new ConfigurationException(
+                            STL50011_INVALID_XPATH_EXPRESSION, XPATH_ROOT_LOG);
+            log.error(ce.getMessage(), e);
+            throw ce;
+        }
+    }
+
     @Override
     public void saveConfig(File configFile) {
         Document config = getConfig();
@@ -214,7 +296,10 @@ public class LogbackConfigFactory implements ILogConfigFactory {
     @Override
     public void updateNode(Node node, RollingFileAppender appender) {
         Element element = getElement(node);
-        setLoggingThreshold(element, appender.getThreshold());
+        LoggingThreshold threshold = appender.getThreshold();
+        if (threshold != null) {
+            setLoggingThreshold(element, appender.getThreshold());
+        }
         setConversionPattern(element, appender.getConversionPattern());
         setFileLocation(element, appender.getFileLocation());
         setFileNamePattern(element, appender.getFileNamePattern());

@@ -30,13 +30,52 @@
  *	
  *  Functional Group: Fabric Viewer Application
  *
- *  File Name: ConnectivityBuilder.java
+ *  File Name: ConnectivityTableController.java
  *
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.29.2.1  2015/08/12 15:26:58  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.39  2015/08/17 18:53:41  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.38  2015/08/04 23:00:34  jijunwan
+ *  Archive Log:    PR 129821 - connectivity table has no Link Width Down Grade data
+ *  Archive Log:    - added related data to data table
+ *  Archive Log:
+ *  Archive Log:    Revision 1.37  2015/07/17 15:40:15  rjtierne
+ *  Archive Log:    PR 129547 - Need to add Node type and lid to the Connectivity
+ *  Archive Log:    In createTable() and createTableEntry(), passed node type to ConnectivityTableData()
+ *  Archive Log:    so it will appear in the table
+ *  Archive Log:
+ *  Archive Log:    Revision 1.36  2015/07/13 21:56:49  rjtierne
+ *  Archive Log:    PR 129355 - Ability to click on cables to get cable info
+ *  Archive Log:    Updated createTableEntry() to initialize the ConnectivityTableData with
+ *  Archive Log:    the cable info initial value
+ *  Archive Log:
+ *  Archive Log:    Revision 1.35  2015/06/10 21:07:21  jijunwan
+ *  Archive Log:    PR 129120 - Some old files have no proper file header. They cannot record change logs
+ *  Archive Log:    - manual correction on files that our tool cannot  identify
+ *  Archive Log:
+ *  Archive Log:    Revision 1.34  2015/06/01 15:01:17  jypak
+ *  Archive Log:    PR 128823 - Improve performance tables to include all portcounters fields.
+ *  Archive Log:    All port counters fields added to performance table and connectivity table.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.33  2015/05/19 19:19:54  jijunwan
+ *  Archive Log:    PR 128797 - Notice update failed to update related notes
+ *  Archive Log:    - remove old node check. always redraw everything
+ *  Archive Log:
+ *  Archive Log:    Revision 1.32  2015/05/14 15:02:04  rjtierne
+ *  Archive Log:    PR 128682 - Set link quality indicator to "Unknown" on port error
+ *  Archive Log:    When port counters bean is null, in createTableEntry(), set the link quality indicator to "Unknown"
+ *  Archive Log:
+ *  Archive Log:    Revision 1.31  2015/05/14 13:22:25  rjtierne
+ *  Archive Log:    When port counters bean is null, in createTableEntry(), set the link quality indicator to "Unknown"
+ *  Archive Log:
+ *  Archive Log:    Revision 1.30  2015/05/13 17:15:20  rjtierne
+ *  Archive Log:    In createTableEntry(), added null pointer protection to PortBeanCounters to
+ *  Archive Log:    prevent dereferencing when null; as is the case when selecting a switch
+ *  Archive Log:    which has no ports.
  *  Archive Log:
  *  Archive Log:    Revision 1.29  2015/04/08 16:39:07  jijunwan
  *  Archive Log:    changed to valid link speed value
@@ -148,7 +187,6 @@ package com.intel.stl.ui.monitor;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -157,8 +195,11 @@ import java.util.Map;
 import javax.swing.ListSelectionModel;
 
 import org.jdesktop.swingx.JXTable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.intel.stl.api.Utils;
+import com.intel.stl.api.configuration.LinkQuality;
 import com.intel.stl.api.performance.PortCountersBean;
 import com.intel.stl.api.subnet.ISubnetApi;
 import com.intel.stl.api.subnet.LinkRecordBean;
@@ -186,6 +227,9 @@ import com.intel.stl.ui.publisher.subscriber.PortCounterSubscriber;
 import com.intel.stl.ui.publisher.subscriber.SubscriberType;
 
 public class ConnectivityTableController {
+
+    private final static Logger log = LoggerFactory
+            .getLogger(ConnectivityTableController.class);
 
     private static final boolean TEST_SLOW_LINKS = false;
 
@@ -241,14 +285,6 @@ public class ConnectivityTableController {
 
     public synchronized void showConnectivity(int nodeLid,
             IProgressObserver observer, short... portList) {
-        if (!model.isEmpty() && nodeLid == currentLid
-                && Arrays.equals(currentPorts, portList)) {
-            if (observer != null) {
-                observer.onFinish();
-            }
-            return;
-        }
-
         clearScheduledTasks();
         currentLid = nodeLid;
         currentPorts = portList;
@@ -375,7 +411,7 @@ public class ConnectivityTableController {
     protected List<ConnectivityTableData> createTable(int lid,
             ICancelIndicator indicator, short... portList)
             throws SubnetException, SubnetDataNotFoundException {
-
+        // TODO: improve performance by querying all ports once!!
         NodeRecordBean nodeBean = null;
         try {
             nodeBean = subnetApi.getNode(lid);
@@ -412,9 +448,10 @@ public class ConnectivityTableController {
             if (!isActive) {
                 ConnectivityTableData nodeData =
                         new ConnectivityTableData(nodeBean.getLid(), nodeBean
-                                .getNodeInfo().getNodeGUID(), port, false);
+                                .getNodeInfo().getNodeGUID(),
+                                nodeBean.getNodeType(), port, false);
                 nodeData.clear();
-                nodeData.setDeviceName(nodeBean.getNodeDesc());
+                nodeData.setNodeName(nodeBean.getNodeDesc());
                 nodeData.setLinkState(STLConstants.K0524_INACTIVE.getValue());
                 dataList.add(nodeData);
             } else {
@@ -511,7 +548,6 @@ public class ConnectivityTableController {
     private ConnectivityTableData createTableEntry(int index, int lid,
             short portNum, PortRecordBean portBean, LinkRecordBean linkBean,
             NodeRecordBean nodeBean, boolean isNeighbor) {
-
         ConnectivityTableData nodeData = null;
         if (nodeBean.getNodeType() == NodeType.HFI) {
             portNum = 1; // we use local port number for display
@@ -535,15 +571,25 @@ public class ConnectivityTableController {
 
         nodeData =
                 new ConnectivityTableData(nodeBean.getLid(), nodeBean
-                        .getNodeInfo().getNodeGUID(), portNum, isNeighbor);
+                        .getNodeInfo().getNodeGUID(), nodeBean.getNodeType(),
+                        portNum, isNeighbor);
         nodeData.clear();
 
-        nodeData.setDeviceName(nodeBean.getNodeDesc());
+        nodeData.setNodeName(nodeBean.getNodeDesc());
         nodeData.setLinkState(portProperties.getState());
         nodeData.setPhysicalLinkState(portProperties.getPhysicalState());
+
         nodeData.setActiveLinkWidth(portProperties.getLinkWidthActive());
         nodeData.setEnabledLinkWidth(portProperties.getLinkWidthEnabled());
         nodeData.setSupportedLinkWidth(portProperties.getLinkWidthSupported());
+
+        nodeData.setActiveLinkWidthDnGrdTx(portProperties.getLinkWidthDnGrdTx());
+        nodeData.setActiveLinkWidthDnGrdRx(portProperties.getLinkWidthDnGrdRx());
+        nodeData.setEnabledLinkWidthDnGrd(portProperties
+                .getLinkWidthDnGrdEnabled());
+        nodeData.setSupportedLinkWidthDnGrd(portProperties
+                .getLinkWidthDnGrdSupported());
+
         nodeData.setActiveLinkSpeed(portProperties.getLinkSpeedActive());
         nodeData.setEnabledLinkSpeed(portProperties.getLinkSpeedEnabled());
         nodeData.setSupportedLinkSpeed(portProperties.getLinkSpeedSupported());
@@ -552,7 +598,18 @@ public class ConnectivityTableController {
                 schedulePortPerformanceTask(index, nodeData, lid, portNum);
         PortCountersBean counters =
                 taskScheduler.getPerformanceApi().getPortCounters(lid, portNum);
-        nodeData.setLinkQualityData(counters.getLinkQualityIndicator());
+
+        // Give the cableInfo a value so the icon will appear
+        nodeData.setCableInfo("");
+
+        // If port counters bean is null, set the link quality indicator to
+        // unknown and log the error
+        if (counters != null) {
+            nodeData.setLinkQualityData(counters.getLinkQualityIndicator());
+        } else {
+            nodeData.setLinkQualityData(LinkQuality.UNKNOWN.getValue());
+            log.error(STLConstants.K3047_PORT_BEAN_COUNTERS_NULL.getValue());
+        }
 
         schedule.callback.onDone(counters);
         return nodeData;
@@ -596,6 +653,30 @@ public class ConnectivityTableController {
                         perfData.setRxConstraints(pcBean
                                 .getPortRcvConstraintErrors());
                         // perfData.setVl15Dropped(???);
+                        perfData.setPortRcvData(pcBean.getPortRcvData());
+                        perfData.setPortXmitData(pcBean.getPortXmitData());
+
+                        perfData.setFmConfigErrors(pcBean.getFmConfigErrors());
+                        perfData.setPortMulticastRcvPkts(pcBean
+                                .getPortMulticastRcvPkts());
+                        perfData.setPortRcvFECN(pcBean.getPortRcvFECN());
+                        perfData.setPortRcvBECN(pcBean.getPortRcvBECN());
+                        perfData.setPortRcvBubble(pcBean.getPortRcvBubble());
+
+                        perfData.setPortMulticastXmitPkts(pcBean
+                                .getPortMulticastXmitPkts());
+                        perfData.setPortXmitWait(pcBean.getPortXmitWait());
+                        perfData.setPortXmitTimeCong(pcBean
+                                .getPortXmitTimeCong());
+                        perfData.setPortXmitWastedBW(pcBean
+                                .getPortXmitWastedBW());
+                        perfData.setPortXmitWaitData(pcBean
+                                .getPortXmitWaitData());
+                        perfData.setPortMarkFECN(pcBean.getPortMarkFECN());
+                        perfData.setUncorrectableErrors(pcBean
+                                .getUncorrectableErrors());
+                        perfData.setSwPortCongestion(pcBean
+                                .getSwPortCongestion());
 
                         Util.runInEDT(new Runnable() {
                             @Override

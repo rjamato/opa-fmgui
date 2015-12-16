@@ -32,10 +32,31 @@
  *
  *  File Name: WorstNodesCard.java
  *
- *  Archive Source: 
- *
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.15  2015/08/17 18:53:38  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
  *  Archive Log:
- *
+ *  Archive Log: Revision 1.14  2015/08/05 02:47:02  jijunwan
+ *  Archive Log: PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log: - introduced UndoHandler to manage undo/redo
+ *  Archive Log: - added undo/redo to main frame
+ *  Archive Log: - improved FabricController to support undoHandler and undo action on page selection
+ *  Archive Log: - improved FabricController to support the new page name based IPageListener
+ *  Archive Log:
+ *  Archive Log: Revision 1.13  2015/06/25 20:24:56  jijunwan
+ *  Archive Log: Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log: - applied pin framework on fabric viewer and simple 'static' cards
+ *  Archive Log:
+ *  Archive Log: Revision 1.12  2015/06/09 18:37:27  jijunwan
+ *  Archive Log: PR 129069 - Incorrect Help action
+ *  Archive Log: - moved help action from view to controller
+ *  Archive Log: - only enable help button when we have HelpID
+ *  Archive Log: - fixed incorrect HelpIDs
+ *  Archive Log:
+ * 
  *  Overview: 
  *
  *  @author: jijunwan
@@ -44,13 +65,19 @@
 
 package com.intel.stl.ui.main;
 
+import java.util.Properties;
+
 import net.engio.mbassy.bus.MBassador;
 
 import com.intel.stl.api.subnet.NodeType;
-import com.intel.stl.ui.common.BaseCardController;
+import com.intel.stl.ui.common.IPinProvider;
+import com.intel.stl.ui.common.PinDescription.PinID;
+import com.intel.stl.ui.common.PinnableCardController;
+import com.intel.stl.ui.common.UndoableJumpEvent;
 import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.event.JumpDestination;
-import com.intel.stl.ui.event.NodeSelectedEvent;
+import com.intel.stl.ui.event.NodesSelectedEvent;
+import com.intel.stl.ui.event.PageSelectedEvent;
 import com.intel.stl.ui.framework.IAppEvent;
 import com.intel.stl.ui.main.view.IWorstNodesListener;
 import com.intel.stl.ui.main.view.WorstNodesView;
@@ -61,14 +88,42 @@ import com.intel.stl.ui.model.NodeScore;
  * 
  */
 public class WorstNodesCard extends
-        BaseCardController<IWorstNodesListener, WorstNodesView> implements
-        IWorstNodesListener {
+        PinnableCardController<IWorstNodesListener, WorstNodesView> implements
+        IWorstNodesListener, IPinProvider {
+    private UndoHandler undoHandler;
+
+    private final String origin = HomePage.NAME;
+
+    private NodeScore[] lastNodes;
+
     public WorstNodesCard(WorstNodesView view, MBassador<IAppEvent> eventBus) {
         super(view, eventBus);
+    }
 
-        HelpAction helpAction = HelpAction.getInstance();
-        helpAction.getHelpBroker().enableHelpOnButton(view.getHelpButton(),
-                helpAction.getWorstNodes(), helpAction.getHelpSet());
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.ICardController#getHelpID()
+     */
+    @Override
+    public String getHelpID() {
+        return HelpAction.getInstance().getWorstNodes();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.common.PinnableCardController#setContext(com.intel.stl
+     * .ui.main.Context)
+     */
+    @Override
+    public void setContext(Context context) {
+        super.setContext(context);
+
+        if (context != null && context.getController() != null) {
+            undoHandler = context.getController().getUndoHandler();
+        }
     }
 
     /**
@@ -78,7 +133,11 @@ public class WorstNodesCard extends
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
+                lastNodes = nodes;
                 view.updateNodes(nodes);
+                if (pinView != null) {
+                    pinView.updateNodes(nodes);
+                }
             }
         });
     }
@@ -91,9 +150,16 @@ public class WorstNodesCard extends
      */
     @Override
     public void jumpTo(int lid, NodeType type, JumpDestination descination) {
-        NodeSelectedEvent event =
-                new NodeSelectedEvent(lid, type, this, descination);
+        NodesSelectedEvent event =
+                new NodesSelectedEvent(lid, type, this, descination.getName());
         eventBus.publish(event);
+
+        if (undoHandler != null && !undoHandler.isInProgress()) {
+            UndoableJumpEvent undoSel =
+                    new UndoableJumpEvent(eventBus, new PageSelectedEvent(this,
+                            origin), event);
+            undoHandler.addUndoAction(undoSel);
+        }
     }
 
     /*
@@ -116,7 +182,11 @@ public class WorstNodesCard extends
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
+                lastNodes = null;
                 view.clear();
+                if (pinView != null) {
+                    pinView.clear();
+                }
             }
         });
     }
@@ -140,6 +210,55 @@ public class WorstNodesCard extends
     @Override
     public void onSizeChanged(int size) {
         view.setSize(size);
+        if (pinView != null) {
+            pinView.setSize(size);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.common.PinnableCardController#generateArgument(java.
+     * util.Properties)
+     */
+    @Override
+    protected void generateArgument(Properties arg) {
+        // no argument
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.PinnableCardController#createPinView()
+     */
+    @Override
+    protected WorstNodesView createPinView() {
+        WorstNodesView pinView = new WorstNodesView();
+        pinView.setCardListener(getCardListener());
+        return pinView;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.PinnableCardController#initPinView()
+     */
+    @Override
+    protected void initPinView() {
+        if (lastNodes != null) {
+            pinView.updateNodes(lastNodes);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.PinnableCardController#getPinID()
+     */
+    @Override
+    public PinID getPinID() {
+        return PinID.WORST;
     }
 
 }

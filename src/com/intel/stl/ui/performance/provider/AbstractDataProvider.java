@@ -35,8 +35,22 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8.2.1  2015/08/12 15:27:14  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.11  2015/08/17 18:54:06  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/06/25 20:42:14  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improved PerformanceItem to support port counters
+ *  Archive Log:    - improved PerformanceItem to use generic ISource to describe data source
+ *  Archive Log:    - improved PerformanceItem to use enum DataProviderName to describe data provider name
+ *  Archive Log:    - improved PerformanceItem to support creating a copy of PerformanceItem
+ *  Archive Log:    - improved TrendItem to share scale with other charts
+ *  Archive Log:    - improved SimpleDataProvider to support hsitory data
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/06/22 13:11:54  jypak
+ *  Archive Log:    PR 128980 - Be able to search devices by name or lid.
+ *  Archive Log:    New feature added to enable search devices by name, lid or node guid. The search results are displayed as a tree and when a result node from the tree is selected, original tree is expanded and the corresponding node is highlighted.
  *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/02/12 19:40:11  jijunwan
  *  Archive Log:    short term PA support
@@ -84,10 +98,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.intel.stl.ui.common.IProgressObserver;
 import com.intel.stl.ui.main.Context;
 import com.intel.stl.ui.model.HistoryType;
+import com.intel.stl.ui.performance.ISource;
 import com.intel.stl.ui.performance.observer.IDataObserver;
 import com.intel.stl.ui.publisher.TaskScheduler;
 
-public abstract class AbstractDataProvider<E> implements IDataProvider<E> {
+public abstract class AbstractDataProvider<E, S extends ISource> implements
+        IDataProvider<E, S> {
     private final static boolean DEBUG = false;
 
     protected TaskScheduler scheduler;
@@ -95,14 +111,14 @@ public abstract class AbstractDataProvider<E> implements IDataProvider<E> {
     protected List<IDataObserver<E>> observers =
             new CopyOnWriteArrayList<IDataObserver<E>>();
 
-    protected List<ISourceObserver> sourceObservers =
-            new CopyOnWriteArrayList<ISourceObserver>();
+    protected List<ISourceObserver<S>> sourceObservers =
+            new CopyOnWriteArrayList<ISourceObserver<S>>();
 
     protected HistoryType historyType;
 
     @Override
     public void setContext(Context context, IProgressObserver progressObserver,
-            String... sourceNames) {
+            S[] sourceNames) {
         if (DEBUG) {
             System.out.println("setContext " + context + " with sources "
                     + Arrays.toString(sourceNames));
@@ -132,11 +148,11 @@ public abstract class AbstractDataProvider<E> implements IDataProvider<E> {
         }
     }
 
-    protected abstract String[] getSourceNames();
+    protected abstract S[] getSourceNames();
 
-    protected abstract boolean sameSources(String[] names);
+    protected abstract boolean sameSources(S[] names);
 
-    protected abstract void setSources(String[] names);
+    protected abstract void setSources(S[] names);
 
     protected boolean hasScheduler(Context context) {
         return scheduler != null && context.getTaskScheduler() == scheduler;
@@ -174,7 +190,7 @@ public abstract class AbstractDataProvider<E> implements IDataProvider<E> {
      * (com.intel.stl.ui.performance.provider.ISourceObserver)
      */
     @Override
-    public void addSourceObserver(ISourceObserver observer) {
+    public void addSourceObserver(ISourceObserver<S> observer) {
         sourceObservers.add(observer);
     }
 
@@ -186,7 +202,7 @@ public abstract class AbstractDataProvider<E> implements IDataProvider<E> {
      * (com.intel.stl.ui.performance.provider.ISourceObserver)
      */
     @Override
-    public void removeSourceObserver(ISourceObserver observer) {
+    public void removeSourceObserver(ISourceObserver<S> observer) {
         sourceObservers.remove(observer);
     }
 
@@ -196,26 +212,26 @@ public abstract class AbstractDataProvider<E> implements IDataProvider<E> {
         }
     }
 
-    protected void fireSourcesToRemove(String[] names) {
-        for (ISourceObserver observer : sourceObservers) {
+    protected void fireSourcesToRemove(S[] names) {
+        for (ISourceObserver<S> observer : sourceObservers) {
             observer.sourcesToRemove(names);
         }
     }
 
-    protected void fireSourcesToAdd(String[] names) {
-        for (ISourceObserver observer : sourceObservers) {
+    protected void fireSourcesToAdd(S[] names) {
+        for (ISourceObserver<S> observer : sourceObservers) {
             observer.sourcesToAdd(names);
         }
     }
 
-    protected void fireSourcesRemoved(String[] names) {
-        for (ISourceObserver observer : sourceObservers) {
+    protected void fireSourcesRemoved(S[] names) {
+        for (ISourceObserver<S> observer : sourceObservers) {
             observer.sourcesRemoved(names);
         }
     }
 
-    protected void fireSourcesAdded(String[] names) {
-        for (ISourceObserver observer : sourceObservers) {
+    protected void fireSourcesAdded(S[] names) {
+        for (ISourceObserver<S> observer : sourceObservers) {
             observer.sourcesAdded(names);
         }
     }
@@ -228,6 +244,7 @@ public abstract class AbstractDataProvider<E> implements IDataProvider<E> {
     /**
      * @return the historyType
      */
+    @Override
     public HistoryType getHistoryType() {
         return historyType;
     }
@@ -239,14 +256,14 @@ public abstract class AbstractDataProvider<E> implements IDataProvider<E> {
      */
     @Override
     public void clear() {
-        String[] oldSources = getSourceNames();
-        if (oldSources != null && oldSources.length >= 0) {
+        S[] oldSources = getSourceNames();
+        if (oldSources != null && oldSources.length > 0) {
             fireSourcesToRemove(oldSources);
         }
         try {
             clearSources();
         } finally {
-            if (oldSources != null && oldSources.length >= 0) {
+            if (oldSources != null && oldSources.length > 0) {
                 fireSourcesRemoved(oldSources);
             }
         }

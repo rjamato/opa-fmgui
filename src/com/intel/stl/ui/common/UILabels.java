@@ -24,6 +24,95 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: UILabels.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.72  2015/10/09 17:48:13  fernande
+ *  Archive Log: PR130753 - XML parse errors when new VF is created from FM GUI. Added check during validation of opaconfig.xml to make sure the "All" application is not added if a PKey is especified.
+ *  Archive Log:
+ *  Archive Log: Revision 1.71  2015/10/06 15:54:01  rjtierne
+ *  Archive Log: PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
+ *  Archive Log: - Added constants STL50215-STL50216 for Log Viewer error messages
+ *  Archive Log:
+ *  Archive Log: Revision 1.70  2015/09/25 20:50:52  fernande
+ *  Archive Log: PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
+ *  Archive Log:
+ *  Archive Log: Revision 1.69  2015/09/25 13:58:13  rjtierne
+ *  Archive Log: PR 130011 - Enhance SM Log Viewer to include Standard and Advanced requirements
+ *  Archive Log: - Tweaked STL50206 to match text
+ *  Archive Log: - Added new label STL50214 for invalid log users
+ *  Archive Log:
+ *  Archive Log: Revision 1.68  2015/08/17 18:54:12  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.67  2015/08/17 18:34:36  jijunwan
+ *  Archive Log: PR 128973 - Deploy FM conf changes on all SMs
+ *  Archive Log: - improved to ask confirmation when we intend to leave deploy panel while we are deploying FM confs.
+ *  Archive Log:
+ *  Archive Log: Revision 1.66  2015/08/17 17:35:51  jijunwan
+ *  Archive Log: PR 128973 - Deploy FM conf changes on all SMs
+ *  Archive Log: - added resources
+ *  Archive Log:
+ *  Archive Log: Revision 1.65  2015/08/17 14:22:43  rjtierne
+ *  Archive Log: PR 128979 - SM Log display
+ *  Archive Log: This is the first version of the Log Viewer which displays select lines of text from the remote SM log file. Updates include searchable raw text from file, user-defined number of lines to display, refreshing end of file, and paging. This PR is now closed and further updates can be found by referencing PR 130011 - "Enhance SM Log Viewer to include Standard and Advanced requirements".
+ *  Archive Log:
+ *  Archive Log: Revision 1.64  2015/08/10 17:31:01  robertja
+ *  Archive Log: PR 128974 - Email notification functionality.
+ *  Archive Log:
+ *  Archive Log: Revision 1.63  2015/07/23 18:12:38  jijunwan
+ *  Archive Log: PR 129645 - Tree search enhancement
+ *  Archive Log: - display message when search is canceled or return empty result
+ *  Archive Log: - fixed an issue that hides result tree by mistake
+ *  Archive Log: - changed name search field to SafeTextField, so the name rules, such as cannot start with digit, do not apply here. We are doing text match in search, so any rules are unnecessary except the valid characters.
+ *  Archive Log: - fixed value setting issue when we change the search field's formatter
+ *  Archive Log:
+ *  Archive Log: Revision 1.62  2015/07/16 21:22:52  jijunwan
+ *  Archive Log: PR 129528 - input validation improvement
+ *  Archive Log: - extended SafeTextField to apply rules in name check
+ *  Archive Log: - moved valid chars to UIConstants
+ *  Archive Log: - made FieldPair more generic and flexible
+ *  Archive Log:
+ *  Archive Log: Revision 1.61  2015/07/14 20:32:55  rjtierne
+ *  Archive Log: PR 129545 - Klocwork and FindBugs fixes
+ *  Archive Log: Added label STL50202 for logging an error message if the port column of the
+ *  Archive Log: connectivity table is null
+ *  Archive Log:
+ *  Archive Log: Revision 1.60  2015/07/14 17:06:58  jijunwan
+ *  Archive Log: PR 129541 - Should forbid save or deploy when there is invalid edit on management panel
+ *  Archive Log: - display warning message when a user intends to save or deploy while there is invalid edit
+ *  Archive Log:
+ *  Archive Log: Revision 1.59  2015/07/13 16:22:42  jijunwan
+ *  Archive Log: PR 129528 - input validation improvement
+ *  Archive Log: - new resources
+ *  Archive Log:
+ *  Archive Log: Revision 1.58  2015/06/30 22:28:02  jijunwan
+ *  Archive Log: PR 129215 - Need short chart name to support pin capability
+ *  Archive Log: - added new resources to support short name and full name
+ *  Archive Log:
+ *  Archive Log: Revision 1.57  2015/06/25 19:08:56  jijunwan
+ *  Archive Log: Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log: - new resources to support pin capability
+ *  Archive Log:
+ *  Archive Log: Revision 1.56  2015/06/10 19:58:58  jijunwan
+ *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: Fernando Fernandez
+ * 
+ ******************************************************************************/
 
 package com.intel.stl.ui.common;
 
@@ -73,6 +162,8 @@ public enum UILabels implements IMessage {
     STL10111_REFRESHING_PAGE(10111),
     STL10112_INIT_PAGE_COMPLETED(10112),
     STL10113_CONNECTION_LOST(10113),
+    STL10114_USER_CANCELLED(10114),
+    STL10115_MAX_PINS(10115),
 
     STL10200_TOPN_BANDWIDTH(10200),
     STL10201_TOPN_CONGESTION(10201),
@@ -88,6 +179,23 @@ public enum UILabels implements IMessage {
     STL10211_WORST_NODE(10211),
     STL10212_TIRE_N(10212),
     STL10213_TOPN_BUBBLE(10213),
+
+    STL10214_SHORT_TOPN_BW(10214),
+    STL10215_SHORT_TOPN_PKT_RATE(10215),
+    STL10216_SHORT_TOPN_INTEG(10216),
+    STL10217_SHORT_TOPN_CONGST(10217),
+    STL10218_SHORT_TOPN_SMA_CONG(10218),
+    STL10219_SHORT_TOPN_BUBBLE(10219),
+    STL10220_SHORT_TOPN_SECURE(10220),
+    STL10221_SHORT_TOPN_ROUTING(10221),
+
+    STL10300_NUM_SWITCHES(10300),
+    STL10301_NUM_HFIS(10301),
+    STL10302_NUM_ISLINKS(10302),
+    STL10303_NUM_HFILINKS(10303),
+    STL10304_NUM_PORTS(10304),
+    STL10305_NUM_NONDEGRADISLS(10305),
+    STL10306_NUM_NONDEGRADHFILINKS(10306),
 
     // Database Manager messages
     STL30002_DATABASE_ENGINE_ERROR(30002),
@@ -226,11 +334,32 @@ public enum UILabels implements IMessage {
     STL50092_CONFIGURE_SUBNET(50092),
     STL50093_WELCOME_FM_GUI(50093),
     STL50094_WELCOME_ERROR(50094),
+
     STL50095_TEXT_FIELD_LIMIT(50095),
+    STL50096_TEXT_FIELD_INVALID_CHAR(50096),
+    STL50097_TEXT_FIELD_VALID_CHARS(50097),
+    STL50098_TEXT_FIELD_INVALID_SPACES(50098),
+    STL50099_TEXT_FIELD_INVALID_DIGITS(50099),
 
     // CertsAssistant
     STL50200_SUBNETDESC_CANNOT_BE_NULL(50200),
     STL50201_CERTSDESC_CANNOT_BE_NULL(50201),
+    STL50202_CONNECTIVITY_PORT_IS_NULL(50202),
+
+    STL50203_SEARCH_CANCELLED(50203),
+    STL50204_SEARCH_NULL(50204),
+    STL50205_SEARCH_EMPTY(50205),
+    STL50206_SEARCH_TEXT_NOT_FOUND(50206),
+    STL50207_FILE_NOT_FOUND(50207),
+    STL50208_LOG_OK(50208),
+    STL50209_LOG_FILE_NOT_FOUND(50209),
+    STL50210_SSH_UNABLE_TO_CONNECT(50210),
+    STL50211_LOG_FILE_NOT_FOUND_USING_DEFAULT(50211),
+    STL50212_RESPONSE_TIMEOUT(50212),
+    STL50213_LINES_PER_PAGE_ERROR(50213),
+    STL50214_INVALID_LOG_USER(50214),
+    STL50215_ESM_NOT_SUPPORTED(50215),
+    STL50216_UNEXPECTED_LOGIN_FAILURE(50216),
 
     // Event messages
     STL60001_TOPO_CHANGE(60001),
@@ -270,10 +399,19 @@ public enum UILabels implements IMessage {
     STL81007_CHANGE_ID(81007),
     STL81008_INVALID_GIDRANGE(81008),
     STL81009_CHANGE_GID(81009),
+    STL81010_APPLICATIONS_ALL(81010),
+    STL81011_APPLICATIONS_ALL_SUG(81011),
+
+    STL81020_POSITIVE_VALIDATION(81020),
+    STL81021_RANGE1_VALIDATION(81021),
+    STL81022_RANGE2_VALIDATION(81022),
+    STL81023_RANGE3_VALIDATION(81023),
+    STL81024_RANGE4_VALIDATION(81024),
 
     STL81050_DG_DEVICES_DESC(81050),
     STL81051_DG_SELECT_DESC(81051),
     STL81052_DG_INCLUDE_DESC(81052),
+    STL81053_INVALID_EDIT(81053),
 
     STL81100_SAVE_ITEM(81100),
     STL81101_REMOVE_ITEM(81101),
@@ -282,6 +420,13 @@ public enum UILabels implements IMessage {
     STL81104_ONE_ISSUE_FOUND(81104),
 
     STL81110_DEPLOY_MSG(81110),
+    STL81111_LOGIN_ERROR(81111),
+    STL81112_NO_CHANGES(81112),
+    STL81113_APPLY_CREDENTIAL(81113),
+    STL81114_ADD_SM(81114),
+    STL81115_DEPLOY_CANCELLED(81115),
+    STL81116_UNKNOWN_HOST(81116),
+    STL81117_ABANDON_DEPLOY(81117),
 
     // Error messages in the UI
     STL90001_DEVICE_TYPE_NOT_SET(90001),
@@ -293,6 +438,9 @@ public enum UILabels implements IMessage {
     STL91000_ABOUT_APP(91000),
     STL91001_BUILD_ID(91001),
     STL91002_BUILD_DATE(91002),
+
+    STL92000_EMAIL_SUBJECT(92000),
+    STL92001_TEST_EMAIL_SUBJECT(92001),
     STL99999_HOLDER(99999);
 
     private static final String STL_MESSAGES_BUNDLE =

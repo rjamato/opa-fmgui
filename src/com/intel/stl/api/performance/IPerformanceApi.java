@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.20.2.1  2015/08/12 15:21:44  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.22  2015/08/17 18:48:41  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.21  2015/05/26 15:34:24  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
  *  Archive Log:
  *  Archive Log:    Revision 1.20  2015/04/09 03:29:21  jijunwan
  *  Archive Log:    updated to match FM 390
@@ -65,7 +69,6 @@ package com.intel.stl.api.performance;
 
 import java.util.List;
 
-import com.intel.stl.api.IErrorSupport;
 import com.intel.stl.api.IRandomable;
 import com.intel.stl.api.subnet.Selection;
 import com.intel.stl.api.subnet.SubnetDescription;
@@ -74,7 +77,7 @@ import com.intel.stl.api.subnet.SubnetDescription;
  * @author jijunwan
  * 
  */
-public interface IPerformanceApi extends IRandomable, IErrorSupport {
+public interface IPerformanceApi extends IRandomable {
     SubnetDescription getConnectionDescription();
 
     ImageInfoBean getImageInfo(long imageNumber, int imageOffset);

@@ -35,8 +35,28 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.14.2.1  2015/08/12 15:22:29  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.20  2015/08/17 18:49:34  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.19  2015/08/10 17:04:48  robertja
+ *  Archive Log:    PR128974 - Email notification functionality.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.18  2015/07/10 16:17:48  jijunwan
+ *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time
+ *  Archive Log:    - updated settings to restrict result_max_memory_rows
+ *  Archive Log:    - added log.info to print out DB properties
+ *  Archive Log:
+ *  Archive Log:    Revision 1.17  2015/07/09 18:55:29  fernande
+ *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Added logic to enable specifying HSQLDB option the the connection URL, just in case we need to tweak settings for customer issues
+ *  Archive Log:
+ *  Archive Log:    Revision 1.16  2015/07/07 23:29:50  jijunwan
+ *  Archive Log:    PR 129485 - Out of memory
+ *  Archive Log:    - changed to shutdown DB with compact
+ *  Archive Log:
+ *  Archive Log:    Revision 1.15  2015/07/07 22:52:21  jijunwan
+ *  Archive Log:    PR 129485 - Out of memory
+ *  Archive Log:    - changed default table type to cached
  *  Archive Log:
  *  Archive Log:    Revision 1.14  2015/04/01 17:06:35  rjtierne
  *  Archive Log:    Added printout for hibernate shutdown
@@ -95,6 +115,7 @@ import static com.intel.stl.configuration.AppSettings.DB_CONNECTION_DRIVER;
 import static com.intel.stl.configuration.AppSettings.DB_CONNECTION_PASSWORD;
 import static com.intel.stl.configuration.AppSettings.DB_CONNECTION_URL;
 import static com.intel.stl.configuration.AppSettings.DB_CONNECTION_USER;
+import static com.intel.stl.configuration.AppSettings.DB_DATABASE_PROVIDER_NAME;
 import static com.intel.stl.configuration.AppSettings.DB_NAME;
 import static com.intel.stl.configuration.AppSettings.DB_PERSISTENCE_PROVIDER;
 import static com.intel.stl.configuration.AppSettings.DB_PERSISTENCE_PROVIDER_NAME;
@@ -190,6 +211,8 @@ public class HibernateEngine implements DatabaseEngine {
 
     private final String providerName;
 
+    private final String dbmsName;
+
     private final String connectionDriver;
 
     private final String connectionUrl;
@@ -204,7 +227,9 @@ public class HibernateEngine implements DatabaseEngine {
         this.settings = settings;
         this.persistenceProvider = getSetting(DB_PERSISTENCE_PROVIDER);
         this.providerName = getSetting(DB_PERSISTENCE_PROVIDER_NAME);
+        this.dbmsName = getSetting(DB_DATABASE_PROVIDER_NAME);
         this.connectionDriver = getSetting(DB_CONNECTION_DRIVER);
+        String dbmsProps = createDBMSPropertiesString();
         // If DB_CONNECTION_URL is not set in settings.xml (overridden by user)
         // then create a connection URL.
         String connectionUrl = getSetting(DB_CONNECTION_URL);
@@ -217,7 +242,8 @@ public class HibernateEngine implements DatabaseEngine {
                 dbFullName =
                         appDbFolder + File.separatorChar + getSetting(DB_NAME);
             }
-            this.connectionUrl = "jdbc:hsqldb:file:" + dbFullName;
+            this.connectionUrl =
+                    "jdbc:hsqldb:file:" + dbFullName + ";" + dbmsProps;
         } else {
             this.connectionUrl = connectionUrl;
         }
@@ -238,8 +264,8 @@ public class HibernateEngine implements DatabaseEngine {
         EntityManager em = factory.createEntityManager();
         try {
             em.getTransaction().begin();
-            System.out.println("HibernateEngine Shutting Down!");
-            em.createNativeQuery("SHUTDOWN").executeUpdate();
+            log.info("Hibernate engine shutting down...");
+            em.createNativeQuery("SHUTDOWN COMPACT").executeUpdate();
             em.getTransaction().commit();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -269,28 +295,30 @@ public class HibernateEngine implements DatabaseEngine {
     @Override
     public AppInfo getAppInfo() {
         AppInfo appInfo = null;
+        AppInfoRecord appInfoRec;
         try {
             EntityManager em = getEntityManager();
-            AppInfoRecord appInfoRec =
-                    em.find(AppInfoRecord.class, APP_INFO_KEY);
+            appInfoRec = em.find(AppInfoRecord.class, APP_INFO_KEY);
             if (appInfoRec == null) {
                 return appInfo;
             }
             appInfo = appInfoRec.getAppInfo();
-            UserOptions options =
-                    UserOptionsMarshaller.unmarshal(appInfoRec
-                            .getPropertiesXml());
-            appInfo.setProperties(options.getPreferences());
-            return appInfo;
-        } catch (JAXBException e) {
-            log.warn(e.getMessage(), e);
-            return appInfo;
         } catch (DatabaseException e) {
             log.warn(e.getMessage(), e);
             return null;
         } catch (PersistenceException e) {
-            log.warn(e.getMessage(), e);
+            log.debug(e.getMessage(), e);
             return null;
+        }
+        try {
+            UserOptions options =
+                    UserOptionsMarshaller.unmarshal(appInfoRec
+                            .getPropertiesXml());
+            appInfo.setPropertiesMap(options.getPreferences());
+            return appInfo;
+        } catch (JAXBException e) {
+            log.warn(e.getMessage(), e);
+            return appInfo;
         }
     }
 
@@ -300,7 +328,7 @@ public class HibernateEngine implements DatabaseEngine {
         UserOptions options;
         try {
             options = UserOptionsMarshaller.unmarshal(propertiesXml);
-            options.setPreferences(appInfo.getProperties());
+            options.setPreferences(appInfo.getPropertiesMap());
             propertiesXml = UserOptionsMarshaller.marshal(options);
         } catch (JAXBException e) {
             log.error(e.getMessage(), e);
@@ -405,6 +433,26 @@ public class HibernateEngine implements DatabaseEngine {
             }
         }
         return overrides;
+    }
+
+    private String createDBMSPropertiesString() {
+        StringBuffer props = new StringBuffer();
+        if (dbmsName != null) {
+            String dbmsSettingPrefix = DB_SETTING_PREFIX + dbmsName + ".";
+            for (Object setting : settings.keySet()) {
+                String settingName = setting.toString().toLowerCase();
+                if (settingName.startsWith(dbmsSettingPrefix)) {
+                    String configOption = getSetting((String) setting);
+                    props.append(settingName.substring(dbmsSettingPrefix
+                            .length()));
+                    props.append('=');
+                    props.append(configOption);
+                    props.append(';');
+                }
+            }
+        }
+        log.info("DB Properties: '" + props.toString() + "'");
+        return props.toString();
     }
 
     public void generateScripts(String targetDatabase, int targetMajorVersion,

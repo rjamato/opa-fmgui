@@ -35,8 +35,19 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3.2.1  2015/08/12 15:27:34  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.7  2015/08/17 18:54:50  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/08/12 19:28:12  fisherma
+ *  Archive Log:    Store/retrieve SMTP settings in/from SECTION_PREFERENCE properties.  Cleanup unused interface.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/08/11 20:35:56  jijunwan
+ *  Archive Log:    PR 129935 - Need proper default value for user preference
+ *  Archive Log:    - set default time window to 60 sec
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/08/10 17:55:47  robertja
+ *  Archive Log:    PR 128974 - Email notification functionality.
  *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/02/23 15:06:54  rjtierne
  *  Archive Log:    Replaced hard coded string constants with STLConstants
@@ -55,6 +66,7 @@
  ******************************************************************************/
 package com.intel.stl.ui.wizards.model.preferences;
 
+import static com.intel.stl.api.configuration.UserSettings.PROPERTY_MAIL_RECIPIENTS;
 import static com.intel.stl.api.configuration.UserSettings.PROPERTY_NUM_WORST_NODES;
 import static com.intel.stl.api.configuration.UserSettings.PROPERTY_REFRESH_RATE;
 import static com.intel.stl.api.configuration.UserSettings.PROPERTY_REFRESH_RATE_UNITS;
@@ -81,9 +93,20 @@ public class PreferencesModel {
         preferences.put(PROPERTY_REFRESH_RATE, "10");
         preferences.put(PROPERTY_REFRESH_RATE_UNITS,
                 STLConstants.K0012_SECONDS.getValue());
-        preferences.put(PROPERTY_TIMING_WINDOW, "10");
+        preferences.put(PROPERTY_TIMING_WINDOW, "60");
         preferences.put(PROPERTY_NUM_WORST_NODES, "10");
+        preferences.put(PROPERTY_MAIL_RECIPIENTS, "");
         preferencesMap.put(SECTION_PREFERENCE, preferences);
+    }
+
+    public String getMailRecipients() {
+        return preferencesMap.get(SECTION_PREFERENCE).getProperty(
+                PROPERTY_MAIL_RECIPIENTS);
+    }
+
+    public void setMailRecipients(String recipients) {
+        preferencesMap.get(SECTION_PREFERENCE).setProperty(
+                PROPERTY_MAIL_RECIPIENTS, recipients);
     }
 
     public String getRefreshRateInSeconds() {
@@ -140,5 +163,9 @@ public class PreferencesModel {
 
     public void setPreferencesMap(Map<String, Properties> preferencesMap) {
         this.preferencesMap = preferencesMap;
+    }
+
+    public Properties getPreferences() {
+        return preferencesMap.get(SECTION_PREFERENCE);
     }
 }

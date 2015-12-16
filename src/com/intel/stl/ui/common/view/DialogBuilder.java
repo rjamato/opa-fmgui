@@ -35,11 +35,19 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.2  2015/08/12 15:26:33  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.13  2015/08/17 18:53:36  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.5.2.1  2015/05/06 19:40:10  jijunwan
- *  Archive Log:    improvement on error dialog to show parent's title, handle special case etc.
+ *  Archive Log:    Revision 1.12  2015/07/13 22:26:47  jijunwan
+ *  Archive Log:    PR 129533 - Close application without confirmation on changes
+ *  Archive Log:    - changed default action to cancel action
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/06/17 15:40:28  fisherma
+ *  Archive Log:    PR129220 - partial fix for the login changes.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/05/21 17:02:41  fisherma
+ *  Archive Log:    Make error dialogs non-modal by default.  Added code to make the error dialog "sticky" to its parent frame if there is one.  This way the error dialog is always shown over the parent window and will be moved around along with the parent window.
  *  Archive Log:
  *  Archive Log:    Revision 1.9  2015/05/05 18:29:46  jijunwan
  *  Archive Log:    improvement to avoid potential sync issue
@@ -83,19 +91,22 @@
 
 package com.intel.stl.ui.common.view;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dialog;
-import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -103,11 +114,11 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JViewport;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.PlainDocument;
 
@@ -132,9 +143,7 @@ public class DialogBuilder {
 
     private JButton okBtn, cancelBtn;
 
-    private int btnPressed = 0;
-
-    private ModalityType desiredType;
+    private int btnPressed = JOptionPane.NO_OPTION;
 
     //
     // Constructor to create dialog with one button
@@ -145,7 +154,7 @@ public class DialogBuilder {
     }
 
     // This is constructor for a modeless dialog
-    // which should always be shown on top of all other windows.
+    // which should always be shown on top of its parent window.
     public DialogBuilder(String btn0) {
         dialog = new JDialog();
 
@@ -155,7 +164,6 @@ public class DialogBuilder {
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.setModalityType(java.awt.Dialog.ModalityType.MODELESS);
         dialog.setIconImage(UIImages.LOGO_24.getImage());
-        dialog.setAlwaysOnTop(true);
         dialog.setPreferredSize(new Dimension(500, 300));
         dialog.pack();
     }
@@ -167,6 +175,7 @@ public class DialogBuilder {
         // Figure out the parent.
         if (owner instanceof JFrame) {
             dialog = new JDialog((JFrame) owner, title, modal);
+            new MovingTogether((JFrame) owner, dialog);
         } else if (owner instanceof JDialog) {
             dialog = new JDialog((JDialog) owner, title, modal);
         } else {
@@ -174,7 +183,8 @@ public class DialogBuilder {
             dialog.setTitle(title);
             dialog.setModal(modal);
             dialog.setIconImage(UIImages.LOGO_24.getImage());
-            System.out.println("PARENT IS NEITHER FRAME NOR DIALOG: " + owner);
+            // System.out.println("PARENT IS NEITHER FRAME NOR DIALOG: " +
+            // owner);
         }
 
         createButtonsPanel(btn0, btn1);
@@ -187,9 +197,46 @@ public class DialogBuilder {
         // DOCUMENT_MODAL
         // MODELESS
         // TOOLKIT_MODAL
-        dialog.setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
 
         dialog.setPreferredSize(new Dimension(500, 200));
+        dialog.pack();
+        dialog.setLocationRelativeTo(owner);
+    }
+
+    //
+    // Constructor for password dialog
+    //
+    public DialogBuilder(java.awt.Component owner, String title, boolean modal,
+            java.awt.Component showThisInDialog, String btn0, String btn1) {
+        this.title = title;
+
+        // Figure out the parent.
+        if (owner instanceof JFrame) {
+            dialog = new JDialog((JFrame) owner, title, modal);
+            new MovingTogether((JFrame) owner, dialog);
+
+            if (modal) {
+                dialog.setModalityType(Dialog.ModalityType.DOCUMENT_MODAL);
+            }
+        } else if (owner instanceof JDialog) {
+            dialog = new JDialog((JDialog) owner, title, modal);
+        } else {
+            dialog = new JDialog();
+            dialog.setTitle(title);
+            dialog.setModal(modal);
+            dialog.setIconImage(UIImages.LOGO_24.getImage());
+        }
+
+        createButtonsPanel(btn0, btn1);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+        JPanel content = new JPanel();
+        content.setLayout(new BorderLayout());
+        content.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        content.add(showThisInDialog, BorderLayout.CENTER);
+        buttonsPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
+        content.add(buttonsPanel, BorderLayout.SOUTH);
+        dialog.getContentPane().add(content);
         dialog.pack();
         dialog.setLocationRelativeTo(owner);
     }
@@ -245,20 +292,6 @@ public class DialogBuilder {
         buttonsPanel.setBorder(BorderFactory.createEmptyBorder());
         buttonsPanel.setOpaque(false);
 
-        if (btn0 != null) {
-            // this is ok button
-            okBtn = ComponentFactory.getIntelActionButton(btn0);
-            okBtn.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    // clear text
-                    text.setText(null);
-                    dialog.dispose();
-                }
-            });
-            buttonsPanel.add(okBtn);
-        }
-
         if (btn1 != null) {
             // this is cancel button
             cancelBtn = ComponentFactory.getIntelCancelButton(btn1);
@@ -271,6 +304,23 @@ public class DialogBuilder {
             buttonsPanel.add(cancelBtn);
         }
 
+        if (btn0 != null) {
+            // this is ok button
+            okBtn = ComponentFactory.getIntelActionButton(btn0);
+            okBtn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // clear text
+                    if (text != null) {
+                        text.setText(null);
+                    }
+                    btnPressed = JOptionPane.YES_OPTION;
+                    dialog.dispose();
+                }
+            });
+            buttonsPanel.add(okBtn);
+        }
+
         // If there are two buttons, make them same width.
         if (btn0 != null && btn1 != null) {
             JButton btnGroup[] = { okBtn, cancelBtn };
@@ -281,35 +331,27 @@ public class DialogBuilder {
 
     public void show() {
         refresh();
-        // when there is an APPLICATION_MODAL dialog, we want our user
-        // respond to this dialog first.
-        if (desiredType == null) {
-            desiredType = dialog.getModalityType();
-        }
-        Dialog appDlg = getAppModalDlg();
-        boolean intersects =
-                appDlg != null
-                        && appDlg.getBounds().intersects(dialog.getBounds());
-        if (intersects) {
-            dialog.setModalityType(ModalityType.APPLICATION_MODAL);
-        } else if (dialog.getModalityType() != desiredType) {
-            dialog.setModalityType(desiredType);
-        }
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                okBtn.requestFocus();
-            }
-        });
-
+        // The following code ensures that the parent frame will be shown behind
+        // the dialog in case when the dialog is shown while its parent
+        // is in minimized state.
         if (!dialog.isVisible()) {
+
+            if (dialog.getParent() != null
+                    && dialog.getParent() instanceof JFrame) {
+                JFrame parent = (JFrame) dialog.getParent();
+
+                if (parent.getState() != Frame.NORMAL) {
+                    parent.setState(Frame.NORMAL);
+                }
+                parent.setVisible(true);
+                parent.toFront();
+            }
+
+            dialog.setLocationRelativeTo(dialog.getParent());
             dialog.setVisible(true);
-        } else {
-            // Should we actually do it??? Might be disruptive if it gains
-            // focus!!!
-            dialog.toFront();
         }
+
     }
 
     /**
@@ -333,28 +375,6 @@ public class DialogBuilder {
                 dialog.setTitle(prefix + " " + title);
             }
         }
-        dialog.setLocationRelativeTo(parent);
-    }
-
-    /**
-     * 
-     * <i>Description:</i> Detect whether there is an APPLICATION_MODAL dialog,
-     * for example, whether setup wizard is running.
-     * 
-     * @return
-     */
-    protected Dialog getAppModalDlg() {
-        Window[] wins = Window.getWindows();
-        for (Window win : wins) {
-            if (win.isVisible() && win instanceof Dialog) {
-                Dialog dlg = (Dialog) win;
-                ModalityType type = dlg.getModalityType();
-                if (type == ModalityType.APPLICATION_MODAL) {
-                    return dlg;
-                }
-            }
-        }
-        return null;
     }
 
     public int getButtonPressed() {
@@ -363,7 +383,7 @@ public class DialogBuilder {
 
     public void cancelAction() {
         // User pressed cancel button
-        btnPressed = 1;
+        btnPressed = JOptionPane.NO_OPTION;
         dialog.setVisible(false);
     }
 
@@ -408,4 +428,56 @@ public class DialogBuilder {
         text.setText(str);
     }
 
+}
+
+//
+// Class to move the dialog in parent's coordinate space
+// when parent gets moved around on the screen.
+//
+class MovingTogether extends ComponentAdapter {
+    private Window parent, dialog;
+
+    private int xDiff, yDiff;
+
+    public MovingTogether(JFrame parent, JDialog dialog) {
+        if (null != parent) {
+            // Make sure we did not get here with null parent
+            this.parent = parent;
+            this.dialog = dialog;
+
+            parent.addComponentListener(this);
+            dialog.addComponentListener(this);
+        }
+    }
+
+    @Override
+    public void componentMoved(ComponentEvent e) {
+        Window win = (Window) e.getComponent();
+        if (win == parent && parent.isVisible()) {
+            // Parent frame got moved. Make sure we move the dialog along with
+            // the parent.
+            dialog.setLocation(parent.getLocationOnScreen().x + xDiff,
+                    parent.getLocationOnScreen().y + yDiff);
+        } else if (parent.isVisible()) {
+            // Dialog is the source of the event, it probably got moved.
+            // Save the new delta(s) between parent and modal dialog
+            // coordinates.
+            Point location = dialog.getLocation();
+            xDiff = location.x - parent.getLocationOnScreen().x;
+            yDiff = location.y - parent.getLocationOnScreen().y;
+        }
+    }
+
+    @Override
+    public void componentShown(ComponentEvent e) {
+        Window win = (Window) e.getComponent();
+        if (win == parent) {
+            // System.out.println("Parent is shown");
+        } else if (parent.isVisible()) {
+            Point location = dialog.getLocationOnScreen();
+            // calculate x/y deltas with the parent dialog
+            xDiff = location.x - parent.getLocationOnScreen().x;
+            yDiff = location.y - parent.getLocationOnScreen().y;
+        }
+    }
 }

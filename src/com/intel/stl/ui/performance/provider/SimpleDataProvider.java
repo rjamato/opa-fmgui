@@ -35,8 +35,22 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8.2.1  2015/08/12 15:27:14  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.11  2015/08/17 18:54:06  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/06/26 23:03:51  jijunwan
+ *  Archive Log:    PR 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improvement on stability
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/06/25 20:42:14  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improved PerformanceItem to support port counters
+ *  Archive Log:    - improved PerformanceItem to use generic ISource to describe data source
+ *  Archive Log:    - improved PerformanceItem to use enum DataProviderName to describe data provider name
+ *  Archive Log:    - improved PerformanceItem to support creating a copy of PerformanceItem
+ *  Archive Log:    - improved TrendItem to share scale with other charts
+ *  Archive Log:    - improved SimpleDataProvider to support hsitory data
  *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/02/03 21:12:34  jypak
  *  Archive Log:    Short Term PA history changes for Group Info only.
@@ -76,19 +90,28 @@
 
 package com.intel.stl.ui.performance.provider;
 
+import java.util.concurrent.Future;
+
 import com.intel.stl.ui.common.IProgressObserver;
 import com.intel.stl.ui.model.HistoryType;
+import com.intel.stl.ui.performance.ISource;
+import com.intel.stl.ui.performance.observer.IDataObserver;
 import com.intel.stl.ui.publisher.CallbackAdapter;
 import com.intel.stl.ui.publisher.ICallback;
 import com.intel.stl.ui.publisher.Task;
 
-public abstract class SimpleDataProvider<E> extends AbstractDataProvider<E> {
+public abstract class SimpleDataProvider<E, S extends ISource> extends
+        AbstractDataProvider<E, S> {
 
-    private String sourceName;
+    protected S sourceName;
 
     protected Task<E> task;
 
+    protected Future<Void> historyTask;
+
     private ICallback<E> callback;
+
+    private ICallback<E[]> batchedCallback;
 
     /**
      * Description:
@@ -106,9 +129,10 @@ public abstract class SimpleDataProvider<E> extends AbstractDataProvider<E> {
      * com.intel.stl.ui.performance.provider.AbstractDataProvider#getSourceNames
      * ()
      */
+    @SuppressWarnings("unchecked")
     @Override
-    protected String[] getSourceNames() {
-        return sourceName == null ? null : new String[] { sourceName };
+    protected S[] getSourceNames() {
+        return sourceName == null ? null : (S[]) new ISource[] { sourceName };
     }
 
     /*
@@ -119,8 +143,8 @@ public abstract class SimpleDataProvider<E> extends AbstractDataProvider<E> {
      * (java.lang.String[])
      */
     @Override
-    protected boolean sameSources(String[] names) {
-        String name = names == null || names.length == 0 ? null : names[0];
+    protected boolean sameSources(S[] names) {
+        S name = names == null || names.length == 0 ? null : names[0];
         if (name != null) {
             return name.equals(sourceName);
         } else if (sourceName != null) {
@@ -131,9 +155,16 @@ public abstract class SimpleDataProvider<E> extends AbstractDataProvider<E> {
     }
 
     @Override
-    protected void setSources(String[] names) {
+    protected void setSources(S[] names) {
         sourceName = names == null || names.length == 0 ? null : names[0];
         if (sourceName != null) {
+            for (IDataObserver<E> observer : observers) {
+                observer.reset();
+            }
+
+            if (historyType != null && historyType != HistoryType.CURRENT) {
+                historyTask = initHistory(sourceName, getBatchedCallback());
+            }
             task = registerTask(sourceName, getCallback());
             onRefresh(null);
         }
@@ -154,7 +185,7 @@ public abstract class SimpleDataProvider<E> extends AbstractDataProvider<E> {
         scheduler.submitToBackground(new Runnable() {
             @Override
             public void run() {
-                String source = sourceName;
+                S source = sourceName;
                 if (source != null) {
                     E result = refresh(source);
                     if (source.equals(sourceName)) {
@@ -186,20 +217,50 @@ public abstract class SimpleDataProvider<E> extends AbstractDataProvider<E> {
         return callback;
     }
 
-    protected abstract E refresh(String sourceName);
+    protected abstract E refresh(S sourceName);
 
-    protected abstract Task<E> registerTask(String sourceName,
-            ICallback<E> callback);
+    protected abstract Task<E> registerTask(S sourceName, ICallback<E> callback);
 
     protected abstract void deregisterTask(Task<E> task, ICallback<E> callback);
 
     @Override
     public void clearSources() {
-        if (scheduler != null && task != null) {
-            deregisterTask(task, callback);
+        if (scheduler != null) {
+            if (task != null) {
+                deregisterTask(task, callback);
+            }
+            if (historyTask != null) {
+                historyTask.cancel(true);
+            }
         }
         sourceName = null;
     }
+
+    protected ICallback<E[]> getBatchedCallback() {
+        if (batchedCallback == null) {
+            batchedCallback = new CallbackAdapter<E[]>() {
+                /*
+                 * (non-Javadoc)
+                 * 
+                 * @see
+                 * com.intel.hpc.stl.ui.publisher.CallBackAdapter#onDone(java
+                 * .lang .Object)
+                 */
+                @Override
+                public synchronized void onDone(E[] result) {
+                    if (result != null) {
+                        for (E element : result) {
+                            fireNewData(element);
+                        }
+                    }
+                }
+            };
+        }
+        return batchedCallback;
+    }
+
+    protected abstract Future<Void> initHistory(S sourceName,
+            ICallback<E[]> callback);
 
     /**
      * HistoryType is only used for CombinedDataProvider not for
@@ -207,7 +268,19 @@ public abstract class SimpleDataProvider<E> extends AbstractDataProvider<E> {
      */
     @Override
     public void setHistoryType(HistoryType type) {
-        this.historyType = type;
+        super.setHistoryType(type);
+        for (IDataObserver<E> observer : observers) {
+            observer.reset();
+        }
+
+        if (historyTask != null && !historyTask.isDone()) {
+            historyTask.cancel(true);
+        }
+
+        if (sourceName != null && scheduler != null
+                && historyType != HistoryType.CURRENT) {
+            historyTask = initHistory(sourceName, getBatchedCallback());
+        }
     }
 
 }

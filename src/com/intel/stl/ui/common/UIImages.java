@@ -35,8 +35,40 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.49.2.1  2015/08/12 15:27:03  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.58  2015/08/17 18:54:12  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.57  2015/08/05 03:01:39  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - changed undo/redo image icon
+ *  Archive Log:
+ *  Archive Log:    Revision 1.56  2015/07/23 11:49:11  jypak
+ *  Archive Log:    PR 129645 - Tree search enhancement.
+ *  Archive Log:    Search progress bar, running icon and cancel capability are added.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.55  2015/07/13 21:55:49  rjtierne
+ *  Archive Log:    PR 129355 - Ability to click on cables to get cable info
+ *  Archive Log:    - Added new icon CABLE for Cable Info column of the connectivity table
+ *  Archive Log:
+ *  Archive Log:    Revision 1.54  2015/06/25 19:08:56  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - new resources to support pin capability
+ *  Archive Log:
+ *  Archive Log:    Revision 1.53  2015/06/22 13:11:56  jypak
+ *  Archive Log:    PR 128980 - Be able to search devices by name or lid.
+ *  Archive Log:    New feature added to enable search devices by name, lid or node guid. The search results are displayed as a tree and when a result node from the tree is selected, original tree is expanded and the corresponding node is highlighted.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.52  2015/06/10 19:19:34  rjtierne
+ *  Archive Log:    PR 128975 - Can not setup application log
+ *  Archive Log:    - Added LOG_MENU_ICON and  log_16x16.png for the Configure/Logging menu
+ *  Archive Log:
+ *  Archive Log:    Revision 1.51  2015/05/14 14:56:50  rjtierne
+ *  Archive Log:    PR 128682 - Set link quality indicator to "Unknown" on port error
+ *  Archive Log:    Added LINK_QUALITY_UNKNOWN and link_quality_16x16-error.png icon
+ *  Archive Log:
+ *  Archive Log:    Revision 1.50  2015/05/14 13:21:57  rjtierne
+ *  Archive Log:    Added LINK_QUALITY_UNKNOWN and link_quality_16x16-unknown.png icon
  *  Archive Log:
  *  Archive Log:    Revision 1.49  2015/04/18 01:39:59  fisherma
  *  Archive Log:    PR 127653 - FM GUI errors after connection loss.  The code changes address issue #2 reported in the bug.  Adding common dialog to display errors.  Needs further appearance improvements.
@@ -248,8 +280,8 @@ public enum UIImages {
     FIT_WINDOW("fit_window_16x16.png"),
     EXPAND_ALL("expandAll_16x16.png"),
     COLLAPSE_ALL("collapseAll_16x16.png"),
-    UNDO("undo_16x16.png"),
-    REDO("redo_16x16.png"),
+    UNDO("left-previous_16x16.png"),
+    REDO("right-next_16x16.png"),
     RESET("reset_16x16.png"),
     SLOW_LINK("slow_link_16x16.png"),
     NORMAL_LINK("normal_link_16x16.png"),
@@ -277,6 +309,7 @@ public enum UIImages {
     DEVICE_SET("deviceSet_16x16.png"),
     CONNECT_GRAY("connect_gray_16x16.png"),
     CONNECT_WHITE("connect_white_16x16.png"),
+    LOG_MENU_ICON("log_16x16.png"),
     LOG_ICON("log_40x40.png"),
     DIENAMIC_BAR("dienamic_bar-640x56.png"),
     EMAIL_ICON("email_16x16.png"),
@@ -289,19 +322,27 @@ public enum UIImages {
     LINK_QUALITY_GOOD("link_quality_16x16-3.png"),
     LINK_QUALITY_VERY_GOOD("link_quality_16x16-4.png"),
     LINK_QUALITY_EXCELLENT("link_quality_16x16-5.png"),
+    LINK_QUALITY_UNKNOWN("link_quality_16x16-error.png"),
     CHECK_MARK("checkmark_16x16.png"),
     X_MARK("x_mark_16x16.png"),
     DASH("dash_16x16.png"),
     PLAY("play_16x16.png"),
     STOP("stop_16x16.png"),
+    STOP_RED("stop_red_16x16.png"),
     MOVE("move_16x16.png"),
+    GO_UP("goUp_16x16.png"),
+    GO_DOWN("goDown_16x16.png"),
     SYS_IMG("systemImage_16x16.png"),
     ABOUT_DIALOG_TOP_BANNER_IMG("AboutDlgTopBanner.png"),
     ABOUT_DIALOG_LEFT_BANNER_IMG("AboutDlgVerticalBanner.png"),
     INFO_DLG("info_32x32.png"),
     CONFIRM_DLG("confirm_32x32.png"),
     WARNING_DLG("warning_32x32.png"),
-    ERROR_DLG("error_32x32.png");
+    ERROR_DLG("error_32x32.png"),
+    SEARCH("search_16x16.png"),
+    EXPAND_DOWN("expandDown_10x10.png"),
+    EXPAND_UP("expandUp_10x10.png"),
+    CABLE("cable_16x16.png");
 
     private static final String STL_IMAGES_PATH = "/image/";
 

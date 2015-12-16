@@ -35,8 +35,17 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.1  2015/08/12 15:22:01  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.8  2015/10/07 11:39:58  jypak
+ *  Archive Log:    PR 130608 - Changes made to SC2VL mapping is not reflected in FM GUI's SC2SL Mapping Table.
+ *  Archive Log:    Klocwork issues fixed.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/10/01 17:37:10  jypak
+ *  Archive Log:    PR 130608 - Changes made to SC2VL mapping is not reflected in FM GUI's SC2SL Mapping Table.
+ *  Archive Log:    Each cache's refreshCache method is implemented to remove relevant cahce.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/08/17 18:48:53  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.5  2014/09/17 16:40:08  fernande
  *  Archive Log:    Refactored CacheManager to load caches according to what's defined in enums MemCacheType and DBCacheType, to make it more dynamic
@@ -65,15 +74,17 @@
 package com.intel.stl.api.subnet.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.intel.stl.api.notice.impl.NoticeProcess;
 import com.intel.stl.api.subnet.LFTRecordBean;
 import com.intel.stl.configuration.CacheManager;
 import com.intel.stl.configuration.MemoryCache;
 
-public class LFTCacheImpl extends MemoryCache<List<LFTRecordBean>> implements
-        LFTCache {
+public class LFTCacheImpl extends
+        MemoryCache<Map<Integer, List<LFTRecordBean>>> implements LFTCache {
 
     private final SAHelper helper;
 
@@ -84,21 +95,41 @@ public class LFTCacheImpl extends MemoryCache<List<LFTRecordBean>> implements
 
     @Override
     public List<LFTRecordBean> getLFTs() {
-        List<LFTRecordBean> res = getCachedObject();
-        return res;
+        Map<Integer, List<LFTRecordBean>> map = getCachedObject();
+
+        List<LFTRecordBean> res = new ArrayList<LFTRecordBean>();
+        if (map != null && !map.isEmpty()) {
+            for (List<LFTRecordBean> lfts : map.values()) {
+                for (LFTRecordBean lft : lfts) {
+                    res.add(lft);
+                }
+            }
+        }
+
+        if (!res.isEmpty()) {
+            return res;
+        } else {
+            // might be a new
+            try {
+                res = helper.getLFTs();
+                if (res != null) {
+                    setCacheReady(false); // Force a refresh on next call;
+                }
+                return res;
+            } catch (Exception e) {
+                throw SubnetApi.getSubnetException(e);
+            }
+
+        }
     }
 
     @Override
     public List<LFTRecordBean> getLFT(int lid) {
-        List<LFTRecordBean> lfts = getLFTs();
+        Map<Integer, List<LFTRecordBean>> map = getCachedObject();
         List<LFTRecordBean> res = new ArrayList<LFTRecordBean>();
-        if (lfts != null) {
-            for (LFTRecordBean lft : lfts) {
-                if (lft.getLid() == lid) {
-                    res.add(lft);
-                }
-            }
-            if (!res.isEmpty()) {
+        if (map != null) {
+            res = map.get(lid);
+            if (res != null && !res.isEmpty()) {
                 return res;
             }
         }
@@ -118,10 +149,26 @@ public class LFTCacheImpl extends MemoryCache<List<LFTRecordBean>> implements
     }
 
     @Override
-    protected List<LFTRecordBean> retrieveObjectForCache() throws Exception {
-        List<LFTRecordBean> res = helper.getLFTs();
-        log.info("Retrieve " + (res == null ? 0 : res.size()) + " LFTs from FE");
-        return res;
+    protected Map<Integer, List<LFTRecordBean>> retrieveObjectForCache()
+            throws Exception {
+        List<LFTRecordBean> lfts = helper.getLFTs();
+        log.info("Retrieve " + (lfts == null ? 0 : lfts.size())
+                + " LFTs from FE");
+        Map<Integer, List<LFTRecordBean>> map = null;
+        if (lfts != null) {
+            map = new HashMap<Integer, List<LFTRecordBean>>();
+            for (LFTRecordBean lft : lfts) {
+                int lid = lft.getLid();
+                if (map.containsKey(lid)) {
+                    map.get(lid).add(lft);
+                } else {
+                    List<LFTRecordBean> list = new ArrayList<LFTRecordBean>();
+                    list.add(lft);
+                    map.put(lft.getLid(), list);
+                }
+            }
+        }
+        return map;
     }
 
     /*
@@ -134,6 +181,10 @@ public class LFTCacheImpl extends MemoryCache<List<LFTRecordBean>> implements
     @Override
     public boolean refreshCache(NoticeProcess notice) throws Exception {
         // No notice applies to this cache so far
+        Map<Integer, List<LFTRecordBean>> map = getCachedObject();
+        if (map != null && !map.isEmpty()) {
+            map.remove(notice.getLid());
+        }
         return true;
     }
 

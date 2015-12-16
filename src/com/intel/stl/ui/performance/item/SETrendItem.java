@@ -25,7 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
  *	
@@ -36,8 +35,22 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:26:55  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.5  2015/08/17 18:53:43  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/06/30 22:28:49  jijunwan
+ *  Archive Log:    PR 129215 - Need short chart name to support pin capability
+ *  Archive Log:    - introduced short name to performance items
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/06/25 20:42:13  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improved PerformanceItem to support port counters
+ *  Archive Log:    - improved PerformanceItem to use generic ISource to describe data source
+ *  Archive Log:    - improved PerformanceItem to use enum DataProviderName to describe data provider name
+ *  Archive Log:    - improved PerformanceItem to support creating a copy of PerformanceItem
+ *  Archive Log:    - improved TrendItem to share scale with other charts
+ *  Archive Log:    - improved SimpleDataProvider to support hsitory data
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/03/27 15:48:36  jijunwan
  *  Archive Log:    changed K0072_SECURITY_ERROR to K0072_SECURITY
@@ -59,37 +72,43 @@ package com.intel.stl.ui.performance.item;
 
 import com.intel.stl.api.performance.ErrStatBean;
 import com.intel.stl.ui.common.STLConstants;
-import com.intel.stl.ui.monitor.TreeNodeType;
+import com.intel.stl.ui.performance.GroupSource;
 import com.intel.stl.ui.performance.observer.ErrorDataObserver;
 import com.intel.stl.ui.performance.observer.VFErrorDataObserver;
 import com.intel.stl.ui.performance.provider.CombinedGroupInfoProvider;
 import com.intel.stl.ui.performance.provider.CombinedVFInfoProvider;
+import com.intel.stl.ui.performance.provider.DataProviderName;
 
 /**
  * Security Errors Trend
  */
-public class SETrendItem extends TrendItem {
+public class SETrendItem extends TrendItem<GroupSource> {
 
     /**
-     * Description: 
-     *
-     * @param name 
+     * Description:
+     * 
+     * @param name
      */
     public SETrendItem() {
         this(DEFAULT_DATA_POINTS);
     }
 
     /**
-     * Description: 
-     *
+     * Description:
+     * 
      * @param name
-     * @param maxDataPoints 
+     * @param maxDataPoints
      */
     public SETrendItem(int maxDataPoints) {
-        super(STLConstants.K0072_SECURITY.getValue(),
-                maxDataPoints);
+        super(STLConstants.K0863_SHORT_SECURE_TREND.getValue(),
+                STLConstants.K0877_SECURITY_TREND.getValue(), maxDataPoints);
     }
 
+    public SETrendItem(SETrendItem item) {
+        super(item);
+    }
+
+    @Override
     protected void initDataProvider() {
         CombinedGroupInfoProvider provider = new CombinedGroupInfoProvider();
         ErrorDataObserver observer = new ErrorDataObserver(this) {
@@ -98,8 +117,7 @@ public class SETrendItem extends TrendItem {
                 return error.getErrorMaximums().getSecurityErrors();
             }
         };
-        registerDataProvider(TreeNodeType.DEVICE_GROUP.name(), provider,
-                observer);
+        registerDataProvider(DataProviderName.PORT_GROUP, provider, observer);
 
         CombinedVFInfoProvider vfProvider = new CombinedVFInfoProvider();
         VFErrorDataObserver vfObserver = new VFErrorDataObserver(this) {
@@ -108,7 +126,17 @@ public class SETrendItem extends TrendItem {
                 return error.getErrorMaximums().getSecurityErrors();
             }
         };
-        registerDataProvider(TreeNodeType.VIRTUAL_FABRIC.name(), vfProvider,
+        registerDataProvider(DataProviderName.VIRTUAL_FABRIC, vfProvider,
                 vfObserver);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.performance.item.IPerformanceItem#copy()
+     */
+    @Override
+    public IPerformanceItem<GroupSource> copy() {
+        return new SETrendItem(this);
     }
 }

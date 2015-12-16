@@ -35,8 +35,17 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:27:17  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.7  2015/09/21 21:40:31  jijunwan
+ *  Archive Log:    PR 130229 - The text component of all editable combo boxes should provide validation of the input
+ *  Archive Log:    - adapt to the new IntelComboBoxUI
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/08/17 18:53:52  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/05/12 17:39:39  rjtierne
+ *  Archive Log:    PR 128624 - Klocwork and FindBugs fixes for UI
+ *  Archive Log:    In getAttrRenderer(), use equals() to compare strings name and currentRendererName.
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/04/06 11:14:11  jypak
  *  Archive Log:    Klockwork: Front End Critical Without Unit Test. Open issues fixed.
@@ -75,6 +84,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 
 import com.intel.stl.api.management.IAttribute;
 import com.intel.stl.ui.admin.impl.IRendererModel;
@@ -128,13 +138,21 @@ public abstract class AbstractAttrPanel extends JPanel {
         ExComboBoxModel<String> comboModel =
                 new ExComboBoxModel<String>(rendererModel.getRendererNames(),
                         false);
+        final Border rendererBorder =
+                BorderFactory.createCompoundBorder(BorderFactory
+                        .createMatteBorder(1, 1, 1, 0, UIConstants.INTEL_GRAY),
+                        BorderFactory.createEmptyBorder(0, 2, 0, 2));
         typeList = new ExComboBox<String>(comboModel) {
             private static final long serialVersionUID = 826992741561960993L;
 
             @Override
-            protected void decorateDisabledCell(JLabel label, boolean isDisabled) {
+            protected void decorateDisabledCell(JLabel label,
+                    boolean isDisabled, int index) {
                 label.setIcon(isDisabled ? UIImages.UNEDITABLE.getImageIcon()
                         : null);
+                if (index == -1) {
+                    label.setBorder(rendererBorder);
+                }
             }
 
         };
@@ -218,7 +236,7 @@ public abstract class AbstractAttrPanel extends JPanel {
 
     public IAttrRenderer<? extends IAttribute> getAttrRenderer() {
         String name = (String) typeList.getSelectedItem();
-        if (name != currentRendererName) {
+        if (!name.equals(currentRendererName)) {
             currentRendererName = name;
             try {
                 if (rendererModel != null) {

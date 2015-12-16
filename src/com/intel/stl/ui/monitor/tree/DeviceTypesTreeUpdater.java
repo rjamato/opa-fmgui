@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.9.2.1  2015/08/12 15:27:10  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.11  2015/09/30 13:26:45  fisherma
+ *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/08/17 18:54:19  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.9  2015/02/23 22:48:44  jijunwan
  *  Archive Log:    fixed insures on tree update upon notices
@@ -174,7 +178,7 @@ public class DeviceTypesTreeUpdater implements ITreeUpdater {
             index = -index - 1;
             nodeUpdater.addNode(index, lid, typeNode, monitors, null);
         } else {
-            FVResourceNode updateNode = typeNode.getChildAt(index);
+            FVResourceNode updateNode = typeNode.getModelChildAt(index);
             nodeUpdater.updateNode(updateNode, typeNode, monitors, null);
         }
     }
@@ -191,7 +195,7 @@ public class DeviceTypesTreeUpdater implements ITreeUpdater {
             int pos = -index - 1;
             parent.addChild(pos, node);
         } else {
-            node = parent.getChildAt(index);
+            node = parent.getModelChildAt(index);
         }
 
         return node;
@@ -199,22 +203,24 @@ public class DeviceTypesTreeUpdater implements ITreeUpdater {
 
     public void removeDeviceTypesNode(int lid, FVResourceNode tree,
             boolean removeEmptyParents, List<ITreeMonitor> monitors) {
-        for (int i = 0; i < tree.getChildCount(); i++) {
-            FVResourceNode typeNode = tree.getChildAt(i);
-            for (int j = 0; j < typeNode.getChildCount(); j++) {
-                FVResourceNode node = typeNode.getChildAt(j);
+        for (int i = 0; i < tree.getModelChildCount(); i++) {
+            FVResourceNode typeNode = tree.getModelChildAt(i);
+            for (int j = 0; j < typeNode.getModelChildCount(); j++) {
+                FVResourceNode node = typeNode.getModelChildAt(j);
                 if (node.getId() == lid) {
                     int index = j;
                     FVResourceNode parent = typeNode;
-                    if (removeEmptyParents && typeNode.getChildCount() == 1) {
-                        index = tree.getIndex(typeNode);
+                    if (removeEmptyParents
+                            && typeNode.getModelChildCount() == 1) {
+                        index = tree.getModelIndex(typeNode);
                         parent = tree;
                     }
                     parent.removeChild(index);
                     if (monitors != null) {
+                        int viewIndex = parent.getViewIndex(index);
                         for (ITreeMonitor monitor : monitors) {
                             monitor.fireTreeNodesRemoved(this, parent.getPath()
-                                    .getPath(), new int[] { index },
+                                    .getPath(), new int[] { viewIndex },
                                     new FVResourceNode[] { node });
                         }
                     }

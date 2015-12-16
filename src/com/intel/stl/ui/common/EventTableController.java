@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.10.2.1  2015/08/12 15:27:03  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.12  2015/08/19 19:31:40  fernande
+ *  Archive Log:    PR 128703 - Fail over doesn't work on A0 Fabric. Fix for logging of just a null string
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/08/17 18:54:12  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.10  2015/03/26 11:10:01  jypak
  *  Archive Log:    PR 126613 Event (State) Severity based on user configuration via setup wizard.
@@ -150,8 +154,8 @@ public class EventTableController implements IEventListener<EventDescription>,
      *            - message describing the event
      */
     public boolean addEvent(final EventDescription event) {
-        mLog.info(null, event.getType());
-
+        mLog.debug("Event type: {}; event severity: {}", event.getType(),
+                event.getSeverity());
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {

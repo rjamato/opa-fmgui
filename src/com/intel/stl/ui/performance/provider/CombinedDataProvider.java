@@ -35,8 +35,22 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.12.2.1  2015/08/12 15:27:14  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.15  2015/08/17 18:54:06  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.14  2015/06/26 23:03:51  jijunwan
+ *  Archive Log:    PR 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improvement on stability
+ *  Archive Log:
+ *  Archive Log:    Revision 1.13  2015/06/25 20:42:14  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improved PerformanceItem to support port counters
+ *  Archive Log:    - improved PerformanceItem to use generic ISource to describe data source
+ *  Archive Log:    - improved PerformanceItem to use enum DataProviderName to describe data provider name
+ *  Archive Log:    - improved PerformanceItem to support creating a copy of PerformanceItem
+ *  Archive Log:    - improved TrendItem to share scale with other charts
+ *  Archive Log:    - improved SimpleDataProvider to support hsitory data
  *  Archive Log:
  *  Archive Log:    Revision 1.12  2015/02/12 19:40:11  jijunwan
  *  Archive Log:    short term PA support
@@ -99,12 +113,17 @@ import java.util.concurrent.Future;
 
 import com.intel.stl.ui.common.IProgressObserver;
 import com.intel.stl.ui.model.HistoryType;
+import com.intel.stl.ui.performance.ISource;
+import com.intel.stl.ui.performance.observer.IDataObserver;
 import com.intel.stl.ui.publisher.CallbackAdapter;
 import com.intel.stl.ui.publisher.ICallback;
 import com.intel.stl.ui.publisher.Task;
 
-public abstract class CombinedDataProvider<E> extends AbstractDataProvider<E[]> {
-    protected Set<String> sourceNames = new HashSet<String>();
+public abstract class CombinedDataProvider<E, S extends ISource> extends
+        AbstractDataProvider<E[], S> {
+    protected S[] sourceNames;
+
+    protected Object sourceCritical = new Object();
 
     protected List<Task<E>> tasks;
 
@@ -129,10 +148,8 @@ public abstract class CombinedDataProvider<E> extends AbstractDataProvider<E[]> 
      * ()
      */
     @Override
-    protected String[] getSourceNames() {
-        synchronized (sourceNames) {
-            return sourceNames.toArray(new String[0]);
-        }
+    protected S[] getSourceNames() {
+        return sourceNames;
     }
 
     /*
@@ -143,22 +160,30 @@ public abstract class CombinedDataProvider<E> extends AbstractDataProvider<E[]> 
      * (java.lang.String[])
      */
     @Override
-    protected boolean sameSources(String[] names) {
-        Set<String> newSet = new HashSet<String>();
+    protected boolean sameSources(S[] names) {
+        Set<S> newSet = new HashSet<S>();
         if (names != null && names.length > 0) {
             newSet.addAll(Arrays.asList(names));
         }
-        synchronized (sourceNames) {
-            return newSet.equals(sourceNames);
+
+        synchronized (sourceCritical) {
+            Set<S> oldSet = new HashSet<S>();
+            if (sourceNames != null) {
+                oldSet.addAll(Arrays.asList(sourceNames));
+            }
+            return newSet.equals(oldSet);
         }
     }
 
     @Override
-    protected void setSources(String[] names) {
-        synchronized (sourceNames) {
-            sourceNames.clear();
+    protected void setSources(S[] names) {
+        synchronized (sourceCritical) {
+            sourceNames = names;
             if (names != null && names.length > 0) {
-                sourceNames.addAll(Arrays.asList(names));
+                for (IDataObserver<E[]> observer : observers) {
+                    observer.reset();
+                }
+
                 if (historyType != null && historyType != HistoryType.CURRENT) {
                     historyTask = initHistory(names, getCallback());
                 }
@@ -183,7 +208,7 @@ public abstract class CombinedDataProvider<E> extends AbstractDataProvider<E[]> 
         scheduler.submitToBackground(new Runnable() {
             @Override
             public void run() {
-                String[] sources = getSourceNames();
+                S[] sources = getSourceNames();
                 if (sources.length > 0) {
                     E[] result = refresh(sources);
                     if (sameSources(sources)) {
@@ -215,9 +240,9 @@ public abstract class CombinedDataProvider<E> extends AbstractDataProvider<E[]> 
         return callback;
     }
 
-    protected abstract E[] refresh(String[] sourceNames);
+    protected abstract E[] refresh(S[] sourceNames);
 
-    protected abstract List<Task<E>> registerTasks(String[] sourceNames,
+    protected abstract List<Task<E>> registerTasks(S[] sourceNames,
             ICallback<E[]> callback);
 
     protected abstract void deregisterTasks(List<Task<E>> task,
@@ -234,12 +259,13 @@ public abstract class CombinedDataProvider<E> extends AbstractDataProvider<E[]> 
                 historyTask.cancel(true);
             }
         }
-        synchronized (sourceNames) {
-            sourceNames.clear();
+
+        synchronized (sourceCritical) {
+            sourceNames = null;
         }
     }
 
-    protected abstract Future<Void> initHistory(String[] names,
+    protected abstract Future<Void> initHistory(S[] names,
             ICallback<E[]> callback);
 
     /**
@@ -253,12 +279,17 @@ public abstract class CombinedDataProvider<E> extends AbstractDataProvider<E[]> 
     public void setHistoryType(HistoryType type) {
         super.setHistoryType(type);
 
+        for (IDataObserver<E[]> observer : observers) {
+            observer.reset();
+        }
+
         if (historyTask != null && !historyTask.isDone()) {
             historyTask.cancel(true);
         }
 
-        String[] sources = getSourceNames();
-        if (sources.length > 0 && historyType != HistoryType.CURRENT) {
+        S[] sources = getSourceNames();
+        if (sources != null && scheduler != null
+                && historyType != HistoryType.CURRENT) {
             historyTask = initHistory(sources, getCallback());
         }
     }

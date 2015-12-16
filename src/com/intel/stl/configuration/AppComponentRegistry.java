@@ -24,6 +24,53 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: AppComponentRegistry.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.50  2015/09/02 15:55:49  fernande
+ *  Archive Log: PR 130220 - FM GUI "about" window displays unmatched version and build #. Passing the OPA FM version thru the manifest.
+ *  Archive Log:
+ *  Archive Log: Revision 1.49  2015/09/01 15:32:40  fernande
+ *  Archive Log: PR 130220 - FM GUI "about" window displays unmatched version and build #. Changed the default app version to 10.
+ *  Archive Log:
+ *  Archive Log: Revision 1.48  2015/08/19 19:26:45  fernande
+ *  Archive Log: PR 128703 - Fail over doesn't work on A0 Fabric. Adding shutdown method to AppComponent interface for application shutdown.
+ *  Archive Log:
+ *  Archive Log: Revision 1.47  2015/08/17 18:48:40  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - change backend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.46  2015/08/17 14:22:56  rjtierne
+ *  Archive Log: PR 128979 - SM Log display
+ *  Archive Log: This is the first version of the Log Viewer which displays select lines of text from the remote SM log file. Updates include searchable raw text from file, user-defined number of lines to display, refreshing end of file, and paging. This PR is now closed and further updates can be found by referencing PR 130011 - "Enhance SM Log Viewer to include Standard and Advanced requirements".
+ *  Archive Log:
+ *  Archive Log: Revision 1.45  2015/08/10 17:04:49  robertja
+ *  Archive Log: PR128974 - Email notification functionality.
+ *  Archive Log:
+ *  Archive Log: Revision 1.44  2015/07/09 18:51:49  fernande
+ *  Archive Log: PR 129447 - Database size increases a lot over a short period of time. Added method to expose application settings in the settings.xml file to higher levels in the app
+ *  Archive Log:
+ *  Archive Log: Revision 1.43  2015/06/17 15:35:28  fisherma
+ *  Archive Log: PR129220 - partial fix for the login changes.
+ *  Archive Log:
+ *  Archive Log: Revision 1.42  2015/06/10 19:36:34  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: Fernando Fernandez
+ * 
+ ******************************************************************************/
 
 package com.intel.stl.configuration;
 
@@ -33,10 +80,9 @@ import static com.intel.stl.common.STLMessages.STL10004_SECURITY_EXCEPTION_IN_FO
 import static com.intel.stl.common.STLMessages.STL10005_DATABASE_ENGINE_NOTSUPPORTED;
 import static com.intel.stl.common.STLMessages.STL10016_INITIALIZING_COMPONENT_REGISTRY;
 import static com.intel.stl.common.STLMessages.STL10017_CHECKING_MULTI_APP_INSTANCES;
-import static com.intel.stl.common.STLMessages.STL10021_STARTING_ASYNC_TASKS;
-import static com.intel.stl.common.STLMessages.STL10022_ERROR_IN_ASYNC_TASK_CREATION;
 import static com.intel.stl.common.STLMessages.STL10025_STARTING_COMPONENT;
 import static com.intel.stl.common.STLMessages.STL10102_MULTI_INSTANCES;
+import static com.intel.stl.configuration.AppSettings.APP_ADAPTER_USENEW;
 import static com.intel.stl.configuration.AppSettings.APP_BUILD_DATE;
 import static com.intel.stl.configuration.AppSettings.APP_BUILD_ID;
 import static com.intel.stl.configuration.AppSettings.APP_DATA_PATH;
@@ -44,6 +90,7 @@ import static com.intel.stl.configuration.AppSettings.APP_DB_PATH;
 import static com.intel.stl.configuration.AppSettings.APP_INTEL_PATH;
 import static com.intel.stl.configuration.AppSettings.APP_MODLEVEL;
 import static com.intel.stl.configuration.AppSettings.APP_NAME;
+import static com.intel.stl.configuration.AppSettings.APP_OPA_FM;
 import static com.intel.stl.configuration.AppSettings.APP_RELEASE;
 import static com.intel.stl.configuration.AppSettings.APP_SCHEMA_LEVEL;
 import static com.intel.stl.configuration.AppSettings.APP_UI_PLUGIN;
@@ -61,6 +108,7 @@ import java.net.URLConnection;
 import java.nio.channels.FileLock;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.InvalidPropertiesFormatException;
 import java.util.LinkedHashMap;
@@ -77,18 +125,18 @@ import com.intel.stl.api.AppContext;
 import com.intel.stl.api.DefaultCertsAssistant;
 import com.intel.stl.api.DefaultSecurityHandler;
 import com.intel.stl.api.FMGui;
-import com.intel.stl.api.StringUtils;
-import com.intel.stl.api.SubnetContext;
 import com.intel.stl.api.configuration.impl.AppContextImpl;
 import com.intel.stl.api.configuration.impl.MailManager;
-import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.common.AppDataUtils;
 import com.intel.stl.common.STLMessages;
 import com.intel.stl.datamanager.DatabaseManager;
 import com.intel.stl.datamanager.impl.DatabaseManagerImpl;
 import com.intel.stl.dbengine.DatabaseEngine;
 import com.intel.stl.dbengine.impl.HibernateEngine;
+import com.intel.stl.fecdriver.adapter.FEAdapter;
+import com.intel.stl.fecdriver.adapter.IAdapter;
 import com.intel.stl.fecdriver.impl.STLAdapter;
+import com.intel.stl.fecdriver.network.ssh.impl.JSchSessionFactory;
 
 /**
  * @author Fernando Fernandez
@@ -99,6 +147,8 @@ public class AppComponentRegistry {
     public static final String COMPONENT_DATABASE_MANAGER = "dbmgr";
 
     public static final String COMPONENT_MAIL_MANAGER = "mailmgr";
+
+    public static final String COMPONENT_FEADAPTER = "feadapter";
 
     public static final String COMPONENT_APPLICATION_CONTEXT = "appcontext";
 
@@ -116,21 +166,21 @@ public class AppComponentRegistry {
 
     private static final String MANIFEST_SCHEMAVERSION = "Schema-Version";
 
+    private static final String MANIFEST_OPAFM_VERSION = "Intel-OPAFM-Version";
+
     private static final String MANIFEST_BUILDID = "Intel-Build-Id";
 
     private static final String MANIFEST_BUILD_DATE = "Intel-Build-Date";
 
-    private static final String APP_DEFAULT_NAME = "Intel Fabric Viewer";
+    private static final String APP_DEFAULT_NAME = "Intel Fabric Manager GUI";
 
-    private static final int APP_DEFAULT_VERSION = 1;
+    private static final int APP_DEFAULT_VERSION = 10;
 
     private static final int APP_DEFAULT_RELEASE = 0;
 
     private static final int APP_DEFAULT_MODLEVEL = 0;
 
-    private static final String APP_DEFAULT_BUILDID = "N/A";
-
-    private static final String APP_DEFAULT_BUILD_DATE = "N/A";
+    private static final String NOT_AVAILABLE = "N/A";
 
     // Up one this number if you want the database to be recreated;
     private static final int APP_DEFAULT_SCHEMALEVEL = 1;
@@ -185,11 +235,6 @@ public class AppComponentRegistry {
             progress += component.getInitializationWeight();
             sleep(PROGRESS_DELAY);
         }
-
-        double percent = ((progress / totalWeight) * 100) - 2.0;
-        uiComponent.showProgress(
-                STL10021_STARTING_ASYNC_TASKS.getDescription(), (int) percent);
-        initializeAsyncInitializer();
         sleep(PROGRESS_DELAY);
     }
 
@@ -201,8 +246,9 @@ public class AppComponentRegistry {
     }
 
     private void createComponents() throws AppConfigurationException {
-        createMailManager();
+        asyncService = new AsyncProcessingService();
         createDatabaseManager();
+        createMailManager();
         createAppContext();
     }
 
@@ -256,8 +302,9 @@ public class AppComponentRegistry {
             Integer appRelease = new Integer(APP_DEFAULT_RELEASE);
             Integer appModLevel = new Integer(APP_DEFAULT_MODLEVEL);
             Integer schLevel = new Integer(APP_DEFAULT_SCHEMALEVEL);
-            String appBuildId = APP_DEFAULT_BUILDID;
-            String appBuildDate = APP_DEFAULT_BUILD_DATE;
+            String opaFMVersion = NOT_AVAILABLE;
+            String appBuildId = NOT_AVAILABLE;
+            String appBuildDate = NOT_AVAILABLE;
             settings = getApplicationSettings();
             Manifest manifest = getManifest();
             if (manifest != null) {
@@ -266,17 +313,20 @@ public class AppComponentRegistry {
                 appName = (String) attribs.get(key);
                 key = new Name(MANIFEST_IMPLEMENTATIONVERSION);
                 String strVersion = (String) attribs.get(key);
-                log.info(appName + " v" + appVersion);
                 String[] verParts =
                         strVersion == null ? new String[] { "0", "0" }
                                 : strVersion.split("[.]");
                 appVersion = parseInt(verParts[0], appVersion);
                 appRelease = parseInt(verParts[1], appRelease);
                 appModLevel = parseInt(verParts[2], appModLevel);
+                log.info(appName + " v" + strVersion);
                 key = new Name(MANIFEST_SCHEMAVERSION);
                 String value = (String) attribs.get(key);
-                log.info("Schema level: " + schLevel);
                 schLevel = parseInt(value, schLevel);
+                log.info("Schema level: " + schLevel);
+                key = new Name(MANIFEST_OPAFM_VERSION);
+                opaFMVersion = (String) attribs.get(key);
+                log.info("OPA FM version: " + opaFMVersion);
                 key = new Name(MANIFEST_BUILDID);
                 appBuildId = (String) attribs.get(key);
                 log.info("Build id: " + appBuildId);
@@ -288,6 +338,7 @@ public class AppComponentRegistry {
             settings.setConfigOption(APP_VERSION, appVersion);
             settings.setConfigOption(APP_RELEASE, appRelease);
             settings.setConfigOption(APP_MODLEVEL, appModLevel);
+            settings.setConfigOption(APP_OPA_FM, opaFMVersion);
             settings.setConfigOption(APP_BUILD_ID, appBuildId);
             settings.setConfigOption(APP_BUILD_DATE, appBuildDate);
             settings.setConfigOption(APP_SCHEMA_LEVEL, schLevel);
@@ -432,51 +483,30 @@ public class AppComponentRegistry {
     }
 
     private void createMailManager() throws AppConfigurationException {
-        MailManager mailMgr = new MailManager();
+        MailManager mailMgr = new MailManager(getDatabaseManager());
         registerComponent(COMPONENT_MAIL_MANAGER, mailMgr);
         return;
     }
 
     private void createAppContext() throws AppConfigurationException {
-        asyncService = new AsyncProcessingService();
-        STLAdapter adapter = STLAdapter.instance();
-        adapter.registerCertsAssistant(new DefaultCertsAssistant());
-        adapter.registerSecurityHandler(new DefaultSecurityHandler());
+        IAdapter adapter;
+        String adapterUseNew =
+                settings.getConfigOption(APP_ADAPTER_USENEW, "true");
+        boolean useNewAdapter = Boolean.parseBoolean(adapterUseNew);
+        if (useNewAdapter) {
+            FEAdapter feAdapter =
+                    new FEAdapter(getDatabaseManager(), asyncService);
+            registerComponent(COMPONENT_FEADAPTER, feAdapter);
+            adapter = feAdapter;
+        } else {
+            adapter = STLAdapter.instance();
+            adapter.registerCertsAssistant(new DefaultCertsAssistant());
+            adapter.registerSecurityHandler(new DefaultSecurityHandler());
+        }
         AppComponent appContext =
                 new AppContextImpl(adapter, getDatabaseManager(),
                         getMailManager(), asyncService);
         registerComponent(COMPONENT_APPLICATION_CONTEXT, appContext);
-    }
-
-    private void initializeAsyncInitializer() throws AppConfigurationException {
-        log.info(STL10021_STARTING_ASYNC_TASKS.getDescription());
-        DatabaseManager dbMgr = getDatabaseManager();
-        AppContext appContext = getAppContext();
-        List<SubnetDescription> subnets;
-        try {
-            subnets = dbMgr.getSubnets();
-        } catch (Exception e) {
-            AppConfigurationException ace =
-                    getExceptionFor(STL10022_ERROR_IN_ASYNC_TASK_CREATION,
-                            StringUtils.getErrorMessage(e));
-            log.error(StringUtils.getErrorMessage(ace), e);
-            throw ace;
-        }
-        for (SubnetDescription subnet : subnets) {
-            if (subnet.isAutoConnect()) {
-                String subnetName = subnet.getName();
-                InitSubnetContext asyncTask =
-                        new InitSubnetContext(appContext, subnetName);
-                asyncService.submit(asyncTask, null);
-            }
-        }
-    }
-
-    private AppConfigurationException getExceptionFor(STLMessages message,
-            Object... arguments) {
-        String errMsg = message.getDescription(arguments);
-        AppConfigurationException ace = new AppConfigurationException(errMsg);
-        return ace;
     }
 
     protected AppSettings getApplicationSettings()
@@ -505,25 +535,26 @@ public class AppComponentRegistry {
     }
 
     public void shutdown() {
+        List<String> componentName = new ArrayList<String>(components.keySet());
+        // Shutdown in the reverse order components were created
+        for (int i = componentName.size() - 1; i >= 0; i--) {
+            AppComponent component = components.get(componentName.get(i));
+            log.info("Shutting down component {}...",
+                    component.getComponentDescription());
+            try {
+                component.shutdown();
+            } catch (Exception e) {
+                log.warn("Exception occurred during {} shutdown.",
+                        component.getComponentDescription(), e);
+            }
+        }
         try {
-            getAppContext().shutdown();
-        } catch (AppConfigurationException e) {
-            e.printStackTrace();
+            STLAdapter.instance().close();
         } finally {
             try {
-                STLAdapter.instance().close();
-            } finally {
-                try {
-                    getDatabaseManager().close();
-                } catch (AppConfigurationException e) {
-                    e.printStackTrace();
-                } finally {
-                    try {
-                        getMailManager().shutdown();
-                    } catch (AppConfigurationException e) {
-                        e.printStackTrace();
-                    }
-                }
+                JSchSessionFactory.cleanup();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -572,26 +603,4 @@ public class AppComponentRegistry {
             }
         }
     }
-
-    private class InitSubnetContext extends AsyncTask<Void> {
-
-        private final AppContext appContext;
-
-        private final String subnetName;
-
-        public InitSubnetContext(AppContext appContext, String subnetName) {
-            this.appContext = appContext;
-            this.subnetName = subnetName;
-        }
-
-        @Override
-        public Void process() throws Exception {
-            SubnetContext subnetContext =
-                    appContext.getSubnetContextFor(subnetName, true);
-            subnetContext.initialize();
-            return null;
-        }
-
-    }
-
 }

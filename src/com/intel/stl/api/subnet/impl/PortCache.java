@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7.2.1  2015/08/12 15:22:01  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.9  2015/08/17 18:48:53  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/08/11 17:37:19  jijunwan
+ *  Archive Log:    PR 126645 - Topology Page does not show correct data after port disable/enable event
+ *  Archive Log:    - improved to get distribution data with argument "refresh". When it's true, calculate distribution rather than get it from cache
  *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/02/23 22:22:19  jijunwan
  *  Archive Log:    improved to include/exclude inactive nodes/links in query
@@ -106,11 +111,12 @@ public interface PortCache {
      * <i>Description:</i> distribution of active ports
      * 
      * @param countInternalMgrPort
+     * @param refresh
      * @return
      * @throws SubnetDataNotFoundException
      */
-    EnumMap<NodeType, Long> getPortsTypeDist(boolean countInternalMgrPort)
-            throws SubnetDataNotFoundException;
+    EnumMap<NodeType, Long> getPortsTypeDist(boolean countInternalMgrPort,
+            boolean refresh) throws SubnetDataNotFoundException;
 
     long getSubnetPrefix();
 

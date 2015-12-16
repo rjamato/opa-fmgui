@@ -35,8 +35,33 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.24.2.1  2015/08/12 15:26:50  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.31  2015/09/20 23:40:40  jijunwan
+ *  Archive Log:    PR 130523 - Performance Event window reports negative when nodes are rebooted
+ *  Archive Log:    - fixed null pointer issue
+ *  Archive Log:
+ *  Archive Log:    Revision 1.30  2015/08/17 18:54:00  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.29  2015/08/06 19:10:22  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - fixed one NPE issue
+ *  Archive Log:
+ *  Archive Log:    Revision 1.28  2015/08/06 15:25:23  jijunwan
+ *  Archive Log:    PR 129849 - Incorrect connectivity table after we do link selection
+ *  Archive Log:    - changed to get GraphNode from full graph rather then one comes from local graph
+ *  Archive Log:
+ *  Archive Log:    Revision 1.27  2015/08/05 04:09:31  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on Topology Page
+ *  Archive Log:
+ *  Archive Log:    Revision 1.26  2015/07/30 18:56:13  jijunwan
+ *  Archive Log:    PR 129745 - empty topology detailed information for port zero
+ *  Archive Log:    - fixed to use the correct Tree Node
+ *  Archive Log:
+ *  Archive Log:    Revision 1.25  2015/07/13 18:05:55  jijunwan
+ *  Archive Log:    PR 129530 - Incorrect link connectivity table
+ *  Archive Log:    - set link port to only include selected port
  *  Archive Log:
  *  Archive Log:    Revision 1.24  2015/04/28 14:00:34  jijunwan
  *  Archive Log:    1) improved topology viz to use TopGraph copy for outline display. This will avoid graph and outline views share internal graph view that may cause sync issues.
@@ -125,12 +150,13 @@
 
 package com.intel.stl.ui.network;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.TreeMap;
 
 import javax.swing.SwingUtilities;
 
@@ -447,7 +473,10 @@ public class TopologyGraphController implements ITopologyListener {
             @Override
             public GraphCells call(ICancelIndicator indicator) throws Exception {
                 GraphCells current = new GraphCells();
-                Set<GraphEdge> edges = new HashSet<GraphEdge>();
+
+                // in a graph we only have one edge between two vertex, so we
+                // use the following map to help us only add one edge
+                Map<Point, GraphEdge> edges = new HashMap<Point, GraphEdge>();
                 for (FVResourceNode node : nodes) {
                     if (indicator.isCancelled()) {
                         return null;
@@ -470,13 +499,37 @@ public class TopologyGraphController implements ITopologyListener {
                         if (gNode != null) {
                             GraphNode toNode = gNode.getNeighbor(portNum);
                             if (toNode != null) {
+                                Integer toPort =
+                                        gNode.getLinkPorts(toNode).get(portNum);
+                                TreeMap<Integer, Integer> linkPorts =
+                                        new TreeMap<Integer, Integer>();
+                                if (toPort != null) {
+                                    linkPorts.put(portNum, toPort);
+                                }
+                                GraphEdge tmp =
+                                        new GraphEdge(lid,
+                                                TreeNodeType
+                                                        .getNodeTypeCode(type),
+                                                toNode.getLid(),
+                                                toNode.getType(), linkPorts);
                                 GraphEdge edge =
-                                        new GraphEdge(lid, toNode.getLid(),
-                                                gNode.getLinkPorts(toNode));
-                                if (!edges.contains(edge)
-                                        && !edges.contains(edge.normalize())) {
-                                    current.addEdge(edge);
-                                    edges.add(edge);
+                                        edges.get(new Point(lid, toNode
+                                                .getLid()));
+                                if (edge == null) {
+                                    edge =
+                                            edges.get(new Point(
+                                                    toNode.getLid(), lid));
+                                    if (edge != null) {
+                                        // ensure its links are reversed as well
+                                        tmp = tmp.normalize();
+                                    }
+                                }
+                                if (edge == null) {
+                                    current.addEdge(tmp);
+                                    edges.put(new Point(lid, toNode.getLid()),
+                                            tmp);
+                                } else {
+                                    edge.getLinks().putAll(tmp.getLinks());
                                 }
                             } else {
                                 log.warn("Couldn't find connection for Lid="
@@ -655,7 +708,15 @@ public class TopologyGraphController implements ITopologyListener {
             public void run() {
                 // the following #showXXX methods should use SwingWorker when it
                 // involves connecting to backend to collect data
-                final List<GraphNode> nodes = current.getNodes();
+                List<GraphNode> tmpNodes = current.getNodes();
+                List<GraphNode> nodes = new ArrayList<GraphNode>();
+                if (tmpNodes != null) {
+                    for (GraphNode tmpNode : tmpNodes) {
+                        if (tmpNode != null) {
+                            nodes.add(updateCtrl.getGraphNode(tmpNode.getLid()));
+                        }
+                    }
+                }
                 if (firstResource == null
                         || firstResource.getType() == TreeNodeType.ALL) {
                     onEmptySelection(source, resourceSelection);
@@ -672,11 +733,15 @@ public class TopologyGraphController implements ITopologyListener {
                     } else {
                         // special cause: multiple switch zero ports are
                         // selected
+                        FVResourceNode[] nodeSelection =
+                                new FVResourceNode[resourceSelection.length];
+                        for (int i = 0; i < nodeSelection.length; i++) {
+                            nodeSelection[i] = resourceSelection[i].getParent();
+                        }
                         if (resourceSelection.length == 1) {
-                            onSingleNode(nodes.get(0), source,
-                                    resourceSelection);
+                            onSingleNode(nodes.get(0), source, nodeSelection);
                         } else {
-                            onMultipleNodes(nodes, source, resourceSelection);
+                            onMultipleNodes(nodes, source, nodeSelection);
                         }
                     }
                 } else {
@@ -705,16 +770,16 @@ public class TopologyGraphController implements ITopologyListener {
     }
 
     // single node
-    protected void onSingleNode(final GraphNode node, final Object source,
-            final FVResourceNode[] selectedResources) {
+    protected void onSingleNode(GraphNode node, Object source,
+            FVResourceNode[] selectedResources) {
         ShowNodeTask updateTask =
                 new ShowNodeTask(this, source, selectedResources, node);
         updateCtrl.update(updateTask);
     }
 
     // multiple nodes, try to find routes among the nodes
-    protected void onMultipleNodes(final List<GraphNode> nodes,
-            final Object source, final FVResourceNode[] selectedResources) {
+    protected void onMultipleNodes(List<GraphNode> nodes, Object source,
+            FVResourceNode[] selectedResources) {
         ShowRoutesTask updateTask =
                 new ShowRoutesTask(this, source, selectedResources, nodes);
         updateCtrl.update(updateTask);
@@ -751,6 +816,23 @@ public class TopologyGraphController implements ITopologyListener {
         return parent.selectTreePorts(edges, indicator);
     }
 
+    /**
+     * <i>Description:</i>
+     * 
+     * @param subpageName
+     */
+    public void setCurrentSubpage(String subpageName) {
+        resourceController.setCurrentSubpage(subpageName);
+    }
+
+    public String getPreviousSubpage() {
+        return resourceController.getPreviousSubpage();
+    }
+
+    public String getCurrentSubpage() {
+        return resourceController.getCurrentSubpage();
+    }
+
     public void cleanup() {
         try {
             if (updateCtrl != null) {
@@ -763,4 +845,5 @@ public class TopologyGraphController implements ITopologyListener {
             log.info("GuideView update service shutdown");
         }
     }
+
 }

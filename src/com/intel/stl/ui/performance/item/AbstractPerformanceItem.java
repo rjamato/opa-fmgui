@@ -35,8 +35,22 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.14.2.1  2015/08/12 15:26:55  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.17  2015/08/17 18:53:43  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.16  2015/06/30 22:28:49  jijunwan
+ *  Archive Log:    PR 129215 - Need short chart name to support pin capability
+ *  Archive Log:    - introduced short name to performance items
+ *  Archive Log:
+ *  Archive Log:    Revision 1.15  2015/06/25 20:42:13  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improved PerformanceItem to support port counters
+ *  Archive Log:    - improved PerformanceItem to use generic ISource to describe data source
+ *  Archive Log:    - improved PerformanceItem to use enum DataProviderName to describe data provider name
+ *  Archive Log:    - improved PerformanceItem to support creating a copy of PerformanceItem
+ *  Archive Log:    - improved TrendItem to share scale with other charts
+ *  Archive Log:    - improved SimpleDataProvider to support hsitory data
  *  Archive Log:
  *  Archive Log:    Revision 1.14  2015/02/17 23:22:14  jijunwan
  *  Archive Log:    PR 127106 - Suggest to use same bucket range for Group Err Summary as shown in "opatop" command to plot performance graphs in FV
@@ -93,6 +107,7 @@
 
 package com.intel.stl.ui.performance.item;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -106,12 +121,14 @@ import com.intel.stl.ui.main.Context;
 import com.intel.stl.ui.model.DataType;
 import com.intel.stl.ui.model.DatasetDescription;
 import com.intel.stl.ui.model.HistoryType;
+import com.intel.stl.ui.performance.ISource;
 import com.intel.stl.ui.performance.observer.IDataObserver;
+import com.intel.stl.ui.performance.provider.DataProviderName;
 import com.intel.stl.ui.performance.provider.IDataProvider;
 import com.intel.stl.ui.performance.provider.ISourceObserver;
 
-public abstract class AbstractPerformanceItem implements IPerformanceItem,
-        ISourceObserver {
+public abstract class AbstractPerformanceItem<S extends ISource> implements
+        IPerformanceItem<S>, ISourceObserver<S> {
     public final static int DEFAULT_DATA_POINTS = 100;
 
     private final static boolean DEBUG = false;
@@ -123,26 +140,33 @@ public abstract class AbstractPerformanceItem implements IPerformanceItem,
 
     protected final String name;
 
+    protected String shortName;
+
     protected String description;
 
-    protected String[] sourceNames;
+    protected S[] sourceNames;
 
     protected DatasetDescription datasetDescription;
 
-    private final Map<String, IDataProvider<?>> providers =
-            new HashMap<String, IDataProvider<?>>();
+    private final Map<DataProviderName, IDataProvider<?, S>> providers =
+            new HashMap<DataProviderName, IDataProvider<?, S>>();
 
-    private final Map<String, IDataObserver<?>> observers =
-            new HashMap<String, IDataObserver<?>>();
+    private final Map<DataProviderName, IDataObserver<?>> observers =
+            new HashMap<DataProviderName, IDataObserver<?>>();
 
-    protected String currentProviderName;
+    protected DataProviderName currentProviderName;
 
     private Context currentContext;
 
     private boolean isActive;
 
-    public AbstractPerformanceItem(String name, String fullName) {
-        this(name, fullName, DEFAULT_DATA_POINTS);
+    private DataType type;
+
+    private HistoryType historyType;
+
+    public AbstractPerformanceItem(String name, String shortName,
+            String fullName) {
+        this(name, shortName, fullName, DEFAULT_DATA_POINTS);
     }
 
     /**
@@ -151,12 +175,72 @@ public abstract class AbstractPerformanceItem implements IPerformanceItem,
      * @param name
      * @param observer
      */
-    public AbstractPerformanceItem(String name, String fullName,
-            int maxDataPoints) {
+    public AbstractPerformanceItem(String name, String shortName,
+            String fullName, int maxDataPoints) {
         super();
         this.name = name;
+        this.shortName = shortName;
         this.description = fullName;
         this.maxDataPoints = maxDataPoints;
+    }
+
+    // make a copy
+    public AbstractPerformanceItem(AbstractPerformanceItem<S> item) {
+        this(item.name, item.shortName, item.description, item.maxDataPoints);
+        copyPreparation(item);
+        copyDataProvider(item);
+        copyDataObserver(item);
+        copyDataset(item);
+        copyState(item);
+    }
+
+    protected void copyPreparation(AbstractPerformanceItem<S> item) {
+        initDataProvider();
+    }
+
+    protected void copyDataProvider(AbstractPerformanceItem<S> item) {
+        IDataProvider<?, S> curProvider = item.getCurrentProvider();
+        if (curProvider != null) {
+            HistoryType type = curProvider.getHistoryType();
+            for (IDataProvider<?, S> provider : providers.values()) {
+                provider.setHistoryType(type);
+            }
+        }
+    }
+
+    protected void copyDataObserver(AbstractPerformanceItem<S> item) {
+        IDataObserver<?> curObserver = item.getCurrentObserver();
+        if (curObserver != null) {
+            DataType type = curObserver.getType();
+            for (IDataObserver<?> observer : observers.values()) {
+                observer.setType(type);
+            }
+        }
+    }
+
+    protected abstract void copyDataset(AbstractPerformanceItem<S> item);
+
+    @SuppressWarnings("unchecked")
+    protected void copyState(AbstractPerformanceItem<S> item) {
+        currentProviderName = item.currentProviderName;
+        if (item.sourceNames != null && item.sourceNames.length > 0) {
+            sourceNames =
+                    (S[]) Array.newInstance(item.sourceNames[0].getClass(),
+                            item.sourceNames.length);
+            for (int i = 0; i < sourceNames.length; i++) {
+                sourceNames[i] = (S) item.sourceNames[i].copy();
+            }
+        }
+        isActive = item.isActive;
+        currentContext = item.currentContext;
+        IDataProvider<?, S> provider = getCurrentProvider();
+        if (provider != null) {
+            provider.removeSourceObserver(this); // do not clear data
+            if (provider != null && isActive) {
+                provider.setContext(currentContext, null, sourceNames);
+            }
+            provider.addSourceObserver(this);
+        }
     }
 
     /**
@@ -165,6 +249,13 @@ public abstract class AbstractPerformanceItem implements IPerformanceItem,
     @Override
     public String getName() {
         return name;
+    }
+
+    /**
+     * @return the shortName
+     */
+    public String getShortName() {
+        return shortName;
     }
 
     /**
@@ -206,8 +297,8 @@ public abstract class AbstractPerformanceItem implements IPerformanceItem,
     protected abstract boolean isJumpable();
 
     @Override
-    public <E> void registerDataProvider(String name,
-            IDataProvider<E> provider, IDataObserver<E> observer) {
+    public <E> void registerDataProvider(DataProviderName name,
+            IDataProvider<E, S> provider, IDataObserver<E> observer) {
         providers.put(name, provider);
         observers.put(name, observer);
         provider.addObserver(observer);
@@ -225,12 +316,12 @@ public abstract class AbstractPerformanceItem implements IPerformanceItem,
      * .lang.String)
      */
     @Override
-    public void setDataProvider(String name) {
+    public void setDataProvider(DataProviderName name) {
         if (currentProviderName != null && currentProviderName.equals(name)) {
             return;
         }
 
-        IDataProvider<?> provider = getCurrentProvider();
+        IDataProvider<?, S> provider = getCurrentProvider();
         if (provider != null) {
             provider.clear();
         }
@@ -245,7 +336,17 @@ public abstract class AbstractPerformanceItem implements IPerformanceItem,
         // }
     }
 
-    protected IDataProvider<?> getCurrentProvider() {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.performance.item.IPerformanceItem#getDataProvider()
+     */
+    @Override
+    public DataProviderName getCurrentProviderName() {
+        return currentProviderName;
+    }
+
+    protected IDataProvider<?, S> getCurrentProvider() {
         if (currentProviderName == null) {
             return null;
         } else {
@@ -269,7 +370,7 @@ public abstract class AbstractPerformanceItem implements IPerformanceItem,
      * lang.String[])
      */
     @Override
-    public void setSources(String... sourceNames) {
+    public void setSources(S[] sourceNames) {
         if (DEBUG) {
             System.out.println("[" + currentProviderName + ":" + getName()
                     + " " + getFullName() + "] setSources "
@@ -284,25 +385,35 @@ public abstract class AbstractPerformanceItem implements IPerformanceItem,
         clear();
 
         this.sourceNames = sourceNames;
-        IDataProvider<?> provider = getCurrentProvider();
+        IDataProvider<?, S> provider = getCurrentProvider();
         if (provider != null && isActive) {
             provider.setContext(currentContext, null, sourceNames);
         }
     }
 
-    protected boolean sameSources(String[] sources) {
+    protected boolean sameSources(S[] sources) {
         if (sourceNames == null) {
             return sources == null;
         } else if (sources == null) {
             return true;
         }
 
-        Set<String> set1 = new HashSet<String>(Arrays.asList(sourceNames));
-        Set<String> set2 = new HashSet<String>(Arrays.asList(sources));
+        Set<S> set1 = new HashSet<S>(Arrays.asList(sourceNames));
+        Set<S> set2 = new HashSet<S>(Arrays.asList(sources));
         return set1.equals(set2);
     }
 
-    protected String getPrimarySource() {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.performance.item.IPerformanceItem#getSources()
+     */
+    @Override
+    public S[] getSources() {
+        return sourceNames;
+    }
+
+    protected S getPrimarySource() {
         if (sourceNames == null || sourceNames.length == 0) {
             return null;
         } else {
@@ -318,7 +429,7 @@ public abstract class AbstractPerformanceItem implements IPerformanceItem,
      * (java.lang.String[])
      */
     @Override
-    public void sourcesToRemove(String[] names) {
+    public void sourcesToRemove(S[] names) {
         // TODO Auto-generated method stub
 
     }
@@ -331,7 +442,7 @@ public abstract class AbstractPerformanceItem implements IPerformanceItem,
      * .lang.String[])
      */
     @Override
-    public void sourcesToAdd(String[] names) {
+    public void sourcesToAdd(S[] names) {
         // TODO Auto-generated method stub
 
     }
@@ -344,7 +455,7 @@ public abstract class AbstractPerformanceItem implements IPerformanceItem,
      * java.lang.String[])
      */
     @Override
-    public void sourcesRemoved(String[] names) {
+    public void sourcesRemoved(S[] names) {
     }
 
     /*
@@ -355,7 +466,7 @@ public abstract class AbstractPerformanceItem implements IPerformanceItem,
      * .lang.String[])
      */
     @Override
-    public void sourcesAdded(String[] names) {
+    public void sourcesAdded(S[] names) {
     }
 
     /*
@@ -374,7 +485,7 @@ public abstract class AbstractPerformanceItem implements IPerformanceItem,
         }
 
         clear();
-        IDataProvider<?> provider = getCurrentProvider();
+        IDataProvider<?, S> provider = getCurrentProvider();
         if (provider != null && isActive) {
             provider.setContext(context, observer, sourceNames);
         }
@@ -400,7 +511,7 @@ public abstract class AbstractPerformanceItem implements IPerformanceItem,
             System.out.println("[" + currentProviderName + ":" + getName()
                     + " " + getFullName() + "] refresh");
         }
-        IDataProvider<?> provider = getCurrentProvider();
+        IDataProvider<?, S> provider = getCurrentProvider();
         if (provider != null && isActive) {
             provider.onRefresh(observer);
         }
@@ -418,10 +529,22 @@ public abstract class AbstractPerformanceItem implements IPerformanceItem,
      */
     @Override
     public void setType(DataType type) {
-        clear();
+        if (this.type == type) {
+            return;
+        }
+
+        if (this.type != null) {
+            clear();
+        }
+        this.type = type;
         for (IDataObserver<?> observer : observers.values()) {
             observer.setType(type);
         }
+    }
+
+    @Override
+    public DataType getType() {
+        return type;
     }
 
     /**
@@ -432,7 +555,14 @@ public abstract class AbstractPerformanceItem implements IPerformanceItem,
      */
     @Override
     public void setHistoryType(HistoryType type) {
-        clear();
+        if (this.historyType == type) {
+            return;
+        }
+
+        if (historyType != null) {
+            clear();
+        }
+        this.historyType = type;
 
         if (currentContext != null && type != HistoryType.CURRENT) {
             int refreshRate =
@@ -442,10 +572,15 @@ public abstract class AbstractPerformanceItem implements IPerformanceItem,
             maxDataPoints = DEFAULT_DATA_POINTS;
         }
 
-        for (IDataProvider<?> provider : providers.values()) {
+        for (IDataProvider<?, S> provider : providers.values()) {
             provider.setHistoryType(type);
         }
 
+    }
+
+    @Override
+    public HistoryType getHistoryType() {
+        return historyType;
     }
 
     /*
@@ -466,7 +601,7 @@ public abstract class AbstractPerformanceItem implements IPerformanceItem,
         }
 
         isActive = b;
-        IDataProvider<?> provider = getCurrentProvider();
+        IDataProvider<?, S> provider = getCurrentProvider();
         if (provider != null) {
             if (b && currentContext != null) {
                 if (DEBUG) {

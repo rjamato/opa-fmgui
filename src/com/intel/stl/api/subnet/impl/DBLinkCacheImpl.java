@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.18.2.1  2015/08/12 15:22:00  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.20  2015/09/26 06:17:06  jijunwan
+ *  Archive Log:    130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
+ *  Archive Log:    - added reset to clear all caches and update DB topology
+ *  Archive Log:
+ *  Archive Log:    Revision 1.19  2015/08/17 18:48:53  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.18  2015/04/29 14:25:17  fernande
  *  Archive Log:    Fixed issue where changing the name of the subnet is not reflected in the caches.
@@ -244,6 +249,16 @@ public class DBLinkCacheImpl extends BaseCache implements LinkCache {
 
         // If not found in fabric, throw link not found exception.
         throw le;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.configuration.ManagedCache#reset()
+     */
+    @Override
+    public void reset() {
+        // this is DB. do nothing
     }
 
     @Override

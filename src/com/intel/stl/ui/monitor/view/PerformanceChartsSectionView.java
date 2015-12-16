@@ -35,10 +35,20 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.19.2.2  2015/08/12 15:27:16  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.23  2015/08/17 18:54:25  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.19.2.1  2015/05/17 18:30:44  jijunwan
+ *  Archive Log:    Revision 1.22  2015/08/05 04:04:48  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on Performance Page
+ *  Archive Log:
+ *  Archive Log:    Revision 1.21  2015/06/25 20:50:01  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on dynamic cards that can have different data sources
+ *  Archive Log:    - change to use port counter performance item
+ *  Archive Log:
+ *  Archive Log:    Revision 1.20  2015/05/14 17:43:09  jijunwan
  *  Archive Log:    PR 127700 - Delta data on host performance display is accumulating
  *  Archive Log:    - corrected delta value calculation
  *  Archive Log:    - changed to display data/pkts rate rather than delta on chart and table
@@ -221,7 +231,7 @@ public class PerformanceChartsSectionView extends
     public void setHistoryTypeListener(
             final IDataTypeListener<HistoryType> listener) {
         historyTypeListener = listener;
-        if (historyTypeList != null && listener != null) {
+        if (listener != null) {
             if (historyTypeListSelectionListener != null) {
                 historyTypeList
                         .removeMouseListener(historyTypeListSelectionListener);
@@ -238,13 +248,14 @@ public class PerformanceChartsSectionView extends
                                 (HistoryType) historyTypeList
                                         .getSelectedValue();
                         if (prevHistoryType != type) {
+                            HistoryType oldType = prevHistoryType;
                             prevHistoryType = type;
                             if (historyTypeBtn != null) {
                                 historyTypeBtn.setText(historyTypeList
                                         .getSelectedValue().toString());
                             }
 
-                            listener.onDataTypeChange(type);
+                            listener.onDataTypeChange(oldType, type);
                         }
                         if (historyPopupOptions != null
                                 && historyPopupOptions.isVisible()) {
@@ -277,6 +288,10 @@ public class PerformanceChartsSectionView extends
 
     public void setHistoryType(HistoryType type) {
         historyTypeList.setSelectedValue(type, true);
+        if (historyTypeBtn != null) {
+            historyTypeBtn.setText(historyTypeList.getSelectedValue()
+                    .toString());
+        }
     }
 
     protected void addHistoryTypeButton(JPanel controlPanel) {
@@ -334,24 +349,24 @@ public class PerformanceChartsSectionView extends
      */
     @Override
     protected JComponent getMainComponent() {
-
         if (mainPanel == null) {
-            mainPanel = new JPanel(new GridLayout(1, 2, 5, 5));
+            mainPanel = new JPanel();
             mainPanel.setBorder(BorderFactory.createEmptyBorder(5, 2, 2, 2));
-            rxCardView =
-                    new ChartsView(
-                            STLConstants.K0828_REC_PACKETS_RATE.getValue(),
-                            TrafficChartsCreator.instance());
-            mainPanel.add(rxCardView);
-
-            txCardView =
-                    new ChartsView(
-                            STLConstants.K0829_TRAN_PACKETS_RATE.getValue(),
-                            TrafficChartsCreator.instance());
-            mainPanel.add(txCardView);
         }
-
         return mainPanel;
+    }
+
+    public void installCardViews(ChartsView rxCardView, ChartsView txCardView) {
+        this.rxCardView = rxCardView;
+        this.txCardView = txCardView;
+
+        if (mainPanel != null) {
+            mainPanel.removeAll();
+            mainPanel.setLayout(new GridLayout(1, 2, 5, 5));
+            mainPanel.add(rxCardView);
+            mainPanel.add(txCardView);
+            revalidate();
+        }
     }
 
     /**

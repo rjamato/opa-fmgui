@@ -35,8 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:26:38  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/08/17 18:53:46  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/07/16 16:33:36  jijunwan
+ *  Archive Log:    PR 129228 - remove PortLTPCRCMode of Al
+ *  Archive Log:    -  removed STL_PORT_LTP_CRC_MODE_ALL and STL_PORT_LINK_MODE_ALL_SUPPORTED
+ *  Archive Log:    - changed to use STLConstants for string print out
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/01/11 18:40:02  jijunwan
  *  Archive Log:    PR 126387 - SCMappingTableRecord PortLinkMode ambiguous
@@ -54,17 +60,15 @@
 
 package com.intel.stl.ui.model;
 
-import static com.intel.stl.ui.common.STLConstants.K0384_ALL_SUPP;
-
 import java.util.EnumMap;
 
 import com.intel.stl.api.configuration.PortLinkMode;
+import com.intel.stl.ui.common.STLConstants;
 
 public enum PortLinkModeViz {
-    NOP(PortLinkMode.NOP, "NOP"),
-    ETH(PortLinkMode.ETH, "ETH"),
-    STL(PortLinkMode.STL, "STL"),
-    ALL_SUPPORTED(PortLinkMode.ALL_SUPPORTED, K0384_ALL_SUPP.getValue());
+    NOP(PortLinkMode.NOP, STLConstants.K0118_NOOP.getValue()),
+    ETH(PortLinkMode.ETH, STLConstants.K0119_EHT.getValue()),
+    STL(PortLinkMode.STL, STLConstants.K0120_STL.getValue());
 
     private final static EnumMap<PortLinkMode, String> portLinkModeMap =
             new EnumMap<PortLinkMode, String>(PortLinkMode.class);

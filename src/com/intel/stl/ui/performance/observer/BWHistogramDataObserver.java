@@ -25,7 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
  *	
@@ -36,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3.2.1  2015/08/12 15:27:11  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.5  2015/08/17 18:54:20  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/07/02 20:33:54  fernande
+ *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Moving Blobs to the database; arrays are now being saved to the database as collection tables.
  *  Archive Log:
  *  Archive Log:    Revision 1.3  2014/08/05 13:37:35  jijunwan
  *  Archive Log:    added null check
@@ -57,51 +60,58 @@
 
 package com.intel.stl.ui.performance.observer;
 
+import java.util.List;
+
 import com.intel.stl.api.performance.GroupInfoBean;
 import com.intel.stl.api.performance.UtilStatsBean;
 import com.intel.stl.ui.model.DataType;
 import com.intel.stl.ui.performance.item.HistogramItem;
 
-public class BWHistogramDataObserver extends AbstractDataObserver<GroupInfoBean[], HistogramItem> {
+public class BWHistogramDataObserver extends
+        AbstractDataObserver<GroupInfoBean[], HistogramItem> {
 
     public BWHistogramDataObserver(HistogramItem controller) {
         this(controller, DataType.ALL);
     }
-    
+
     /**
-     * Description: 
-     *
+     * Description:
+     * 
      * @param controller
-     * @param type 
+     * @param type
      */
     public BWHistogramDataObserver(HistogramItem controller, DataType type) {
         super(controller, type);
     }
 
-    /* (non-Javadoc)
-     * @see com.intel.stl.ui.common.performance.IDataObserver#processData(java.lang.Object)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.common.performance.IDataObserver#processData(java.lang
+     * .Object)
      */
     @Override
     public void processData(GroupInfoBean[] data) {
-        if (data!=null && data.length>0) {
+        if (data != null && data.length > 0) {
             processData(data[0]);
         }
     }
-    
+
     public void processData(GroupInfoBean data) {
-        if (data==null) {
+        if (data == null) {
             return;
         }
-        
+
         UtilStatsBean[] utils = getUtilStatsBeans(data, type);
         int[] counts = null;
         for (UtilStatsBean util : utils) {
-            Integer[] buckets = util.getBwBuckets();
-            if (counts==null) {
-                counts = new int[buckets.length];
+            List<Integer> buckets = util.getBwBuckets();
+            if (counts == null) {
+                counts = new int[buckets.size()];
             }
-            for (int i=0; i<buckets.length; i++) {
-                counts[i] += buckets[i];
+            for (int i = 0; i < buckets.size(); i++) {
+                counts[i] += buckets.get(i);
             }
         }
         controller.updateHistogram(counts, 1.0);

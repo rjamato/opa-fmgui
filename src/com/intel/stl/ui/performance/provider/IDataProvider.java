@@ -35,8 +35,18 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.1  2015/08/12 15:27:14  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.7  2015/08/17 18:54:06  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/06/25 20:42:14  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improved PerformanceItem to support port counters
+ *  Archive Log:    - improved PerformanceItem to use generic ISource to describe data source
+ *  Archive Log:    - improved PerformanceItem to use enum DataProviderName to describe data provider name
+ *  Archive Log:    - improved PerformanceItem to support creating a copy of PerformanceItem
+ *  Archive Log:    - improved TrendItem to share scale with other charts
+ *  Archive Log:    - improved SimpleDataProvider to support hsitory data
  *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/02/03 21:12:34  jypak
  *  Archive Log:    Short Term PA history changes for Group Info only.
@@ -66,11 +76,12 @@ package com.intel.stl.ui.performance.provider;
 import com.intel.stl.ui.common.IProgressObserver;
 import com.intel.stl.ui.main.Context;
 import com.intel.stl.ui.model.HistoryType;
+import com.intel.stl.ui.performance.ISource;
 import com.intel.stl.ui.performance.observer.IDataObserver;
 
-public interface IDataProvider<E> {
+public interface IDataProvider<E, S extends ISource> {
     void setContext(Context context, IProgressObserver progressObserver,
-            String... sourceNames);
+            S[] sourceNames);
 
     void onRefresh(IProgressObserver observer);
 
@@ -78,11 +89,13 @@ public interface IDataProvider<E> {
 
     void removeObserver(IDataObserver<E> observer);
 
-    void addSourceObserver(ISourceObserver observer);
+    void addSourceObserver(ISourceObserver<S> observer);
 
-    void removeSourceObserver(ISourceObserver observer);
+    void removeSourceObserver(ISourceObserver<S> observer);
 
     void setHistoryType(HistoryType type);
+
+    HistoryType getHistoryType();
 
     void clear();
 }

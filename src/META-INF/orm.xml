@@ -43,7 +43,7 @@
 	</named-query>
 	<named-query name="GroupInfoBean.findByTime">
 		<query>
-			SELECT info.groupInfo
+			SELECT info
 			FROM GroupInfoRecord info
 			WHERE info.id.groupId.fabricId = :subnetId AND info.id.groupId.subnetGroup = :groupName AND info.id.sweepTimestamp between :startTime and :stopTime 
 		</query>
@@ -135,10 +135,16 @@
 			<basic name="appName">
 				<column length="32"/>
 			</basic>
-			<basic name="appBuild">
-				<column length="32"/>
+			<basic name="appBuildId">
+				<column length="64"/>
 			</basic>
-            <transient name="properties"/>
+            <basic name="appBuildDate">
+                <column length="32"/>
+            </basic>
+            <basic name="opaFmVersion">
+                <column length="64"/>
+            </basic>
+            <transient name="propertiesMap"/>
 		</attributes>
 	</embeddable>
 	<embeddable class="com.intel.stl.api.configuration.EventRule">
@@ -163,6 +169,8 @@
 			<transient name="eventSubnets"/>
 		</attributes>
 	</embeddable>
+    <embeddable class="com.intel.stl.api.performance.ErrBucketBean">
+    </embeddable>
 	<embeddable class="com.intel.stl.api.performance.ErrSummaryBean">
 	</embeddable>
 	<embeddable class="com.intel.stl.api.subnet.GIDGlobal">
@@ -175,14 +183,22 @@
 			<basic name="sweepTimestamp">
 				<column name="gi_sweepTimestamp"/>
 			</basic>
-			<basic name="internalErrorPorts">
-				<column length="1024"/>
-				<lob/>
-			</basic>
-			<basic name="externalErrorPorts">
-				<column length="1024"/>
-				<lob/>
-			</basic>
+            <element-collection name="internalErrorPorts" fetch="EAGER">
+                 <order-column/>
+                 <collection-table name="INTERNAL_ERROR_PORTS">
+                     <join-column name="subnetId"/>
+                     <join-column name="groupName"/>
+                     <join-column name="sweepTimestamp"/>
+                 </collection-table>
+            </element-collection>
+            <element-collection name="externalErrorPorts" fetch="EAGER">
+                 <order-column/>
+                 <collection-table name="EXTERNAL_ERROR_PORTS">
+                     <join-column name="subnetId"/>
+                     <join-column name="groupName"/>
+                     <join-column name="sweepTimestamp"/>
+                 </collection-table>
+            </element-collection>
 			<embedded name="internalUtilStats">
 				<attribute-override name="totalMBps">
 					<column name="internal_totalMBps"/>
@@ -201,9 +217,6 @@
 				</attribute-override>
 				<attribute-override name="numBWBuckets">
 					<column name="internal_numBWBuckets"/>
-				</attribute-override>
-				<attribute-override name="bwBuckets">
-					<column name="internal_bwBuckets" length="1024"/>
 				</attribute-override>
 				<attribute-override name="avgKPps">
 					<column name="internal_avgKPps"/>
@@ -234,9 +247,6 @@
 				<attribute-override name="numBWBuckets">
 					<column name="send_numBWBuckets"/>
 				</attribute-override>
-				<attribute-override name="bwBuckets">
-					<column name="send_bwBuckets" length="1024"/>
-				</attribute-override>
 				<attribute-override name="avgKPps">
 					<column name="send_avgKPps"/>
 				</attribute-override>
@@ -265,9 +275,6 @@
 				</attribute-override>
 				<attribute-override name="numBWBuckets">
 					<column name="recv_numBWBuckets"/>
-				</attribute-override>
-				<attribute-override name="bwBuckets">
-					<column name="recv_bwBuckets" length="1024"/>
 				</attribute-override>
 				<attribute-override name="avgKPps">
 					<column name="recv_avgKPps"/>
@@ -368,6 +375,7 @@
             </basic>
             <embedded name="certsDescription"></embedded>
             <transient name="inetAddress"/>
+            <transient name="connectionAssistant"/>
         </attributes>
     </embeddable>
 	<embeddable class="com.intel.stl.api.performance.ImageIdBean">
@@ -449,6 +457,7 @@
             <transient name="smList"/>
 			<transient name="topologyUpdated"/>
 			<transient name="failoverInProgress"/>
+			<transient name="connectionAssistant"/>
 		</attributes>
 	</embeddable>
 	<embeddable class="com.intel.stl.api.CertsDescription">
@@ -465,10 +474,11 @@
 		</attributes>
 	</embeddable>
 	<embeddable class="com.intel.stl.api.performance.UtilStatsBean">
-		<attributes>
-			<basic name="bwBuckets">
-				<lob/>
-			</basic>
-		</attributes>
+        <attributes>
+            <!--bwBuckets are kept in the record so that we can have three collection tables,
+                internal, send and receive in the GroupInfoBean record. This is due to a 
+                limitation in Hibernate (override table name for a collection table)-->
+            <transient name="bwBuckets"/>
+        </attributes>
 	</embeddable>
 </entity-mappings>

@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.1  2015/08/12 15:21:45  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.7  2015/09/26 06:17:08  jijunwan
+ *  Archive Log:    130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
+ *  Archive Log:    - added reset to clear all caches and update DB topology
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/08/17 18:48:40  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.5  2014/11/04 14:14:41  fernande
  *  Archive Log:    NoticeManager performance improvements. Notices are now processed in batches and database update is done in parallel with cache updates. Changes to the management of caches; if a cache is not ready, no updates for a notice are carried out.
@@ -74,4 +79,5 @@ public interface ManagedCache {
 
     void processNotice(NoticeProcess notice) throws Exception;
 
+    void reset();
 }

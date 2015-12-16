@@ -35,8 +35,26 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.10.2.1  2015/08/12 15:26:41  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.14  2015/08/17 18:53:49  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.13  2015/06/30 22:31:42  jijunwan
+ *  Archive Log:    PR 129215 - Need short chart name to support pin capability
+ *  Archive Log:    - use short name as pin card title
+ *  Archive Log:    - improved pin argument to include full name and provide data source description
+ *  Archive Log:    - fixed improper full name issues on trend charts
+ *  Archive Log:
+ *  Archive Log:    Revision 1.12  2015/06/25 20:50:03  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on dynamic cards that can have different data sources
+ *  Archive Log:    - change to use port counter performance item
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/06/09 18:37:23  jijunwan
+ *  Archive Log:    PR 129069 - Incorrect Help action
+ *  Archive Log:    - moved help action from view to controller
+ *  Archive Log:    - only enable help button when we have HelpID
+ *  Archive Log:    - fixed incorrect HelpIDs
  *  Archive Log:
  *  Archive Log:    Revision 1.10  2015/04/02 13:33:02  jypak
  *  Archive Log:    Klockwork: Front End Critical Without Unit Test. 47 open issues fixed. All of them are for null checks.
@@ -92,8 +110,6 @@ import com.intel.stl.ui.common.ChartsCard;
 import com.intel.stl.ui.common.view.ChartsView;
 import com.intel.stl.ui.common.view.OptionChartsView;
 import com.intel.stl.ui.framework.IAppEvent;
-import com.intel.stl.ui.main.HelpAction;
-import com.intel.stl.ui.main.view.IDataTypeListener;
 import com.intel.stl.ui.model.DatasetDescription;
 import com.intel.stl.ui.model.HistoryType;
 import com.intel.stl.ui.performance.item.AbstractPerformanceItem;
@@ -101,7 +117,9 @@ import com.intel.stl.ui.performance.item.IPerformanceItem;
 import com.intel.stl.ui.performance.item.TopNItem;
 import com.intel.stl.ui.performance.item.TrendItem;
 
-public class CompactGroupController extends AbstractGroupController {
+public class CompactGroupController extends
+        AbstractGroupController<GroupSource> {
+    private ChartsCard trendCard, auxCard;
 
     /**
      * Description:
@@ -112,70 +130,53 @@ public class CompactGroupController extends AbstractGroupController {
      * @param topNItem
      * @param sourceNames
      */
+    @SuppressWarnings("unchecked")
     public CompactGroupController(MBassador<IAppEvent> eventBus, String name,
-            TrendItem trendItem, AbstractPerformanceItem histogramItem,
+            TrendItem<GroupSource> trendItem,
+            AbstractPerformanceItem<GroupSource> histogramItem,
             TopNItem topNItem, HistoryType[] historyTypes) {
-        super(eventBus, name, trendItem, histogramItem, topNItem);
+        super(eventBus, name, new IPerformanceItem[] { trendItem,
+                histogramItem, topNItem });
         installTimeScopes(historyTypes);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected List<ChartsCard> initCards(Map<String, DatasetDescription> map) {
         List<ChartsCard> res = new ArrayList<ChartsCard>();
 
-        HelpAction helpAction = HelpAction.getInstance();
-
         if (allItems[0] != null) {
-            ChartsCard card = createTrendCard(allItems[0], map);
-
-            helpAction.getHelpBroker().enableHelpOnButton(
-                    card.getView().getHelpButton(), helpAction.getTrend(),
-                    helpAction.getHelpSet());
-
-            res.add(card);
+            trendCard = createTrendCard(allItems[0], map);
+            res.add(trendCard);
         }
 
         if (allItems[1] != null || allItems[2] != null) {
-            ChartsCard card =
+            auxCard =
                     createAuxCard(new IPerformanceItem[] { allItems[2],
                             allItems[1] }, map);
-
-            helpAction.getHelpBroker().enableHelpOnButton(
-                    card.getView().getHelpButton(), helpAction.getTopN(),
-                    helpAction.getHelpSet());
-
-            res.add(card);
+            res.add(auxCard);
         }
 
         return res;
     }
 
-    protected ChartsCard createTrendCard(IPerformanceItem item,
-            Map<String, DatasetDescription> map) {
-        return createOptionCard(item, map);
+    public void setHelpIDs(String trendHelpID, String auxHelpID) {
+        if (trendCard != null) {
+            trendCard.setHelpID(trendHelpID);
+        }
+        if (auxCard != null) {
+            auxCard.setHelpID(auxHelpID);
+        }
     }
 
-    protected ChartsCard createOptionCard(final IPerformanceItem item,
+    protected ChartsCard createTrendCard(IPerformanceItem<GroupSource> item,
             Map<String, DatasetDescription> map) {
-        String name = item.getName();
-        final OptionChartsView view =
-                new OptionChartsView(name, PerformanceChartsCreator.instance());
+        return createOptionCard(item, map, true, false);
+    }
 
-        ChartsCard chartsCard = createChartsCard(view, map, name);
-        // HistoryTypeListener is only needed for the TrendItem not
-        // histogram/top n.
-
-        view.setHistoryTypeListener(new IDataTypeListener<HistoryType>() {
-            @Override
-            public void onDataTypeChange(HistoryType type) {
-                // Get the refresh rate here and calculate the maxDataPoints
-                // here.
-                item.setHistoryType(type);
-                view.setHistoryType(type);
-            }
-        });
-
-        return chartsCard;
+    protected ChartsCard createAuxCard(IPerformanceItem<GroupSource>[] items,
+            Map<String, DatasetDescription> map) {
+        return createCard(items, map);
     }
 
     protected void installTimeScopes(HistoryType... types) {
@@ -187,26 +188,47 @@ public class CompactGroupController extends AbstractGroupController {
         }
     }
 
-    protected ChartsCard createAuxCard(IPerformanceItem[] items,
-            Map<String, DatasetDescription> map) {
-        ChartsView auxView =
-                new ChartsView("", PerformanceChartsCreator.instance());
-        String[] names = new String[items.length];
-        String name = null;
-        for (int i = 0; i < items.length; i++) {
-            if (items[i] != null) {
-                names[i] = getItemName(items[i]);
-                if (name == null) {
-                    name = names[i];
-                }
-            }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.performance.AbstractGroupController#getItemView(com.
+     * intel.stl.ui.performance.item.IPerformanceItem)
+     */
+    @Override
+    protected ChartsView getItemView(IPerformanceItem<GroupSource> item) {
+        if (allItems[0] == item) {
+            return trendCard.getView();
+        } else if (allItems[1] == item || allItems[2] == item) {
+            return auxCard.getView();
+        } else {
+            return null;
         }
-        auxView.setTitle(name);
-        return createChartsCard(auxView, map, names);
     }
 
-    private String getItemName(IPerformanceItem item) {
-        return item == null ? null : item.getName();
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.performance.AbstractGroupController#getChartArgument
+     * (com.intel.stl.ui.performance.item.IPerformanceItem)
+     */
+    @Override
+    protected ChartArgument<GroupSource> getChartArgument(
+            IPerformanceItem<GroupSource> item) {
+        GroupChartArgument arg = new GroupChartArgument();
+        String name = item.getName();
+        arg.setName(name);
+        arg.setFullName(item.getFullName());
+        arg.setProvider(item.getCurrentProviderName().name());
+        if (item.getType() != null) {
+            arg.setDataType(item.getType());
+        }
+        if (item.getHistoryType() != null) {
+            arg.setHistoryType(item.getHistoryType());
+        }
+        arg.setSources(item.getSources());
+        return arg;
     }
 
 }

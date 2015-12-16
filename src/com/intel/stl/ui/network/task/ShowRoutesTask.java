@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6.2.1  2015/08/12 15:26:56  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.8  2015/08/17 18:54:05  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/08/05 03:11:29  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - improved GrapgEdge to include node type
  *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/04/28 14:00:33  jijunwan
  *  Archive Log:    1) improved topology viz to use TopGraph copy for outline display. This will avoid graph and outline views share internal graph view that may cause sync issues.
@@ -263,7 +268,8 @@ public class ShowRoutesTask extends TopologyUpdateTask {
                     System.out.println(source + " -> " + target);
                 }
                 GraphEdge edge =
-                        new GraphEdge(source.getLid(), target.getLid(),
+                        new GraphEdge(source.getLid(), source.getType(),
+                                target.getLid(), target.getType(),
                                 source.getLinkPorts(target));
 
                 List<GraphEdge> edges =
@@ -286,8 +292,9 @@ public class ShowRoutesTask extends TopologyUpdateTask {
                         startNode = node;
                     } else {
                         GraphEdge nextEdge =
-                                new GraphEdge(startNode.getLid(),
-                                        node.getLid(),
+                                new GraphEdge(startNode.getLid(), startNode
+                                        .getNodeType().getId(), node.getLid(),
+                                        node.getNodeType().getId(),
                                         Collections.singletonMap(Integer
                                                 .valueOf(start.getExitPort()),
                                                 Integer.valueOf(bean

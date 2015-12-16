@@ -32,10 +32,25 @@
  *
  *  File Name: PerformanceSection.java
  *
- *  Archive Source: 
- *
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.31  2015/08/17 18:53:38  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
  *  Archive Log:
- *
+ *  Archive Log: Revision 1.30  2015/06/25 20:50:05  jijunwan
+ *  Archive Log: Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log: - applied pin framework on dynamic cards that can have different data sources
+ *  Archive Log: - change to use port counter performance item
+ *  Archive Log:
+ *  Archive Log: Revision 1.29  2015/06/09 18:37:27  jijunwan
+ *  Archive Log: PR 129069 - Incorrect Help action
+ *  Archive Log: - moved help action from view to controller
+ *  Archive Log: - only enable help button when we have HelpID
+ *  Archive Log: - fixed incorrect HelpIDs
+ *  Archive Log:
+ * 
  *  Overview: 
  *
  *  @author: jijunwan
@@ -53,6 +68,7 @@ import com.intel.stl.ui.framework.IAppEvent;
 import com.intel.stl.ui.model.DataType;
 import com.intel.stl.ui.model.HistoryType;
 import com.intel.stl.ui.performance.CompactGroupFactory;
+import com.intel.stl.ui.performance.GroupSource;
 import com.intel.stl.ui.performance.IGroupController;
 
 /**
@@ -60,17 +76,23 @@ import com.intel.stl.ui.performance.IGroupController;
  * 
  */
 public class PerformanceSection extends ChartsSectionController {
-    private IGroupController[] utilGroups;
+    private IGroupController<GroupSource>[] utilGroups;
 
-    private IGroupController[] errGroups;
+    private IGroupController<GroupSource>[] errGroups;
 
     public PerformanceSection(ChartsSectionView view,
             MBassador<IAppEvent> eventBus) {
         super(view, eventBus);
+    }
 
-        HelpAction helpAction = HelpAction.getInstance();
-        helpAction.getHelpBroker().enableHelpOnButton(view.getHelpButton(),
-                helpAction.getSubnetPerformance(), helpAction.getHelpSet());
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.BaseSectionController#getHelpID()
+     */
+    @Override
+    public String getHelpID() {
+        return HelpAction.getInstance().getSubnetPerformance();
     }
 
     /*
@@ -78,12 +100,14 @@ public class PerformanceSection extends ChartsSectionController {
      * 
      * @see com.intel.stl.ui.main.ChartsSectionController#getUtilGroups()
      */
+    @SuppressWarnings("unchecked")
     @Override
-    protected IGroupController[] getUtilGroups() {
+    protected IGroupController<GroupSource>[] getUtilGroups() {
         if (utilGroups == null) {
-            String[] sourceNames =
-                    new String[] { DefaultDeviceGroup.ALL.getName(),
-                            DefaultDeviceGroup.SW.getName() };
+            GroupSource[] sourceNames =
+                    new GroupSource[] {
+                            new GroupSource(DefaultDeviceGroup.ALL.getName()),
+                            new GroupSource(DefaultDeviceGroup.SW.getName()) };
             utilGroups =
                     new IGroupController[] {
                             CompactGroupFactory.createBandwidthGroup(eventBus,
@@ -101,12 +125,14 @@ public class PerformanceSection extends ChartsSectionController {
      * 
      * @see com.intel.stl.ui.main.ChartsSectionController#getErrorGroups()
      */
+    @SuppressWarnings("unchecked")
     @Override
-    protected IGroupController[] getErrorGroups() {
+    protected IGroupController<GroupSource>[] getErrorGroups() {
         if (errGroups == null) {
-            String[] sourceNames =
-                    new String[] { DefaultDeviceGroup.ALL.getName(),
-                            DefaultDeviceGroup.SW.getName() };
+            GroupSource[] sourceNames =
+                    new GroupSource[] {
+                            new GroupSource(DefaultDeviceGroup.ALL.getName()),
+                            new GroupSource(DefaultDeviceGroup.SW.getName()) };
             errGroups =
                     new IGroupController[] {
                             CompactGroupFactory.createCongestionGroup(eventBus,

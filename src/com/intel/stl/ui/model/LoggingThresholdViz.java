@@ -35,8 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:26:38  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.3  2015/08/17 18:53:46  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/06/10 19:25:34  rjtierne
+ *  Archive Log:    PR 128975 - Can not setup application log
+ *  Archive Log:    - Updated to reflect the changes to the LoggingThreshold enumeration in the back end.
+ *  Archive Log:    - The enum INHERITED is not reflected here because it is for internal logging and
+ *  Archive Log:    never exposed to the user
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2014/12/19 18:31:45  rjtierne
  *  Archive Log:    Initial Version
@@ -60,13 +67,13 @@ import com.intel.stl.ui.common.STLConstants;
 
 public enum LoggingThresholdViz {
 
-    OFF(LoggingThreshold.OFF, STLConstants.K0699_OFF.getValue()),
-    INFO(LoggingThreshold.INFO, STLConstants.K0631_INFO.getValue()),
+    ALL(LoggingThreshold.ALL, STLConstants.K0698_ALL.getValue()),
+    TRACE(LoggingThreshold.TRACE, STLConstants.K0632_TRACE.getValue()),
     DEBUG(LoggingThreshold.DEBUG, STLConstants.K0630_DEBUG.getValue()),
+    INFO(LoggingThreshold.INFO, STLConstants.K0631_INFO.getValue()),
     WARN(LoggingThreshold.WARN, STLConstants.K3002_WARN.getValue()),
     ERROR(LoggingThreshold.ERROR, STLConstants.K0030_ERROR.getValue()),
-    FATAL(LoggingThreshold.FATAL, STLConstants.K0632_FATAL.getValue()),
-    ALL(LoggingThreshold.ALL, STLConstants.K0698_ALL.getValue());
+    OFF(LoggingThreshold.OFF, STLConstants.K0699_OFF.getValue());
 
     private final static EnumMap<LoggingThreshold, String> loggingThresholdNameMap =
             new EnumMap<LoggingThreshold, String>(LoggingThreshold.class);
@@ -83,6 +90,15 @@ public enum LoggingThresholdViz {
         for (LoggingThresholdViz thresholdViz : LoggingThresholdViz.values()) {
             loggingThresholdMap.put(thresholdViz.getName(),
                     thresholdViz.getThreshold());
+        }
+    }
+
+    private final static Map<LoggingThreshold, Integer> loggingThresholdMapAtId =
+            new HashMap<LoggingThreshold, Integer>();
+    static {
+        for (LoggingThresholdViz thresholdViz : LoggingThresholdViz.values()) {
+            loggingThresholdMapAtId.put(thresholdViz.getThreshold(),
+                    thresholdViz.getId());
         }
     }
 
@@ -117,6 +133,10 @@ public enum LoggingThresholdViz {
 
     public static LoggingThreshold getLoggingThreshold(String name) {
         return loggingThresholdMap.get(name);
+    }
+
+    public static int getLoggingThresholdAtId(LoggingThreshold threshold) {
+        return loggingThresholdMapAtId.get(threshold);
     }
 
 }

@@ -35,8 +35,17 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.10.2.1  2015/08/12 15:27:04  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.13  2015/08/17 18:54:14  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.12  2015/06/25 11:55:06  jypak
+ *  Archive Log:    PR 129073 - Add help action for Admin Page.
+ *  Archive Log:    The help action is added to App, DG, VF,Console page and Console terminal. For now, a help ID and a content are being used as a place holder for each page. Once we get the help contents delivered by technical writer team, the HelpAction will be updated with correct help ID.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/05/27 14:35:27  rjtierne
+ *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
+ *  Archive Log:    Removed loginDialogView
  *  Archive Log:
  *  Archive Log:    Revision 1.10  2015/03/20 14:32:37  jypak
  *  Archive Log:    Help Set file name changed so that it can work with a delivered JAR.
@@ -81,6 +90,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
@@ -88,7 +98,6 @@ import com.intel.stl.ui.common.HelpController;
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.view.HelpView;
 import com.intel.stl.ui.console.ConsoleDispatchManager;
-import com.intel.stl.ui.main.view.IFabricView;
 
 public class ConsoleView extends JPanel {
 
@@ -98,17 +107,13 @@ public class ConsoleView extends JPanel {
 
     private HelpView consoleHelpView;
 
-    private final LoginDialogView loginDialogView;
-
     private static final String HELP_SET_FILE =
             "GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.hs";
 
     private static String title = STLConstants.K1056_FAST_FABRIC_ASSISTANT
             .getValue();
 
-    public ConsoleView(IFabricView owner) {
-
-        loginDialogView = new LoginDialogView(owner);
+    public ConsoleView() {
         initComponents();
     }
 
@@ -130,8 +135,7 @@ public class ConsoleView extends JPanel {
         consoleHelpView = consoleHelpController.getView();
         spltPane.setRightComponent(consoleHelpView);
 
-        consoleSubpageView =
-                new ConsoleSubpageView(loginDialogView, consoleHelpController);
+        consoleSubpageView = new ConsoleSubpageView(consoleHelpController);
         spltPane.setLeftComponent(consoleSubpageView.getMainComponent());
 
         add(spltPane, gc);
@@ -141,6 +145,14 @@ public class ConsoleView extends JPanel {
         return consoleSubpageView;
     }
 
+    public void enableHelp(boolean b) {
+        consoleSubpageView.enableHelp(b);
+    }
+
+    public JButton getHelpButton() {
+        return consoleSubpageView.getHelpButton();
+    }
+
     /**
      * @return the consoleHelpView
      */
@@ -148,15 +160,7 @@ public class ConsoleView extends JPanel {
         return consoleHelpView;
     }
 
-    /**
-     * @return the loginDialogView
-     */
-    public LoginDialogView getLoginDialogView() {
-        return loginDialogView;
-    }
-
     public void setConsoleDispatchManager(ConsoleDispatchManager dispatchManager) {
-        this.loginDialogView.setConsoleEventListener(dispatchManager);
         this.consoleSubpageView.setConsoleListener(dispatchManager);
     }
 

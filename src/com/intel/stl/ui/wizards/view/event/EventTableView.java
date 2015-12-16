@@ -35,8 +35,27 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8.2.1  2015/08/12 15:27:27  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.13  2015/10/07 11:39:59  jypak
+ *  Archive Log:    PR 130608 - Changes made to SC2VL mapping is not reflected in FM GUI's SC2SL Mapping Table.
+ *  Archive Log:    Klocwork issues fixed.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.12  2015/10/02 12:51:37  rjtierne
+ *  Archive Log:    PR 130509 - Missing ICON for Display_Message
+ *  Archive Log:    - Simplified getTableCellRendererComponent() when adding e-mail/display message
+ *  Archive Log:    icons to the action panel using EventRuleActionViz.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/08/17 18:54:40  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/08/10 17:55:49  robertja
+ *  Archive Log:    PR 128974 - Email notification functionality.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/06/03 19:44:35  rjtierne
+ *  Archive Log:    129043 - The Action column on the Event Wizard should be re-enabled for e-mail support
+ *  Archive Log:    Added flag ACTION_COLUMN_ENABLE which can be set to true to make the Action column
+ *  Archive Log:    on the Event Wizard visible.  This flag should only be enabled when the e-mail feature
+ *  Archive Log:    is available.
  *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/04/21 21:18:32  rjtierne
  *  Archive Log:    In installEditors(), set Reset button to true when table combo box is selected
@@ -118,10 +137,10 @@ import com.intel.stl.api.configuration.EventRuleAction;
 import com.intel.stl.api.notice.NoticeSeverity;
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UIConstants;
-import com.intel.stl.ui.common.UIImages;
 import com.intel.stl.ui.common.view.FVHeaderRenderer;
 import com.intel.stl.ui.common.view.FVTableRenderer;
 import com.intel.stl.ui.common.view.FVXTableView;
+import com.intel.stl.ui.model.EventRuleActionViz;
 import com.intel.stl.ui.model.EventTypeViz;
 import com.intel.stl.ui.wizards.impl.IWizardTask;
 import com.intel.stl.ui.wizards.impl.event.EventRulesTableColumns;
@@ -131,7 +150,10 @@ import com.intel.stl.ui.wizards.view.IWizardView;
 import com.intel.stl.ui.wizards.view.MultinetWizardView;
 
 public class EventTableView extends FVXTableView<EventRulesTableModel> {
+
     private static final long serialVersionUID = 2521825791205609777L;
+
+    private static final boolean ACTION_COLUMN_ENABLE = true;
 
     private IWizardTask eventWizardControlListener;
 
@@ -188,8 +210,11 @@ public class EventTableView extends FVXTableView<EventRulesTableModel> {
         // Turn off column control icon
         table.setColumnControlVisible(false);
 
-        // TODO Action column is disabled until e-mail is available
-        table.removeColumn(table.getColumnModel().getColumn(3));
+        // The action column should only be enabled if e-mail is available
+        if (!ACTION_COLUMN_ENABLE) {
+            table.removeColumn(table.getColumnModel().getColumn(
+                    EventRulesTableColumns.EVENT_ACTION.getId()));
+        }
 
         return table;
     }
@@ -220,11 +245,14 @@ public class EventTableView extends FVXTableView<EventRulesTableModel> {
 
         // Create the popup window
         pnlEventAction = new ActionPanel(model, multinetWizardViewListener);
-        // TODO Action column is disabled until e-mail is available
-        // EventActionEditor actionEditor = new
-        // EventActionEditor(pnlEventAction);
-        // mTable.getColumn(ITableListener.ACTION_EDITOR_COLUMN).setCellEditor(
-        // actionEditor);
+
+        // The action column should only be enabled if e-mail is available
+        if (ACTION_COLUMN_ENABLE) {
+            EventActionEditor actionEditor =
+                    new EventActionEditor(pnlEventAction);
+            mTable.getColumn(ITableListener.ACTION_EDITOR_COLUMN)
+                    .setCellEditor(actionEditor);
+        }
     }
 
     /*
@@ -362,19 +390,11 @@ public class EventTableView extends FVXTableView<EventRulesTableModel> {
             EventRule tableEntry = model.getEntry(row);
             actionPanel.removeAll();
             for (EventRuleAction action : tableEntry.getEventActions()) {
-                if (action.name()
-                        .equals(EventRuleAction.DISPLAY_MESSAGE.name())) {
-                    JLabel label =
-                            new JLabel(UIImages.DISPLAY_ICON.getImageIcon());
-                    label.setToolTipText(STLConstants.K0682_DISPLAY_MESSAGE
-                            .getValue());
-                    actionPanel.add(label);
-                } else if (action.name().equals(
-                        EventRuleAction.SEND_EMAIL.name())) {
-                    JLabel label =
-                            new JLabel(UIImages.EMAIL_ICON.getImageIcon());
-                    label.setToolTipText(STLConstants.K0683_EMAIL_MESSAGE
-                            .getValue());
+                EventRuleActionViz actionViz =
+                        EventRuleActionViz.getEventRuleActionVizFor(action);
+                if (actionViz != null) {
+                    JLabel label = new JLabel(actionViz.getImageIcon());
+                    label.setToolTipText(actionViz.getName());
                     actionPanel.add(label);
                 }
             }

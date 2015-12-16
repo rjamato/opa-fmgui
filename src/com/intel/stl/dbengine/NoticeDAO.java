@@ -24,20 +24,36 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ * 
  *  Functional Group: Fabric Viewer Application
- *
+ * 
  *  File Name: NoticeDAO.java
- *
- *  Overview: 
- *
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.10  2015/08/17 18:48:35  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - change backend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.9  2015/06/10 19:41:19  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ *  Archive Log: Revision 1.8  2015/06/10 19:36:49  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
  *  @author: jypak
- *
+ * 
  ******************************************************************************/
-
 package com.intel.stl.dbengine;
 
 import java.util.List;

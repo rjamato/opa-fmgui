@@ -35,8 +35,31 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3.2.1  2015/08/12 15:26:38  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.9  2015/08/28 16:34:05  jijunwan
+ *  Archive Log:    PR 129821 - connectivity table has no Link Width Down Grade data
+ *  Archive Log:    - updated tooltip text
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/08/17 18:53:46  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/08/04 23:00:32  jijunwan
+ *  Archive Log:    PR 129821 - connectivity table has no Link Width Down Grade data
+ *  Archive Log:    - added related data to data table
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/07/17 15:39:49  rjtierne
+ *  Archive Log:    PR 129547 - Need to add Node type and lid to the Connectivity
+ *  Archive Log:    Added NODE_LID and NODE_TYPE columns and renumbered ids to remain in synch
+ *  Archive Log:    with the order the columns are displayed in the Connectivity table
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/07/13 21:56:07  rjtierne
+ *  Archive Log:    PR 129355 - Ability to click on cables to get cable info
+ *  Archive Log:    - Added CABLE_INFO column
+ *  Archive Log:    - Renumbered enumeration to stay in since with column ordering on view
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/06/01 15:01:22  jypak
+ *  Archive Log:    PR 128823 - Improve performance tables to include all portcounters fields.
+ *  Archive Log:    All port counters fields added to performance table and connectivity table.
  *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/04/08 19:44:01  rjtierne
  *  Archive Log:    PR 126844 - Can make Port counter names in UIs more concise.
@@ -59,97 +82,170 @@ package com.intel.stl.ui.model;
 import com.intel.stl.ui.common.STLConstants;
 
 public enum ConnectivityTableColumns {
-    DEVICE_NAME(0, STLConstants.K0500_NODE_NAME.getValue(),
+
+    // Keep these ids in column order!
+    NODE_NAME(STLConstants.K0500_NODE_NAME.getValue(),
             STLConstants.K0500_NODE_NAME.getValue()),
 
-    NODE_GUID(0, STLConstants.K0363_NODE_GUID.getValue(),
+    NODE_LID(STLConstants.K0501_NODE_LID.getValue(),
+            STLConstants.K0501_NODE_LID.getValue()),
+
+    NODE_TYPE(STLConstants.K0083_NODE_TYPE.getValue(),
+            STLConstants.K0083_NODE_TYPE.getValue()),
+
+    NODE_GUID(STLConstants.K0363_NODE_GUID.getValue(),
             STLConstants.K0363_NODE_GUID.getValue()),
 
-    PORT_NUMBER(1, STLConstants.K0404_PORT_NUMBER.getValue(),
+    PORT_NUMBER(STLConstants.K0404_PORT_NUMBER.getValue(),
             STLConstants.K0404_PORT_NUMBER.getValue()),
 
-    LINK_STATE(2, STLConstants.K0505_LINK_STATE.getValue(),
+    CABLE_INFO(STLConstants.K3049_CABLE_INFO.getValue(),
+            STLConstants.K3049_CABLE_INFO.getValue()),
+
+    LINK_STATE(STLConstants.K0505_LINK_STATE.getValue(),
             STLConstants.K0505_LINK_STATE.getValue()),
 
-    PHYSICAL_LINK_STATE(3, STLConstants.K0506_PHYSICAL_LINK_STATE.getValue(),
+    PHYSICAL_LINK_STATE(STLConstants.K0506_PHYSICAL_LINK_STATE.getValue(),
             STLConstants.K0506_PHYSICAL_LINK_STATE.getValue()),
 
-    LINK_QUALITY(26, STLConstants.K2068_LINK_QUALITY.getValue(),
+    LINK_QUALITY(STLConstants.K2068_LINK_QUALITY.getValue(),
             STLConstants.K3204_LINK_QUALITY_DESCRIPTION.getValue()),
 
-    ACTIVE_LINK_WIDTH(4, STLConstants.K0319_PORT_LINK_WIDTH.getValue(),
+    ACTIVE_LINK_WIDTH(STLConstants.K0319_PORT_LINK_WIDTH.getValue(),
             STLConstants.K0319_PORT_LINK_WIDTH.getValue()),
 
-    ENABLED_LINK_WIDTH(5, STLConstants.K0507_LINK_WIDTH_ENABLED.getValue(),
+    ENABLED_LINK_WIDTH(STLConstants.K0507_LINK_WIDTH_ENABLED.getValue(),
             STLConstants.K0507_LINK_WIDTH_ENABLED.getValue()),
 
-    SUPPORTED_LINK_WIDTH(6, STLConstants.K0508_LINK_WIDTH_SUPPORTED.getValue(),
+    SUPPORTED_LINK_WIDTH(STLConstants.K0508_LINK_WIDTH_SUPPORTED.getValue(),
             STLConstants.K0508_LINK_WIDTH_SUPPORTED.getValue()),
 
-    ACTIVE_LINK_SPEED(7, STLConstants.K0509_ACTIVE_LINK_SPEED.getValue(),
+    ACTIVE_LINK_WIDTH_DG_TX(STLConstants.K0526_TX_LINK_WIDTH_DG.getValue(),
+            STLConstants.K0526_TX_LINK_WIDTH_DG.getValue()),
+
+    ACTIVE_LINK_WIDTH_DG_RX(STLConstants.K0527_RX_LINK_WIDTH_DG.getValue(),
+            STLConstants.K0527_RX_LINK_WIDTH_DG.getValue()),
+
+    ENABLED_LINK_WIDTH_DG(STLConstants.K0528_LINK_WIDTH_DG_ENABLED.getValue(),
+            STLConstants.K0507_LINK_WIDTH_ENABLED.getValue()),
+
+    SUPPORTED_LINK_WIDTH_DG(STLConstants.K0529_LINK_WIDTH_DG_SUPPORTED
+            .getValue(), STLConstants.K0508_LINK_WIDTH_SUPPORTED.getValue()),
+
+    ACTIVE_LINK_SPEED(STLConstants.K0509_ACTIVE_LINK_SPEED.getValue(),
             STLConstants.K0509_ACTIVE_LINK_SPEED.getValue()),
 
-    ENABLED_LINK_SPEED(8, STLConstants.K0510_LINK_SPEED_ENABLED.getValue(),
+    ENABLED_LINK_SPEED(STLConstants.K0510_LINK_SPEED_ENABLED.getValue(),
             STLConstants.K0510_LINK_SPEED_ENABLED.getValue()),
 
-    SUPPORTED_LINK_SPEED(9, STLConstants.K0511_LINK_SPEED_SUPPORTED.getValue(),
+    SUPPORTED_LINK_SPEED(STLConstants.K0511_LINK_SPEED_SUPPORTED.getValue(),
             STLConstants.K0511_LINK_SPEED_SUPPORTED.getValue()),
 
-    TX_PACKETS(12, STLConstants.K0734_TX_CUMULATIVE_PACKETS.getValue(),
-            STLConstants.K3215_TX_CUMULATIVE_PACKETS_DESCRIPTION.getValue()),
+    RX_DATA(STLConstants.K0729_RX_CUMULATIVE_DATA.getValue(),
+            STLConstants.K3207_RX_CUMULATIVE_DATA_DESCRIPTION.getValue()),
 
-    RX_PACKETS(13, STLConstants.K0728_RX_CUMULATIVE_PACKETS.getValue(),
+    RX_PACKETS(STLConstants.K0728_RX_CUMULATIVE_PACKETS.getValue(),
             STLConstants.K3209_RX_CUMULATIVE_PACKETS_DESCRIPTION.getValue()),
 
-    // SYMBOL_ERRORS(14, STLConstants.K0516_SYMBOL_ERRORS.getValue()),
+    RX_MC_PACKETS(STLConstants.K0834_RX_MULTICAST_PACKETS.getValue(),
+            STLConstants.K3216_RX_MULTICAST_PACKETS.getValue()),
 
-    LINK_RECOVERIES(15, STLConstants.K0517_LINK_RECOVERIES.getValue(),
-            STLConstants.K3203_LINK_RECOVERIES_DESCRIPTION.getValue()),
-
-    LINK_DOWN(16, STLConstants.K0518_LINK_DOWN.getValue(),
-            STLConstants.K3202_LINK_DOWN_DESCRIPTION.getValue()),
-
-    RX_ERRORS(17, STLConstants.K0519_RX_ERRORS.getValue(),
+    RX_ERRORS(STLConstants.K0519_RX_ERRORS.getValue(),
             STLConstants.K3208_RX_ERRORS_DESCRIPTION.getValue()),
 
-    RX_REMOTE_PHYSICAL_ERRRORS(18, STLConstants.K0520_RX_REMOTE_PHY_ERRORS
+    RX_CONSTRAINT(STLConstants.K0522_RX_PORT_CONSTRAINT.getValue(),
+            STLConstants.K3206_RX_PORT_CONSTRAINT_DESCRIPTION.getValue()),
+
+    RX_SWITCH_RELAY_ERRRORS(STLConstants.K0717_REC_SW_REL_ERR.getValue(),
+            STLConstants.K3211_REC_SW_REL_ERR_DESCRIPTION.getValue()),
+
+    RX_REMOTE_PHYSICAL_ERRRORS(STLConstants.K0520_RX_REMOTE_PHY_ERRORS
             .getValue(), STLConstants.K3210_RX_REMOTE_PHY_ERRORS_DESCRIPTION
             .getValue()),
 
-    TX_DISCARDS(19, STLConstants.K0731_TX_DISCARDS.getValue(),
+    RX_FECN(STLConstants.K0837_RX_FECN.getValue(),
+            STLConstants.K3223_RX_FECN_DESCRIPTION.getValue()),
+
+    RX_BECN(STLConstants.K0838_RX_BECN.getValue(),
+            STLConstants.K3224_RX_BECN_DESCRIPTION.getValue()),
+
+    RX_BUBBLE(STLConstants.K0842_RX_BUBBLE.getValue(),
+            STLConstants.K3225_RX_BUBBLE_DESCRIPTION.getValue()),
+
+    TX_DATA(STLConstants.K0735_TX_CUMULATIVE_DATA.getValue(),
+            STLConstants.K3213_TX_CUMULATIVE_DATA_DESCRIPTION.getValue()),
+
+    TX_PACKETS(STLConstants.K0734_TX_CUMULATIVE_PACKETS.getValue(),
+            STLConstants.K3215_TX_CUMULATIVE_PACKETS_DESCRIPTION.getValue()),
+
+    TX_MC_PACKETS(STLConstants.K0833_TX_MULTICAST_PACKETS.getValue(),
+            STLConstants.K3217_TX_MULTICAST_PACKETS.getValue()),
+
+    TX_DISCARDS(STLConstants.K0731_TX_DISCARDS.getValue(),
             STLConstants.K3214_TX_DISCARDS_DESCRIPTION.getValue()),
 
-    LOCAL_LINK_INTEGRITY_ERRRORS(20, STLConstants.K0718_LOCAL_LINK_INTEG_ERR
-            .getValue(), STLConstants.K3205_LOCAL_LINK_INTEG_ERR_DESCRIPTION
-            .getValue()),
+    TX_CONSTRAINT(STLConstants.K0521_TX_PORT_CONSTRAINT.getValue(),
+            STLConstants.K3212_TX_PORT_CONSTRAINT_DESCRIPTION.getValue()),
 
-    EXCESSIVE_BUFFER_OVERRUNS(21, STLConstants.K0719_EXCESS_BUFF_OVERRUNS
+    TX_WAIT(STLConstants.K0836_TX_WAIT.getValue(),
+            STLConstants.K3226_TX_WAIT_DESCRIPTION.getValue()),
+
+    TX_TIME_CONG(STLConstants.K0839_TX_TIME_CONG.getValue(),
+            STLConstants.K3227_TX_TIME_CONG_DESCRIPTION.getValue()),
+
+    TX_WASTED_BW(STLConstants.K0840_TX_WASTED_BW.getValue(),
+            STLConstants.K3228_TX_WASTED_BW_DESCRIPTION.getValue()),
+
+    TX_WAIT_DATA(STLConstants.K0841_TX_WAIT_DATA.getValue(),
+            STLConstants.K3229_TX_WAIT_DATA_DESCRIPTION.getValue()),
+
+    LOCAL_LINK_INTEGRITY(STLConstants.K0718_LOCAL_LINK_INTEG_ERR.getValue(),
+            STLConstants.K3205_LOCAL_LINK_INTEG_ERR_DESCRIPTION.getValue()),
+
+    FM_CONFIG_ERRORS(STLConstants.K0737_FM_CONFIG_ERRRORS.getValue(),
+            STLConstants.K3201_FM_CONFIG_ERR_DESCRIPTION.getValue()),
+
+    EXCESSIVE_BUFFER_OVERRUNS(STLConstants.K0719_EXCESS_BUFF_OVERRUNS
             .getValue(), STLConstants.K3200_EXCESS_BUFF_OVERRUNS_DESCRIPTION
             .getValue()),
 
-    SWITCH_RELAY_ERRRORS(22, STLConstants.K0717_REC_SW_REL_ERR.getValue(),
-            STLConstants.K3211_REC_SW_REL_ERR_DESCRIPTION.getValue()),
+    SW_PORT_CONGESTION(STLConstants.K0835_SW_PORT_CONG.getValue(),
+            STLConstants.K3230_SW_PORT_CONG_DESCRIPTION.getValue()),
 
-    TX_PORT_CONSTRAINT(23, STLConstants.K0521_TX_PORT_CONSTRAINT.getValue(),
-            STLConstants.K3212_TX_PORT_CONSTRAINT_DESCRIPTION.getValue()),
+    MARK_FECN(STLConstants.K0843_MARK_FECN.getValue(),
+            STLConstants.K3231_MARK_FECN_DESCRIPTION.getValue()),
 
-    RX_PORT_CONSTRAINT(24, STLConstants.K0522_RX_PORT_CONSTRAINT.getValue(),
-            STLConstants.K3206_RX_PORT_CONSTRAINT_DESCRIPTION.getValue());
+    LINK_ERROR_RECOVERIES(STLConstants.K0517_LINK_RECOVERIES.getValue(),
+            STLConstants.K3203_LINK_RECOVERIES_DESCRIPTION.getValue()),
 
-    private final int id;
+    LINK_DOWNED(STLConstants.K0518_LINK_DOWN.getValue(),
+            STLConstants.K3202_LINK_DOWN_DESCRIPTION.getValue()),
+
+    UNCORRECTABLE_ERRORS(STLConstants.K0716_UNCORR_ERR.getValue(),
+            STLConstants.K3232_UNCORR_ERR_DESCRIPTION.getValue());
+
+    private int id = -1;
 
     private final String title;
 
     private final String toolTip;
 
-    private ConnectivityTableColumns(int id, String title, String toolTip) {
-        this.id = id;
+    private ConnectivityTableColumns(String title, String toolTip) {
         this.title = title;
         this.toolTip = toolTip;
     }
 
     public int getId() {
-        return this.id;
+        if (id == -1) {
+            ConnectivityTableColumns[] vals = values();
+            for (int i = 0; i < vals.length; i++) {
+                if (vals[i] == this) {
+                    id = i;
+                    break;
+                }
+            }
+        }
+        return id;
     }
 
     public String getTitle() {

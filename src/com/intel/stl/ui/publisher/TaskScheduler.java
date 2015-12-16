@@ -35,8 +35,26 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.41.2.1  2015/08/12 15:26:59  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.47  2015/08/17 18:54:08  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.46  2015/08/11 14:10:35  jijunwan
+ *  Archive Log:    PR 129917 - No update on event statistics
+ *  Archive Log:    - Added a new subscriber to allow periodically getting state summary
+ *  Archive Log:
+ *  Archive Log:    Revision 1.45  2015/07/31 21:09:52  fernande
+ *  Archive Log:    PR 129631 - Ports table sometimes not getting performance related data. Changed to handle a request cancellation exceptions and not log stack traces in those cases.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.44  2015/06/25 21:10:07  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - code clean up
+ *  Archive Log:
+ *  Archive Log:    Revision 1.43  2015/06/23 15:39:57  fernande
+ *  Archive Log:    PR 128977 Application log needs to support multi-subnet. - Changed logging statements to debug level
+ *  Archive Log:
+ *  Archive Log:    Revision 1.42  2015/05/22 13:53:51  robertja
+ *  Archive Log:    PR128703 Resume performance data tasks after completion of fail-over.
  *  Archive Log:
  *  Archive Log:    Revision 1.41  2015/04/28 22:13:17  jijunwan
  *  Archive Log:    1) introduced component owner to Context, so when we have errors in data collection, preparation etc, we now there the error dialog should go
@@ -216,12 +234,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.intel.stl.api.FMException;
+import com.intel.stl.api.StringUtils;
 import com.intel.stl.api.failure.BaseFailureEvaluator;
 import com.intel.stl.api.failure.BaseTaskFailure;
 import com.intel.stl.api.failure.FailureManager;
@@ -229,9 +249,11 @@ import com.intel.stl.api.failure.FatalException;
 import com.intel.stl.api.failure.IFailureManagement;
 import com.intel.stl.api.failure.ITaskFailure;
 import com.intel.stl.api.performance.IPerformanceApi;
+import com.intel.stl.api.performance.PerformanceRequestCancelledException;
 import com.intel.stl.ui.common.UILabels;
 import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.main.Context;
+import com.intel.stl.ui.publisher.subscriber.EventSubscriber;
 import com.intel.stl.ui.publisher.subscriber.FocusPortCounterSubscriber;
 import com.intel.stl.ui.publisher.subscriber.GroupInfoSubscriber;
 import com.intel.stl.ui.publisher.subscriber.IRegisterTask;
@@ -242,7 +264,6 @@ import com.intel.stl.ui.publisher.subscriber.SubscriberType;
 import com.intel.stl.ui.publisher.subscriber.VFFocusPortSubscriber;
 import com.intel.stl.ui.publisher.subscriber.VFInfoSubscriber;
 import com.intel.stl.ui.publisher.subscriber.VFPortCounterSubscriber;
-import com.sun.corba.se.impl.orbutil.threadpool.TimeoutException;
 
 public class TaskScheduler implements IRegisterTask {
 
@@ -321,6 +342,8 @@ public class TaskScheduler implements IRegisterTask {
                 new FocusPortCounterSubscriber(this, perfApi));
         subscriberPool.put(SubscriberType.VF_FOCUS_PORTS,
                 new VFFocusPortSubscriber(this, perfApi));
+        subscriberPool.put(SubscriberType.EVENT, new EventSubscriber(this,
+                context.getEvtCal()));
 
         log.info("Refresh Rate = " + refreshRate);
     }
@@ -456,13 +479,13 @@ public class TaskScheduler implements IRegisterTask {
             if (index >= 0) {
                 task = tasks.get(index);
                 task.addCallback(callback);
-                log.info("Register Task " + task);
-                log.info("Add callback to already running task " + task);
+                log.debug("Register Task " + task);
+                log.debug("Add callback to already running task " + task);
             } else {
                 task.addCallback(callback);
                 task.setCaller(caller);
                 final Task<E> taskFinal = task;
-                log.info("Schedule task " + task + " with rate " + refreshRate
+                log.debug("Schedule task " + task + " with rate " + refreshRate
                         + " sec.");
                 ScheduledFuture<?> future =
                         scheduledService.scheduleAtFixedRate(new Runnable() {
@@ -471,14 +494,25 @@ public class TaskScheduler implements IRegisterTask {
                                 try {
                                     E result = caller.call();
                                     taskFinal.onDone(result);
+                                } catch (PerformanceRequestCancelledException e) {
+                                    log.info(e.getMessage());
+                                    try {
+                                        taskFinal.onError(e);
+                                    } finally {
+                                        handleFailure(taskFinal, e);
+                                    }
                                 } catch (Exception e) {
-                                    e.printStackTrace();
+                                    log.error(
+                                            "Scheduled task had an error: {}",
+                                            StringUtils.getErrorMessage(e), e);
                                     try {
                                         taskFinal.onError(e);
                                     } finally {
                                         handleFailure(taskFinal, e);
                                     }
                                 }
+                                // Util.showErrorMessage(context.getOwner(),
+                                // "TTTTTTTTTTTTTTTT");
                             }
                         }, 0, refreshRate, TimeUnit.SECONDS);
                 task.setFuture(future);
@@ -525,13 +559,13 @@ public class TaskScheduler implements IRegisterTask {
         }
 
         synchronized (tasks) {
-            log.info("Deregister Task " + target);
+            log.debug("Deregister Task " + target);
             int index = tasks.indexOf(target);
             if (index >= 0) {
                 Task<E> realTask = tasks.get(index);
                 realTask.removeCallback(callback);
                 if (realTask.isEmpty()) {
-                    log.info("Stop Task " + target);
+                    log.debug("Stop Task " + target);
                     try {
                         realTask.getFuture().cancel(true);
                     } finally {
@@ -551,13 +585,13 @@ public class TaskScheduler implements IRegisterTask {
         synchronized (tasks) {
             for (int i = targets.size() - 1; i >= 0; i--) {
                 Task<E> target = targets.get(i);
-                log.info("Deregister Task " + target);
+                log.debug("Deregister Task " + target);
                 int index = tasks.indexOf(target);
                 if (index >= 0) {
                     Task<E> realTask = tasks.get(index);
                     realTask.removeSubCallbacks(callback);
                     if (realTask.isEmpty()) {
-                        log.info("Stop Task " + target);
+                        log.debug("Stop Task " + target);
                         try {
                             realTask.getFuture().cancel(true);
                         } finally {
@@ -588,7 +622,7 @@ public class TaskScheduler implements IRegisterTask {
 
                     @Override
                     public void onFatal() {
-                        log.info("Fatal Failure - Stop task! " + task);
+                        log.error("Fatal Failure - Stop task! " + task);
                         FatalException fe = new FatalException(e);
                         // We need to be careful what we show on each callback
                         // on the error. The current approach is displaying
@@ -640,6 +674,10 @@ public class TaskScheduler implements IRegisterTask {
                 + "'");
     }
 
+    public void suspendServiceDuringFailover() throws InterruptedException {
+        shutdownService(scheduledService);
+    }
+
     private void shutdownService(ExecutorService service)
             throws InterruptedException {
 
@@ -648,9 +686,9 @@ public class TaskScheduler implements IRegisterTask {
 
         // Wait for termination to complete
         if (!service.awaitTermination(SHUTDOWN_TIME, TimeUnit.MILLISECONDS)) {
-            log.info("Executor did not terminate in the specified time.");
+            log.warn("Executor did not terminate in the specified time.");
             List<Runnable> droppedTasks = service.shutdownNow();
-            log.info("Executor was abruptly shut down. " + droppedTasks.size()
+            log.warn("Executor was abruptly shut down. " + droppedTasks.size()
                     + " tasks will not be executed.");
         }
     }
@@ -663,9 +701,9 @@ public class TaskScheduler implements IRegisterTask {
 
         // Wait just in case it doesn't 'actually' shut down right away
         if (!service.awaitTermination(SHUTDOWN_TIME, TimeUnit.MILLISECONDS)) {
-            log.info("Executor did not terminate in the specified time.");
+            log.warn("Executor did not terminate in the specified time.");
             List<Runnable> droppedTasks = service.shutdownNow();
-            log.info("Executor was abruptly shut down. " + droppedTasks.size()
+            log.warn("Executor was abruptly shut down. " + droppedTasks.size()
                     + " tasks will not be executed.");
         }
     }

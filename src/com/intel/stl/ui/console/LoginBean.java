@@ -35,8 +35,17 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6.2.1  2015/08/12 15:27:18  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.9  2015/08/17 18:54:27  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/07/28 18:29:15  fisherma
+ *  Archive Log:    PR 129219 - Admin page login dialog improvement
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/05/27 14:34:38  rjtierne
+ *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
+ *  Archive Log:    Stemming from a security problem with JPasswordField(), all password related
+ *  Archive Log:    Strings have been changed to char[]
  *  Archive Log:
  *  Archive Log:    Revision 1.6  2014/10/28 22:19:47  rjtierne
  *  Archive Log:    Added copy constructor
@@ -77,7 +86,7 @@ public class LoginBean {
 
     private String hostName;
 
-    private String password;
+    private char[] password;
 
     private String portNum = "22";
 
@@ -148,7 +157,7 @@ public class LoginBean {
     /**
      * @return the password
      */
-    public String getPassword() {
+    public char[] getPassword() {
         return password;
     }
 
@@ -156,7 +165,7 @@ public class LoginBean {
      * @param password
      *            the password to set
      */
-    public void setPassword(String password) {
+    public void setPassword(char[] password) {
         this.password = password;
     }
 
@@ -181,5 +190,23 @@ public class LoginBean {
                 + ", portNum = " + portNum + "]";
 
     }
+
+    /*
+     * Check if all the fields have been filled.
+     */
+    public boolean isFilled(){
+        if (userName == null || userName.isEmpty()){
+            return false;
+        }
+        if (hostName == null || hostName.isEmpty()){
+            return false;
+        }
+        if (password == null || password.length <= 0 ){
+            return false;
+        }
+        
+        return true;
+    }
+
 
 }

@@ -35,8 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.1  2015/08/12 15:26:41  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.7  2015/08/17 18:53:49  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/06/25 20:50:03  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on dynamic cards that can have different data sources
+ *  Archive Log:    - change to use port counter performance item
  *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/02/17 23:22:18  jijunwan
  *  Archive Log:    PR 127106 - Suggest to use same bucket range for Group Err Summary as shown in "opatop" command to plot performance graphs in FV
@@ -81,7 +87,6 @@ import com.intel.stl.ui.common.ChartsCard;
 import com.intel.stl.ui.common.view.ChartsView;
 import com.intel.stl.ui.common.view.OptionChartsView;
 import com.intel.stl.ui.framework.IAppEvent;
-import com.intel.stl.ui.main.view.IDataTypeListener;
 import com.intel.stl.ui.model.ChartGroup;
 import com.intel.stl.ui.model.DataType;
 import com.intel.stl.ui.model.DatasetDescription;
@@ -103,9 +108,9 @@ public class OptionBaseGroupController extends BaseGroupController {
      * @param types
      */
     public OptionBaseGroupController(MBassador<IAppEvent> eventBus,
-            String name, TrendItem trendItem,
-            AbstractPerformanceItem histogramItem, TopNItem topNItem,
-            DataType[] types, HistoryType[] historyTypes) {
+            String name, TrendItem<GroupSource> trendItem,
+            AbstractPerformanceItem<GroupSource> histogramItem,
+            TopNItem topNItem, DataType[] types, HistoryType[] historyTypes) {
         super(eventBus, name, trendItem, histogramItem, topNItem);
         if (group != null) {
             installTypes(types);
@@ -121,9 +126,9 @@ public class OptionBaseGroupController extends BaseGroupController {
      * intel.stl.ui.performance.item.IPerformanceItem, java.util.Map)
      */
     @Override
-    protected ChartsCard createTrendCard(IPerformanceItem item,
+    protected ChartsCard createTrendCard(IPerformanceItem<GroupSource> item,
             Map<String, DatasetDescription> map) {
-        return createOptionCard(item, map);
+        return createOptionCard(item, map, true, true);
     }
 
     /*
@@ -134,40 +139,10 @@ public class OptionBaseGroupController extends BaseGroupController {
      * com.intel.stl.ui.performance.item.IPerformanceItem, java.util.Map)
      */
     @Override
-    protected ChartsCard createHistogramCard(IPerformanceItem item,
+    protected ChartsCard createHistogramCard(
+            IPerformanceItem<GroupSource> item,
             Map<String, DatasetDescription> map) {
-        return createOptionCard(item, map);
-    }
-
-    protected ChartsCard createOptionCard(final IPerformanceItem item,
-            Map<String, DatasetDescription> map) {
-        String name = item.getName();
-        final OptionChartsView view =
-                new OptionChartsView(name, PerformanceChartsCreator.instance());
-        view.setDataTypeListener(new IDataTypeListener<DataType>() {
-            @Override
-            public void onDataTypeChange(DataType type) {
-                item.setType(type);
-                view.setType(type);
-            }
-        });
-
-        ChartsCard chartsCard = createChartsCard(view, map, name);
-        // HistoryTypeListener is only needed for the TrendItem not
-        // histogram/top n.
-        if (item instanceof TrendItem) {
-            view.setHistoryTypeListener(new IDataTypeListener<HistoryType>() {
-                @Override
-                public void onDataTypeChange(HistoryType type) {
-                    // Get the refresh rate here and calculate the maxDataPoints
-                    // here.
-                    item.setHistoryType(type);
-                    view.setHistoryType(type);
-                }
-            });
-        }
-
-        return chartsCard;
+        return createOptionCard(item, map, false, true);
     }
 
     protected void installTypes(DataType... types) {

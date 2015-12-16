@@ -25,7 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
  *	
@@ -36,8 +35,18 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3.2.1  2015/08/12 15:26:59  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.6  2015/08/18 14:36:48  jijunwan
+ *  Archive Log:    PR 130033 - Fix critical issues found by Klocwork or FindBugs
+ *  Archive Log:    - made EventItem to be Serializable
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/08/17 18:54:08  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/08/07 19:11:41  jijunwan
+ *  Archive Log:    PR 129775 - disable node not available on Worst Node Card
+ *  Archive Log:    - improved to display event type
+ *  Archive Log:    - improved to disable jumping buttons when event type is PORT_INACTIVE
  *  Archive Log:
  *  Archive Log:    Revision 1.3  2014/05/19 22:08:53  jijunwan
  *  Archive Log:    moved filter from EventCalculator to StateSummary, so we can have better consistent result
@@ -61,29 +70,33 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.intel.stl.api.configuration.EventType;
 import com.intel.stl.api.notice.NodeSource;
 import com.intel.stl.api.notice.NoticeSeverity;
 import com.intel.stl.api.subnet.NodeType;
 
 public class NodeEvents implements Serializable, Comparable<NodeEvents> {
     private static final long serialVersionUID = 8632566237911275093L;
-    
+
     private int lid;
+
     private String name;
+
     private NodeType nodeType;
-    private List<NoticeSeverity> eventSeverity = new ArrayList<NoticeSeverity>();
-    private List<Long> eventTime = new ArrayList<Long>(); // in ms
+
+    private List<EventItem> events = new ArrayList<EventItem>();
+
     private NoticeSeverity overallSeverity;
-    
+
     public NodeEvents() {
     }
-    
+
     public NodeEvents(NodeSource source) {
         lid = source.getLid();
         nodeType = source.getNodeType();
         name = source.getNodeName();
     }
-    
+
     /**
      * @return the lid
      */
@@ -104,13 +117,17 @@ public class NodeEvents implements Serializable, Comparable<NodeEvents> {
     public NodeType getNodeType() {
         return nodeType;
     }
-    
-    public long getEarlistTime() {
-        return eventTime.isEmpty() ? -1 : eventTime.get(0);
+
+    public synchronized long getEarlistTime() {
+        if (!events.isEmpty()) {
+            return events.get(0).getTime();
+        } else {
+            return -1;
+        }
     }
-    
-    public int getSize() {
-        return eventTime.size();
+
+    public synchronized int getSize() {
+        return events.size();
     }
 
     /**
@@ -119,13 +136,12 @@ public class NodeEvents implements Serializable, Comparable<NodeEvents> {
     public synchronized NoticeSeverity getOverallSeverity() {
         return overallSeverity;
     }
-    
+
     public synchronized NoticeSeverity clear(long earliestTime) {
         boolean recalculateSeverity = false;
-        while (!eventTime.isEmpty() && eventTime.get(0)<earliestTime) {
-            eventTime.remove(0);
-            NoticeSeverity severity = eventSeverity.remove(0);
-            if (!recalculateSeverity && severity==overallSeverity) {
+        while (!events.isEmpty() && events.get(0).getTime() < earliestTime) {
+            NoticeSeverity severity = events.remove(0).getSeverity();
+            if (!recalculateSeverity && severity == overallSeverity) {
                 recalculateSeverity = true;
             }
         }
@@ -134,58 +150,71 @@ public class NodeEvents implements Serializable, Comparable<NodeEvents> {
         }
         return overallSeverity;
     }
-    
-    public synchronized NoticeSeverity addEvent(long time, NoticeSeverity severity) {
-        eventTime.add(time);
-        eventSeverity.add(severity);
-        if (overallSeverity==null || severity.ordinal() > overallSeverity.ordinal()) {
+
+    public synchronized NoticeSeverity addEvent(long time, EventType type,
+            NoticeSeverity severity) {
+        EventItem item = new EventItem(time, type, severity);
+        events.add(item);
+        if (overallSeverity == null
+                || severity.ordinal() > overallSeverity.ordinal()) {
             overallSeverity = severity;
         }
         return overallSeverity;
     }
-    
+
     protected NoticeSeverity calculateSeverity() {
         NoticeSeverity res = null;
-        for (NoticeSeverity severity : eventSeverity) {
-            if (res==null || severity.ordinal()>res.ordinal()) {
+        for (EventItem item : events) {
+            NoticeSeverity severity = item.getSeverity();
+            if (res == null || severity.ordinal() > res.ordinal()) {
                 res = severity;
             }
         }
         return res;
     }
-    
+
     /**
      * 
-     *  Description: score in [0, 100]
-     *  
-     *  @return
+     * Description: score in [0, 100]
+     * 
+     * @return
      */
     public double getHealthScore() {
         NoticeSeverity severity = getOverallSeverity();
-        if (severity==null) {
+        if (severity == null) {
             return 0;
         }
-        return EventCalculator.HEALTH_WEIGHTS.get(severity)*100; 
+        return EventCalculator.HEALTH_WEIGHTS.get(severity) * 100;
+    }
+
+    public synchronized EventItem getLatestEvent() {
+        if (!events.isEmpty()) {
+            return events.get(events.size() - 1);
+        } else {
+            return null;
+        }
     }
 
     /**
      * 
-     *  Description: deep copy of the objet
-     *  
-     *  @return
+     * Description: deep copy of the objet
+     * 
+     * @return
      */
     public NodeEvents copy() {
         NodeEvents res = new NodeEvents();
         res.lid = this.lid;
         res.name = new String(this.name);
         res.nodeType = this.nodeType;
-        res.eventTime = new ArrayList<Long>(this.eventTime);
-        res.eventSeverity = new ArrayList<NoticeSeverity>(this.eventSeverity);
+        // shallow copy
+        res.events = new ArrayList<EventItem>(this.events);
         res.overallSeverity = this.overallSeverity;
         return res;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -195,43 +224,155 @@ public class NodeEvents implements Serializable, Comparable<NodeEvents> {
         result = prime * result + lid;
         return result;
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         NodeEvents other = (NodeEvents) obj;
-        if (lid != other.lid)
+        if (lid != other.lid) {
             return false;
+        }
         return true;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Comparable#compareTo(java.lang.Object)
      */
     @Override
     public int compareTo(NodeEvents o) {
         long t1 = getEarlistTime();
         long t2 = o.getEarlistTime();
-        return t1>t2 ? 1 : (t1<t2 ? -1 : 0);
+        return t1 > t2 ? 1 : (t1 < t2 ? -1 : 0);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "NodeEvents [lid=" + lid + ", nodeType=" + nodeType
-                + ", overallSeverity=" + overallSeverity
-                + ", eventSeverity=" + eventSeverity + ", eventTime="
-                + eventTime + "]";
+        return "NodeEvents [lid=" + lid + ", name=" + name + ", nodeType="
+                + nodeType + ", events=" + events + ", overallSeverity="
+                + overallSeverity + "]";
     }
 
+    public static class EventItem implements Serializable {
+        private final long time; // in ms
+
+        private final EventType type;
+
+        private final NoticeSeverity severity;
+
+        /**
+         * Description:
+         * 
+         * @param time
+         * @param type
+         * @param severity
+         */
+        public EventItem(long time, EventType type, NoticeSeverity severity) {
+            super();
+            this.time = time;
+            this.type = type;
+            this.severity = severity;
+        }
+
+        /**
+         * @return the time
+         */
+        public long getTime() {
+            return time;
+        }
+
+        /**
+         * @return the type
+         */
+        public EventType getType() {
+            return type;
+        }
+
+        /**
+         * @return the severity
+         */
+        public NoticeSeverity getSeverity() {
+            return severity;
+        }
+
+        public double getHealthScore() {
+            return EventCalculator.HEALTH_WEIGHTS.get(severity) * 100;
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.lang.Object#hashCode()
+         */
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result =
+                    prime * result
+                            + ((severity == null) ? 0 : severity.hashCode());
+            result = prime * result + (int) (time ^ (time >>> 32));
+            result = prime * result + ((type == null) ? 0 : type.hashCode());
+            return result;
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            EventItem other = (EventItem) obj;
+            if (severity != other.severity) {
+                return false;
+            }
+            if (time != other.time) {
+                return false;
+            }
+            if (type != other.type) {
+                return false;
+            }
+            return true;
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.lang.Object#toString()
+         */
+        @Override
+        public String toString() {
+            return "Item [time=" + time + ", type=" + type + ", severity="
+                    + severity + "]";
+        }
+    }
 }

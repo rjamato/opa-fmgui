@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:27:10  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.3  2015/08/17 18:54:19  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/05/20 17:05:20  jijunwan
+ *  Archive Log:    PR 128797 - Notice update failed to update related notes
+ *  Archive Log:    - improved to fire tree update event at port level, so if we select a port that is under change, the port will still get selected and updated
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2014/09/02 19:02:59  jijunwan
  *  Archive Log:    tree update based on merge sort algorithm
@@ -58,6 +63,9 @@ public interface ITreeMonitor {
 
     void fireTreeNodesInserted(Object source, Object[] path,
             int[] childIndices, Object[] children);
+
+    void fireTreeNodesChanged(Object source, Object[] path, int[] childIndices,
+            Object[] children);
 
     void fireTreeStructureChanged(Object source, TreePath path);
 }

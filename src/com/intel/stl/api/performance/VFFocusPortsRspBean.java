@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:21:44  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.6  2015/10/08 16:18:23  fernande
+ *  Archive Log:    PR130810 - Add 64bit reserved field to PA PortCounters queries for query by GUID in Gen2. Changed commands to match FM spec.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/08/17 18:48:41  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/04/09 03:29:21  jijunwan
  *  Archive Log:    updated to match FM 390
@@ -83,7 +87,7 @@ public class VFFocusPortsRspBean implements ITimestamped, Serializable {
 
     private long value; // list sorting factor
 
-    private long value2; // good place for GUID
+    private long nodeGUID;
 
     private String nodeDesc;
 
@@ -200,16 +204,16 @@ public class VFFocusPortsRspBean implements ITimestamped, Serializable {
     /**
      * @return the value2
      */
-    public long getValue2() {
-        return value2;
+    public long getNodeGUID() {
+        return nodeGUID;
     }
 
     /**
      * @param value2
      *            the value2 to set
      */
-    public void setValue2(long value2) {
-        this.value2 = value2;
+    public void setNodeGUID(long guid) {
+        this.nodeGUID = guid;
     }
 
     /**
@@ -345,8 +349,8 @@ public class VFFocusPortsRspBean implements ITimestamped, Serializable {
     public String toString() {
         return "VFFocusPortRspBean [nodeLid=" + nodeLid + ", portNumber="
                 + portNumber + ", rate=" + rate + ", mtu=" + mtu + ", value=0x"
-                + Long.toHexString(value) + ", value2=0x"
-                + Long.toHexString(value2) + ", nodeDesc=" + nodeDesc
+                + Long.toHexString(value) + ", nodeGUID=0x"
+                + Long.toHexString(nodeGUID) + ", nodeDesc=" + nodeDesc
                 + ", neighborLid=" + neighborLid + ", neighborPortNumber="
                 + neighborPortNumber + ", neighborValue=0x"
                 + Long.toHexString(neighborValue) + ", neighborGuid=0x"

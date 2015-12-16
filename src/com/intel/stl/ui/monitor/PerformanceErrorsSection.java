@@ -35,8 +35,19 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.20.2.1  2015/08/12 15:26:58  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.23  2015/08/17 18:53:41  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.22  2015/06/09 18:37:21  jijunwan
+ *  Archive Log:    PR 129069 - Incorrect Help action
+ *  Archive Log:    - moved help action from view to controller
+ *  Archive Log:    - only enable help button when we have HelpID
+ *  Archive Log:    - fixed incorrect HelpIDs
+ *  Archive Log:
+ *  Archive Log:    Revision 1.21  2015/06/01 15:01:17  jypak
+ *  Archive Log:    PR 128823 - Improve performance tables to include all portcounters fields.
+ *  Archive Log:    All port counters fields added to performance table and connectivity table.
  *  Archive Log:
  *  Archive Log:    Revision 1.20  2015/04/14 21:12:22  rjtierne
  *  Archive Log:    PR 128036 - SendFECN is tabulated as a neighbor error, refine recvFECN tabulation.
@@ -117,11 +128,16 @@ public class PerformanceErrorsSection extends
         view.setStyleListener(this);
         initErrorsCard();
         initOtherCard();
+    }
 
-        HelpAction helpAction = HelpAction.getInstance();
-        helpAction.getHelpBroker().enableHelpOnButton(view.getHelpButton(),
-                helpAction.getCounters(), helpAction.getHelpSet());
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.BaseSectionController#getHelpID()
+     */
+    @Override
+    public String getHelpID() {
+        return HelpAction.getInstance().getCounters();
     }
 
     private void initErrorsCard() {
@@ -133,11 +149,7 @@ public class PerformanceErrorsSection extends
         errorsCard =
                 new PerfErrorsCard(view.getErrorsCardView(), eventBus,
                         errorMap.values());
-
-        HelpAction helpAction = HelpAction.getInstance();
-        helpAction.getHelpBroker().enableHelpOnButton(
-                view.getErrorsCardView().getHelpButton(),
-                helpAction.getReceiveCounters(), helpAction.getHelpSet());
+        errorsCard.setHelpID(HelpAction.getInstance().getReceiveCounters());
     }
 
     private void initOtherCard() {
@@ -145,11 +157,7 @@ public class PerformanceErrorsSection extends
         otherCard =
                 new PerfErrorsCard(view.getOtherCardView(), eventBus,
                         otherMap.values());
-
-        HelpAction helpAction = HelpAction.getInstance();
-        helpAction.getHelpBroker().enableHelpOnButton(
-                view.getOtherCardView().getHelpButton(),
-                helpAction.getOtherCounters(), helpAction.getHelpSet());
+        otherCard.setHelpID(HelpAction.getInstance().getOtherCounters());
     }
 
     private void initErrItemMap() {
@@ -288,7 +296,7 @@ public class PerformanceErrorsSection extends
                 bean.getPortXmitPkts());
         setValStr(errorMap, STLConstants.K0833_TX_MULTICAST_PACKETS.getValue(),
                 bean.getPortMulticastXmitPkts());
-        setValStr(errorMap, STLConstants.K0714_TRAN_DISCARDS.getValue(),
+        setValStr(errorMap, STLConstants.K0731_TX_DISCARDS.getValue(),
                 bean.getPortXmitDiscards());
         setValStr(errorMap, STLConstants.K0521_TX_PORT_CONSTRAINT.getValue(),
                 bean.getPortXmitConstraintErrors());
@@ -327,7 +335,7 @@ public class PerformanceErrorsSection extends
         setValStr(errorMap,
                 STLConstants.K0734_TX_CUMULATIVE_PACKETS.getValue(),
                 bean.getPortVFXmitPkts());
-        setValStr(errorMap, STLConstants.K0714_TRAN_DISCARDS.getValue(),
+        setValStr(errorMap, STLConstants.K0731_TX_DISCARDS.getValue(),
                 bean.getPortVFXmitDiscards());
         setValStr(errorMap, STLConstants.K0836_TX_WAIT.getValue(),
                 bean.getPortVFXmitWait());

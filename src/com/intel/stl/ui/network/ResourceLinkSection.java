@@ -35,8 +35,42 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7.2.1  2015/08/12 15:26:50  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.15  2015/08/18 14:36:09  jijunwan
+ *  Archive Log:    PR 130033 - Fix critical issues found by Klocwork or FindBugs
+ *  Archive Log:    - clean dead code
+ *  Archive Log:
+ *  Archive Log:    Revision 1.14  2015/08/17 18:54:00  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.13  2015/08/05 04:10:48  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism
+ *  Archive Log:    - fixed single link multiple ports issue to show each port pair as one link
+ *  Archive Log:
+ *  Archive Log:    Revision 1.12  2015/07/22 15:40:41  jijunwan
+ *  Archive Log:    PR 129355 - Ability to click on cables to get cable info
+ *  Archive Log:    - fixed null pointer issue on route connectivity table
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/07/17 15:42:40  rjtierne
+ *  Archive Log:    PR 129549 - On connectivity table, clicking on cable info for an HFI results in an error
+ *  Archive Log:    In showNode(), removed call to setLastNode() in cableInfoPopupController - no longer used
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/07/13 21:58:05  rjtierne
+ *  Archive Log:    PR 129355 - Ability to click on cables to get cable info
+ *  Archive Log:    Methods showLinks() and showPath() now use the CableInfoPopupController,
+ *  Archive Log:    therefore enabling the cable info functionality in the connectivity table
+ *  Archive Log:    on the Topology page when a port (or link) is selected.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/06/09 18:37:25  jijunwan
+ *  Archive Log:    PR 129069 - Incorrect Help action
+ *  Archive Log:    - moved help action from view to controller
+ *  Archive Log:    - only enable help button when we have HelpID
+ *  Archive Log:    - fixed incorrect HelpIDs
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/06/01 15:01:21  jypak
+ *  Archive Log:    PR 128823 - Improve performance tables to include all portcounters fields.
+ *  Archive Log:    All port counters fields added to performance table and connectivity table.
  *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/04/08 19:44:34  rjtierne
  *  Archive Log:    Removed SYMBOL_ERRORS, TX_32BIT_WORDS, RX_32BIT_WORDS, and VL_15_DROPPED
@@ -138,6 +172,9 @@
 
 package com.intel.stl.ui.network;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -148,28 +185,34 @@ import net.engio.mbassy.bus.MBassador;
 
 import org.jfree.util.Log;
 
-import com.intel.stl.ui.common.BaseSectionController;
+import com.intel.stl.api.subnet.NodeType;
 import com.intel.stl.ui.common.ICardController;
 import com.intel.stl.ui.common.IProgressObserver;
 import com.intel.stl.ui.common.STLConstants;
+import com.intel.stl.ui.common.UndoableJumpEvent;
 import com.intel.stl.ui.common.view.ISectionListener;
-import com.intel.stl.ui.event.JumpDestination;
-import com.intel.stl.ui.event.PortSelectedEvent;
+import com.intel.stl.ui.event.JumpToEvent;
+import com.intel.stl.ui.event.NodesSelectedEvent;
+import com.intel.stl.ui.event.PortsSelectedEvent;
 import com.intel.stl.ui.framework.IAppEvent;
 import com.intel.stl.ui.main.Context;
 import com.intel.stl.ui.main.HelpAction;
+import com.intel.stl.ui.main.UndoHandler;
+import com.intel.stl.ui.main.view.IPageListener;
 import com.intel.stl.ui.model.ConnectivityTableColumns;
 import com.intel.stl.ui.model.ConnectivityTableModel;
 import com.intel.stl.ui.model.GraphEdge;
 import com.intel.stl.ui.model.GraphNode;
+import com.intel.stl.ui.monitor.CableInfoPopupController;
 import com.intel.stl.ui.monitor.IPortSelectionListener;
+import com.intel.stl.ui.monitor.view.CableInfoPopupView;
 import com.intel.stl.ui.monitor.view.ConnectivitySubpageView;
 import com.intel.stl.ui.network.view.ResourceLinkSubpageView;
 import com.intel.stl.ui.network.view.ResourceLinkView;
 
 public class ResourceLinkSection extends
-        BaseSectionController<ISectionListener, ResourceLinkSubpageView>
-        implements IPortSelectionListener {
+        ResourceSection<ResourceLinkSubpageView> implements
+        IPortSelectionListener, IPageListener {
 
     /**
      * Subpages for the Topology page
@@ -179,9 +222,19 @@ public class ResourceLinkSection extends
 
     private Context context;
 
+    private IProgressObserver observer;
+
     private List<GraphEdge> currentLinks;
 
     private Map<GraphEdge, List<GraphEdge>> currentTraces;
+
+    private String previousSubpageName;
+
+    private String currentSubpageName;
+
+    private UndoHandler undoHandler;
+
+    private final String origin = TopologyPage.NAME;
 
     /**
      * Description:
@@ -192,18 +245,53 @@ public class ResourceLinkSection extends
             MBassador<IAppEvent> eventBus) {
         super(view, eventBus);
         this.view = view;
-
-        HelpAction helpAction = HelpAction.getInstance();
-        helpAction.getHelpBroker().enableHelpOnButton(view.getHelpButton(),
-                helpAction.getLinks(), helpAction.getHelpSet());
+        view.setPageListener(this);
     }
 
+    @Override
     public void setContext(Context context, IProgressObserver observer) {
         this.context = context;
+        if (context != null && context.getController() != null) {
+            undoHandler = context.getController().getUndoHandler();
+        }
         observer.onFinish();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.network.ResourceSection#setCurrentSubpage(java.lang.
+     * String)
+     */
+    @Override
+    public void setCurrentSubpage(String subpageName) {
+        previousSubpageName = currentSubpageName;
+        currentSubpageName = subpageName;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.network.ResourceSection#getPreviousSubpage()
+     */
+    @Override
+    public String getPreviousSubpage() {
+        return previousSubpageName;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.network.ResourceSection#getCurrentSubpage()
+     */
+    @Override
+    public String getCurrentSubpage() {
+        return currentSubpageName;
+    }
+
     protected void showLinks(List<GraphEdge> links) {
+        links = toPortLinks(links);
         if (links != null && links.equals(currentLinks)) {
             for (GraphEdge link : links) {
                 ResourceLinkPage page = subpages.get(link);
@@ -234,6 +322,16 @@ public class ResourceLinkSection extends
                     new ConnectivityTableModel();
             ConnectivitySubpageView linkTableView =
                     createLinkView(linkTableModel);
+            CableInfoPopupView cableInfoPopupView =
+                    new CableInfoPopupView(linkTableView);
+            linkTableView.setCableInfoPopupView(cableInfoPopupView);
+            CableInfoPopupController cableInfoPopupController =
+                    new CableInfoPopupController(cableInfoPopupView);
+
+            cableInfoPopupController.setContext(context, null);
+            cableInfoPopupView.setCableInfoListener(cableInfoPopupController);
+            linkTableView.setPortSelectionListener(this);
+
             ResourceLinkView linkView = new ResourceLinkView();
             ResourceLinkPage linkPage =
                     new ResourceLinkPage(linkTableModel, linkTableView,
@@ -245,11 +343,33 @@ public class ResourceLinkSection extends
             subpages.put(link, linkPage);
         }
 
+        previousSubpageName = currentSubpageName;
         view.setTabs(subpages.values().toArray(new ResourceLinkPage[0]),
-                subpages.size() - 1);
+                currentSubpageName);
+        currentSubpageName = view.getCurrentSubpage();
         currentLinks = links;
         currentTraces = null;
+
+        setHelpID(HelpAction.getInstance().getLinks());
     } // showLinks
+
+    protected List<GraphEdge> toPortLinks(List<GraphEdge> edges) {
+        List<GraphEdge> res = new ArrayList<GraphEdge>();
+        for (GraphEdge edge : edges) {
+            Map<Integer, Integer> links = edge.getLinks();
+            if (links.size() == 1) {
+                res.add(edge);
+            } else if (links.size() > 1) {
+                for (Entry<Integer, Integer> link : links.entrySet()) {
+                    res.add(new GraphEdge(edge.getFromLid(),
+                            edge.getFromType(), edge.getToLid(), edge
+                                    .getToType(), Collections.singletonMap(
+                                    link.getKey(), link.getValue())));
+                }
+            }
+        }
+        return res;
+    }
 
     protected void showPath(final Map<GraphEdge, List<GraphEdge>> traceMap) {
         if (traceMap != null && traceMap.equals(currentTraces)) {
@@ -280,6 +400,16 @@ public class ResourceLinkSection extends
                     new ConnectivityTableModel();
             ConnectivitySubpageView pathTableView =
                     createPathView(pathTableModel);
+            CableInfoPopupView cableInfoPopupView =
+                    new CableInfoPopupView(pathTableView);
+            pathTableView.setCableInfoPopupView(cableInfoPopupView);
+            CableInfoPopupController cableInfoPopupController =
+                    new CableInfoPopupController(cableInfoPopupView);
+
+            cableInfoPopupController.setContext(context, null);
+            cableInfoPopupView.setCableInfoListener(cableInfoPopupController);
+            pathTableView.setPortSelectionListener(this);
+
             ResourceLinkView pathView = new ResourceLinkView();
             ResourceLinkPage pathPage =
                     new ResourceLinkPage(pathTableModel, pathTableView,
@@ -295,12 +425,16 @@ public class ResourceLinkSection extends
             subpages.put(entry.getKey(), pathPage);
         } // while
 
+        previousSubpageName = currentSubpageName;
         // Show all the pages on the tabbed pane
         view.setTabs(subpages.values().toArray(new ResourceLinkPage[0]),
-                subpages.size() - 1);
+                currentSubpageName);
+        currentSubpageName = view.getCurrentSubpage();
 
         currentTraces = traceMap;
         currentLinks = null;
+
+        setHelpID(HelpAction.getInstance().getRoutes());
     } // showPath
 
     protected GraphNode findNode(int lid, GraphNode node) {
@@ -324,6 +458,22 @@ public class ResourceLinkSection extends
         return this;
     }
 
+    @Override
+    public boolean canPageChange(String oldPage, String newPage) {
+        return true;
+    }
+
+    @Override
+    public synchronized void onPageChanged(String oldPageId, String newPageId) {
+        if (undoHandler != null && !undoHandler.isInProgress()) {
+            UndoableLinkSubpageSelection undoSel =
+                    new UndoableLinkSubpageSelection(view, oldPageId, newPageId);
+            undoHandler.addUndoAction(undoSel);
+        }
+        previousSubpageName = oldPageId;
+        currentSubpageName = newPageId;
+    }
+
     protected ConnectivitySubpageView createLinkView(
             ConnectivityTableModel linkTableModel) {
 
@@ -335,43 +485,36 @@ public class ResourceLinkSection extends
 
                     @Override
                     protected void filterColumns() {
-                        ConnectivityTableColumns[] toHide =
+                        ConnectivityTableColumns[] toShow =
                                 new ConnectivityTableColumns[] {
 
                                         // Show these columns
-                                        // ConnectivityTableColumns.DEVICE_NAME,
-                                        // ConnectivityTableColumns.PORT_NUMBER,
-                                        // ConnectivityTableColumns.LINK_STATE,
-                                        // ConnectivityTableColumns.ACTIVE_LINK_SPEED,
-                                        // ConnectivityTableColumns.SUPPORTED_LINK_SPEED,
-                                        // ConnectivityTableColumns.LINK_RECOVERIES,
-                                        // ConnectivityTableColumns.LINK_DOWN
-
-                                        // Hide these columns
-                                        ConnectivityTableColumns.NODE_GUID,
+                                        ConnectivityTableColumns.NODE_NAME,
+                                        ConnectivityTableColumns.PORT_NUMBER,
+                                        ConnectivityTableColumns.CABLE_INFO,
+                                        ConnectivityTableColumns.LINK_STATE,
                                         ConnectivityTableColumns.PHYSICAL_LINK_STATE,
+                                        ConnectivityTableColumns.LINK_QUALITY,
                                         ConnectivityTableColumns.ACTIVE_LINK_WIDTH,
-                                        ConnectivityTableColumns.ENABLED_LINK_WIDTH,
-                                        ConnectivityTableColumns.SUPPORTED_LINK_WIDTH,
-                                        ConnectivityTableColumns.ENABLED_LINK_SPEED,
-                                        ConnectivityTableColumns.TX_PACKETS,
-                                        ConnectivityTableColumns.RX_PACKETS,
-                                        ConnectivityTableColumns.RX_ERRORS,
-                                        ConnectivityTableColumns.RX_REMOTE_PHYSICAL_ERRRORS,
-                                        ConnectivityTableColumns.TX_DISCARDS,
-                                        ConnectivityTableColumns.SWITCH_RELAY_ERRRORS,
-                                        ConnectivityTableColumns.TX_PORT_CONSTRAINT,
-                                        ConnectivityTableColumns.RX_PORT_CONSTRAINT,
-                                        ConnectivityTableColumns.LOCAL_LINK_INTEGRITY_ERRRORS,
-                                        ConnectivityTableColumns.EXCESSIVE_BUFFER_OVERRUNS };
+                                        ConnectivityTableColumns.ACTIVE_LINK_WIDTH_DG_TX,
+                                        ConnectivityTableColumns.ACTIVE_LINK_WIDTH_DG_RX,
+                                        ConnectivityTableColumns.ACTIVE_LINK_SPEED,
+                                        ConnectivityTableColumns.RX_DATA,
+                                        ConnectivityTableColumns.TX_DATA,
+                                        ConnectivityTableColumns.LINK_DOWNED, };
 
-                        for (ConnectivityTableColumns col : toHide) {
-                            mTable.getColumnExt(col.getTitle()).setVisible(
-                                    false);
+                        ConnectivityTableColumns[] all =
+                                ConnectivityTableColumns.values();
+                        boolean[] vis = new boolean[all.length];
+                        for (ConnectivityTableColumns col : toShow) {
+                            vis[col.getId()] = true;
+                        }
+                        for (int i = 0; i < vis.length; i++) {
+                            mTable.getColumnExt(all[i].getTitle()).setVisible(
+                                    vis[i]);
                         }
                     }
                 };
-        linkTableView.setPortSelectionListener(this);
         return linkTableView;
     }
 
@@ -397,8 +540,8 @@ public class ResourceLinkSection extends
                                         // ConnectivityTableColumns.SUPPORTED_LINK_SPEED,
 
                                         // Hide these columns
-                                        ConnectivityTableColumns.LINK_RECOVERIES,
-                                        ConnectivityTableColumns.LINK_DOWN,
+                                        ConnectivityTableColumns.LINK_ERROR_RECOVERIES,
+                                        ConnectivityTableColumns.LINK_DOWNED,
                                         ConnectivityTableColumns.NODE_GUID,
                                         ConnectivityTableColumns.PHYSICAL_LINK_STATE,
                                         ConnectivityTableColumns.ACTIVE_LINK_WIDTH,
@@ -410,11 +553,27 @@ public class ResourceLinkSection extends
                                         ConnectivityTableColumns.RX_ERRORS,
                                         ConnectivityTableColumns.RX_REMOTE_PHYSICAL_ERRRORS,
                                         ConnectivityTableColumns.TX_DISCARDS,
-                                        ConnectivityTableColumns.SWITCH_RELAY_ERRRORS,
-                                        ConnectivityTableColumns.TX_PORT_CONSTRAINT,
-                                        ConnectivityTableColumns.RX_PORT_CONSTRAINT,
-                                        ConnectivityTableColumns.LOCAL_LINK_INTEGRITY_ERRRORS,
-                                        ConnectivityTableColumns.EXCESSIVE_BUFFER_OVERRUNS };
+                                        ConnectivityTableColumns.RX_SWITCH_RELAY_ERRRORS,
+                                        ConnectivityTableColumns.TX_CONSTRAINT,
+                                        ConnectivityTableColumns.RX_CONSTRAINT,
+                                        ConnectivityTableColumns.LOCAL_LINK_INTEGRITY,
+                                        ConnectivityTableColumns.EXCESSIVE_BUFFER_OVERRUNS,
+                                        ConnectivityTableColumns.RX_MC_PACKETS,
+                                        ConnectivityTableColumns.RX_ERRORS,
+                                        ConnectivityTableColumns.RX_CONSTRAINT,
+                                        ConnectivityTableColumns.RX_FECN,
+                                        ConnectivityTableColumns.RX_BECN,
+                                        ConnectivityTableColumns.RX_BUBBLE,
+                                        ConnectivityTableColumns.TX_MC_PACKETS,
+                                        ConnectivityTableColumns.TX_WAIT,
+                                        ConnectivityTableColumns.TX_TIME_CONG,
+                                        ConnectivityTableColumns.TX_WASTED_BW,
+                                        ConnectivityTableColumns.TX_WAIT_DATA,
+                                        ConnectivityTableColumns.LOCAL_LINK_INTEGRITY,
+                                        ConnectivityTableColumns.MARK_FECN,
+                                        ConnectivityTableColumns.LINK_ERROR_RECOVERIES,
+                                        ConnectivityTableColumns.UNCORRECTABLE_ERRORS,
+                                        ConnectivityTableColumns.SW_PORT_CONGESTION };
 
                         for (ConnectivityTableColumns col : toHide) {
                             mTable.getColumnExt(col.getTitle()).setVisible(
@@ -422,7 +581,6 @@ public class ResourceLinkSection extends
                         }
                     }
                 };
-        pathTableView.setPortSelectionListener(this);
         return pathTableView;
     }
 
@@ -450,15 +608,56 @@ public class ResourceLinkSection extends
      * (non-Javadoc)
      * 
      * @see com.intel.stl.ui.monitor.IPortSelectionListener#onJumpToPort(int,
-     * short, com.intel.stl.ui.event.JumpDestination)
+     * short, java.lang.String)
      */
     @Override
-    public void onJumpToPort(int lid, short portNum, JumpDestination destination) {
+    public void onJumpToPort(int lid, short portNum, String destination) {
         if (eventBus != null) {
-            PortSelectedEvent pse =
-                    new PortSelectedEvent(lid, portNum, this, destination);
+            PortsSelectedEvent pse =
+                    new PortsSelectedEvent(lid, portNum, this, destination);
+
+            if (undoHandler != null && !undoHandler.isInProgress()) {
+                UndoableJumpEvent undoSel =
+                        new UndoableJumpEvent(eventBus, getOldSelectionEvent(),
+                                pse);
+                undoHandler.addUndoAction(undoSel);
+            }
+
             eventBus.publish(pse);
         }
+    }
+
+    protected JumpToEvent getOldSelectionEvent() {
+        if (currentLinks != null) {
+            PortsSelectedEvent event = new PortsSelectedEvent(this, origin);
+            for (GraphEdge link : currentLinks) {
+                event.addPort(link.getFromLid(), link.getLinks().keySet()
+                        .iterator().next().shortValue());
+            }
+            return event;
+        }
+
+        if (currentTraces != null) {
+            NodesSelectedEvent event = new NodesSelectedEvent(this, origin);
+            Map<Integer, Byte> nodes = new HashMap<Integer, Byte>();
+            for (GraphEdge source : currentTraces.keySet()) {
+                if (!nodes.containsKey(source.getFromLid())) {
+                    nodes.put(source.getFromLid(), source.getFromType());
+                }
+                if (!nodes.containsKey(source.getToLid())) {
+                    nodes.put(source.getToLid(), source.getToType());
+                }
+            }
+            for (Entry<Integer, Byte> node : nodes.entrySet()) {
+                event.addNode(node.getKey(),
+                        NodeType.getNodeType(node.getValue()));
+            }
+            return event;
+        }
+
+        // shouldn't happen
+        throw new RuntimeException(
+                "Couldn't create JumpToEvent because no links or traces");
     }
 
     /*

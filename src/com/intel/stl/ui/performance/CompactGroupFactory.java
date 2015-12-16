@@ -35,8 +35,24 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.9.2.1  2015/08/12 15:26:41  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.13  2015/08/17 18:53:49  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.12  2015/08/10 17:06:27  jypak
+ *  Archive Log:    PR 129919 - Change name from signal integrity to integrity.
+ *  Archive Log:    STLConstants and class names are changed.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/06/25 20:50:03  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on dynamic cards that can have different data sources
+ *  Archive Log:    - change to use port counter performance item
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/06/09 18:37:23  jijunwan
+ *  Archive Log:    PR 129069 - Incorrect Help action
+ *  Archive Log:    - moved help action from view to controller
+ *  Archive Log:    - only enable help button when we have HelpID
+ *  Archive Log:    - fixed incorrect HelpIDs
  *  Archive Log:
  *  Archive Log:    Revision 1.9  2015/03/27 15:48:34  jijunwan
  *  Archive Log:    changed K0072_SECURITY_ERROR to K0072_SECURITY
@@ -80,8 +96,10 @@ package com.intel.stl.ui.performance;
 
 import net.engio.mbassy.bus.MBassador;
 
+import com.intel.stl.ui.common.PinDescription.PinID;
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.framework.IAppEvent;
+import com.intel.stl.ui.main.HelpAction;
 import com.intel.stl.ui.model.DataType;
 import com.intel.stl.ui.model.HistoryType;
 import com.intel.stl.ui.performance.item.BBHistogramItem;
@@ -104,14 +122,14 @@ import com.intel.stl.ui.performance.item.SCTrendItem;
 import com.intel.stl.ui.performance.item.SEHistogramItem;
 import com.intel.stl.ui.performance.item.SETopNItem;
 import com.intel.stl.ui.performance.item.SETrendItem;
-import com.intel.stl.ui.performance.item.SIHistogramItem;
-import com.intel.stl.ui.performance.item.SITopNItem;
-import com.intel.stl.ui.performance.item.SITrendItem;
+import com.intel.stl.ui.performance.item.IntegrityHistogramItem;
+import com.intel.stl.ui.performance.item.IntegrityTopNItem;
+import com.intel.stl.ui.performance.item.IntegrityTrendItem;
 
 public class CompactGroupFactory {
     public static CompactGroupController createBandwidthGroup(
             MBassador<IAppEvent> eventBus, int topN, DataType type,
-            HistoryType historyType, String... sourceNames) {
+            HistoryType historyType, GroupSource... sourceNames) {
         CompactGroupController res =
                 new CompactGroupController(eventBus,
                         STLConstants.K0041_BANDWIDTH.getValue(),
@@ -120,12 +138,14 @@ public class CompactGroupFactory {
         res.setDataSources(sourceNames);
         res.setType(type);
         res.setHistoryType(historyType);
+        res.setPinID(PinID.SUBNET_BW);
+        setUnitGroupHelp(res);
         return res;
     }
 
     public static CompactGroupController createPacketRateGroup(
             MBassador<IAppEvent> eventBus, int topN, DataType type,
-            HistoryType historyType, String... sourceNames) {
+            HistoryType historyType, GroupSource... sourceNames) {
         CompactGroupController res =
                 new CompactGroupController(eventBus,
                         STLConstants.K0065_PACKET_RATE.getValue(),
@@ -134,12 +154,19 @@ public class CompactGroupFactory {
         res.setDataSources(sourceNames);
         res.setType(type);
         res.setHistoryType(historyType);
+        res.setPinID(PinID.SUBNET_PR);
+        setUnitGroupHelp(res);
         return res;
+    }
+
+    private static void setUnitGroupHelp(CompactGroupController group) {
+        HelpAction helpAction = HelpAction.getInstance();
+        group.setHelpIDs(helpAction.getUnitGroup(), helpAction.getUnitGroup());
     }
 
     public static CompactGroupController createCongestionGroup(
             MBassador<IAppEvent> eventBus, int topN, DataType type,
-            HistoryType historyType, String... sourceNames) {
+            HistoryType historyType, GroupSource... sourceNames) {
         CompactGroupController res =
                 new CompactGroupController(eventBus,
                         STLConstants.K0043_CONGESTION_ERROR.getValue(),
@@ -148,26 +175,30 @@ public class CompactGroupFactory {
         res.setDataSources(sourceNames);
         res.setType(type);
         res.setHistoryType(historyType);
+        res.setPinID(PinID.SUBNET_CG);
+        setErrorGroupHelp(res);
         return res;
     }
 
     public static CompactGroupController createSignalIntegrityGroup(
             MBassador<IAppEvent> eventBus, int topN, DataType type,
-            HistoryType historyType, String... sourceNames) {
+            HistoryType historyType, GroupSource... sourceNames) {
         CompactGroupController res =
                 new CompactGroupController(eventBus,
-                        STLConstants.K0067_SIGNAL_INTEGRITY_ERROR.getValue(),
-                        new SITrendItem(), new SIHistogramItem(),
-                        new SITopNItem(topN), HistoryType.values());
+                        STLConstants.K0067_INTEGRITY_ERROR.getValue(),
+                        new IntegrityTrendItem(), new IntegrityHistogramItem(),
+                        new IntegrityTopNItem(topN), HistoryType.values());
         res.setDataSources(sourceNames);
         res.setType(type);
         res.setHistoryType(historyType);
+        res.setPinID(PinID.SUBNET_SI);
+        setErrorGroupHelp(res);
         return res;
     }
 
     public static CompactGroupController createSmaCongestionGroup(
             MBassador<IAppEvent> eventBus, int topN, DataType type,
-            HistoryType historyType, String... sourceNames) {
+            HistoryType historyType, GroupSource... sourceNames) {
         CompactGroupController res =
                 new CompactGroupController(eventBus,
                         STLConstants.K0070_SMA_CONGESTION_ERROR.getValue(),
@@ -176,12 +207,14 @@ public class CompactGroupFactory {
         res.setDataSources(sourceNames);
         res.setType(type);
         res.setHistoryType(historyType);
+        res.setPinID(PinID.SUBNET_SC);
+        setErrorGroupHelp(res);
         return res;
     }
 
     public static CompactGroupController createBubbleGroup(
             MBassador<IAppEvent> eventBus, int topN, DataType type,
-            HistoryType historyType, String... sourceNames) {
+            HistoryType historyType, GroupSource... sourceNames) {
         CompactGroupController res =
                 new CompactGroupController(eventBus,
                         STLConstants.K0487_BUBBLE_ERROR.getValue(),
@@ -190,12 +223,14 @@ public class CompactGroupFactory {
         res.setDataSources(sourceNames);
         res.setType(type);
         res.setHistoryType(historyType);
+        res.setPinID(PinID.SUBNET_BB);
+        setErrorGroupHelp(res);
         return res;
     }
 
     public static CompactGroupController createSecurityGroup(
             MBassador<IAppEvent> eventBus, int topN, DataType type,
-            HistoryType historyType, String... sourceNames) {
+            HistoryType historyType, GroupSource... sourceNames) {
         CompactGroupController res =
                 new CompactGroupController(eventBus,
                         STLConstants.K0072_SECURITY.getValue(),
@@ -204,12 +239,14 @@ public class CompactGroupFactory {
         res.setDataSources(sourceNames);
         res.setType(type);
         res.setHistoryType(historyType);
+        res.setPinID(PinID.SUBNET_SE);
+        setErrorGroupHelp(res);
         return res;
     }
 
     public static CompactGroupController createRoutingGroup(
             MBassador<IAppEvent> eventBus, int topN, DataType type,
-            HistoryType historyType, String... sourceNames) {
+            HistoryType historyType, GroupSource... sourceNames) {
         CompactGroupController res =
                 new CompactGroupController(eventBus,
                         STLConstants.K0074_ROUTING_ERROR.getValue(),
@@ -218,6 +255,15 @@ public class CompactGroupFactory {
         res.setDataSources(sourceNames);
         res.setType(type);
         res.setHistoryType(historyType);
+        res.setPinID(PinID.SUBNET_RT);
+        setErrorGroupHelp(res);
         return res;
+    }
+
+    // when we have help for each counter type, we will do this in each
+    // createXXXGroup method
+    private static void setErrorGroupHelp(CompactGroupController group) {
+        HelpAction helpAction = HelpAction.getInstance();
+        group.setHelpIDs(helpAction.getErrorGroup(), helpAction.getErrorGroup());
     }
 }

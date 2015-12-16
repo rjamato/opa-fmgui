@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:22:15  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/08/17 18:49:06  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/07/30 13:16:44  fernande
+ *  Archive Log:    PR 129437 - ImageInfo save issue. Fixed spelling
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/02/11 22:36:11  jijunwan
  *  Archive Log:    introduced life span control on CircularBuffer to ensure we will cache properly to get latest image info for a given id
@@ -69,11 +73,11 @@ public class CircularBuffer<K, V> {
      * Introduce lifeSpan to ensure we always have the latest imageinfo for an
      * image id. the worst case can be that on the client side we always happen
      * use the same id, then we need to figure out when the imageinfo is
-     * updated. In theory the safe life span for an image should be
-     * (TotalImages - 1) * SweepInterval. Consider UI client's clock speed may
-     * be different from SM node's clock speed. We can adjust life span to be:
-     * (TotalImages - 2) * SweepInterval. When TotalImages is less than 2, it
-     * should be zero that means we do not cache images.
+     * updated. In theory the safe life span for an image should be (TotalImages
+     * - 1) * SweepInterval. Consider UI client's clock speed may be different
+     * from SM node's clock speed. We can adjust life span to be: (TotalImages -
+     * 2) * SweepInterval. When TotalImages is less than 2, it should be zero
+     * that means we do not cache images.
      */
     private final long lifeSpan; // ms
 
@@ -121,7 +125,7 @@ public class CircularBuffer<K, V> {
         while (it.hasNext()) {
             BufferItem<K, V> item = it.next();
             if (item.getKey().equals(key)) {
-                if (item.isValide()) {
+                if (item.isValid()) {
                     return item.getValue();
                 } else {
                     it.remove();
@@ -152,7 +156,7 @@ public class CircularBuffer<K, V> {
             return value;
         }
 
-        public boolean isValide() {
+        public boolean isValid() {
             return System.currentTimeMillis() - timeStamp < lifeSpan;
         }
 

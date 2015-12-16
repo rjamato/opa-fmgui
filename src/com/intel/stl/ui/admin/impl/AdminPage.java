@@ -35,8 +35,26 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.13.2.1  2015/08/12 15:27:32  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.19  2015/08/17 18:54:28  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.18  2015/08/17 17:46:43  jijunwan
+ *  Archive Log:    PR 128973 - Deploy FM conf changes on all SMs
+ *  Archive Log:    - improved AdminPage to support adding separator between tabs
+ *  Archive Log:    - improved to use canExit to decide weather is able to switch to another tab or page
+ *  Archive Log:
+ *  Archive Log:    Revision 1.17  2015/08/17 14:22:39  rjtierne
+ *  Archive Log:    PR 128979 - SM Log display
+ *  Archive Log:    This is the first version of the Log Viewer which displays select lines of text from the remote SM log file. Updates include searchable raw text from file, user-defined number of lines to display, refreshing end of file, and paging. This PR is now closed and further updates can be found by referencing PR 130011 - "Enhance SM Log Viewer to include Standard and Advanced requirements".
+ *  Archive Log:
+ *  Archive Log:    Revision 1.15  2015/06/25 11:55:04  jypak
+ *  Archive Log:    PR 129073 - Add help action for Admin Page.
+ *  Archive Log:    The help action is added to App, DG, VF,Console page and Console terminal. For now, a help ID and a content are being used as a place holder for each page. Once we get the help contents delivered by technical writer team, the HelpAction will be updated with correct help ID.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.14  2015/05/27 14:32:54  rjtierne
+ *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
+ *  Archive Log:    Removed IFabricView argument in call to ConsoleView()
  *  Archive Log:
  *  Archive Log:    Revision 1.13  2015/04/07 22:13:18  jijunwan
  *  Archive Log:    turn off "Log" feature on Admin page
@@ -104,8 +122,11 @@ import net.engio.mbassy.bus.MBassador;
 
 import com.intel.stl.ui.admin.FunctionType;
 import com.intel.stl.ui.admin.Item;
+import com.intel.stl.ui.admin.UndoableTabSelection;
 import com.intel.stl.ui.admin.impl.applications.AppsPageController;
 import com.intel.stl.ui.admin.impl.devicegroups.DevicegroupsPageController;
+import com.intel.stl.ui.admin.impl.logs.LogPage;
+import com.intel.stl.ui.admin.impl.logs.SMLogController;
 import com.intel.stl.ui.admin.impl.virtualfabrics.VirtualFabricsPageController;
 import com.intel.stl.ui.admin.view.AdminView;
 import com.intel.stl.ui.admin.view.BlankView;
@@ -114,6 +135,7 @@ import com.intel.stl.ui.admin.view.NavigationPanel.IconPanel;
 import com.intel.stl.ui.admin.view.ValidationDialog;
 import com.intel.stl.ui.admin.view.applications.AppsSubpageView;
 import com.intel.stl.ui.admin.view.devicegroups.DevicegroupsSubpageView;
+import com.intel.stl.ui.admin.view.logs.SMLogView;
 import com.intel.stl.ui.admin.view.virtualfabrics.VirtualFabricsSubpageView;
 import com.intel.stl.ui.common.IPageController;
 import com.intel.stl.ui.common.IProgressObserver;
@@ -124,8 +146,10 @@ import com.intel.stl.ui.console.ConsolePage;
 import com.intel.stl.ui.console.view.ConsoleView;
 import com.intel.stl.ui.framework.IAppEvent;
 import com.intel.stl.ui.main.Context;
+import com.intel.stl.ui.main.UndoHandler;
 
 public class AdminPage implements IPageController, ChangeListener {
+    public static final String NAME = STLConstants.K1057_ADMIN.getValue();
 
     private final AdminView view;
 
@@ -136,6 +160,8 @@ public class AdminPage implements IPageController, ChangeListener {
     private final MBassador<IAppEvent> eventBus;
 
     private boolean isShowing;
+
+    protected UndoHandler undoHandler;
 
     public AdminPage(AdminView view, MBassador<IAppEvent> eventBus) {
         this.view = view;
@@ -149,6 +175,9 @@ public class AdminPage implements IPageController, ChangeListener {
 
     protected void installSubpages(List<IPageController> subpages) {
         for (IPageController subpage : subpages) {
+            if (subpage instanceof ConsolePage) {
+                view.addSeperator(20);
+            }
             view.addViewCard(subpage.getIcon(), subpage.getView(),
                     subpage.getName());
         }
@@ -163,7 +192,7 @@ public class AdminPage implements IPageController, ChangeListener {
         res.add(createDGsPage());
         res.add(createVFsPage());
         res.add(createConsolePage());
-        // res.add(createBlankPage(FunctionType.LOG));
+        res.add(createLogsPage());
 
         return res;
     }
@@ -277,12 +306,17 @@ public class AdminPage implements IPageController, ChangeListener {
                         return null;
                     }
 
+                    @Override
+                    protected String getHelpID() {
+                        return null;
+                    }
+
                 };
         return page;
     }
 
     protected IPageController createConsolePage() {
-        ConsoleView consoleView = new ConsoleView(view.getOwner());
+        ConsoleView consoleView = new ConsoleView();
         ConsoleDispatchManager dispatchManager =
                 new ConsoleDispatchManager(consoleView, view.getOwner());
         consoleView.setConsoleDispatchManager(dispatchManager);
@@ -290,6 +324,16 @@ public class AdminPage implements IPageController, ChangeListener {
                 new ConsolePage(consoleView, view.getOwner(), dispatchManager,
                         eventBus);
         return consolePage;
+    }
+
+    protected IPageController createLogsPage() {
+        SMLogView smLogView = new SMLogView();
+        SMLogModel smLogModel = new SMLogModel();
+        SMLogController smLogController =
+                new SMLogController(smLogModel, smLogView);
+        LogPage logPage = new LogPage(smLogController);
+
+        return logPage;
     }
 
     /*
@@ -310,6 +354,10 @@ public class AdminPage implements IPageController, ChangeListener {
             subpage.setContext(context, subObservers == null ? null
                     : subObservers[i]);
         }
+
+        if (context != null && context.getController() != null) {
+            undoHandler = context.getController().getUndoHandler();
+        }
     }
 
     /*
@@ -323,25 +371,36 @@ public class AdminPage implements IPageController, ChangeListener {
     public void stateChanged(ChangeEvent e) {
         IconPanel panel = (IconPanel) e.getSource();
         String name = panel.getName();
+        IPageController newPage = null;
         for (IPageController page : subpages) {
             if (page.getName().equals(name)) {
-                if (currentPage != null) {
-                    if (currentPage instanceof ConfPageController) {
-                        ConfPageController<?, ?> cpc =
-                                (ConfPageController<?, ?>) currentPage;
-                        if (!cpc.changeCheck()) {
-                            return;
-                        }
-                    }
-                    currentPage.onExit();
-                }
-
-                currentPage = page;
-                view.setView(name);
-                page.onEnter();
+                newPage = page;
                 break;
             }
         }
+        if (newPage != null) {
+            IPageController oldPage = currentPage;
+            boolean success = selectPage(newPage);
+            if (success && undoHandler != null && !undoHandler.isInProgress()) {
+                UndoableTabSelection undoSel =
+                        new UndoableTabSelection(this, oldPage, currentPage);
+                undoHandler.addUndoAction(undoSel);
+            }
+        }
+    }
+
+    public boolean selectPage(IPageController page) {
+        if (currentPage != null) {
+            if (!currentPage.canExit()) {
+                return false;
+            }
+            currentPage.onExit();
+        }
+
+        currentPage = page;
+        view.setView(page.getName());
+        page.onEnter();
+        return true;
     }
 
     /*
@@ -351,7 +410,7 @@ public class AdminPage implements IPageController, ChangeListener {
      */
     @Override
     public String getName() {
-        return STLConstants.K1057_ADMIN.getValue();
+        return NAME;
     }
 
     /*
@@ -430,9 +489,7 @@ public class AdminPage implements IPageController, ChangeListener {
     @Override
     public boolean canExit() {
         if (currentPage != null && currentPage instanceof ConfPageController) {
-            ConfPageController<?, ?> cpc =
-                    (ConfPageController<?, ?>) currentPage;
-            return cpc.changeCheck();
+            return currentPage.canExit();
         }
         return true;
     }
@@ -469,6 +526,16 @@ public class AdminPage implements IPageController, ChangeListener {
     @Override
     public PageWeight getRefreshWeight() {
         return MEDIUM;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return getName();
     }
 
 }

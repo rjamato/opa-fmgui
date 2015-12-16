@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.17.2.1  2015/08/12 15:26:38  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.19  2015/08/17 18:53:46  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.18  2015/08/04 23:00:32  jijunwan
+ *  Archive Log:    PR 129821 - connectivity table has no Link Width Down Grade data
+ *  Archive Log:    - added related data to data table
  *  Archive Log:
  *  Archive Log:    Revision 1.17  2015/02/05 21:21:47  jijunwan
  *  Archive Log:    fixed NPE issues found by klocwork
@@ -414,6 +419,54 @@ public class PortProperties extends NodeProperties {
 
         if (hasData) {
             short val = portInfo.getLinkWidthActive();
+
+            retVal = getLinkWidthString(val);
+        }
+
+        return retVal;
+    }
+
+    public String getLinkWidthDnGrdEnabled() {
+        String retVal = "";
+
+        if (hasData) {
+            short val = portInfo.getLinkWidthDownEnabled();
+
+            retVal = getLinkWidthString(val);
+        }
+
+        return retVal;
+    }
+
+    public String getLinkWidthDnGrdSupported() {
+        String retVal = "";
+
+        if (hasData) {
+            short val = portInfo.getLinkWidthDownSupported();
+
+            retVal = getLinkWidthString(val);
+        }
+
+        return retVal;
+    }
+
+    public String getLinkWidthDnGrdTx() {
+        String retVal = "";
+
+        if (hasData) {
+            short val = portInfo.getLinkWidthDownTxActive();
+
+            retVal = getLinkWidthString(val);
+        }
+
+        return retVal;
+    }
+
+    public String getLinkWidthDnGrdRx() {
+        String retVal = "";
+
+        if (hasData) {
+            short val = portInfo.getLinkWidthDownRxActive();
 
             retVal = getLinkWidthString(val);
         }

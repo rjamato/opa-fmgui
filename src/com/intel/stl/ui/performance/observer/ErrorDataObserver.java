@@ -35,10 +35,20 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3.2.2  2015/08/12 15:27:11  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.6  2015/08/17 18:54:20  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.3.2.1  2015/05/14 18:05:35  jijunwan
+ *  Archive Log:    Revision 1.5  2015/06/25 20:42:16  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improved PerformanceItem to support port counters
+ *  Archive Log:    - improved PerformanceItem to use generic ISource to describe data source
+ *  Archive Log:    - improved PerformanceItem to use enum DataProviderName to describe data provider name
+ *  Archive Log:    - improved PerformanceItem to support creating a copy of PerformanceItem
+ *  Archive Log:    - improved TrendItem to share scale with other charts
+ *  Archive Log:    - improved SimpleDataProvider to support hsitory data
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/05/13 20:36:59  jijunwan
  *  Archive Log:    PR 128669 - Wrong history data on error counters
  *  Archive Log:    - use time from FM
  *  Archive Log:
@@ -65,12 +75,13 @@ import java.util.Date;
 import com.intel.stl.api.performance.ErrStatBean;
 import com.intel.stl.api.performance.GroupInfoBean;
 import com.intel.stl.ui.model.DataType;
+import com.intel.stl.ui.performance.GroupSource;
 import com.intel.stl.ui.performance.item.TrendItem;
 
 public abstract class ErrorDataObserver extends
-        AbstractDataObserver<GroupInfoBean[], TrendItem> {
+        AbstractDataObserver<GroupInfoBean[], TrendItem<GroupSource>> {
 
-    public ErrorDataObserver(TrendItem controller) {
+    public ErrorDataObserver(TrendItem<GroupSource> controller) {
         this(controller, DataType.ALL);
     }
 
@@ -80,7 +91,7 @@ public abstract class ErrorDataObserver extends
      * @param controller
      * @param type
      */
-    public ErrorDataObserver(TrendItem controller, DataType type) {
+    public ErrorDataObserver(TrendItem<GroupSource> controller, DataType type) {
         super(controller, type);
     }
 
@@ -108,7 +119,8 @@ public abstract class ErrorDataObserver extends
             for (ErrStatBean error : errors) {
                 value += getValue(error);
             }
-            controller.updateTrend(value, time, bean.getGroupName());
+            GroupSource sourceName = new GroupSource(bean.getGroupName());
+            controller.updateTrend(value, time, sourceName);
         }
     }
 

@@ -35,8 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:27:17  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/08/17 18:53:52  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/08/17 17:46:44  jijunwan
+ *  Archive Log:    PR 128973 - Deploy FM conf changes on all SMs
+ *  Archive Log:    - improved AdminPage to support adding separator between tabs
+ *  Archive Log:    - improved to use canExit to decide weather is able to switch to another tab or page
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/04/03 21:06:23  jijunwan
  *  Archive Log:    Introduced canExit to IPageController, and canPageChange to IPageListener to allow us do some checking before we switch to another page. Fixed the following bugs
@@ -57,6 +63,7 @@
 
 package com.intel.stl.ui.admin.view;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -67,6 +74,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -103,6 +111,10 @@ public class NavigationPanel extends JPanel {
         IconPanel panel = new IconPanel(name, icon);
         itemMap.put(name, panel);
         add(panel);
+    }
+
+    public void addSeparator(int size) {
+        add(Box.createRigidArea(new Dimension(10, size)));
     }
 
     public void selectItem(String name) {

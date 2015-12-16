@@ -35,8 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7.2.1  2015/08/12 15:26:56  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.9  2015/08/17 18:54:05  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/08/06 17:26:40  jijunwan
+ *  Archive Log:    PR 129825 - Topology summary doesn't catch down graded ports
+ *  Archive Log:    - improved to display "abnormal" ports
+ *  Archive Log:    - added undo navigation support
  *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/04/28 14:00:33  jijunwan
  *  Archive Log:    1) improved topology viz to use TopGraph copy for outline display. This will avoid graph and outline views share internal graph view that may cause sync issues.
@@ -165,8 +171,8 @@ public class ShowGroupTask extends TopologyUpdateTask {
             name = STLConstants.K2078_DEVIE_SET.getValue();
             icon = UIImages.DEVICE_SET.getImageIcon();
         }
-        resourceController.showGroup(name, icon, tmpTreeMode, newGraph,
-                oldGraph);
+        resourceController.showGroup(selectedResources, name, icon,
+                tmpTreeMode, newGraph, oldGraph);
         return true;
     }
 

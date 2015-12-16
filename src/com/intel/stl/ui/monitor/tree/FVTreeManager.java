@@ -35,8 +35,27 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6.2.1  2015/08/12 15:27:10  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.12  2015/09/30 13:26:45  fisherma
+ *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/09/08 14:59:54  jijunwan
+ *  Archive Log:    PR 130277 - FM GUI Locked up due to [AWT-EventQueue-0] ERROR - Unsupported MTUSize 0x0d java.lang.IllegalArgumentException: Unsupported MTUSize 0x0d
+ *  Archive Log:    - change to update tree on background thread and update rendering on EDT
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/08/17 18:54:19  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/07/23 11:49:10  jypak
+ *  Archive Log:    PR 129645 - Tree search enhancement.
+ *  Archive Log:    Search progress bar, running icon and cancel capability are added.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/07/15 19:05:39  fernande
+ *  Archive Log:    PR 129199 - Checking copyright test as part of the build step. Fixed year appearing in copyright notice
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/06/22 13:11:52  jypak
+ *  Archive Log:    PR 128980 - Be able to search devices by name or lid.
+ *  Archive Log:    New feature added to enable search devices by name, lid or node guid. The search results are displayed as a tree and when a result node from the tree is selected, original tree is expanded and the corresponding node is highlighted.
  *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/02/23 22:48:44  jijunwan
  *  Archive Log:    fixed insures on tree update upon notices
@@ -187,12 +206,10 @@ package com.intel.stl.ui.monitor.tree;
 
 import static com.intel.stl.ui.common.PageWeight.MEDIUM;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
-
-import javax.swing.SwingUtilities;
+import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -200,12 +217,15 @@ import org.slf4j.LoggerFactory;
 import com.intel.stl.api.performance.IPerformanceApi;
 import com.intel.stl.api.subnet.ISubnetApi;
 import com.intel.stl.api.subnet.SubnetDescription;
+import com.intel.stl.ui.common.ICancelIndicator;
 import com.intel.stl.ui.common.IContextAware;
 import com.intel.stl.ui.common.IProgressObserver;
 import com.intel.stl.ui.common.ObserverAdapter;
 import com.intel.stl.ui.common.PageWeight;
+import com.intel.stl.ui.common.TimeDrivenProgressObserver;
 import com.intel.stl.ui.main.Context;
 import com.intel.stl.ui.monitor.TreeNodeType;
+import com.intel.stl.ui.monitor.TreeSearchType;
 import com.intel.stl.ui.monitor.TreeTypeEnum;
 
 public class FVTreeManager implements IContextAware {
@@ -226,7 +246,12 @@ public class FVTreeManager implements IContextAware {
      */
     IPerformanceApi mPerformanceApi;
 
+    SearchTreeBuilder searchBuilder;
+
     private final EnumMap<TreeTypeEnum, TreeManagementModel> mgrModels;
+
+    protected InactivePortVizIndicator vizIndicator =
+            new InactivePortVizIndicator();
 
     /**
      * 
@@ -242,6 +267,8 @@ public class FVTreeManager implements IContextAware {
         for (TreeTypeEnum type : TreeTypeEnum.values()) {
             mgrModels.put(type, new TreeManagementModel());
         }
+
+        searchBuilder = new SearchTreeBuilder();
     }
 
     @Override
@@ -255,6 +282,7 @@ public class FVTreeManager implements IContextAware {
             mPerformanceApi = pContext.getPerformanceApi();
             reset();
         }
+        vizIndicator.setContext(pContext);
     }
 
     @Override
@@ -302,6 +330,9 @@ public class FVTreeManager implements IContextAware {
                 break;
         } // switch
 
+        if (node != null) {
+            setVisibility(node, null);
+        }
         mLog.info("Build tree " + pTreeType + " in "
                 + (System.currentTimeMillis() - t) + " ms");
         return node;
@@ -365,6 +396,26 @@ public class FVTreeManager implements IContextAware {
 
         mLog.info("Update tree node" + pTreeType + " in "
                 + (System.currentTimeMillis() - t) + " ms");
+    }
+
+    public synchronized SearchResult searchTreeNode(TreeTypeEnum treeType,
+            TreeSearchType searchType, String searchKey,
+            TimeDrivenProgressObserver observer,
+            ICancelIndicator cancelIndicator) {
+        TreeManagementModel model = mgrModels.get(treeType);
+
+        SearchResult result = null;
+
+        if (model != null && model.isValid()) {
+            FVResourceNode treeRoot = model.getTree();
+            result =
+                    searchBuilder.searchAndBuildTree(treeType, searchType,
+                            searchKey, treeRoot, observer, cancelIndicator);
+        } else if (treeType != TreeTypeEnum.TOP_10_CONGESTED_TREE) {
+            throw new RuntimeException("Tree is under change " + model);
+        }
+
+        return result;
     }
 
     public void addMonitor(TreeTypeEnum treeType, ITreeMonitor monitor) {
@@ -455,22 +506,12 @@ public class FVTreeManager implements IContextAware {
         }
 
         if (model.isDirty()) {
-            final DeviceTypesTreeSynchronizer treeUpdater =
+            DeviceTypesTreeSynchronizer treeUpdater =
                     new DeviceTypesTreeSynchronizer(mSubnetApi);
-            try {
-                SwingUtilities.invokeAndWait(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        treeUpdater.updateTree(model.getTree(),
-                                model.getMonitors(), observer);
-                        model.setDirty(false);
-                    }
-                });
-            } catch (InterruptedException e) {
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            treeUpdater.updateTree(model.getTree(), model.getMonitors(),
+                    observer);
+            updateVisibility(model);
+            model.setDirty(false);
         }
 
         if (observer != null) {
@@ -485,24 +526,13 @@ public class FVTreeManager implements IContextAware {
             return;
         } else {
             // Don't need to set model dirty so don't check if it's dirty.
-            final DeviceTypesTreeUpdater treeUpdater =
+            DeviceTypesTreeUpdater treeUpdater =
                     new DeviceTypesTreeUpdater(mSubnetApi);
-            try {
-                // This will make Runnable run in EDT and block until it return.
-                // To set the progress correctly, it should block.
-                SwingUtilities.invokeAndWait(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        FVResourceNode tree = model.getTree();
-                        List<ITreeMonitor> monitors = model.getMonitors();
-                        treeUpdater.updateNode(lid, tree, monitors);
-                    }
-                });
-            } catch (InterruptedException e) {
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            FVResourceNode tree = model.getTree();
+            List<ITreeMonitor> monitors = model.getMonitors();
+            treeUpdater.updateNode(lid, tree, monitors);
+            // TODO: do it at parent rather than root to improve performance
+            setVisibility(tree, model.getMonitors());
         }
     }
 
@@ -556,24 +586,14 @@ public class FVTreeManager implements IContextAware {
 
             FVResourceNode subnetTree = createDeviceTypesTree(subObservers[0]);
             subObservers[0].onFinish();
-            final DeviceGroupsTreeSynchronizer treeUpdater =
+            DeviceGroupsTreeSynchronizer treeUpdater =
                     new DeviceGroupsTreeSynchronizer(mPerformanceApi,
                             subnetTree);
-            try {
-                SwingUtilities.invokeAndWait(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        treeUpdater.updateTree(model.getTree(),
-                                model.getMonitors(), subObservers[1]);
-                        subObservers[1].onFinish();
-                        model.setDirty(false);
-                    }
-                });
-            } catch (InterruptedException e) {
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            treeUpdater.updateTree(model.getTree(), model.getMonitors(),
+                    subObservers[1]);
+            updateVisibility(model);
+            subObservers[1].onFinish();
+            model.setDirty(false);
         }
 
         if (observer != null) {
@@ -588,22 +608,13 @@ public class FVTreeManager implements IContextAware {
         if (model.isEmpty()) {
             return;
         } else {
-            final DeviceGroupsTreeUpdater treeUpdater =
+            DeviceGroupsTreeUpdater treeUpdater =
                     new DeviceGroupsTreeUpdater(mSubnetApi, mPerformanceApi);
-            try {
-                SwingUtilities.invokeAndWait(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        FVResourceNode tree = model.getTree();
-                        List<ITreeMonitor> monitors = model.getMonitors();
-                        treeUpdater.updateNode(lid, tree, monitors);
-                    }
-                });
-            } catch (InterruptedException e) {
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            FVResourceNode tree = model.getTree();
+            List<ITreeMonitor> monitors = model.getMonitors();
+            treeUpdater.updateNode(lid, tree, monitors);
+            // TODO: do it at parent rather than root to improve performance
+            setVisibility(tree, model.getMonitors());
         }
     }
 
@@ -658,24 +669,14 @@ public class FVTreeManager implements IContextAware {
 
             FVResourceNode subnetTree = createDeviceTypesTree(subObservers[0]);
             subObservers[0].onFinish();
-            final VirtualFabricsTreeSynchronizer treeUpdater =
+            VirtualFabricsTreeSynchronizer treeUpdater =
                     new VirtualFabricsTreeSynchronizer(mPerformanceApi,
                             subnetTree);
-            try {
-                SwingUtilities.invokeAndWait(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        treeUpdater.updateTree(model.getTree(),
-                                model.getMonitors(), subObservers[1]);
-                        subObservers[1].onFinish();
-                        model.setDirty(false);
-                    }
-                });
-            } catch (InterruptedException e) {
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            treeUpdater.updateTree(model.getTree(), model.getMonitors(),
+                    subObservers[1]);
+            updateVisibility(model);
+            subObservers[1].onFinish();
+            model.setDirty(false);
         }
 
         if (observer != null) {
@@ -689,25 +690,37 @@ public class FVTreeManager implements IContextAware {
         if (model.isEmpty()) {
             return;
         } else {
-            final VirtualFabricsTreeUpdater treeUpdater =
+            VirtualFabricsTreeUpdater treeUpdater =
                     new VirtualFabricsTreeUpdater(mSubnetApi, mPerformanceApi);
-            try {
-                SwingUtilities.invokeAndWait(new Runnable() {
+            treeUpdater.updateNode(lid, model.getTree(), model.getMonitors());
+            // TODO: do it at parent rather than root to improve performance
+            setVisibility(model.getTree(), model.getMonitors());
+        }
+    }
 
-                    @Override
-                    public void run() {
-                        treeUpdater.updateNode(lid, model.getTree(),
-                                model.getMonitors());
-                    }
-                });
-            } catch (InterruptedException e) {
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
+    protected void updateVisibility(TreeManagementModel model) {
+        FVResourceNode root = model.getTree();
+        setVisibility(root, model.getMonitors());
+    }
+
+    private void setVisibility(FVResourceNode node, List<ITreeMonitor> monitors) {
+        Vector<FVResourceNode> children = node.getChildren();
+        if (children == null || children.isEmpty()) {
+            return;
+        }
+
+        for (FVResourceNode child : children) {
+            setVisibility(child, monitors);
+        }
+        boolean hasChange = node.setChildrenVisibility(vizIndicator);
+        if (monitors != null && hasChange) {
+            for (ITreeMonitor monitor : monitors) {
+                monitor.fireTreeStructureChanged(this, node.getPath());
             }
         }
     }
 
-    class TreeManagementModel {
+    public class TreeManagementModel {
         private FVResourceNode tree;
 
         private boolean isDirty = true;
@@ -784,5 +797,12 @@ public class FVTreeManager implements IContextAware {
     @Override
     public PageWeight getRefreshWeight() {
         return MEDIUM;
+    }
+
+    /**
+     * @return the mgrModels
+     */
+    public EnumMap<TreeTypeEnum, TreeManagementModel> getMgrModels() {
+        return mgrModels;
     }
 } // FVTreeBuilder

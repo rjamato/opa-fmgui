@@ -24,6 +24,42 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: ChartsSectionView.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.6  2015/08/17 18:53:36  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.5  2015/08/06 17:20:09  jijunwan
+ *  Archive Log: PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log: - improved GroupSelectedEvent to GroupsSelectedEvent to support selecting multiple groups
+ *  Archive Log: - fixed couple NPE issues
+ *  Archive Log:
+ *  Archive Log: Revision 1.4  2015/08/05 03:00:44  jijunwan
+ *  Archive Log: PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log: - applied undo mechanism on charts to track chart  change, jump event
+ *  Archive Log: - applied undo mechanism on chart section to track group change
+ *  Archive Log: - improved OptionChartsView to support undoable data type and history selection
+ *  Archive Log:
+ *  Archive Log: Revision 1.3  2015/06/10 19:58:51  jijunwan
+ *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: jijunwan
+ * 
+ ******************************************************************************/
 package com.intel.stl.ui.common.view;
 
 import java.awt.BorderLayout;
@@ -175,6 +211,8 @@ public class ChartsSectionView extends JSectionView<ISectionListener> {
 
         private GridBagConstraints gc;
 
+        private String previousSelection;
+
         private String selection;
 
         private ChangeListener listener;
@@ -218,7 +256,6 @@ public class ChartsSectionView extends JSectionView<ISectionListener> {
             titles.put(name, title);
 
             if (selection == null) {
-                title.setSelected(true);
                 select(name);
             }
         }
@@ -230,7 +267,12 @@ public class ChartsSectionView extends JSectionView<ISectionListener> {
                     tab.setSelected(false);
                 }
             }
+            TabTitle tab = titles.get(name);
+            if (tab != null) {
+                tab.setSelected(true);
+            }
             layout.show(tabPanel, name);
+            previousSelection = selection;
             selection = name;
             if (listener != null) {
                 listener.stateChanged(new ChangeEvent(this));
@@ -242,6 +284,13 @@ public class ChartsSectionView extends JSectionView<ISectionListener> {
          */
         public String getSelection() {
             return selection;
+        }
+
+        /**
+         * @return the previousSelection
+         */
+        public String getPreviousSelection() {
+            return previousSelection;
         }
 
         /**
@@ -307,7 +356,6 @@ public class ChartsSectionView extends JSectionView<ISectionListener> {
                 @Override
                 public void mousePressed(MouseEvent e) {
                     parent.select(name);
-                    setSelected(true);
                 }
             });
             add(chartPanel, BorderLayout.CENTER);
@@ -316,7 +364,6 @@ public class ChartsSectionView extends JSectionView<ISectionListener> {
                 @Override
                 public void mousePressed(MouseEvent e) {
                     parent.select(name);
-                    setSelected(true);
                 }
             });
 

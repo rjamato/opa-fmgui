@@ -35,8 +35,18 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.9.2.1  2015/08/12 15:27:14  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.11  2015/08/17 18:54:06  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/06/25 20:42:14  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improved PerformanceItem to support port counters
+ *  Archive Log:    - improved PerformanceItem to use generic ISource to describe data source
+ *  Archive Log:    - improved PerformanceItem to use enum DataProviderName to describe data provider name
+ *  Archive Log:    - improved PerformanceItem to support creating a copy of PerformanceItem
+ *  Archive Log:    - improved TrendItem to share scale with other charts
+ *  Archive Log:    - improved SimpleDataProvider to support hsitory data
  *  Archive Log:
  *  Archive Log:    Revision 1.9  2015/02/12 19:40:11  jijunwan
  *  Archive Log:    short term PA support
@@ -84,12 +94,14 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import com.intel.stl.api.performance.VFInfoBean;
+import com.intel.stl.ui.performance.GroupSource;
 import com.intel.stl.ui.publisher.ICallback;
 import com.intel.stl.ui.publisher.Task;
 import com.intel.stl.ui.publisher.subscriber.SubscriberType;
 import com.intel.stl.ui.publisher.subscriber.VFInfoSubscriber;
 
-public class CombinedVFInfoProvider extends CombinedDataProvider<VFInfoBean> {
+public class CombinedVFInfoProvider extends
+        CombinedDataProvider<VFInfoBean, GroupSource> {
     private final static boolean DEBUG = false;
 
     /**
@@ -109,10 +121,12 @@ public class CombinedVFInfoProvider extends CombinedDataProvider<VFInfoBean> {
      * .lang.String[])
      */
     @Override
-    protected VFInfoBean[] refresh(String[] sourceNames) {
+    protected VFInfoBean[] refresh(GroupSource[] sourceNames) {
         VFInfoBean[] res = new VFInfoBean[sourceNames.length];
         for (int i = 0; i < res.length; i++) {
-            res[i] = scheduler.getPerformanceApi().getVFInfo(sourceNames[i]);
+            res[i] =
+                    scheduler.getPerformanceApi().getVFInfo(
+                            sourceNames[i].getGroup());
         }
         return res;
     }
@@ -125,7 +139,7 @@ public class CombinedVFInfoProvider extends CombinedDataProvider<VFInfoBean> {
      * (int, com.intel.stl.ui.publisher.ICallback)
      */
     @Override
-    protected List<Task<VFInfoBean>> registerTasks(String[] sourceNames,
+    protected List<Task<VFInfoBean>> registerTasks(GroupSource[] sourceNames,
             ICallback<VFInfoBean[]> callback) {
         if (DEBUG) {
             System.out.println(this + " registerTask "
@@ -137,7 +151,11 @@ public class CombinedVFInfoProvider extends CombinedDataProvider<VFInfoBean> {
                 (VFInfoSubscriber) scheduler
                         .getSubscriber(SubscriberType.VF_INFO);
 
-        return vfInfoSubscriber.registerVFInfo(sourceNames, callback);
+        String[] groups = new String[sourceNames.length];
+        for (int i = 0; i < groups.length; i++) {
+            groups[i] = sourceNames[i].getGroup();
+        }
+        return vfInfoSubscriber.registerVFInfo(groups, callback);
     }
 
     /*
@@ -171,7 +189,7 @@ public class CombinedVFInfoProvider extends CombinedDataProvider<VFInfoBean> {
      * (java.lang.String[], int, int, com.intel.stl.ui.publisher.ICallback)
      */
     @Override
-    protected Future<Void> initHistory(String[] sourceNames,
+    protected Future<Void> initHistory(GroupSource[] sourceNames,
             ICallback<VFInfoBean[]> callback) {
         if (DEBUG) {
             System.out.println(this + " initHistory "
@@ -181,8 +199,12 @@ public class CombinedVFInfoProvider extends CombinedDataProvider<VFInfoBean> {
         VFInfoSubscriber vfInfoSubscriber =
                 (VFInfoSubscriber) scheduler
                         .getSubscriber(SubscriberType.VF_INFO);
-        return vfInfoSubscriber.initVFInfoHistory(sourceNames, historyType,
-                callback);
+        String[] groups = new String[sourceNames.length];
+        for (int i = 0; i < groups.length; i++) {
+            groups[i] = sourceNames[i].getGroup();
+        }
+        return vfInfoSubscriber
+                .initVFInfoHistory(groups, historyType, callback);
 
     }
 

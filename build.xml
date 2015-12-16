@@ -3,7 +3,9 @@
 	<property name="target" value="target"/>
     <property name="resources" value="resources"/>
 	<property name="lib" value="lib"/>
-    <property name="fmgui.app.jar" value="fmgui-10_0_0_0_2.jar"/>
+        <property name="help" value="help"/>
+    <property name="fmgui.app.jar" value="fmgui.jar"/>
+    <property environment="env"/>
 	<path id="source.compile.path">
 		<fileset dir="${lib}">
 			<include name="**/*.jar"/>
@@ -12,12 +14,16 @@
 	<target name="init" description="Creates the build directory structure">
 	    <mkdir dir="${target}"/>
 	    <mkdir dir="${target}/classes"/>
+        <condition property="build.javac" value="${env.OPA_JAVA}\bin\javac" else="${env.JAVA_HOME}\bin\javac">
+            <isset property="env.OPA_JAVA"/>
+        </condition>
 	</target>
 	<target name="compile" description="Compiles the Fabric Manager GUI application">
 	    <javac  srcdir="${src}" destdir="${target}/classes"
 			        encoding="windows-1252"
 				    debug="true"
 		    		fork="yes"
+	    	        executable="${build.javac}"
 				    classpathref="source.compile.path">
 		    	<compilerarg value="-version"/>        
 	    </javac>
@@ -38,6 +44,21 @@
                 <include name="**/*"/>
             </fileset>
         </copy>
+
+        <manifestclasspath property="lib.dependencies" jarfile="${fmgui.app.jar}">
+                    <classpath>
+                        <fileset dir="${lib}">
+                            <include name="**/*.jar"/>
+                        </fileset>
+                <fileset dir="${help}">
+                    <include name="**/*.jar"/>
+                </fileset>
+                    </classpath>
+        </manifestclasspath>
+        <manifest file="${target}/classes/META-INF/MANIFEST.MF" mode="update">
+            <attribute name="Class-Path" value=". ${lib.dependencies}"/>
+        </manifest>
+
         <jar jarfile="${target}/${fmgui.app.jar}" basedir="${target}/classes" manifest="${target}/classes/META-INF/MANIFEST.MF" />
 		<copy file="${target}/${fmgui.app.jar}" todir="." overwrite="true" />
 	</target>

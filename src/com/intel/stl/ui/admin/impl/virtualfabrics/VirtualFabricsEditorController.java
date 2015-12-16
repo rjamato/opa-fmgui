@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:26:45  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.3  2015/10/06 20:17:58  fernande
+ *  Archive Log:    PR130749 - FM GUI virtual fabric information doesn't match opafm.xml file. Fixed spelling error
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/08/17 18:53:54  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2015/03/27 15:47:47  jijunwan
  *  Archive Log:    first version of VirtualFabric UI
@@ -75,14 +79,14 @@ public class VirtualFabricsEditorController extends
 
     @Override
     public void initData() throws Exception {
-        List<String> applications = getAppliationNames();
+        List<String> applications = getApplicationNames();
         view.setApplicationNames(applications);
 
         List<String> devicegroups = getDeviceGroupNames();
         view.setDeviceGroupNames(devicegroups);
     }
 
-    protected List<String> getAppliationNames() throws ApplicationException {
+    protected List<String> getApplicationNames() throws ApplicationException {
         List<Application> apps = mgtApi.getApplications();
         List<String> names = new ArrayList<String>(apps.size());
         for (Application app : apps) {

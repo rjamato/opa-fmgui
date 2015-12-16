@@ -35,8 +35,57 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.37.2.1  2015/08/12 15:26:34  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.52  2015/09/25 20:52:27  fernande
+ *  Archive Log:    PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
+ *  Archive Log:
+ *  Archive Log:    Revision 1.51  2015/08/31 22:26:33  jijunwan
+ *  Archive Log:    PR 130197 - Calculated fabric health above 100% when entire fabric is rebooted
+ *  Archive Log:    - changed to only use information from ImageInfo for calculation
+ *  Archive Log:
+ *  Archive Log:    Revision 1.50  2015/08/17 18:53:38  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.49  2015/08/17 14:22:42  rjtierne
+ *  Archive Log:    PR 128979 - SM Log display
+ *  Archive Log:    This is the first version of the Log Viewer which displays select lines of text from the remote SM log file. Updates include searchable raw text from file, user-defined number of lines to display, refreshing end of file, and paging. This PR is now closed and further updates can be found by referencing PR 130011 - "Enhance SM Log Viewer to include Standard and Advanced requirements".
+ *  Archive Log:
+ *  Archive Log:    Revision 1.48  2015/08/11 14:11:09  jijunwan
+ *  Archive Log:    PR 129917 - No update on event statistics
+ *  Archive Log:    - Added a new subscriber to allow periodically getting state summary
+ *  Archive Log:
+ *  Archive Log:    Revision 1.47  2015/08/10 17:30:41  robertja
+ *  Archive Log:    PR 128974 - Email notification functionality.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.46  2015/07/30 19:34:18  fernande
+ *  Archive Log:    PR 129592 - removing a subnet a user is monitoring cause internal DB exception. Added flag to SubnetContext indicating the subnet has been deleted. If the flag is set, no saving of subnet information occurs.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.44  2015/07/09 17:58:40  jijunwan
+ *  Archive Log:    PR 129509 - Shall refresh UI after failover completed
+ *  Archive Log:    - reset ManagementApi after failover completed
+ *  Archive Log:    - refresh UI after failover completed
+ *  Archive Log:    - updated comments
+ *  Archive Log:
+ *  Archive Log:    Revision 1.43  2015/06/30 17:50:13  fisherma
+ *  Archive Log:    PR 129220 - Improvement on secure FE login.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.42  2015/06/17 15:40:27  fisherma
+ *  Archive Log:    PR129220 - partial fix for the login changes.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.41  2015/06/08 16:12:35  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Stabilizing the new FEAdapter code. Changed to use the Performance API instead of the ConfigurationApi since Context is already running with a SubnetRequestDispatcher and shouldn't use a temporary session
+ *  Archive Log:
+ *  Archive Log:    Revision 1.40  2015/05/29 20:43:46  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Second wave of changes: the application can be switched between the old adapter and the new; moved out several initialization pieces out of objects constructor to allow subnet initialization with a UI in place; improved generics definitions for FV commands.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.39  2015/05/22 13:53:52  robertja
+ *  Archive Log:    PR128703 Resume performance data tasks after completion of fail-over.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.38  2015/05/11 12:35:06  rjtierne
+ *  Archive Log:    Removed printed stack trace for ConfigurationException in method close().
+ *  Archive Log:    This error is ignored since the only time it happens is when a subnet is
+ *  Archive Log:    deleted while running, which is an acceptable condition. The error is now
+ *  Archive Log:    logged only when a SubnetDataNotFoundException occurs.
  *  Archive Log:
  *  Archive Log:    Revision 1.37  2015/04/29 19:13:51  rjtierne
  *  Archive Log:    When saving a subnet to the database in method close(), run on the EDT to prevent
@@ -97,27 +146,44 @@ package com.intel.stl.ui.main;
 
 import java.awt.Component;
 import java.beans.PropertyChangeListener;
-import java.util.Properties;
+import java.security.UnrecoverableKeyException;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.intel.stl.api.CertsDescription;
+import com.intel.stl.api.FMException;
+import com.intel.stl.api.FMKeyStoreException;
+import com.intel.stl.api.FMTrustStoreException;
+import com.intel.stl.api.IConnectionAssistant;
 import com.intel.stl.api.ISubnetEventListener;
+import com.intel.stl.api.SSLStoreCredentialsDeniedException;
+import com.intel.stl.api.StringUtils;
 import com.intel.stl.api.SubnetContext;
 import com.intel.stl.api.SubnetEvent;
 import com.intel.stl.api.configuration.ConfigurationException;
 import com.intel.stl.api.configuration.IConfigurationApi;
 import com.intel.stl.api.configuration.UserNotFoundException;
 import com.intel.stl.api.configuration.UserSettings;
+import com.intel.stl.api.logs.ILogApi;
 import com.intel.stl.api.management.IManagementApi;
 import com.intel.stl.api.notice.INoticeApi;
 import com.intel.stl.api.performance.IPerformanceApi;
 import com.intel.stl.api.performance.PMConfigBean;
+import com.intel.stl.api.subnet.HostInfo;
 import com.intel.stl.api.subnet.ISubnetApi;
+import com.intel.stl.api.subnet.NodeType;
 import com.intel.stl.api.subnet.SubnetConnectionException;
 import com.intel.stl.api.subnet.SubnetDataNotFoundException;
 import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.api.subnet.SubnetDescription.Status;
+import com.intel.stl.ui.alert.NoticeEventListener;
+import com.intel.stl.ui.alert.NoticeNotifier;
+import com.intel.stl.ui.alert.NotifierFactory;
+import com.intel.stl.ui.alert.NotifierType;
 import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.model.UserPreference;
 import com.intel.stl.ui.publisher.EventCalculator;
@@ -128,34 +194,42 @@ import com.intel.stl.ui.publisher.UserSettingsProcessor;
  * @author jijunwan
  * 
  */
-public class Context implements ISubnetEventListener {
+public class Context implements ISubnetEventListener, IConnectionAssistant {
     private static final Logger log = LoggerFactory.getLogger(Context.class);
 
-    private final SubnetContext subnetContext;
+    public static final long TIME_OUT = 30000; // 30 sec
 
     private TaskScheduler scheduler;
 
     private EventCalculator evtCal;
 
-    private final String userName;
-
-    private final UserPreference userPreference;
-
     private UserSettingsProcessor userSettingsProcessor;
 
-    private Component owner;
+    private List<Throwable> errors;
 
-    public Context(SubnetContext subnetContext, String userName) {
+    private final SubnetContext subnetContext;
+
+    private final IFabricController controller;
+
+    private final String userName;
+
+    private UserPreference userPreference;
+
+    private final Component owner;
+
+    private final NoticeEventListener noticeListener;
+
+    private NoticeNotifier emailNotifier;
+
+    public Context(SubnetContext subnetContext, IFabricController controller,
+            String userName) {
         this.subnetContext = subnetContext;
         this.userName = userName;
-        refreshUserSettings();
-        UserSettings userSettings = getUserSettings();
-        Properties properties = null;
-        if (userSettings != null) {
-            properties = userSettings.getUserPreference();
-        }
-        userPreference = new UserPreference(properties);
+        this.controller = controller;
+        this.owner = controller.getViewFrame();
+        this.noticeListener = new NoticeEventListener(controller.getEventBus());
         this.subnetContext.addSubnetEventListener(this);
+        this.subnetContext.getSubnetDescription().setConnectionAssistant(this);
     }
 
     /**
@@ -166,16 +240,10 @@ public class Context implements ISubnetEventListener {
     }
 
     /**
-     * @param owner
-     *            the owner to set
+     * @return the controller
      */
-    public void setOwner(Component owner) {
-        if (this.owner != null && owner != this.owner) {
-            log.warn("Context " + this + "("
-                    + subnetContext.getSubnetDescription().getName()
-                    + ") is set to a new owner " + owner);
-        }
-        this.owner = owner;
+    public IFabricController getController() {
+        return controller;
     }
 
     public EventCalculator getEvtCal() {
@@ -185,9 +253,21 @@ public class Context implements ISubnetEventListener {
     public void initialize() throws SubnetConnectionException {
         subnetContext.initialize();
 
-        IConfigurationApi configApi = subnetContext.getConfigurationApi();
-        PMConfigBean pmConf =
-                configApi.getPMConfig(subnetContext.getSubnetDescription());
+        getNoticeApi().addEventListener(noticeListener);
+        refreshUserSettings();
+        UserSettings userSettings = getUserSettings();
+        userPreference = new UserPreference(userSettings);
+
+        EnumMap<NodeType, Integer> nodes = null;
+        try {
+            nodes = subnetContext.getSubnetApi().getNodesTypeDist(false, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        evtCal = new EventCalculator(nodes, userPreference);
+        this.subnetContext.getNoticeApi().addEventListener(evtCal);
+
+        PMConfigBean pmConf = getPerformanceApi().getPMConfig();
         int refreshRate = userPreference.getRefreshRateInSeconds();
         if (pmConf != null) {
             int sweepInterval = pmConf.getSweepInterval();
@@ -200,17 +280,14 @@ public class Context implements ISubnetEventListener {
             this.scheduler = new TaskScheduler(this, refreshRate);
         }
 
-        int totalNodes = 0;
-        try {
-            totalNodes =
-                    this.subnetContext.getSubnetApi().getNodes(false).size();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        evtCal =
-                new EventCalculator(userPreference.getTimeWindowInSeconds(),
-                        totalNodes, userPreference.getNumWorstNodes());
-        this.subnetContext.getNoticeApi().addEventListener(evtCal);
+        this.emailNotifier =
+                NotifierFactory.createNotifier(NotifierType.MAIL, this);
+        // AppInfo appInfo = this.getConfigurationApi().getAppInfo();
+        this.subnetContext.getNoticeApi().addEventListener(emailNotifier);
+    }
+
+    public NoticeNotifier getEmailNotifier() {
+        return emailNotifier;
     }
 
     public IConfigurationApi getConfigurationApi() {
@@ -227,6 +304,10 @@ public class Context implements ISubnetEventListener {
 
     public INoticeApi getNoticeApi() {
         return subnetContext.getNoticeApi();
+    }
+
+    public ILogApi getLogApi() {
+        return subnetContext.getLogApi();
     }
 
     public IManagementApi getManagementApi() {
@@ -281,6 +362,10 @@ public class Context implements ISubnetEventListener {
         subnetContext.removeFailoverProgressListener(listener);
     }
 
+    public void setDeleted(boolean deleted) {
+        subnetContext.setDeleted(deleted);
+    }
+
     /**
      * @return the apiBroker
      */
@@ -293,6 +378,7 @@ public class Context implements ISubnetEventListener {
     }
 
     public void close() {
+
         final Status status =
                 subnetContext.isValid() ? Status.VALID : Status.INVALID;
         final IConfigurationApi confApi = subnetContext.getConfigurationApi();
@@ -309,10 +395,17 @@ public class Context implements ISubnetEventListener {
                 try {
                     SubnetDescription subnetDesc = confApi.getSubnet(subnetId);
                     subnetDesc.setLastStatus(status);
+
+                    SubnetDescription currentSubnet =
+                            subnetContext.getSubnetDescription();
+                    subnetDesc.getCurrentFE().setSshUserName(
+                            currentSubnet.getCurrentFE().getSshUserName());
+                    subnetDesc.getCurrentFE().setSshPortNum(
+                            currentSubnet.getCurrentFE().getSshPortNum());
                     confApi.updateSubnet(subnetDesc);
                 } catch (SubnetDataNotFoundException e) {
+                    log.error(e.getMessage(), e);
                 } catch (ConfigurationException e) {
-                    e.printStackTrace();
                 }
             }
         });
@@ -323,6 +416,9 @@ public class Context implements ISubnetEventListener {
         try {
             if (scheduler != null) {
                 scheduler.shutdown();
+            }
+            if (noticeListener != null) {
+                noticeListener.shutdown();
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -337,13 +433,11 @@ public class Context implements ISubnetEventListener {
 
     @Override
     public void onFailoverCompleted(SubnetEvent event) {
-        // Restart the scheduler
-        if (scheduler != null) {
-            // if the scheduler has been initialized already
-            log.debug("Restarting the task scheduler");
-            int rate = scheduler.getRefreshRate();
-            scheduler.updateRefreshRate(rate);
-        }
+        // This method is intentionally left empty.
+        // FabricController.onFailoverCompleted will handle the following
+        // 1) reschedule of tasks after fail-over.
+        // 2) reset ManagementApi so we will reload opafm.xml
+        // 3) refresh UI to update to the latest FM state
     }
 
     @Override
@@ -358,7 +452,7 @@ public class Context implements ISubnetEventListener {
         // Stop the TaskScheduler when a connection is lost to avoid more
         // requests until failover is completed
         try {
-            scheduler.shutdown();
+            scheduler.suspendServiceDuringFailover();
         } catch (Exception e) {
         }
     }
@@ -374,5 +468,68 @@ public class Context implements ISubnetEventListener {
     public void onSubnetManagerConnected(SubnetEvent arg0) {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public CertsDescription getSSLStoreCredentials(HostInfo hostInfo)
+            throws SSLStoreCredentialsDeniedException {
+
+        CertsDescription certs = null;
+        CertsLoginController loginCtr = controller.getCertsLoginController();
+
+        if (errors != null) {
+            // Parse if there is a certificate password error
+            for (Throwable error : errors) {
+                System.out.println("error=" + error);
+                if (error instanceof FMKeyStoreException) {
+                    Throwable cause = getPasswordException(error);
+                    if (cause != null) {
+                        loginCtr.setKeyStorePwdError(StringUtils
+                                .getErrorMessage(cause));
+                    } else {
+                        loginCtr.setKeyStoreLocError(StringUtils
+                                .getErrorMessage(error));
+                    }
+                } else if (error instanceof FMTrustStoreException) {
+                    Throwable cause = getPasswordException(error);
+                    if (cause != null) {
+                        loginCtr.setTrustStorePwdError(StringUtils
+                                .getErrorMessage(cause));
+                    } else {
+                        loginCtr.setTrustStoreLocError(StringUtils
+                                .getErrorMessage(error));
+                    }
+                } else {
+                    log.warn("Unsupported error", error);
+                }
+            }
+        } else {
+            errors = new ArrayList<Throwable>();
+        }
+
+        certs = loginCtr.getSSLCredentials(hostInfo);
+
+        // Cleanup errors from this iteration
+        if (errors != null) {
+            errors.clear();
+        }
+
+        return certs;
+    }
+
+    @Override
+    public void onSSLStoreError(FMException fmException) {
+        errors.add(fmException);
+    }
+
+    private Throwable getPasswordException(Throwable e) {
+        while (e.getCause() != null) {
+            e = e.getCause();
+        }
+        if ((e instanceof UnrecoverableKeyException)
+                && e.getMessage().contains("Password")) {
+            return e;
+        }
+        return null;
     }
 }

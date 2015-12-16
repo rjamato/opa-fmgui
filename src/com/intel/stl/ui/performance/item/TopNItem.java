@@ -35,14 +35,32 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7.2.2  2015/08/12 15:26:55  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.12  2015/08/17 18:53:43  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.7.2.1  2015/05/17 18:49:24  jijunwan
+ *  Archive Log:    Revision 1.11  2015/06/30 22:28:49  jijunwan
+ *  Archive Log:    PR 129215 - Need short chart name to support pin capability
+ *  Archive Log:    - introduced short name to performance items
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/06/25 20:42:13  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improved PerformanceItem to support port counters
+ *  Archive Log:    - improved PerformanceItem to use generic ISource to describe data source
+ *  Archive Log:    - improved PerformanceItem to use enum DataProviderName to describe data provider name
+ *  Archive Log:    - improved PerformanceItem to support creating a copy of PerformanceItem
+ *  Archive Log:    - improved TrendItem to share scale with other charts
+ *  Archive Log:    - improved SimpleDataProvider to support hsitory data
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/05/15 19:06:43  jijunwan
+ *  Archive Log:    PR 128743 - Incorrect Top N chart value
+ *  Archive Log:    - removed testing code
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/05/15 18:58:21  jijunwan
  *  Archive Log:    PR 128743 - Incorrect Top N chart value
  *  Archive Log:    - display Top N in two bars, one for port value and one for neighbor value
  *  Archive Log:    - removed item labels on the bars since we have narrower bars, turned on axis label and grid line to show data range
- *  Archive Log:    - introduced new tick unit format to handle very large number cases reported in PR 126832
+ *  Archive Log:    - introduced new tick unit formate to handle very large number cases reported in PR 126832
  *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/02/17 23:22:14  jijunwan
  *  Archive Log:    PR 127106 - Suggest to use same bucket range for Group Err Summary as shown in "opatop" command to plot performance graphs in FV
@@ -87,21 +105,25 @@ import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UILabels;
 import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.model.PortEntry;
-import com.intel.stl.ui.monitor.TreeNodeType;
+import com.intel.stl.ui.performance.GroupSource;
 import com.intel.stl.ui.performance.observer.TopNDataObserver;
 import com.intel.stl.ui.performance.observer.VFTopNDataObserver;
+import com.intel.stl.ui.performance.provider.DataProviderName;
 import com.intel.stl.ui.performance.provider.FocusPortProvider;
 import com.intel.stl.ui.performance.provider.VFFocusPortProvider;
 
-public abstract class TopNItem extends AbstractPerformanceItem {
+public abstract class TopNItem extends AbstractPerformanceItem<GroupSource> {
     protected DefaultCategoryDataset dataset;
 
-    private final Selection selection;
+    private Selection selection;
 
-    private final int range;
+    private int range;
 
-    public TopNItem(String fullName, Selection selection, int range) {
-        this(fullName, DEFAULT_DATA_POINTS, selection, range);
+    private final Object copyCritical = new Object();
+
+    public TopNItem(String shortName, String fullName, Selection selection,
+            int range) {
+        this(shortName, fullName, DEFAULT_DATA_POINTS, selection, range);
     }
 
     /**
@@ -112,14 +134,53 @@ public abstract class TopNItem extends AbstractPerformanceItem {
      * @param selection
      * @param range
      */
-    public TopNItem(String fullName, int maxDataPoints, Selection selection,
-            int range) {
-        super(UILabels.STL10210_TOPN.getDescription(range), fullName,
-                maxDataPoints);
+    public TopNItem(String shortName, String fullName, int maxDataPoints,
+            Selection selection, int range) {
+        super(UILabels.STL10210_TOPN.getDescription(range), shortName,
+                fullName, maxDataPoints);
         this.selection = selection;
         this.range = range;
         initDataProvider();
         initDataset();
+    }
+
+    public TopNItem(TopNItem item) {
+        super(item);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.performance.item.AbstractPerformanceItem#copyPreparation
+     * (com.intel.stl.ui.performance.item.AbstractPerformanceItem)
+     */
+    @Override
+    protected void copyPreparation(AbstractPerformanceItem<GroupSource> item) {
+        TopNItem topNItem = (TopNItem) item;
+        selection = topNItem.selection;
+        range = topNItem.range;
+        super.copyPreparation(item);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.performance.item.AbstractPerformanceItem#copyDataset
+     * (com.intel.stl.ui.performance.item.AbstractPerformanceItem)
+     */
+    @Override
+    protected void copyDataset(AbstractPerformanceItem<GroupSource> item) {
+        try {
+            TopNItem ti = (TopNItem) item;
+            synchronized (ti.copyCritical) {
+                dataset = (DefaultCategoryDataset) ti.dataset.clone();
+            }
+        } catch (CloneNotSupportedException e) {
+            // shouldn't happen
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -141,13 +202,12 @@ public abstract class TopNItem extends AbstractPerformanceItem {
         FocusPortProvider provider =
                 new FocusPortProvider(getSelection(), getRange());
         TopNDataObserver observer = new TopNDataObserver(this);
-        registerDataProvider(TreeNodeType.DEVICE_GROUP.name(), provider,
-                observer);
+        registerDataProvider(DataProviderName.PORT_GROUP, provider, observer);
 
         VFFocusPortProvider vfProvider =
                 new VFFocusPortProvider(getSelection(), getRange());
         VFTopNDataObserver vfObserver = new VFTopNDataObserver(this);
-        registerDataProvider(TreeNodeType.VIRTUAL_FABRIC.name(), vfProvider,
+        registerDataProvider(DataProviderName.VIRTUAL_FABRIC, vfProvider,
                 vfObserver);
     }
 
@@ -189,18 +249,20 @@ public abstract class TopNItem extends AbstractPerformanceItem {
 
             @Override
             public void run() {
-                dataset.setNotify(false);
-                dataset.clear();
-                for (FocusPortsRspBean port : portList) {
-                    PortEntry pe =
-                            new PortEntry(port.getNodeDesc(),
-                                    port.getNodeLid(), port.getPortNumber());
-                    dataset.addValue(port.getValue(),
-                            STLConstants.K0113_PORT_VALUE.getValue(), pe);
-                    dataset.addValue(port.getNeighborValue(),
-                            STLConstants.K0114_NBR_VALUE.getValue(), pe);
+                synchronized (copyCritical) {
+                    dataset.setNotify(false);
+                    dataset.clear();
+                    for (FocusPortsRspBean port : portList) {
+                        PortEntry pe =
+                                new PortEntry(port.getNodeDesc(), port
+                                        .getNodeLid(), port.getPortNumber());
+                        dataset.addValue(port.getValue(),
+                                STLConstants.K0113_PORT_VALUE.getValue(), pe);
+                        dataset.addValue(port.getNeighborValue(),
+                                STLConstants.K0114_NBR_VALUE.getValue(), pe);
+                    }
+                    dataset.setNotify(true);
                 }
-                dataset.setNotify(true);
             }
 
         });
@@ -215,15 +277,20 @@ public abstract class TopNItem extends AbstractPerformanceItem {
 
             @Override
             public void run() {
-                dataset.setNotify(false);
-                dataset.clear();
-                for (VFFocusPortsRspBean port : portList) {
-                    PortEntry pe =
-                            new PortEntry(port.getNodeDesc(),
-                                    port.getNodeLid(), port.getPortNumber());
-                    dataset.addValue(port.getValue(), getName(), pe);
+                synchronized (copyCritical) {
+                    dataset.setNotify(false);
+                    dataset.clear();
+                    for (VFFocusPortsRspBean port : portList) {
+                        PortEntry pe =
+                                new PortEntry(port.getNodeDesc(), port
+                                        .getNodeLid(), port.getPortNumber());
+                        dataset.addValue(port.getValue(),
+                                STLConstants.K0113_PORT_VALUE.getValue(), pe);
+                        dataset.addValue(port.getNeighborValue(),
+                                STLConstants.K0114_NBR_VALUE.getValue(), pe);
+                    }
+                    dataset.setNotify(true);
                 }
-                dataset.setNotify(true);
             }
 
         });
@@ -239,8 +306,10 @@ public abstract class TopNItem extends AbstractPerformanceItem {
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
-                if (dataset != null) {
-                    dataset.clear();
+                synchronized (copyCritical) {
+                    if (dataset != null) {
+                        dataset.clear();
+                    }
                 }
             }
         });

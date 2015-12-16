@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.1  2015/08/12 15:26:34  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.7  2015/09/26 06:27:35  jijunwan
+ *  Archive Log:    130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
+ *  Archive Log:    - changed to do a full refresh that includes DB data update
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/08/17 18:53:38  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.5  2014/12/11 18:52:55  fernande
  *  Archive Log:    Switch from log4j to slf4j+logback
@@ -78,22 +83,28 @@ import com.intel.stl.ui.monitor.tree.FVTreeManager;
 
 public class SubnetRefreshTask extends AbstractTask<FabricModel, Void, String> {
 
-    private static Logger log = LoggerFactory.getLogger(SubnetRefreshTask.class);
+    private static Logger log = LoggerFactory
+            .getLogger(SubnetRefreshTask.class);
+
+    private final Context context;
 
     private final List<IPageController> pages;
 
     private final FVTreeManager builder;
 
     public SubnetRefreshTask(FabricModel model, FVTreeManager builder,
-            List<IPageController> pages) {
+            List<IPageController> pages, Context context) {
         super(model);
         this.pages = pages;
         this.builder = builder;
+        this.context = context;
     }
 
     @Override
     public Void processInBackground(Context context) throws Exception {
         log.info("Refresh subnet '" + model.getCurrentSubnet() + "'");
+        // clear all caches, and re-init DB data
+        context.getSubnetApi().reset();
 
         builder.setDirty();
         for (int i = 0; i < pages.size(); i++) {

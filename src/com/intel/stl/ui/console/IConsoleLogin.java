@@ -35,8 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:27:18  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.6  2015/08/17 18:54:27  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/05/27 14:34:51  rjtierne
+ *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
+ *  Archive Log:    - Renamed showDialog() and hideDialog() to showLogin() and hideLogin()
+ *  Archive Log:    - Added field setters/getters to the interface
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2014/10/24 14:36:48  rjtierne
  *  Archive Log:    Added consoleId parameter to showDialog() prototype
@@ -51,7 +57,7 @@
  *  Archive Log:    Initial Version
  *  Archive Log:
  *
- *  Overview: Interface for the LoginDialogView
+ *  Overview: Interface for the consoleLogin
  *
  *  @author: rjtierne
  *
@@ -60,14 +66,26 @@ package com.intel.stl.ui.console;
 
 public interface IConsoleLogin {
 
-    public void showDialog(final LoginBean loginBean, boolean newConsole,
-            int consoleId);
+    public void hideLogin();
 
-    public void hideDialog();
+    public void showLogin(final LoginBean loginBean);
+
+    public void showLogin(LoginBean loginBean, boolean newConsole, int consoleId);
 
     public void showMessage(String message);
 
     public void startProgress();
 
     public void killProgress();
+
+    public String getUserName();
+
+    public char[] getPassword();
+
+    public String getHostName();
+
+    public String getPortNum();
+
+    public void setConsoleEventListener(
+            IConsoleEventListener consoleEventListener);
 }

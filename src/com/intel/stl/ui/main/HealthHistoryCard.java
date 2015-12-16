@@ -32,10 +32,37 @@
  *
  *  File Name: HealthHistoryCard.java
  *
- *  Archive Source: 
- *
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.24  2015/09/25 20:51:38  fernande
+ *  Archive Log: PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
  *  Archive Log:
- *
+ *  Archive Log: Revision 1.23  2015/08/17 18:53:38  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.22  2015/08/11 15:05:26  jijunwan
+ *  Archive Log: PR 129917 - No update on event statistics
+ *  Archive Log: - improved to maintain history length by time. The default length is 6 hrs
+ *  Archive Log:
+ *  Archive Log: Revision 1.21  2015/08/11 14:36:51  jijunwan
+ *  Archive Log: PR 129917 - No update on event statistics
+ *  Archive Log: - Apply event subscriber on HealthHistoryCard. It will update either by event or period updating.
+ *  Archive Log: - Improved Health Trend chart to draw current data shape
+ *  Archive Log: - Improved Health Trend view to show current value immediately
+ *  Archive Log:
+ *  Archive Log: Revision 1.20  2015/06/25 20:24:56  jijunwan
+ *  Archive Log: Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log: - applied pin framework on fabric viewer and simple 'static' cards
+ *  Archive Log:
+ *  Archive Log: Revision 1.19  2015/06/09 18:37:27  jijunwan
+ *  Archive Log: PR 129069 - Incorrect Help action
+ *  Archive Log: - moved help action from view to controller
+ *  Archive Log: - only enable help button when we have HelpID
+ *  Archive Log: - fixed incorrect HelpIDs
+ *  Archive Log:
+ * 
  *  Overview: 
  *
  *  @author: jijunwan
@@ -44,12 +71,10 @@
 
 package com.intel.stl.ui.main;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Font;
 import java.text.DateFormat;
 import java.util.Date;
-
-import javax.swing.Timer;
+import java.util.Properties;
 
 import net.engio.mbassy.bus.MBassador;
 
@@ -59,7 +84,8 @@ import org.jfree.data.time.TimePeriodValues;
 import org.jfree.data.time.TimePeriodValuesCollection;
 import org.jfree.util.Log;
 
-import com.intel.stl.ui.common.BaseCardController;
+import com.intel.stl.ui.common.PinDescription.PinID;
+import com.intel.stl.ui.common.PinnableCardController;
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UIConstants;
 import com.intel.stl.ui.common.Util;
@@ -67,42 +93,25 @@ import com.intel.stl.ui.common.view.ICardListener;
 import com.intel.stl.ui.framework.IAppEvent;
 import com.intel.stl.ui.main.view.HealthHistoryView;
 import com.intel.stl.ui.model.TimedScore;
-import com.intel.stl.ui.publisher.IRefreshRateListener;
 
 /**
  * @author jijunwan
  * 
  */
 public class HealthHistoryCard extends
-        BaseCardController<ICardListener, HealthHistoryView> implements
-        IRefreshRateListener {
+        PinnableCardController<ICardListener, HealthHistoryView> {
     private final TimePeriodValues dataset;
+
+    private final TimePeriodValuesCollection timeseriescollection;
 
     private Date lastTime = null;
 
-    private Timer periodicUpdateTimer = null;
-
-    private int refreshRate = 0;
-
-    private Context context = null;
-
-    private int maxDatasetCount = 0;
+    // TODO: make this user configurable
+    private final int maxHistoryLength = 6 * 3600000; // 6 hours in ms
 
     private final double INIT_SCORE = 100.0;
 
     private double lastScore = INIT_SCORE;
-
-    private final long INIT_DELAY = 250;
-
-    private final int INIT_REPS = 4;
-
-    /**
-     * the time difference between GUI client time and FM time
-     */
-    private long timeAdjustment = 0;
-
-    // 21600 seconds in six hours.
-    private final int SIX_HR_WINDOW_SECONDS = 6 * 60 * 60;
 
     public HealthHistoryCard(HealthHistoryView view,
             MBassador<IAppEvent> eventBus) {
@@ -110,20 +119,19 @@ public class HealthHistoryCard extends
         dataset =
                 new TimePeriodValues(
                         STLConstants.K0105_HEALTH_HISTORY.getValue());
-        TimePeriodValuesCollection timeseriescollection =
-                new TimePeriodValuesCollection(dataset);
+        timeseriescollection = new TimePeriodValuesCollection(dataset);
         timeseriescollection.setXPosition(TimePeriodAnchor.START);
         view.setDataset(timeseriescollection);
-
-        HelpAction helpAction = HelpAction.getInstance();
-        helpAction.getHelpBroker().enableHelpOnButton(view.getHelpButton(),
-                helpAction.getHealthTrend(), helpAction.getHelpSet());
     }
 
-    public void updateContext(Context context) {
-        this.context = context;
-        setPeriodicUpdate();
-        initializeCard();
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.ICardController#getHelpID()
+     */
+    @Override
+    public String getHelpID() {
+        return HelpAction.getInstance().getHealthTrend();
     }
 
     /**
@@ -135,9 +143,6 @@ public class HealthHistoryCard extends
 
     @Override
     public void clear() {
-        // Exception e = new Exception();
-        // e.printStackTrace();
-
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
@@ -147,7 +152,12 @@ public class HealthHistoryCard extends
                 }
                 view.setCurrentScore(
                         STLConstants.K0039_NOT_AVAILABLE.getValue(),
-                        UIConstants.INTEL_DARK_GRAY);
+                        UIConstants.INTEL_DARK_GRAY, "");
+                if (pinView != null) {
+                    pinView.setCurrentScore(
+                            STLConstants.K0039_NOT_AVAILABLE.getValue(),
+                            UIConstants.INTEL_DARK_GRAY, "");
+                }
             }
         });
     }
@@ -159,27 +169,27 @@ public class HealthHistoryCard extends
      *            Health score can be refreshed periodically by a timer or
      *            updated asynchronously by an external event.
      */
-    public void updateHealthScore(final double score, final Date time) {
-
+    public void updateHealthScore(final double score, final Date time,
+            final String tip) {
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
-
                 lastScore = score;
-                timeAdjustment = System.currentTimeMillis() - time.getTime();
+
+                TimedScore tScore = new TimedScore(time.getTime(), score, tip);
+                view.setCurrentScore(tScore.getScoreString(),
+                        tScore.getColor(), tip);
+
                 if (lastTime == null) {
-                    lastTime = time;
-                    dataset.add(new SimpleTimePeriod(lastTime, lastTime),
+                    Date fakedLastTime = new Date(time.getTime() - 1000);
+                    dataset.add(new SimpleTimePeriod(fakedLastTime, time),
                             Double.valueOf(score));
-                }
-                if (dataset.getItemCount() == maxDatasetCount) {
-                    dataset.delete(0, 0);
+                    lastTime = time;
                 }
 
                 if (lastTime.after(time)) {
                     Log.warn("time mismatch happend lastTime=" + lastTime
-                            + " current time=" + time + " timeAdjustment="
-                            + timeAdjustment);
+                            + " current time=" + time);
                     dataset.add(new SimpleTimePeriod(lastTime, lastTime),
                             Double.valueOf(score));
                 } else {
@@ -192,14 +202,20 @@ public class HealthHistoryCard extends
                 long endTime =
                         dataset.getTimePeriod(dataset.getItemCount() - 1)
                                 .getEnd().getTime();
-
+                while (endTime - startTime > maxHistoryLength) {
+                    dataset.delete(0, 0);
+                    startTime = dataset.getTimePeriod(0).getStart().getTime();
+                }
                 String start =
                         DateFormat.getInstance().format(new Date(startTime));
                 String end = DateFormat.getInstance().format(new Date(endTime));
-
                 view.setTimeDuration(start, end);
-                TimedScore tScore = new TimedScore(time.getTime(), score);
-                view.setCurrentScore(tScore.getScoreString(), tScore.getColor());
+
+                if (pinView != null) {
+                    pinView.setTimeDuration(start, end);
+                    pinView.setCurrentScore(tScore.getScoreString(),
+                            tScore.getColor(), tScore.getTip());
+                }
             }
 
         });
@@ -215,71 +231,57 @@ public class HealthHistoryCard extends
         return this;
     }
 
-    protected void startPeriodicTimer(int rate) {
-        periodicUpdateTimer = new Timer(rate * 1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (periodicUpdateTimer != null) {
-                    updateHealthScore(lastScore,
-                            new Date(System.currentTimeMillis()));
-                }
-            }
-        });
-        periodicUpdateTimer.setRepeats(true);
-        periodicUpdateTimer.start();
-    }
-
-    protected void cleanUpPeriodicUpdateTimer() {
-        if (context != null) {
-            context.getTaskScheduler().removeListener(this);
-        }
-        if (periodicUpdateTimer != null) {
-            if (periodicUpdateTimer.isRunning()) {
-                periodicUpdateTimer.stop();
-            }
-            periodicUpdateTimer = null;
-        }
-    }
-
-    @Override
-    public void onRefreshRateChange(int newRate) {
-        refreshRate = newRate;
-        setPeriodicUpdate();
-    }
-
     @Override
     public String toString() {
         return "HealthHistoryCard ";
     }
 
-    protected void setPeriodicUpdate() {
-        cleanUpPeriodicUpdateTimer();
-        context.getTaskScheduler().addListener(this);
-        refreshRate = context.getTaskScheduler().getRefreshRate();
-
-        // dataset is sized according to the latest refresh rate to
-        // hold six hours of data.
-        if (refreshRate > 0) {
-            maxDatasetCount = SIX_HR_WINDOW_SECONDS / refreshRate;
-
-        } else {
-            maxDatasetCount = 10;
-        }
-
-        // Start periodic timer to refresh health score in case there are
-        // no asynchronous events reporting changes to the score.
-        startPeriodicTimer(refreshRate);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.common.PinnableCardController#generateArgument(java.
+     * util.Properties)
+     */
+    @Override
+    protected void generateArgument(Properties arg) {
+        // no argument
     }
 
-    // Initialize to score of 100.
-    protected void initializeCard() {
-        for (int i = 0; i < INIT_REPS; i++) {
-            updateHealthScore(INIT_SCORE, new Date(System.currentTimeMillis()));
-            try {
-                Thread.sleep(INIT_DELAY);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.PinnableCardController#createPinView()
+     */
+    @Override
+    protected HealthHistoryView createPinView() {
+        HealthHistoryView pinView =
+                new HealthHistoryView(UIConstants.H2_FONT.deriveFont(Font.BOLD));
+        pinView.setCardListener(getCardListener());
+        return pinView;
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.PinnableCardController#initPinView()
+     */
+    @Override
+    protected void initPinView() {
+        TimedScore tScore =
+                new TimedScore(System.currentTimeMillis(), lastScore);
+        pinView.setCurrentScore(tScore.getScoreString(), tScore.getColor(), "");
+        pinView.setDataset(timeseriescollection);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.PinnableCardController#getPinID()
+     */
+    @Override
+    public PinID getPinID() {
+        return PinID.HEALTH;
+    }
+
 }

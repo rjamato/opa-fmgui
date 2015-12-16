@@ -35,8 +35,51 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8.2.1  2015/08/12 15:22:09  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.22  2015/10/06 20:16:42  fernande
+ *  Archive Log:    PR130749 - FM GUI virtual fabric information doesn't match opafm.xml file. A previous fix disabled the update of most fields used in the Admin configuration editor. Restored the updating capability in those fields
+ *  Archive Log:
+ *  Archive Log:    Revision 1.21  2015/10/01 21:53:32  fernande
+ *  Archive Log:    PR130409 - [Dell]: FMGUI Admin Console login fails when switch is configured without username and password. Added ESM support
+ *  Archive Log:
+ *  Archive Log:    Revision 1.20  2015/09/28 13:53:23  fisherma
+ *  Archive Log:    PR 130425 - added cancel button to allow user to cancel out of hung or slow ssh logins.  Cancel action terminates sftp connection and closes remote ssh session.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.19  2015/09/21 20:46:57  jijunwan
+ *  Archive Log:    PR 130542 - Confusion error message on fetching conf file
+ *  Archive Log:    - improved SftpException to include file path information
+ *  Archive Log:
+ *  Archive Log:    Revision 1.18  2015/09/10 22:17:28  jijunwan
+ *  Archive Log:    PR 130409 - [Dell]: FMGUI Admin Console login fails when switch is configured without username and password
+ *  Archive Log:    - fixed typo
+ *  Archive Log:
+ *  Archive Log:    Revision 1.17  2015/09/10 20:56:50  jijunwan
+ *  Archive Log:    PR 130409 - [Dell]: FMGUI Admin Console login fails when switch is configured without username and password
+ *  Archive Log:    - improved code to better handle conf file not found
+ *  Archive Log:
+ *  Archive Log:    Revision 1.16  2015/08/17 18:49:02  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.15  2015/08/17 17:30:47  jijunwan
+ *  Archive Log:    PR 128973 - Deploy FM conf changes on all SMs
+ *  Archive Log:    - improved FmConfHelper to get ride of ILoginAssistence and deploy with password
+ *  Archive Log:    - added tmp FM conf helper that deal with conf file with temporary connection
+ *  Archive Log:    - renamed testConnection to fetchConfigFile
+ *  Archive Log:
+ *  Archive Log:    Revision 1.14  2015/08/17 14:22:50  rjtierne
+ *  Archive Log:    PR 128979 - SM Log display
+ *  Archive Log:    This is the first version of the Log Viewer which displays select lines of text from the remote SM log file. Updates include searchable raw text from file, user-defined number of lines to display, refreshing end of file, and paging. This PR is now closed and further updates can be found by referencing PR 130011 - "Enhance SM Log Viewer to include Standard and Advanced requirements".
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/07/28 18:20:25  fisherma
+ *  Archive Log:    PR 129219 - Admin page login dialog improvement.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/07/09 17:55:44  jijunwan
+ *  Archive Log:    PR 129509 - Shall refresh UI after failover completed
+ *  Archive Log:    - added reset method to ManagermentApi so we can reset after failover completed
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/07/01 21:59:58  jijunwan
+ *  Archive Log:    PR 129442 - login failed with FileNotFoundException
+ *  Archive Log:    - Changed all JSch creation on backend to use this utility method
  *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/04/29 22:02:10  jijunwan
  *  Archive Log:    changed DefaulLoginAssistant to be DOCUMENT_MODAL
@@ -77,6 +120,10 @@
 
 package com.intel.stl.api.management;
 
+import static com.intel.stl.api.subnet.HostType.ESM;
+import static com.intel.stl.api.subnet.HostType.HSM;
+import static com.intel.stl.api.subnet.HostType.UNKNOWN;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -84,21 +131,25 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.swing.JOptionPane;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.intel.stl.api.DefaultLoginAssistant;
-import com.intel.stl.api.ILoginAssistant;
+import com.intel.stl.api.StringUtils;
+import com.intel.stl.api.Utils;
 import com.intel.stl.api.subnet.HostInfo;
+import com.intel.stl.api.subnet.HostType;
 import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.common.STLMessages;
+import com.intel.stl.fecdriver.network.ssh.JSchChannelType;
+import com.intel.stl.fecdriver.network.ssh.impl.JSchSession;
+import com.intel.stl.fecdriver.network.ssh.impl.JSchSessionFactory;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpException;
 
 /**
  * This class helps us get and deploy FM conf file. It also can help us restart
@@ -119,17 +170,13 @@ public class FMConfHelper {
     private static Map<SubnetDescription, FMConfHelper> helperMap =
             new HashMap<SubnetDescription, FMConfHelper>();
 
-    private final static String SM_DIR = "/etc/sysconfig/";
+    protected final static String CONF = "opafm.xml";
 
-    private final static String CONF = "opafm.xml";
+    protected final static int NUM_BACKUPS = 16;
 
-    private final static int NUM_BACKUPS = 16;
+    protected final SubnetDescription subnet;
 
-    private final SubnetDescription subnet;
-
-    private ILoginAssistant loginAssistant;
-
-    private File tmpConfFile;
+    protected File tmpConfFile;
 
     public static FMConfHelper getInstance(SubnetDescription subnet) {
         FMConfHelper helper = helperMap.get(subnet);
@@ -145,95 +192,26 @@ public class FMConfHelper {
      * 
      * @param subnet
      */
-    private FMConfHelper(SubnetDescription subnet) {
+    protected FMConfHelper(SubnetDescription subnet) {
         super();
         this.subnet = subnet;
-    }
-
-    /**
-     * @param loginAssistant
-     *            the loginAssistant to set
-     */
-    public void setLoginAssistant(ILoginAssistant loginAssistant) {
-        this.loginAssistant = loginAssistant;
-    }
-
-    public ILoginAssistant getLoginAssistant() {
-        if (loginAssistant == null) {
-            loginAssistant =
-                    new DefaultLoginAssistant(null, subnet.getCurrentFE()
-                            .getHost(), subnet.getCurrentUser());
-        }
-        return loginAssistant;
     }
 
     public String getHost() {
         return subnet.getCurrentFE().getHost();
     }
 
+    public synchronized void reset() {
+        tmpConfFile = null;
+    }
+
     /**
      * 
-     * <i>Description:</i> return the local copy of FM opafm.xml file. If no
-     * local file exist or <code>force</code> is set to true, get a copy of
-     * opafm.xml from SM node.
+     * <i>Description:</i> return the local copy of FM opafm.xml file.
      * 
-     * @param force
-     *            indicate whether directly get a copy from SM node
      * @return the local file of the opafm.xml
-     * @throws Exception
      */
-    public synchronized File getConfFile(boolean force) throws Exception {
-        if (tmpConfFile == null || force) {
-            HostInfo hostInfo = subnet.getCurrentFE();
-            String host = hostInfo.getHost();
-            ILoginAssistant loginAssistant = getLoginAssistant();
-            loginAssistant.init(host, subnet.getCurrentUser());
-            loginAssistant.getOption(null);
-
-            loginAssistant.startProgress();
-            try {
-                loginAssistant.reportProgress(STLMessages.STL61015_CONNECTING
-                        .getDescription());
-                String userName = loginAssistant.getUserName();
-                char[] password = loginAssistant.getPassword();
-                int port = loginAssistant.getPort();
-                JSch jsch = new JSch();
-                Session session = jsch.getSession(userName, host, port);
-                session.setPassword(new String(password));
-                Properties config = new java.util.Properties();
-                config.put("StrictHostKeyChecking", "no");
-                session.setConfig(config);
-                session.connect();
-
-                loginAssistant.reportProgress(STLMessages.STL61016_FETCHING
-                        .getDescription());
-                tmpConfFile = File.createTempFile("~FV", null);
-                tmpConfFile.deleteOnExit();
-                try {
-                    // download file
-                    Channel channel = session.openChannel("sftp");
-                    channel.connect();
-                    try {
-                        ChannelSftp channelSftp = (ChannelSftp) channel;
-                        channelSftp.cd(SM_DIR);
-                        channelSftp.get(CONF, tmpConfFile.getAbsolutePath());
-                        log.info("Download " + host + ":" + CONF + " to "
-                                + tmpConfFile.getAbsolutePath() + " (size="
-                                + tmpConfFile.length() + ")");
-                        subnet.setCurrentUser(loginAssistant.getUserName());
-                    } finally {
-                        channel.disconnect();
-                    }
-                } finally {
-                    session.disconnect();
-                }
-            } finally {
-                loginAssistant.stopProgress();
-                loginAssistant.close();
-            }
-
-        }
-
+    public synchronized File getConfFile() {
         return tmpConfFile;
     }
 
@@ -244,74 +222,96 @@ public class FMConfHelper {
      * 2) make a copy of FM opafm.xml 3) replace FM opafm.xml with local
      * opafm.xml
      */
-    public synchronized void deployConf() throws Exception {
+    public synchronized void deployConf(char[] password) throws Exception {
         if (tmpConfFile == null) {
             return;
         }
         HostInfo hostInfo = subnet.getCurrentFE();
+        HostType hostType = hostInfo.getHostType();
+        Session session = createSession(hostInfo, password);
         String host = hostInfo.getHost();
-        ILoginAssistant loginAssistant = getLoginAssistant();
-        loginAssistant.init(host, subnet.getCurrentUser());
-        int option = loginAssistant.getOption(null);
-        if (option == JOptionPane.CANCEL_OPTION) {
-            loginAssistant.close();
-            return;
-        }
-
-        loginAssistant.startProgress();
+        String userName = hostInfo.getSshUserName();
+        session.connect();
         try {
-            loginAssistant.reportProgress(STLMessages.STL61015_CONNECTING
-                    .getDescription());
-            String userName = loginAssistant.getUserName();
-            char[] password = loginAssistant.getPassword();
-            JSch jsch = new JSch();
-            Session session = jsch.getSession(userName, host, 22);
-            session.setPassword(new String(password));
-            Properties config = new java.util.Properties();
-            config.put("StrictHostKeyChecking", "no");
-            session.setConfig(config);
-            session.connect();
-
-            loginAssistant.reportProgress(STLMessages.STL61017_DEPLOYING
-                    .getDescription());
-            try {
-                // upload file
-                Channel channel = session.openChannel("sftp");
-                channel.connect();
-                try {
-                    ChannelSftp channelSftp = (ChannelSftp) channel;
-                    channelSftp.cd(SM_DIR);
-                    log.info("Upload " + tmpConfFile.getAbsolutePath() + " to "
-                            + host + ":" + tmpConfFile.getName());
-                    channelSftp.put(tmpConfFile.getAbsolutePath(),
-                            tmpConfFile.getName());
-                } finally {
-                    channel.disconnect();
-                }
-
-                // rename file
-                String cmd = getShellScript();
-                log.info("execute command @ " + host + " \"" + cmd + "\"");
-                channel = session.openChannel("exec");
-                try {
-                    ((ChannelExec) channel).setCommand(cmd);
-                    channel.setInputStream(null);
-                    ((ChannelExec) channel).setErrStream(System.err);
-                    InputStream in = channel.getInputStream();
-                    channel.connect();
-                    waitForExecution(in, channel);
-                    subnet.setCurrentUser(loginAssistant.getUserName());
-                } finally {
-                    channel.disconnect();
-                }
-
-            } finally {
-                session.disconnect();
+            switch (hostType) {
+                case HSM:
+                    deployHSM(host, userName, session);
+                    break;
+                case ESM:
+                    deployESM(session);
+                    break;
+                case UNKNOWN:
+                    break;
             }
         } finally {
-            loginAssistant.stopProgress();
-            loginAssistant.close();
+            session.disconnect();
         }
+
+    }
+
+    private void deployHSM(String host, String userName, Session session)
+            throws JSchException, SftpException, IOException {
+        // upload file
+        uploadFile(tmpConfFile.getAbsolutePath(), HSM.getConfigLocation(),
+                tmpConfFile.getName(), session);
+        // rename file
+        String cmd = getShellScript();
+        log.info("execute command @ " + host + " \"" + cmd + "\"");
+        Channel channel = session.openChannel("exec");
+        try {
+            ((ChannelExec) channel).setCommand(cmd);
+            channel.setInputStream(null);
+            ((ChannelExec) channel).setErrStream(System.err);
+            InputStream in = channel.getInputStream();
+            channel.connect();
+            waitForExecution(in, channel);
+            subnet.setCurrentUser(userName);
+        } finally {
+            channel.disconnect();
+        }
+    }
+
+    private void deployESM(Session session) throws SftpException, JSchException {
+        // upload file (there is no way to make a copy of the original
+        // configuration file in ESM, so we override it)
+        uploadFile(tmpConfFile.getAbsolutePath(), ESM.getConfigLocation(),
+                CONF, session);
+    }
+
+    private Session createSession(HostInfo hostInfo, char[] password)
+            throws JSchException {
+        String host = hostInfo.getHost();
+        String userName = hostInfo.getSshUserName();
+        int port = hostInfo.getSshPortNum();
+
+        JSch jsch = Utils.createJSch();
+        Session session = jsch.getSession(userName, host, port);
+        session.setPassword(new String(password));
+        Properties config = new Properties();
+        config.put("StrictHostKeyChecking", "no");
+        session.setConfig(config);
+        return session;
+    }
+
+    private void uploadFile(String localFile, String remoteFolder,
+            String remoteFile, Session session) throws SftpException,
+            JSchException {
+        // upload file
+        Channel channel =
+                session.openChannel(JSchChannelType.SFTP_CHANNEL.getValue());
+        String host = session.getHost();
+        channel.connect();
+        try {
+            ChannelSftp channelSftp = (ChannelSftp) channel;
+            // channelSftp.cd(hostType.getConfigLocation());
+            log.info("Upload {} to {}:{}{}", localFile, host, remoteFolder,
+                    remoteFile);
+            channelSftp.cd(remoteFolder);
+            channelSftp.put(localFile, remoteFile);
+        } finally {
+            channel.disconnect();
+        }
+
     }
 
     public synchronized void restartFM() {
@@ -321,7 +321,7 @@ public class FMConfHelper {
     }
 
     protected String getShellScript() {
-        return "cd " + SM_DIR + "; cp " + CONF + " " + CONF
+        return "cd " + HSM.getConfigLocation() + "; cp " + CONF + " " + CONF
                 + ".`date +%Y%m%d%H%M%S-%3N`" + ".fv; mv "
                 + tmpConfFile.getName() + " " + CONF + "; chmod 755 " + CONF
                 + "; rm -f `ls -t opafm.xml.??????????????-???.fv | sed 1,"
@@ -351,4 +351,88 @@ public class FMConfHelper {
             }
         }
     }
+
+    public boolean checkConfigFilePresense() {
+        if (tmpConfFile != null && tmpConfFile.exists()) {
+            return true;
+        }
+        return false;
+    }
+
+    public void fetchConfigFile(char[] password) throws Exception {
+        HostInfo hostInfo = subnet.getCurrentFE();
+        String hostName = hostInfo.getHost();
+
+        String userName = hostInfo.getSshUserName();
+
+        JSchSession jschSession =
+                JSchSessionFactory.getSession(subnet, false, password);
+
+        File tmpFile = File.createTempFile("~FV", null);
+        tmpFile.deleteOnExit();
+        ChannelSftp sftpChannel = jschSession.getSFtpChannel();
+        sftpChannel.connect();
+        HostType hostType = determineHostType(sftpChannel);
+        hostInfo.setHostType(hostType);
+        try {
+            sftpChannel.get(CONF, tmpFile.getAbsolutePath());
+            log.info("Download {}:{}{} to {} (size={})", hostName,
+                    hostType.getConfigLocation(), CONF,
+                    tmpFile.getAbsolutePath(), tmpFile.length());
+            subnet.setCurrentUser(userName);
+            tmpConfFile = tmpFile;
+        } catch (SftpException e) {
+            throw new SftpException(e.id,
+                    STLMessages.STL61020_SFTP_FAILURE.getDescription(
+                            hostType.getConfigLocation() + CONF,
+                            StringUtils.getErrorMessage(e)), e.getCause());
+        } finally {
+            sftpChannel.disconnect();
+        }
+    }
+
+    /*
+     * This method is called by the ManagementApi to terminate any open
+     * connections.
+     */
+    public void cancelFetchConfigFile(SubnetDescription subnet) {
+        // See if there are any in-progress or open connections and close them
+        JSchSession subnetSession =
+                JSchSessionFactory.getSessionFromMap(subnet);
+        if (subnetSession != null) {
+
+            Channel sftp = null;
+            try {
+                sftp = subnetSession.getSFtpChannel();
+                if (sftp != null) {
+                    sftp.disconnect();
+                }
+            } catch (JSchException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } finally {
+                // Close session if user canceled the login
+                subnetSession.disconnect();
+            }
+
+        } else {
+            log.info("cancelFetchConfigFile(): subnetSession is not in the map yet");
+        }
+
+    }
+
+    protected HostType determineHostType(ChannelSftp sftpChannel) {
+        HostType hostType = UNKNOWN;
+        HostType[] hostTypes = HostType.values();
+        for (int i = 0; i < hostTypes.length; i++) {
+            try {
+                sftpChannel.cd(hostTypes[i].getConfigLocation());
+                hostType = hostTypes[i];
+                break;
+            } catch (SftpException e) {
+            }
+        }
+        return hostType;
+    }
+
 }

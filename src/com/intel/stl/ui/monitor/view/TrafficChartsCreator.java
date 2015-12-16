@@ -35,10 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.2  2015/08/12 15:27:16  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.7  2015/08/17 18:54:25  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.5.2.1  2015/05/17 18:30:44  jijunwan
+ *  Archive Log:    Revision 1.6  2015/05/14 17:43:09  jijunwan
  *  Archive Log:    PR 127700 - Delta data on host performance display is accumulating
  *  Archive Log:    - corrected delta value calculation
  *  Archive Log:    - changed to display data/pkts rate rather than delta on chart and table
@@ -103,8 +104,7 @@ public class TrafficChartsCreator implements IChartCreator {
     @Override
     public JFreeChart createChart(String name, Dataset dataset) {
         if (STLConstants.K0828_REC_PACKETS_RATE.getValue().equals(name)
-                || STLConstants.K0829_TRAN_PACKETS_RATE.getValue()
-                        .equals(name)) {
+                || STLConstants.K0829_TRAN_PACKETS_RATE.getValue().equals(name)) {
             return getPacketsRateChart(dataset);
         } else if (STLConstants.K0830_REC_DATA_RATE.getValue().equals(name)
                 || STLConstants.K0831_TRAN_DATA_RATE.getValue().equals(name)) {
@@ -117,8 +117,8 @@ public class TrafficChartsCreator implements IChartCreator {
         JFreeChart chart =
                 ComponentFactory.createXYAreaChart(
                         STLConstants.K0035_TIME.getValue(),
-                        STLConstants.K0750_PPS.getValue(),
-                        (XYDataset) dataset, false);
+                        STLConstants.K0750_PPS.getValue(), (XYDataset) dataset,
+                        false);
 
         NumberAxis rangeAxis = (NumberAxis) chart.getXYPlot().getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
@@ -130,8 +130,8 @@ public class TrafficChartsCreator implements IChartCreator {
         JFreeChart chart =
                 ComponentFactory.createXYAreaChart(
                         STLConstants.K0035_TIME.getValue(),
-                        STLConstants.K0703_MB_PER_SEC.getValue(), (XYDataset) dataset,
-                        false);
+                        STLConstants.K0703_MB_PER_SEC.getValue(),
+                        (XYDataset) dataset, false);
 
         NumberAxis rangeAxis = (NumberAxis) chart.getXYPlot().getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());

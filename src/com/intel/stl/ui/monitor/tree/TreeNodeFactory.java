@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.1  2015/08/12 15:27:10  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.7  2015/08/17 18:54:19  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/06/22 13:11:52  jypak
+ *  Archive Log:    PR 128980 - Be able to search devices by name or lid.
+ *  Archive Log:    New feature added to enable search devices by name, lid or node guid. The search results are displayed as a tree and when a result node from the tree is selected, original tree is expanded and the corresponding node is highlighted.
  *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/02/05 21:21:44  jijunwan
  *  Archive Log:    fixed NPE issues found by klocwork
@@ -104,13 +109,13 @@ public class TreeNodeFactory {
         // Create the appropriate node depending on the type
         if (type == NodeType.HFI) {
             return new FVResourceNode(bean.getNodeDesc(), TreeNodeType.HFI,
-                    bean.getLid());
+                    bean.getLid(), bean.getNodeInfo().getNodeGUID());
         } else if (type == NodeType.SWITCH) {
             return new FVResourceNode(bean.getNodeDesc(), TreeNodeType.SWITCH,
-                    bean.getLid());
+                    bean.getLid(), bean.getNodeInfo().getNodeGUID());
         } else if (type == NodeType.ROUTER) {
             return new FVResourceNode(bean.getNodeDesc(), TreeNodeType.ROUTER,
-                    bean.getLid());
+                    bean.getLid(), bean.getNodeInfo().getNodeGUID());
         } else {
             throw new RuntimeException("Unknown node type " + type);
         }

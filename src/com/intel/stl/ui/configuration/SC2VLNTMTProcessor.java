@@ -24,21 +24,34 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ * 
  *  Functional Group: Fabric Viewer Application
- *
+ * 
  *  File Name: SC2VLNTMTProcessor.java
- *
- *
- *  Overview: 
- *
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.4  2015/08/17 18:53:50  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.3  2015/06/10 21:59:27  jijunwan
+ *  Archive Log: clean up comment
+ *  Archive Log:
+ *  Archive Log: Revision 1.2  2015/06/10 19:58:54  jijunwan
+ *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
  *  @author: jypak
- *
+ * 
  ******************************************************************************/
-
 package com.intel.stl.ui.configuration;
 
 import static com.intel.stl.ui.model.DeviceProperty.SC;
@@ -59,12 +72,8 @@ public class SC2VLNTMTProcessor extends BaseCategoryProcessor {
     @Override
     public void process(ICategoryProcessorContext context,
             DevicePropertyCategory category) {
-        // FVResourceNode node = context.getResourceNode();
         PortRecordBean portBean = context.getPort();
         ISubnetApi subnetApi = context.getContext().getSubnetApi();
-        // int lid = node.getId();
-        // TODO: What lid? Is this correct Lid? Isn't it supposed to be
-        // portBean.getEndPortLID()?
 
         // For node type Switch and port 0, don't process and display
         // N/A screen.

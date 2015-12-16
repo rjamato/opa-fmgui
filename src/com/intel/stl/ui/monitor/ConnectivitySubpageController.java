@@ -35,8 +35,28 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.23.2.1  2015/08/12 15:26:58  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.29  2015/09/30 13:26:50  fisherma
+ *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
+ *  Archive Log:
+ *  Archive Log:    Revision 1.28  2015/08/18 14:29:42  jijunwan
+ *  Archive Log:    PR 130033 - Fix critical issues found by Klocwork or FindBugs
+ *  Archive Log:    - fixed null pointer issue
+ *  Archive Log:
+ *  Archive Log:    Revision 1.27  2015/08/17 18:53:41  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.26  2015/08/05 04:04:47  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on Performance Page
+ *  Archive Log:
+ *  Archive Log:    Revision 1.25  2015/07/17 15:42:13  rjtierne
+ *  Archive Log:    PR 129549 - On connectivity table, clicking on cable info for an HFI results in an error
+ *  Archive Log:    In showNode(), removed call to setLastNode in cableInfoPopupController - no longer used
+ *  Archive Log:
+ *  Archive Log:    Revision 1.24  2015/07/13 21:56:37  rjtierne
+ *  Archive Log:    PR 129355 - Ability to click on cables to get cable info
+ *  Archive Log:    Initialized the CableInfoPopup Controller and View
  *  Archive Log:
  *  Archive Log:    Revision 1.23  2015/04/03 21:06:27  jijunwan
  *  Archive Log:    Introduced canExit to IPageController, and canPageChange to IPageListener to allow us do some checking before we switch to another page. Fixed the following bugs
@@ -134,20 +154,28 @@ import javax.swing.ImageIcon;
 
 import net.engio.mbassy.bus.MBassador;
 
+import com.intel.stl.api.subnet.NodeType;
 import com.intel.stl.ui.common.IPerfSubpageController;
 import com.intel.stl.ui.common.IProgressObserver;
 import com.intel.stl.ui.common.PageWeight;
 import com.intel.stl.ui.common.STLConstants;
-import com.intel.stl.ui.event.JumpDestination;
-import com.intel.stl.ui.event.PortSelectedEvent;
+import com.intel.stl.ui.common.UndoableJumpEvent;
+import com.intel.stl.ui.event.JumpToEvent;
+import com.intel.stl.ui.event.NodesSelectedEvent;
+import com.intel.stl.ui.event.PortsSelectedEvent;
 import com.intel.stl.ui.framework.IAppEvent;
 import com.intel.stl.ui.main.Context;
+import com.intel.stl.ui.main.UndoHandler;
 import com.intel.stl.ui.model.ConnectivityTableModel;
 import com.intel.stl.ui.monitor.tree.FVResourceNode;
+import com.intel.stl.ui.monitor.view.CableInfoPopupView;
 import com.intel.stl.ui.monitor.view.ConnectivitySubpageView;
 
 public class ConnectivitySubpageController implements IPerfSubpageController,
         IPortSelectionListener {
+    private UndoHandler undoHandler;
+
+    private final String origin = PerformancePage.NAME;
 
     private final ConnectivityTableController tableController;
 
@@ -155,16 +183,24 @@ public class ConnectivitySubpageController implements IPerfSubpageController,
 
     private final MBassador<IAppEvent> eventBus;
 
-    private FVResourceNode lastNode;
-
     private PerformanceTreeController parentController;
+
+    private final CableInfoPopupController cableInfoPopupController;
+
+    private final CableInfoPopupView cableInfoPopupView;
 
     public ConnectivitySubpageController(
             ConnectivityTableModel connectTableModel,
             ConnectivitySubpageView pSubpageView, MBassador<IAppEvent> eventBus) {
+
         tableController =
                 new ConnectivityTableController(connectTableModel,
                         pSubpageView.getTable());
+        cableInfoPopupView = new CableInfoPopupView(pSubpageView);
+        pSubpageView.setCableInfoPopupView(cableInfoPopupView);
+        cableInfoPopupController =
+                new CableInfoPopupController(cableInfoPopupView);
+        cableInfoPopupView.setCableInfoListener(cableInfoPopupController);
         view = pSubpageView;
         view.setPortSelectionListener(this);
         this.eventBus = eventBus;
@@ -172,7 +208,13 @@ public class ConnectivitySubpageController implements IPerfSubpageController,
 
     @Override
     public void setContext(Context context, IProgressObserver observer) {
-        tableController.setContext(context, observer);
+        if (context != null) {
+            tableController.setContext(context, observer);
+            cableInfoPopupController.setContext(context, observer);
+            if (context.getController() != null) {
+                undoHandler = context.getController().getUndoHandler();
+            }
+        }
     }
 
     /*
@@ -215,10 +257,6 @@ public class ConnectivitySubpageController implements IPerfSubpageController,
 
     @Override
     public void showNode(FVResourceNode node, IProgressObserver observer) {
-        if (!node.equals(lastNode)) {
-            clear();
-            lastNode = node;
-        }
         switch (node.getType()) {
             case SWITCH:
                 processSwitch(node, observer);
@@ -253,7 +291,7 @@ public class ConnectivitySubpageController implements IPerfSubpageController,
     }
 
     protected void processSwitch(FVResourceNode node, IProgressObserver observer) {
-        Vector<FVResourceNode> children = node.getChildren();
+        Vector<FVResourceNode> children = node.getVisibleChildren();
         if (children.size() > 1) {
             short[] ports = new short[children.size() - 1];
             for (int i = 1; i < children.size(); i++) {
@@ -266,7 +304,7 @@ public class ConnectivitySubpageController implements IPerfSubpageController,
     }
 
     protected void processHFI(FVResourceNode node, IProgressObserver observer) {
-        Vector<FVResourceNode> children = node.getChildren();
+        Vector<FVResourceNode> children = node.getVisibleChildren();
         if (children.size() > 0) {
             short[] ports = new short[children.size()];
             for (int i = 0; i < children.size(); i++) {
@@ -330,13 +368,35 @@ public class ConnectivitySubpageController implements IPerfSubpageController,
      * (non-Javadoc)
      * 
      * @see com.intel.stl.ui.monitor.IPortSelectionListener#onJumpToPort(int,
-     * com.intel.stl.ui.event.JumpDestination)
+     * java.lang.String)
      */
     @Override
-    public void onJumpToPort(int lid, short portNum, JumpDestination destination) {
+    public void onJumpToPort(int lid, short portNum, String destination) {
         if (eventBus != null) {
-            PortSelectedEvent pse =
-                    new PortSelectedEvent(lid, portNum, this, destination);
+            PortsSelectedEvent pse =
+                    new PortsSelectedEvent(lid, portNum, this, destination);
+
+            if (undoHandler != null && !undoHandler.isInProgress()) {
+                JumpToEvent oldSel = null;
+                FVResourceNode node = parentController.getCurrentNode();
+                if (node.isNode()) {
+                    NodeType type = TreeNodeType.getNodeType(node.getType());
+                    oldSel =
+                            new NodesSelectedEvent(node.getId(), type, this,
+                                    origin);
+                } else if (node.isPort()) {
+                    oldSel =
+                            new PortsSelectedEvent(node.getParent().getId(),
+                                    (short) node.getId(), this, origin);
+                } else {
+                    // shouldn't happen
+                    throw new RuntimeException("Unsupported node " + node);
+                }
+                UndoableJumpEvent undoSel =
+                        new UndoableJumpEvent(eventBus, oldSel, pse);
+                undoHandler.addUndoAction(undoSel);
+            }
+
             eventBus.publish(pse);
         }
     }

@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:21:53  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/08/17 18:49:22  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/05/26 15:37:20  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/03/16 17:39:14  fernande
  *  Archive Log:    STLConnection lifecycle support. STLConnections can now be reused and temporary connections are not cached and their socket is closed after they are logically closed. Changed SubnetDescription in support of failover to have a list of HostInfo objects instead of just info for one host.
@@ -54,9 +58,10 @@
 package com.intel.stl.fecdriver;
 
 import com.intel.stl.api.subnet.SubnetDescription;
+import com.intel.stl.fecdriver.session.ISession;
 
 public interface IConnectionFactory {
 
-    IConnection createConnection(SubnetDescription subnet);
+    ISession createConnection(SubnetDescription subnet);
 
 }

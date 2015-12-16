@@ -2,7 +2,7 @@ Introduciton
 
 This README file contains instructions to build the Intel OPA Fabric Manager GUI 
 jar file from source. However, you should be aware that the FM GUI jar 
-distributed by Intel is signed but this build process does sign the generated jar 
+distributed by Intel is signed but this build process does not sign the generated jar 
 and a CA certificate is not distributed with the source. Distributing the 
 generated jar will result in user machines not being able to verify the origin 
 of the jar file.
@@ -44,26 +44,18 @@ Fabric Management information. The main package for this component is:
 com.intel.stl.ui
 
 Build Requirements
+Gradle
+The Fabric Manager GUI build requires Gradle 2.9.  Gradle is an open 
+source tool used for dependency management and build.  It can be
+downloaded from http://gradle.org 
 
 Java Development Kit
 The Fabric Manager GUI build requires a Java Development Kit (JDK) 7. 
 The JDK 7 binaries can be downloaded from Oracle's Java SE Downloads site.
 http://www.oracle.com/technetwork/java/javase/downloads/index.html
-You should always set the environment variable OPA_JAVA to the 
-location of the JDK installation; this is the pathname of the folder that 
-contains folders bin, lib, and include. 
-If you don't set OPA_JAVA, the build process will attempt to use the 
-default JDK in the system, if available.
-
-Ant
-The Fabric Manager GUI build also requires Apache Ant 1.9. 
-The Ant tool is available from the Apache Ant Project Binary 
-Distributions download site. 
-http://ant.apache.org/bindownload.cgi 
-Follow the installation instructions available in the online 
-Ant manual.
-http://ant.apache.org/manual/index.html
-and always make sure ant is in in your PATH.
+You should set the environment variable JAVA_HOME to the location of the JDK
+installation; this is the pathname of the folder that contains folders bin,
+lib and include.
 
 Building the Jar
 
@@ -74,12 +66,17 @@ Open a terminal/command window at the location where you unzipped
 the FM GUI distribution source. We will refer to this location as FMGUI_SRC
 Start the build process by entering the following command:
 
-    ant
+	gradle copyDeps build
 
 Wait for the successful completion of the build process:
 
     BUILD SUCCESSFUL
     Total time: n seconds
+
+The build will produce the fmgui.jar file which will appear in {FMGUI_SRC} 
+directory.  The build will also download the necessary compile and runtime
+dependecies and copy them into the {FMGUI_SRC}/lib directory to make them
+available for the FM GUI application during runtime.
 
 Type the following command to start the application:
 

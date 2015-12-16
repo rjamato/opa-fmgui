@@ -35,8 +35,16 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:26:38  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.7  2015/09/25 20:53:37  fernande
+ *  Archive Log:    PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/09/14 19:04:33  jijunwan
+ *  Archive Log:    PR 130229 - The text component of all editable combo boxes should provide validation of the input
+ *  Archive Log:    - added exception check just in case
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/08/17 18:53:46  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/04/02 17:03:59  jypak
  *  Archive Log:    Null checks added.
@@ -80,9 +88,16 @@ public class UserPreference {
      * 
      * @param properties
      */
-    public UserPreference(Properties properties) {
-        super();
-        this.properties = properties;
+    public UserPreference(UserSettings userSettings) {
+        Properties userPrefs = new Properties();
+        if (userSettings != null) {
+            userPrefs = userSettings.getUserPreference();
+        }
+        this.properties = userPrefs;
+    }
+
+    public UserPreference(Properties userPrefs) {
+        this.properties = userPrefs;
     }
 
     public int getRefreshRate() {
@@ -91,10 +106,7 @@ public class UserPreference {
 
     public TimeUnit getRefreshRateUnit() {
         String name = UserSettings.PROPERTY_REFRESH_RATE_UNITS;
-        String str = null;
-        if (properties != null) {
-            str = properties.getProperty(name);
-        }
+        String str = properties.getProperty(name);
         if (str != null) {
             return TimeUnit.valueOf(str.toUpperCase());
         } else {
@@ -117,13 +129,31 @@ public class UserPreference {
         return getInt(UserSettings.PROPERTY_NUM_WORST_NODES);
     }
 
-    private int getInt(String name) {
-        String str = null;
-        if (properties != null) {
-            str = properties.getProperty(name);
-        }
+    public int getWeightForHealthScoreAttribute(HealthScoreAttribute attribute) {
+        int weight = 0;
+        String str = properties.getProperty(attribute.getPropertiesKey());
         if (str != null) {
-            return Integer.valueOf(str);
+            try {
+                weight = Integer.valueOf(str);
+            } catch (NumberFormatException nfe) {
+                weight = attribute.getDefaultWeight();
+            }
+        } else {
+            weight = attribute.getDefaultWeight();
+        }
+        return weight;
+    }
+
+    private int getInt(String name) {
+        String str = properties.getProperty(name);
+        if (str != null) {
+            try {
+                return Integer.valueOf(str);
+            } catch (NumberFormatException nfe) {
+                // shouldn't happen
+                nfe.printStackTrace();
+                return -1;
+            }
         } else {
             throw new IllegalArgumentException("Counldn't find property for '"
                     + name + "'");

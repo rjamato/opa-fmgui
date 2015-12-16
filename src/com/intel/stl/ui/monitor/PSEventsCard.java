@@ -35,8 +35,19 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.12.2.1  2015/08/12 15:26:58  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.15  2015/08/17 18:53:41  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.14  2015/08/11 15:05:25  jijunwan
+ *  Archive Log:    PR 129917 - No update on event statistics
+ *  Archive Log:    - improved to maintain history length by time. The default length is 6 hrs
+ *  Archive Log:
+ *  Archive Log:    Revision 1.13  2015/06/09 18:37:21  jijunwan
+ *  Archive Log:    PR 129069 - Incorrect Help action
+ *  Archive Log:    - moved help action from view to controller
+ *  Archive Log:    - only enable help button when we have HelpID
+ *  Archive Log:    - fixed incorrect HelpIDs
  *  Archive Log:
  *  Archive Log:    Revision 1.12  2015/03/10 18:43:12  jypak
  *  Archive Log:    JavaHelp System introduced to enable online help.
@@ -116,7 +127,8 @@ public class PSEventsCard extends
 
     private final DefaultPieDataset stateDataset;
 
-    private final int maxDataPoints = 10;
+    // TODO: make this user configurable
+    private final int maxHistoryLength = 6 * 3600000; // 6 hours in ms
 
     public PSEventsCard(PSEventsCardView view, MBassador<IAppEvent> eventBus) {
         super(view, eventBus);
@@ -134,10 +146,16 @@ public class PSEventsCard extends
 
         trendDataset = new TimeTableXYDataset();
         view.setTrendDataset(trendDataset, NoticeSeverityViz.colors);
+    }
 
-        HelpAction helpAction = HelpAction.getInstance();
-        helpAction.getHelpBroker().enableHelpOnButton(view.getHelpButton(),
-                helpAction.getEvents(), helpAction.getHelpSet());
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.ICardController#getHelpID()
+     */
+    @Override
+    public String getHelpID() {
+        return HelpAction.getInstance().getEvents();
     }
 
     /**
@@ -156,10 +174,28 @@ public class PSEventsCard extends
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
-                boolean needDelete =
-                        trendDataset.getItemCount() > maxDataPoints;
                 int sum = 0;
                 trendDataset.setNotify(false);
+
+                if (trendDataset.getItemCount() > 0) {
+                    long startTime =
+                            trendDataset.getTimePeriod(0).getStart().getTime();
+                    long endTime =
+                            trendDataset
+                                    .getTimePeriod(
+                                            trendDataset.getItemCount() - 1)
+                                    .getEnd().getTime();
+                    while (endTime - startTime > maxHistoryLength) {
+                        for (int i = 0; i < counts.length - 1; i++) {
+                            trendDataset.remove(trendDataset.getTimePeriod(0),
+                                    items[i], false);
+                        }
+                        startTime =
+                                trendDataset.getTimePeriod(0).getStart()
+                                        .getTime();
+                    }
+                }
+
                 for (int i = 0; i < counts.length; i++) {
                     if (i < counts.length - 1) {
                         Integer count = states.get(items[i].getSeverity());
@@ -167,10 +203,6 @@ public class PSEventsCard extends
                         sum += counts[i];
                         trendDataset.add(new Second(date), counts[i], items[i],
                                 false);
-                        if (needDelete) {
-                            trendDataset.remove(trendDataset.getTimePeriod(0),
-                                    items[i], true);
-                        }
                         stateDataset.setValue(items[i].getName(), counts[i]);
                     } else {
                         counts[i] = total - sum;

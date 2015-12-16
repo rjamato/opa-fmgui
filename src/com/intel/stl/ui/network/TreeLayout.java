@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.19.2.1  2015/08/12 15:26:50  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.21  2015/08/17 18:54:00  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.20  2015/05/07 14:18:40  jypak
+ *  Archive Log:    PR 128564 - Topology Tree synchronization issue:
+ *  Archive Log:    Null check the context before update in the TopologyTreeController. Other safe guard code added to avoid potential synchronization issue.
  *  Archive Log:
  *  Archive Log:    Revision 1.19  2015/04/28 14:00:34  jijunwan
  *  Archive Log:    1) improved topology viz to use TopGraph copy for outline display. This will avoid graph and outline views share internal graph view that may cause sync issues.
@@ -335,6 +340,11 @@ public class TreeLayout extends mxGraphLayout {
     }
 
     protected mxRectangle calculateSize(ICancelIndicator cancelIndicator) {
+
+        if (model == null) {
+            return null;
+        }
+
         int numColumns = model.getMaxWidth();
         double width =
                 numColumns * (GraphBuilder.SWITCH_SIZE + intraCellSpacing)
@@ -405,6 +415,7 @@ public class TreeLayout extends mxGraphLayout {
                 if (cell == null) {
                     System.out.println("Couldn't find vertex lid="
                             + rank.get(j));
+                    continue;
                 } else {
                     node = (GraphNode) cell.getValue();
                 }
@@ -414,7 +425,10 @@ public class TreeLayout extends mxGraphLayout {
                         x += r;
                     }
                     vertex = topGraph.getVertex(node.getLid());
+                } else {
+                    continue;
                 }
+
                 if (isVertexMovable(vertex)) {
                     setVertexLocation(vertex, x, y);
                 }

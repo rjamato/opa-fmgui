@@ -35,10 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.12.2.2  2015/08/12 15:26:38  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.15  2015/08/17 18:53:46  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.12.2.1  2015/05/17 18:30:46  jijunwan
+ *  Archive Log:    Revision 1.14  2015/06/01 15:01:22  jypak
+ *  Archive Log:    PR 128823 - Improve performance tables to include all portcounters fields.
+ *  Archive Log:    All port counters fields added to performance table and connectivity table.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.13  2015/05/14 17:43:12  jijunwan
  *  Archive Log:    PR 127700 - Delta data on host performance display is accumulating
  *  Archive Log:    - corrected delta value calculation
  *  Archive Log:    - changed to display data/pkts rate rather than delta on chart and table
@@ -160,6 +165,8 @@ public class PerformanceTableModel extends FVTableModel<PerformanceTableData> {
 
         long num = -1;
 
+        short uncorrectableErr = -1;
+
         PerformanceTableData portData = null;
         synchronized (critical) {
             portData = this.mEntryList.get(pRow);
@@ -222,7 +229,7 @@ public class PerformanceTableModel extends FVTableModel<PerformanceTableData> {
                         value = portData.getPortTxCumulativeData();
                         break;
 
-                    case BUFFER_OVERRUNS:
+                    case EXCESSIVE_BUFFER_OVERRUNS:
                         num = portData.getExcessiveBufferOverruns();
                         value = num == -1 ? null : num;
                         break;
@@ -230,6 +237,87 @@ public class PerformanceTableModel extends FVTableModel<PerformanceTableData> {
                     case FM_CONFIG_ERRORS:
                         num = portData.getFmConfigErrors();
                         value = num == -1 ? null : num;
+                        break;
+
+                    case RX_MC_PACKETS:
+                        num = portData.getPortMulticastRcvPkts();
+                        value = num == -1 ? null : num;
+                        break;
+
+                    case RX_ERRORS:
+                        num = portData.getPortRcvErrors();
+                        value = num == -1 ? null : num;
+                        break;
+
+                    case RX_CONSTRAINT:
+                        num = portData.getPortRcvConstraintErrors();
+                        value = num == -1 ? null : num;
+                        break;
+
+                    case RX_FECN:
+                        value = portData.getPortRcvFECN();
+                        break;
+
+                    case RX_BECN:
+                        value = portData.getPortRcvBECN();
+                        break;
+
+                    case RX_BUBBLE:
+                        value = portData.getPortRcvBubble();
+                        break;
+
+                    case TX_MC_PACKETS:
+                        num = portData.getPortMulticastXmitPkts();
+                        value = num == -1 ? null : num;
+                        break;
+
+                    case TX_CONSTRAINT:
+                        num = portData.getPortXmitConstraintErrors();
+                        value = num == -1 ? null : num;
+                        break;
+
+                    case TX_WAIT:
+                        value = portData.getPortXmitWait();
+                        break;
+
+                    case TX_TIME_CONG:
+                        value = portData.getPortXmitTimeCong();
+                        break;
+
+                    case TX_WASTED_BW:
+                        value = portData.getPortXmitWastedBW();
+                        break;
+
+                    case TX_WAIT_DATA:
+                        value = portData.getPortXmitWaitData();
+                        break;
+
+                    case LOCAL_LINK_INTEGRITY:
+                        num = portData.getLocalLinkIntegrityErrors();
+                        value = num == -1 ? null : num;
+                        break;
+
+                    case MARK_FECN:
+                        value = portData.getPortMarkFECN();
+                        break;
+
+                    case LINK_ERROR_RECOVERIES:
+                        num = portData.getLinkErrorRecovery();
+                        value = num == -1 ? null : num;
+                        break;
+
+                    case LINK_DOWNED:
+                        num = portData.getLinkDowned();
+                        value = num == -1 ? null : num;
+                        break;
+
+                    case UNCORRECTABLE_ERRORS:
+                        num = portData.getUncorrectableErrors();
+                        value = num == -1 ? null : num;
+                        break;
+
+                    case SW_PORT_CONGESTION:
+                        value = portData.getSwPortCongestion();
                         break;
 
                     default:

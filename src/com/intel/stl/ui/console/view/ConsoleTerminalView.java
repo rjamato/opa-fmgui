@@ -35,11 +35,34 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.19.2.2  2015/08/12 15:27:04  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.26  2015/09/08 21:21:58  jijunwan
+ *  Archive Log:    PR 130329 - Windows FM GUI - Admin tab - Console sidetab - need space between login buttons
+ *  Archive Log:    - adjusted insets to increase space between buttons
  *  Archive Log:
- *  Archive Log:    Revision 1.19.2.1  2015/05/06 19:39:23  jijunwan
- *  Archive Log:    changed to directly show exception(s)
+ *  Archive Log:    Revision 1.25  2015/08/17 18:54:14  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.24  2015/06/25 11:55:06  jypak
+ *  Archive Log:    PR 129073 - Add help action for Admin Page.
+ *  Archive Log:    The help action is added to App, DG, VF,Console page and Console terminal. For now, a help ID and a content are being used as a place holder for each page. Once we get the help contents delivered by technical writer team, the HelpAction will be updated with correct help ID.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.23  2015/05/27 21:53:03  rjtierne
+ *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
+ *  Archive Log:    - Implementing renamed IConsoleLoginListener instead of IDocumentListener
+ *  Archive Log:
+ *  Archive Log:    Revision 1.22  2015/05/27 14:35:40  rjtierne
+ *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
+ *  Archive Log:    - View restructured to correct problem with console locks
+ *  Archive Log:    - Tab listener passed in to constructor
+ *  Archive Log:    - Implemented IDocumentListener to give the ConsoleLoginView the ability to
+ *  Archive Log:    update the controls in this view
+ *  Archive Log:
+ *  Archive Log:    Revision 1.21  2015/05/12 17:40:48  rjtierne
+ *  Archive Log:    PR 128624 - Klocwork and FindBugs fixes for UI
+ *  Archive Log:    - Assigned value to "owner" in constructor since it was never assigned a value and
+ *  Archive Log:    passed to showConfigDialog() in getPassword().
+ *  Archive Log:    - No need to check boxCommand for NULL since it was already dereferenced before
  *  Archive Log:
  *  Archive Log:    Revision 1.20  2015/05/01 21:29:17  jijunwan
  *  Archive Log:    changed to directly show exception(s)
@@ -155,14 +178,15 @@ import com.intel.stl.ui.common.view.ComponentFactory;
 import com.intel.stl.ui.common.view.IntelComboBoxUI;
 import com.intel.stl.ui.console.ConsoleDispatchManager;
 import com.intel.stl.ui.console.IConsoleListener;
+import com.intel.stl.ui.console.IConsoleLogin;
+import com.intel.stl.ui.console.ITabListener;
 import com.intel.stl.ui.console.LoginBean;
 import com.intel.stl.ui.main.view.IFabricView;
 
-public class ConsoleTerminalView extends JPanel {
+public class ConsoleTerminalView extends JPanel implements
+        IConsoleLoginListener {
 
     private static final long serialVersionUID = 4230538658726413678L;
-
-    private JPanel ctrPanel;
 
     private JPanel serverInfoPanel;
 
@@ -196,11 +220,19 @@ public class ConsoleTerminalView extends JPanel {
 
     private IConsoleListener consoleListener;
 
-    private IFabricView owner;
+    private final ITabListener tabListener;
+
+    private JPanel pnlControl;
+
+    private final IFabricView owner;
+
+    private ConsoleLoginView loginView;
 
     // Added this comment to correct PR 126675 comment above
-    public ConsoleTerminalView(IFabricView owner) {
+    public ConsoleTerminalView(IFabricView owner, ITabListener tabListener) {
         super();
+        this.owner = owner;
+        this.tabListener = tabListener;
         initComponents();
         createButtonGroup();
     }
@@ -208,132 +240,147 @@ public class ConsoleTerminalView extends JPanel {
     protected void initComponents() {
         setLayout(new BorderLayout(0, 5));
         setBorder(BorderFactory.createEmptyBorder(5, 2, 2, 2));
-        JPanel panel = getControlPanel();
-        add(panel, BorderLayout.NORTH);
+
+        JPanel pnlInfo = new JPanel();
+        pnlInfo.setLayout(new BorderLayout(0, 0));
+
+        loginView = new ConsoleLoginView(this, tabListener);
+        pnlInfo.add(loginView, BorderLayout.NORTH);
+
+        pnlControl = getControlPanel();
+        pnlInfo.add(pnlControl, BorderLayout.CENTER);
+
+        add(pnlInfo, BorderLayout.NORTH);
 
         terminalCardView =
                 new TerminalCardView(STLConstants.K2107_ADM_CONSOLE.getValue());
         add(terminalCardView, BorderLayout.CENTER);
     }
 
+    public void enableHelp(boolean b) {
+        terminalCardView.enableHelp(b);
+    }
+
+    public JButton getHelpButton() {
+        return terminalCardView.getHelpButton();
+    }
+
     protected JPanel getControlPanel() {
-        if (ctrPanel == null) {
-            ctrPanel = new JPanel(new GridBagLayout());
-            ctrPanel.setBorder(BorderFactory.createTitledBorder((String) null));
-            ctrPanel.setBackground(UIConstants.INTEL_WHITE);
-            GridBagConstraints gc = new GridBagConstraints();
-            gc.fill = GridBagConstraints.HORIZONTAL;
-            gc.insets = new Insets(1, 10, 2, 5);
-            gc.gridwidth = 1;
-            gc.weightx = 0;
 
-            JLabel server =
-                    ComponentFactory.getH4Label(
-                            STLConstants.K1053_SERVER_INFO.getValue(),
-                            Font.BOLD);
-            ctrPanel.add(server, gc);
+        JPanel ctrPanel = new JPanel();
 
-            gc.weightx = 1;
-            JPanel serverInfo = getServerInfoPanel();
-            ctrPanel.add(serverInfo, gc);
+        ctrPanel = new JPanel(new GridBagLayout());
+        ctrPanel.setBorder(BorderFactory.createTitledBorder((String) null));
+        ctrPanel.setBackground(UIConstants.INTEL_WHITE);
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.insets = new Insets(1, 10, 3, 5);
+        gc.gridwidth = 1;
+        gc.weightx = 0;
 
-            gc.weightx = 0;
-            gc.gridwidth = GridBagConstraints.REMAINDER;
-            btnLock =
-                    ComponentFactory
-                            .getIntelDeleteButton(STLConstants.K1051_LOCK
-                                    .getValue());
-            btnLock.setSelected(true);
-            btnLock.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    boolean isSelected = btnLock.isSelected();
+        JLabel server =
+                ComponentFactory.getH4Label(
+                        STLConstants.K1053_SERVER_INFO.getValue(), Font.BOLD);
+        ctrPanel.add(server, gc);
 
-                    if (isSelected) {
-                        consoleListener.onLock(isSelected);
+        gc.weightx = 1;
+        JPanel serverInfo = getServerInfoPanel();
+        ctrPanel.add(serverInfo, gc);
 
-                        toggleLock(!isSelected);
+        gc.weightx = 0;
+        gc.gridwidth = GridBagConstraints.REMAINDER;
+        btnLock =
+                ComponentFactory.getIntelDeleteButton(STLConstants.K1051_LOCK
+                        .getValue());
+        btnLock.setSelected(true);
+        btnLock.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boolean isSelected = btnLock.isSelected();
 
-                        btnLock.setSelected(!isSelected);
-                        if (isSelected) {
-                            btnLock.setText(STLConstants.K1052_UNLOCK
-                                    .getValue());
-                        } else {
-                            btnLock.setText(STLConstants.K1051_LOCK.getValue());
+                if (isSelected) {
+                    consoleListener.onLock(isSelected);
+                    toggleLock(!isSelected);
+                    consoleListener.hideLoginPanel();
+                } else {
+                    consoleListener.showLoginPanel();
+                }
+
+                btnLock.setSelected(!isSelected);
+                if (isSelected) {
+                    btnLock.setText(STLConstants.K1052_UNLOCK.getValue());
+                } else {
+                    btnLock.setText(STLConstants.K1051_LOCK.getValue());
+                }
+            }
+        });
+        ctrPanel.add(btnLock, gc);
+
+        gc.insets = new Insets(2, 10, 3, 5);
+        gc.gridwidth = 1;
+        JLabel cmd =
+                ComponentFactory.getH4Label(
+                        STLConstants.K1044_COMMAND_TITLE.getValue(), Font.BOLD);
+        ctrPanel.add(cmd, gc);
+
+        gc.weightx = 1;
+        boxCommand = new JComboBox<String>();
+        boxCommand.setUI(new IntelComboBoxUI());
+        boxCommand.setEditable(true);
+        AutoCompleteDecorator.decorate(boxCommand);
+        boxCommand.getEditor().getEditorComponent()
+                .addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyReleased(KeyEvent event) {
+                        if (event.getKeyChar() == KeyEvent.VK_ENTER) {
+                            commandSendAction();
                         }
-                    } else {
-                        consoleListener.showLoginDialog();
                     }
+                });
+        boxCommand.addItemListener(new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent arg0) {
+
+                // Pass everything that was typed on the command line
+                // to the parser
+                String entry =
+                        ((JTextField) boxCommand.getEditor()
+                                .getEditorComponent()).getText();
+
+                if (entry.startsWith("iba_report -o ")) {
+                    entry = "iba_report -reporttypes";
                 }
-            });
-            ctrPanel.add(btnLock, gc);
+                consoleListener.getHelpController().parseCommand(entry);
 
-            gc.gridwidth = 1;
-            JLabel cmd =
-                    ComponentFactory.getH4Label(
-                            STLConstants.K1044_COMMAND_TITLE.getValue(),
-                            Font.BOLD);
-            ctrPanel.add(cmd, gc);
-
-            gc.weightx = 1;
-            boxCommand = new JComboBox<String>();
-            boxCommand.setUI(new IntelComboBoxUI());
-            boxCommand.setEditable(true);
-            AutoCompleteDecorator.decorate(boxCommand);
-            boxCommand.getEditor().getEditorComponent()
-                    .addKeyListener(new KeyAdapter() {
-                        @Override
-                        public void keyReleased(KeyEvent event) {
-                            if (event.getKeyChar() == KeyEvent.VK_ENTER) {
-                                commandSendAction();
-                            }
-                        }
-                    });
-            boxCommand.addItemListener(new ItemListener() {
-
-                @Override
-                public void itemStateChanged(ItemEvent arg0) {
-
-                    // Pass everything that was typed on the command line
-                    // to the parser
-                    String entry =
-                            ((JTextField) boxCommand.getEditor()
-                                    .getEditorComponent()).getText();
-
-                    if (entry.startsWith("iba_report -o ")) {
-                        entry = "iba_report -reporttypes";
-                    }
-                    consoleListener.getHelpController().parseCommand(entry);
-
-                    // Only pass the command name to the Help comboBox
-                    if (entry.split(" ").length > 0) {
-                        consoleListener.getHelpController().updateSelection(
-                                entry.split(" ")[0]);
-                    }
+                // Only pass the command name to the Help comboBox
+                if (entry.split(" ").length > 0) {
+                    consoleListener.getHelpController().updateSelection(
+                            entry.split(" ")[0]);
                 }
+            }
 
-            });
-            ctrPanel.add(boxCommand, gc);
+        });
+        ctrPanel.add(boxCommand, gc);
 
-            gc.weightx = 0;
-            gc.gridwidth = GridBagConstraints.REMAINDER;
-            btnSend =
-                    ComponentFactory
-                            .getIntelActionButton(STLConstants.K1045_SEND
-                                    .getValue());
-            btnSend.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    commandSendAction();
-                }
-            });
-            ctrPanel.add(btnSend, gc);
+        gc.weightx = 0;
+        gc.gridwidth = GridBagConstraints.REMAINDER;
+        btnSend =
+                ComponentFactory.getIntelActionButton(STLConstants.K1045_SEND
+                        .getValue());
+        btnSend.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                commandSendAction();
+            }
+        });
+        ctrPanel.add(btnSend, gc);
 
-            gc.gridwidth = 2;
-            gc.weightx = 1;
-            JPanel optionPanel = getOptionPanel();
-            ctrPanel.add(optionPanel, gc);
-        }
+        gc.gridwidth = 2;
+        gc.weightx = 1;
+        JPanel optionPanel = getOptionPanel();
+        ctrPanel.add(optionPanel, gc);
+
         return ctrPanel;
     }
 
@@ -449,9 +496,7 @@ public class ConsoleTerminalView extends JPanel {
             }
         }
 
-        if (boxCommand != null) {
-            boxCommand.addItem(cmd);
-        }
+        boxCommand.addItem(cmd);
     }
 
     public void setCmdFieldEnable(boolean enable) {
@@ -549,6 +594,10 @@ public class ConsoleTerminalView extends JPanel {
         rbtnNewTab.setEnabled(enable);
     }
 
+    public IConsoleLogin getConsoleLogin() {
+        return loginView;
+    }
+
     /**
      * @return the loginBean
      */
@@ -592,5 +641,26 @@ public class ConsoleTerminalView extends JPanel {
         }
 
         btnLock.setSelected(isSelected);
+    }
+
+    @Override
+    public void updateUIComponents(boolean state) {
+
+        if (loginView.isVisible()) {
+            btnLock.setEnabled(state);
+        } else {
+            btnLock.setEnabled(true);
+        }
+    }
+
+    @Override
+    public void enableLock(boolean state) {
+        btnLock.setSelected(state);
+        toggleLock(state);
+    }
+
+    @Override
+    public int getControlPanelWidth() {
+        return pnlControl.getPreferredSize().width;
     }
 }

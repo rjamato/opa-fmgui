@@ -35,8 +35,21 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7.2.1  2015/08/12 15:22:03  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.12  2015/08/17 18:49:14  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/07/14 18:56:23  fernande
+ *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Fixes for Klocwork issues
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/07/13 17:11:33  fernande
+ *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Undoing additional column in database since we can use sweepTimestamp by adjusting time to Linux time
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/07/10 20:45:49  fernande
+ *  Archive Log:    PR 129522 - Notice is not written to database due to topology not found. Moved FE Helpers to the session object and changed the order of initialization for the SubnetContext.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/07/02 20:23:47  fernande
+ *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Moving Blobs to the database; arrays are now being saved to the database as collection tables.
  *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/02/12 20:20:22  jijunwan
  *  Archive Log:    changed back to use timestamp as part of id
@@ -71,12 +84,18 @@ package com.intel.stl.datamanager;
 import static javax.persistence.FetchType.LAZY;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.ElementCollection;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 import com.intel.stl.api.performance.GroupInfoBean;
@@ -100,6 +119,27 @@ public class GroupInfoRecord implements Serializable {
 
     private GroupInfoBean groupInfo;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @OrderColumn
+    @CollectionTable(name = "GROUP_INFOS_INTERNAL_BWBUCKETS", joinColumns = {
+            @JoinColumn(name = "subnetId"), @JoinColumn(name = "groupName"),
+            @JoinColumn(name = "sweepTimestamp") })
+    private List<Integer> internalBwBuckets;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @OrderColumn
+    @CollectionTable(name = "GROUP_INFOS_SEND_BWBUCKETS", joinColumns = {
+            @JoinColumn(name = "subnetId"), @JoinColumn(name = "groupName"),
+            @JoinColumn(name = "sweepTimestamp") })
+    private List<Integer> sendBwBuckets;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @OrderColumn
+    @CollectionTable(name = "GROUP_INFOS_RECEIVE_BWBUCKETS", joinColumns = {
+            @JoinColumn(name = "subnetId"), @JoinColumn(name = "groupName"),
+            @JoinColumn(name = "sweepTimestamp") })
+    private List<Integer> receiveBwBuckets;
+
     public GroupInfoRecord() {
     }
 
@@ -112,7 +152,7 @@ public class GroupInfoRecord implements Serializable {
         groupId.setFabricId(subnetId);
         groupId.setSubnetGroup(groupInfo.getGroupName());
         this.id.setSweepTimestamp(groupInfo.getTimestamp());
-        this.groupInfo = groupInfo;
+        setGroupInfo(groupInfo);
     }
 
     public GroupInfoId getId() {
@@ -132,11 +172,68 @@ public class GroupInfoRecord implements Serializable {
     }
 
     public GroupInfoBean getGroupInfo() {
+        if (groupInfo.getInternalUtilStats() != null) {
+            groupInfo.getInternalUtilStats().setBwBuckets(internalBwBuckets);
+        }
+        if (groupInfo.getSendUtilStats() != null) {
+            groupInfo.getSendUtilStats().setBwBuckets(sendBwBuckets);
+        }
+        if (groupInfo.getRecvUtilStats() != null) {
+            groupInfo.getRecvUtilStats().setBwBuckets(receiveBwBuckets);
+        }
         return groupInfo;
     }
 
     public void setGroupInfo(GroupInfoBean groupInfo) {
+        if (groupInfo != null) {
+            if (groupInfo.getInternalUtilStats() != null) {
+                this.internalBwBuckets =
+                        groupInfo.getInternalUtilStats().getBwBuckets();
+            } else {
+                this.internalBwBuckets = new ArrayList<Integer>();
+            }
+            if (groupInfo.getSendUtilStats() != null) {
+                this.sendBwBuckets =
+                        groupInfo.getSendUtilStats().getBwBuckets();
+            } else {
+                this.sendBwBuckets = new ArrayList<Integer>();
+            }
+            if (groupInfo.getRecvUtilStats() != null) {
+                this.receiveBwBuckets =
+                        groupInfo.getRecvUtilStats().getBwBuckets();
+            } else {
+                this.receiveBwBuckets = new ArrayList<Integer>();
+            }
+        } else {
+            this.internalBwBuckets = new ArrayList<Integer>();
+            this.sendBwBuckets = new ArrayList<Integer>();
+            this.receiveBwBuckets = new ArrayList<Integer>();
+        }
         this.groupInfo = groupInfo;
+    }
+
+    public List<Integer> getInternalBwBuckets() {
+        return internalBwBuckets;
+    }
+
+    public void setInternalBwBuckets(List<Integer> internalBwBuckets) {
+        this.internalBwBuckets = internalBwBuckets;
+    }
+
+    public List<Integer> getSendBwBuckets() {
+        return sendBwBuckets;
+    }
+
+    public void setSendBwBuckets(List<Integer> sendBwBuckets) {
+        this.sendBwBuckets = sendBwBuckets;
+    }
+
+    public List<Integer> getReceiveBwBuckets() {
+        return receiveBwBuckets;
+    }
+
+    public void setReceiveBwBuckets(List<Integer> receiveBwBuckets) {
+        this.receiveBwBuckets = receiveBwBuckets;
     }
 
     @Override

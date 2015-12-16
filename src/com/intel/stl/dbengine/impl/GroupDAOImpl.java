@@ -24,6 +24,43 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: GroupDAOImpl.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.24  2015/08/17 18:49:34  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - change backend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.23  2015/07/13 17:11:52  fernande
+ *  Archive Log: PR 129447 - Database size increases a lot over a short period of time. Undoing additional column in database since we can use sweepTimestamp by adjusting time to Linux time
+ *  Archive Log:
+ *  Archive Log: Revision 1.22  2015/07/10 20:46:12  fernande
+ *  Archive Log: PR 129522 - Notice is not written to database due to topology not found. Moved FE Helpers to the session object and changed the order of initialization for the SubnetContext.
+ *  Archive Log:
+ *  Archive Log: Revision 1.21  2015/07/09 18:54:15  fernande
+ *  Archive Log: PR 129447 - Database size increases a lot over a short period of time. Added purge function to delete GroupInfo records older than a specified timestamp
+ *  Archive Log:
+ *  Archive Log: Revision 1.20  2015/07/02 20:27:05  fernande
+ *  Archive Log: PR 129447 - Database size increases a lot over a short period of time. Moving Blobs to the database; arrays are now being saved to the database as collection tables.
+ *  Archive Log:
+ *  Archive Log: Revision 1.19  2015/06/10 19:36:50  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: 
+ * 
+ ******************************************************************************/
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
@@ -75,6 +112,8 @@ public class GroupDAOImpl extends BaseDAO implements GroupDAO {
     private static Logger log = LoggerFactory.getLogger("org.hibernate.SQL");
 
     protected static int BATCH_SIZE = 1000;
+
+    protected static int BATCH_DELETE = 100;
 
     public GroupDAOImpl(EntityManager entityManager) {
         super(entityManager);
@@ -295,6 +334,7 @@ public class GroupDAOImpl extends BaseDAO implements GroupDAO {
         char separator = '|';
 
         startTransaction();
+        long now = System.currentTimeMillis();
         for (GroupInfoBean groupInfo : groupInfoBeans) {
             GroupInfoRecord groupInfoRec = createGroupInfo(subnet, groupInfo);
             GroupInfoRecord dbGroupInfo =
@@ -314,6 +354,53 @@ public class GroupDAOImpl extends BaseDAO implements GroupDAO {
         } catch (Exception e) {
             throw createPersistDatabaseException(e, GroupInfoRecord.class, keys);
         }
+    }
+
+    @Override
+    public int purgeGroupInfos(SubnetRecord subnet, Long ago) {
+        // Hibernate currently does not support cascading delete of
+        // ElementCollections for bulk deletes, we need then to delete record by
+        // record, which might be memory expensive. We batch deletions to
+        // improve performance.
+        int offset = 0;
+        int deleted = 0;
+        String select =
+                "select rec from GroupInfoRecord as rec where rec.id.groupId.fabricId = :subnetId and rec.id.sweepTimestamp < :stopTime";
+        TypedQuery<GroupInfoRecord> query =
+                em.createQuery(select, GroupInfoRecord.class);
+        query.setParameter("subnetId", subnet.getId());
+        long linuxTime = ago / 1000;
+        query.setParameter("stopTime", linuxTime);
+        query.setFirstResult(offset);
+        query.setMaxResults(BATCH_DELETE);
+        List<GroupInfoRecord> recs = query.getResultList();
+
+        while (recs.size() > 0) {
+            startTransaction();
+            StringBuffer keys = new StringBuffer();
+            char separator = '|';
+            for (GroupInfoRecord rec : recs) {
+                keys.append(separator);
+                keys.append(rec.getId().getGroupID().getSubnetGroup());
+                keys.append('-');
+                keys.append(rec.getGroupInfo().getTimestamp());
+                separator = ',';
+                em.remove(rec);
+            }
+            try {
+                deleted += recs.size();
+                flush();
+                clear();
+                commitTransaction();
+                log.info("Deleted {} GroupInfo records before {}", recs.size(),
+                        ago);
+                recs = query.getResultList();
+            } catch (Exception e) {
+                throw createPersistDatabaseException(e, GroupInfoRecord.class,
+                        keys);
+            }
+        }
+        return deleted;
     }
 
     /**
@@ -364,19 +451,24 @@ public class GroupDAOImpl extends BaseDAO implements GroupDAO {
     public List<GroupInfoBean> getGroupInfoList(SubnetRecord subnet,
             String groupName, long startTime, long stopTime)
             throws PerformanceDataNotFoundException {
-        TypedQuery<GroupInfoBean> query =
+        TypedQuery<GroupInfoRecord> query =
                 em.createNamedQuery("GroupInfoBean.findByTime",
-                        GroupInfoBean.class);
+                        GroupInfoRecord.class);
         query.setParameter("subnetId", subnet.getId());
         query.setParameter("groupName", groupName);
         query.setParameter("startTime", startTime);
         query.setParameter("stopTime", stopTime);
-        List<GroupInfoBean> groupInfoBeans = query.getResultList();
+        List<GroupInfoRecord> groupInfoRecs = query.getResultList();
 
-        if (groupInfoBeans == null || groupInfoBeans.size() == 0) {
+        if (groupInfoRecs == null || groupInfoRecs.size() == 0) {
             throw createGroupInfoNotFoundException(subnet
                     .getSubnetDescription().getName(), groupName, startTime,
                     stopTime);
+        }
+        List<GroupInfoBean> groupInfoBeans =
+                new ArrayList<GroupInfoBean>(groupInfoRecs.size());
+        for (GroupInfoRecord groupInfoRec : groupInfoRecs) {
+            groupInfoBeans.add(groupInfoRec.getGroupInfo());
         }
         return groupInfoBeans;
 

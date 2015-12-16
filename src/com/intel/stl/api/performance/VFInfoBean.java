@@ -35,8 +35,17 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6.2.1  2015/08/12 15:21:44  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.9  2015/09/17 11:51:42  jypak
+ *  Archive Log:    PR 129516- vfSID as described in spec not implemented in gen 1 fm or tools
+ *  Archive Log:    Removed all vfSID related code.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/08/17 18:48:41  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/06/25 21:04:02  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improvement on data randomization that ensure an attribute at the same time point get the same data where
  *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/02/12 19:30:00  jijunwan
  *  Archive Log:    introduced interface ITimestamped, and all timimg attributes implemented it, so we can easily know which attribute is associated with timestamp
@@ -70,8 +79,6 @@ public class VFInfoBean implements ITimestamped, Serializable {
     private static final long serialVersionUID = 1L;
 
     private String vfName;
-
-    private long vfSID;
 
     private ImageIdBean imageId;
 
@@ -107,21 +114,6 @@ public class VFInfoBean implements ITimestamped, Serializable {
         }
 
         this.vfName = vfName;
-    }
-
-    /**
-     * @return the vfSID
-     */
-    public long getVfSID() {
-        return vfSID;
-    }
-
-    /**
-     * @param vfSID
-     *            the vfSID to set
-     */
-    public void setVfSID(long vfSID) {
-        this.vfSID = vfSID;
     }
 
     /**
@@ -274,12 +266,59 @@ public class VFInfoBean implements ITimestamped, Serializable {
     /*
      * (non-Javadoc)
      * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
+        result = prime * result + ((vfName == null) ? 0 : vfName.hashCode());
+        return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        VFInfoBean other = (VFInfoBean) obj;
+        if (imageId == null) {
+            if (other.imageId != null) {
+                return false;
+            }
+        } else if (!imageId.equals(other.imageId)) {
+            return false;
+        }
+        if (vfName == null) {
+            if (other.vfName != null) {
+                return false;
+            }
+        } else if (!vfName.equals(other.vfName)) {
+            return false;
+        }
+        return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "VFInfoBean [vfName=" + vfName + ", vfSID="
-                + StringUtils.longHexString(vfSID) + ", imageId=" + imageId
+        return "VFInfoBean [vfName=" + vfName + ", imageId=" + imageId
                 + ", numPorts=" + numPorts + ", internalUtilStats="
                 + internalUtilStats + ", internalErrors=" + internalErrors
                 + ", maxInternalRate="

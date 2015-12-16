@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:26:53  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.6  2015/08/17 18:54:02  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/06/25 20:24:57  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on fabric viewer and simple 'static' cards
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2014/07/09 21:18:59  jijunwan
  *  Archive Log:    improved status visualization
@@ -82,12 +87,15 @@ import com.intel.stl.ui.model.StateLongTypeViz;
 public class NodeStatesBar extends AbstractNodeStatesView {
     private static final long serialVersionUID = 1036776904191810974L;
 
+    private final boolean concise;
+
     private JHorizontalBar[] stateBars;
 
     private JLabel[] stateLabels;
 
-    public NodeStatesBar() {
+    public NodeStatesBar(boolean concise) {
         super();
+        this.concise = concise;
         initComponent();
     }
 
@@ -127,21 +135,28 @@ public class NodeStatesBar extends AbstractNodeStatesView {
             stateBars[i].setPreferredSize(new Dimension(60, 20));
             add(stateBars[i], gc);
 
+            if (concise) {
+                gc.gridwidth = GridBagConstraints.REMAINDER;
+            }
             stateLabels[i] = new JLabel();
             stateLabels[i].setForeground(UIConstants.INTEL_DARK_GRAY);
             stateLabels[i].setFont(UIConstants.H3_FONT);
             add(stateLabels[i], gc);
 
-            gc.weightx = 0;
-            gc.gridwidth = GridBagConstraints.REMAINDER;
-            label = new JLabel(STLConstants.K0014_ACTIVE_NODES.getValue(),
-                    JLabel.RIGHT);
-            label.setFont(UIConstants.H5_FONT);
-            label.setForeground(UIConstants.INTEL_DARK_GRAY);
-            add(label, gc);
+            if (!concise) {
+                gc.weightx = 0;
+                gc.gridwidth = GridBagConstraints.REMAINDER;
+                label =
+                        new JLabel(STLConstants.K0014_ACTIVE_NODES.getValue(),
+                                JLabel.RIGHT);
+                label.setFont(UIConstants.H5_FONT);
+                label.setForeground(UIConstants.INTEL_DARK_GRAY);
+                add(label, gc);
+            }
         }
     }
 
+    @Override
     public void setStates(double[] values, String[] labels, String[] tooltips) {
         if (values.length != stateBars.length) {
             throw new IllegalArgumentException(
@@ -162,6 +177,7 @@ public class NodeStatesBar extends AbstractNodeStatesView {
 
         for (int i = 0; i < stateBars.length; i++) {
             stateBars[i].setNormalizedValue(values[i]);
+            stateBars[i].setToolTipText(tooltips[i]);
             stateLabels[i].setText(labels[i]);
             stateLabels[i].setToolTipText(tooltips[i]);
         }

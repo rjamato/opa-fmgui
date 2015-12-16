@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8.2.1  2015/08/12 15:26:59  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.10  2015/08/17 18:54:08  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/07/31 21:09:52  fernande
+ *  Archive Log:    PR 129631 - Ports table sometimes not getting performance related data. Changed to handle a request cancellation exceptions and not log stack traces in those cases.
  *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/04/09 22:53:03  jijunwan
  *  Archive Log:    improved BatchedCallback to support refreshing data
@@ -81,6 +85,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.intel.stl.api.StringUtils;
+import com.intel.stl.api.performance.PerformanceRequestCancelledException;
 
 public class CallbackAdapter<E> implements ICallback<E> {
     private static Logger log = LoggerFactory.getLogger(CallbackAdapter.class);
@@ -103,7 +108,11 @@ public class CallbackAdapter<E> implements ICallback<E> {
     @Override
     public void onError(Throwable... errors) {
         for (Throwable e : errors) {
-            log.error(StringUtils.getErrorMessage(e), e);
+            if (e instanceof PerformanceRequestCancelledException) {
+                // Do not log; it was done already in the TasScheduler
+            } else {
+                log.error(StringUtils.getErrorMessage(e), e);
+            }
         }
     }
 

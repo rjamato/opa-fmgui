@@ -35,11 +35,66 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.13.2.2  2015/08/12 15:27:32  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.28  2015/09/28 17:54:17  fisherma
+ *  Archive Log:    PR 130425 - added cancel button to the Admin tab login page to allow user to cancel out of hung or slow ssh logins.  Cancel action terminates sftp connection and closes remote ssh session. This fix also addresses PR 130386 and 130390.
  *  Archive Log:
- *  Archive Log:    Revision 1.13.2.1  2015/05/06 19:39:21  jijunwan
- *  Archive Log:    changed to directly show exception(s)
+ *  Archive Log:    Revision 1.27  2015/09/21 20:48:43  jijunwan
+ *  Archive Log:    PR 130542 - Confusion error message on fetching conf file
+ *  Archive Log:    - changed to show credential error message only for JSchException
+ *  Archive Log:
+ *  Archive Log:    Revision 1.26  2015/08/28 22:10:01  jijunwan
+ *  Archive Log:    PR 130206 - On "Admin" tab, if login fails due to bad credentials, can't leave that tab until login succeeds
+ *  Archive Log:    - change to reset isBusy when error happens, so we are free to switch to another tabs or pages
+ *  Archive Log:
+ *  Archive Log:    Revision 1.25  2015/08/17 18:54:28  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.24  2015/08/17 18:34:35  jijunwan
+ *  Archive Log:    PR 128973 - Deploy FM conf changes on all SMs
+ *  Archive Log:    - improved to ask confirmation when we intend to leave deploy panel while we are deploying FM confs.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.23  2015/08/17 17:41:42  jijunwan
+ *  Archive Log:    PR 128973 - Deploy FM conf changes on all SMs
+ *  Archive Log:    - applied deploy panel, controller on ConfPageController
+ *  Archive Log:    - improved ConfPageController to check changes before deploy conf
+ *  Archive Log:    - improved ConfPageController to refresh conf file when we already have a ssh session, and show log in panel when we have a ssh session.
+ *  Archive Log:    - improved #canExit, so we can not switch to other tabs or pages when we are logging in or deploying conf file
+ *  Archive Log:
+ *  Archive Log:    Revision 1.22  2015/08/05 02:52:55  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - apply undo mechanism on Admin page to track tab selection
+ *  Archive Log:    - improved ConfPageController to check change when we exit one tab
+ *  Archive Log:
+ *  Archive Log:    Revision 1.21  2015/07/28 18:29:13  fisherma
+ *  Archive Log:    PR 129219 - Admin page login dialog improvement
+ *  Archive Log:
+ *  Archive Log:    Revision 1.20  2015/07/14 17:06:57  jijunwan
+ *  Archive Log:    PR 129541 - Should forbid save or deploy when there is invalid edit on management panel
+ *  Archive Log:    - display warning message when a user intends to save or deploy while there is invalid edit
+ *  Archive Log:
+ *  Archive Log:    Revision 1.19  2015/07/10 19:38:07  jijunwan
+ *  Archive Log:    PR 129520 - Empty App or DG list after changes on App or DG
+ *  Archive Log:    - when we reset items, it will trigger action event that will lead to view clear that will empty App and DG list. Fixed by removing the listener before we reset items, and adding it back after we finish it.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.18  2015/06/25 11:55:04  jypak
+ *  Archive Log:    PR 129073 - Add help action for Admin Page.
+ *  Archive Log:    The help action is added to App, DG, VF,Console page and Console terminal. For now, a help ID and a content are being used as a place holder for each page. Once we get the help contents delivered by technical writer team, the HelpAction will be updated with correct help ID.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.17  2015/05/14 17:19:44  jijunwan
+ *  Archive Log:    PR 128697 - Handle empty list of items
+ *  Archive Log:    - Added code to handle null item
+ *  Archive Log:    - Added code to clean panel when it gets a null item
+ *  Archive Log:    - Enable/disable buttons properly when we get an empty item list or null item
+ *  Archive Log:    - Improved to handle item selection when the index is invalid, such as -1
+ *  Archive Log:
+ *  Archive Log:    Revision 1.16  2015/05/14 16:36:46  jijunwan
+ *  Archive Log:    PR 128686 - Get dirty panel when we directly deploy an unsaved change and then select abandon the changes
+ *  Archive Log:    - shift selection up after we abandon the changes
+ *  Archive Log:
+ *  Archive Log:    Revision 1.15  2015/05/12 17:39:22  rjtierne
+ *  Archive Log:    PR 128624 - Klocwork and FindBugs fixes for UI
+ *  Archive Log:    Reorganized code to check orgItems for null before trying synchronize on it.
  *  Archive Log:
  *  Archive Log:    Revision 1.14  2015/05/01 21:29:15  jijunwan
  *  Archive Log:    changed to directly show exception(s)
@@ -98,23 +153,25 @@
 package com.intel.stl.ui.admin.impl;
 
 import java.awt.Component;
-import java.awt.Window;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import com.intel.stl.api.DefaultLoginAssistant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.intel.stl.api.StringUtils;
 import com.intel.stl.api.management.IManagementApi;
 import com.intel.stl.ui.admin.ChangeState;
 import com.intel.stl.ui.admin.IConfListener;
 import com.intel.stl.ui.admin.IItemEditorListener;
 import com.intel.stl.ui.admin.IItemListListener;
+import com.intel.stl.ui.admin.InvalidEditException;
 import com.intel.stl.ui.admin.Item;
 import com.intel.stl.ui.admin.view.AbstractConfView;
 import com.intel.stl.ui.admin.view.AbstractEditorPanel;
@@ -126,12 +183,18 @@ import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UILabels;
 import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.common.ValidationModel;
+import com.intel.stl.ui.console.LoginBean;
 import com.intel.stl.ui.main.Context;
+import com.intel.stl.ui.main.HelpAction;
 import com.intel.stl.ui.publisher.TaskScheduler;
+import com.jcraft.jsch.JSchException;
 
 public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
         implements IPageController, IConfListener, IItemListListener,
         IItemEditorListener {
+    private static final Logger log = LoggerFactory
+            .getLogger(ConfPageController.class);
+
     private final String name;
 
     private final String description;
@@ -139,6 +202,8 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
     private final ImageIcon icon;
 
     private final AbstractConfView<T, E> view;
+
+    private String helpID;
 
     protected IManagementApi mgtApi;
 
@@ -154,6 +219,14 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     protected ValidationModel<T> valModel;
 
+    protected DeployController deployController;
+
+    private boolean restart;
+
+    private boolean isBusy;
+
+    private Future<?> future;
+
     /**
      * Description:
      * 
@@ -168,6 +241,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
         this.description = description;
         this.icon = icon;
         this.view = view;
+        installHelp();
         workingItems = new DefaultListModel<Item<T>>();
         view.setListModel(workingItems);
         view.addItemListListener(this);
@@ -178,7 +252,31 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
         edtCtr = creatEditorController(edtPanel);
 
         valModel = new ValidationModel<T>();
+        deployController = new DeployController(view);
     }
+
+    protected void installHelp() {
+        String helpId = getHelpID();
+        if (helpId != null) {
+            view.enableHelp(true);
+            HelpAction helpAction = HelpAction.getInstance();
+            helpAction.getHelpBroker().enableHelpOnButton(view.getHelpButton(),
+                    helpId, helpAction.getHelpSet());
+        } else {
+            view.enableHelp(false);
+        }
+    }
+
+    /**
+     * @param helpID
+     *            the helpID to set
+     */
+    public void setHelpID(String helpID) {
+        this.helpID = helpID;
+        installHelp();
+    }
+
+    protected abstract String getHelpID();
 
     protected AbstractEditorController<T, E> creatEditorController(E editorPanel) {
         return new AbstractEditorController<T, E>(editorPanel);
@@ -205,20 +303,8 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
     public void setContext(Context context, IProgressObserver observer) {
         try {
             mgtApi = context.getManagementApi();
-            Component owner = context.getOwner();
-            Window win = null;
-            if (owner instanceof Window) {
-                win = (Window) owner;
-            } else {
-                Component root = SwingUtilities.getRoot(owner);
-                if (root instanceof Window) {
-                    win = (Window) root;
-                }
-            }
-            mgtApi.setLoginAssistant(new DefaultLoginAssistant(win, context
-                    .getSubnetDescription().getCurrentFE().getHost(), context
-                    .getSubnetDescription().getCurrentUser()));
             taskScheduler = context.getTaskScheduler();
+            deployController.setContext(context, null);
         } finally {
             if (observer != null) {
                 observer.publishProgress(1);
@@ -283,7 +369,9 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
                     @Override
                     protected ArrayList<Item<T>> doInBackground()
                             throws Exception {
+
                         ArrayList<Item<T>> res = initData();
+
                         return res;
                     }
 
@@ -295,11 +383,18 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
                     @Override
                     protected void done() {
                         try {
+                            // Show editor card in the view
+                            view.showEditorCard();
+
                             orgItems = get();
                             if (orgItems == null) {
                                 return;
                             }
 
+                            // test empty items
+                            // orgItems = new ArrayList<Item<T>>();
+
+                            view.removeItemListListener(ConfPageController.this);
                             workingItems.clear();
                             int first = -1;
                             for (int i = 0; i < orgItems.size(); i++) {
@@ -310,6 +405,8 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
                                 workingItems.addElement(getCopy(item,
                                         ChangeState.NONE));
                             }
+                            view.addItemListListener(ConfPageController.this);
+
                             // view.setItems(workingItems);
                             if (currentItem != null) {
                                 int index = workingItems.indexOf(currentItem);
@@ -325,11 +422,12 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
                                 view.selectItem(first);
                                 edtCtr.setItem(currentItem, getWorkingItems());
                             }
-
                         } catch (InterruptedException e) {
                         } catch (ExecutionException e) {
                             e.printStackTrace();
                             Util.showError(view, e);
+                        } finally {
+                            isBusy = false;
                         }
                     }
 
@@ -368,20 +466,20 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
     }
 
     protected int indexOfOrgItem(long id) {
-        synchronized (orgItems) {
-            if (orgItems == null) {
-                // this shouldn't happen
-                throw new RuntimeException("No item list!");
-            }
-            for (int i = 0; i < orgItems.size(); i++) {
-                Item<T> item = orgItems.get(i);
-                if (item.getId() == id) {
-                    return i;
+        if (orgItems == null) {
+            throw new RuntimeException("No item list!");
+        } else {
+            synchronized (orgItems) {
+                for (int i = 0; i < orgItems.size(); i++) {
+                    Item<T> item = orgItems.get(i);
+                    if (item.getId() == id) {
+                        return i;
+                    }
                 }
+                // this shouldn't happen
+                throw new IllegalArgumentException(
+                        "Couldn't find item with id=" + id);
             }
-            // this shouldn't happen
-            throw new IllegalArgumentException("Couldn't find item with id="
-                    + id);
         }
     }
 
@@ -420,8 +518,13 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
             return true;
         }
 
-        edtCtr.updateItem(currentItem);
-        if (hasChange(currentItem)) {
+        boolean hasChange = false;
+        try {
+            edtCtr.updateItem(currentItem);
+        } catch (InvalidEditException e) {
+            hasChange = true;
+        }
+        if (hasChange || hasChange(currentItem)) {
             int index = workingItems.indexOf(currentItem);
             int option = view.confirmDiscard();
             if (option != JOptionPane.YES_OPTION) {
@@ -438,6 +541,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
                     Item<T> newItem = getCopy(orgItem, ChangeState.NONE);
                     currentItem = newItem;
                     workingItems.set(index, newItem);
+                    edtCtr.setItem(currentItem, getWorkingItems());
                 }
                 view.updateItems();
             }
@@ -453,11 +557,11 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out
-                .println((orgItem == null ? "null" : orgItem
-                        .getFullDescription())
-                        + " "
-                        + workingItem.getFullDescription());
+        // System.out
+        // .println((orgItem == null ? "null" : orgItem
+        // .getFullDescription())
+        // + " "
+        // + workingItem.getFullDescription());
         return orgItem == null || !orgItem.equals(workingItem);
     }
 
@@ -468,7 +572,13 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
      */
     @Override
     public void onSelect(long id) {
-        System.out.println("Select " + id);
+        // System.out.println("Select " + id);
+        if (id == -1) {
+            edtCtr.setItem(null, getWorkingItems());
+            currentItem = null;
+            return;
+        }
+
         if (currentItem != null) {
             if (currentItem.getId() == id) {
                 return;
@@ -486,7 +596,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
         }
         edtCtr.setItem(item, getWorkingItems());
         currentItem = item;
-        System.out.println("Select " + item.getFullDescription());
+        log.info("Select " + item.getFullDescription());
     }
 
     /*
@@ -642,8 +752,14 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
     public void onSave() {
         try {
             edtCtr.updateItem(currentItem);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (InvalidEditException e) {
+            Util.showWarningMessage(view, e.getMessage());
+            return;
+        }
+
+        if (!hasChange(currentItem)) {
+            Util.showWarningMessage(view,
+                    UILabels.STL81112_NO_CHANGES.getDescription());
             return;
         }
 
@@ -711,7 +827,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
                 } else {
                     orgItems.add(newOrgItem);
                 }
-                currentItem.setState(ChangeState.NONE);
+                currentItem.setState(ChangeState.UPDATE);
                 return null;
             }
 
@@ -778,8 +894,16 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
      * @see com.intel.stl.ui.admin.IConfListener#onApply(boolean)
      */
     @Override
-    public void onApply(final boolean restart) {
-        edtCtr.updateItem(currentItem);
+    public void onApply(boolean restart) {
+        this.restart = restart;
+
+        try {
+            edtCtr.updateItem(currentItem);
+        } catch (InvalidEditException e) {
+            Util.showWarningMessage(view, e.getMessage());
+            return;
+        }
+
         if (hasChange(currentItem)) {
             int index = workingItems.indexOf(currentItem);
             int option = view.confirmDiscard();
@@ -791,6 +915,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
                 // discard new added item
                 currentItem = null;
                 workingItems.remove(index);
+                view.selectItem(workingItems.size() - 1);
             } else if (currentItem.getState() == ChangeState.UPDATE) {
                 // change back to org item
                 Item<T> orgItem = getOrgItem(currentItem.getId());
@@ -802,24 +927,13 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
             view.updateItems();
         }
 
-        Util.showWarningMessage(view,
-                UILabels.STL81110_DEPLOY_MSG.getDescription(),
-                STLConstants.K0031_WARNING.getValue());
-        taskScheduler.submitToBackground(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    mgtApi.deploy(restart);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    String msg =
-                            UILabels.STL81000_DEPLOY_ERROR
-                                    .getDescription(StringUtils
-                                            .getErrorMessage(e));
-                    Util.showErrorMessage(view, msg);
-                }
-            }
-        });
+        if (!mgtApi.hasChanges()) {
+            Util.showWarningMessage(view,
+                    UILabels.STL81112_NO_CHANGES.getDescription());
+            return;
+        }
+
+        view.showDeployCard(mgtApi.getSubnetDescription());
     }
 
     /*
@@ -838,8 +952,29 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
      */
     @Override
     public void onEnter() {
-        SwingWorker<ArrayList<Item<T>>, Void> worker = getInitWorker();
-        worker.execute();
+        // onEnter cancel any non-null future. Note: shouldn't be any.
+        if (future != null && !future.isDone()) {
+            future.cancel(true);
+        }
+
+        if (mgtApi.isConfigReady()) {
+            if (!view.isShowingDeployCard()) {
+                view.showEditorCard();
+                SwingWorker<ArrayList<Item<T>>, Void> worker = getInitWorker();
+                worker.execute();
+            }
+        } else if (mgtApi.hasSession()) {
+            loadConfigFile(null);
+        } else {
+            // display and ask for log in info
+            // Set host name and port number
+            view.setHostNameField(mgtApi.getSubnetDescription().getCurrentFE()
+                    .getHost());
+            view.setUserNameField(mgtApi.getSubnetDescription().getCurrentFE()
+                    .getSshUserName());
+            view.showLoginCard(); // turn on login card
+        }
+
     }
 
     /*
@@ -849,7 +984,31 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
      */
     @Override
     public void onExit() {
-        // TODO: if has change, deploy to FM
+        // Save username for ssl login to mgtApi for persistence between tabs
+        // If we don't, the user can change user name on one of the tabs, switch
+        // to another tab on Admin page and see a different user name being
+        // displayed. Same goes for port number
+        mgtApi.getSubnetDescription().getCurrentFE()
+                .setSshUserName(view.getUserNameFieldStr());
+        mgtApi.getSubnetDescription().getCurrentFE()
+                .setSshPortNum(Integer.parseInt(view.getPortFieldStr()));
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.IPageController#onCancel()
+     */
+    @Override
+    public void onCancelLogin() {
+        if (future != null) {
+            future.cancel(true);
+        }
+
+        // Call ManagementApi to cancel fetching of the config file.
+        mgtApi.onCancelFetchConfig(mgtApi.getSubnetDescription());
+        view.showLoginCard();
+        view.clearLoginCard();
     }
 
     /*
@@ -859,6 +1018,18 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
      */
     @Override
     public boolean canExit() {
+        return !isBusy && deployCheck() && changeCheck();
+    }
+
+    protected boolean deployCheck() {
+        if (view.isShowingDeployCard() && deployController.isBusy()) {
+            int ret = deployController.confirmDiscard();
+            if (ret == JOptionPane.YES_OPTION) {
+                deployController.onCancel();
+            } else {
+                return false;
+            }
+        }
         return true;
     }
 
@@ -871,9 +1042,11 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
      */
     @Override
     public void onRefresh(IProgressObserver observer) {
+        // Make the login card visible to get password from user to fetch a new
+        // copy of config file
         if (changeCheck()) {
-            SwingWorker<ArrayList<Item<T>>, Void> worker = getInitWorker();
-            worker.execute();
+            mgtApi.reset();
+            onEnter();
         }
     }
 
@@ -884,6 +1057,59 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
      */
     @Override
     public void clear() {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.admin.IConfListener#prepare(com.intel.stl.ui.console
+     * .LoginBean)
+     */
+    @Override
+    public void prepare(LoginBean credentials) {
+        isBusy = true;
+        int portNum = Integer.parseInt(credentials.getPortNum());
+        mgtApi.getSubnetDescription().getCurrentFE().setSshPortNum(portNum);
+        mgtApi.getSubnetDescription().getCurrentFE()
+                .setSshUserName(credentials.getUserName());
+        loadConfigFile(credentials.getPassword());
+    }
+
+
+    protected void loadConfigFile(final char[] password) {
+        if (future != null && !future.isDone()) {
+            future.cancel(true);
+        }
+
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    mgtApi.fetchConfigFile(password);
+                    if (mgtApi.isConfigReady()) {
+                        SwingWorker<ArrayList<Item<T>>, Void> worker =
+                                getInitWorker();
+                        worker.execute();
+                    }
+                } catch (JSchException e) {
+                    e.printStackTrace();
+                    view.showLoginCard();
+                    view.setMessage(UILabels.STL81111_LOGIN_ERROR
+                            .getDescription(StringUtils.getErrorMessage(e)));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    view.showLoginCard();
+                    view.setMessage(StringUtils.getErrorMessage(e));
+                } finally {
+                    isBusy = false;
+                    view.clearLoginCard();
+                }
+            }
+        };
+
+        future = taskScheduler.submitToBackground(task);
+
     }
 
 }

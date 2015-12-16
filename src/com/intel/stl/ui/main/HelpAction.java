@@ -35,8 +35,31 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.1  2015/08/12 15:26:34  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.11  2015/08/18 15:50:33  jypak
+ *  Archive Log:    PR 129070 - Incorrect Help content.
+ *  Archive Log:    All help pages are provided for alpha final.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/08/17 18:53:38  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/07/22 18:13:40  jypak
+ *  Archive Log:    PR 129129 - Multiple Help Windows.
+ *  Archive Log:    HelpMainWindow is created to override setActivationWindow method so that only a dialog with modality is created for whole application.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/06/25 11:55:03  jypak
+ *  Archive Log:    PR 129073 - Add help action for Admin Page.
+ *  Archive Log:    The help action is added to App, DG, VF,Console page and Console terminal. For now, a help ID and a content are being used as a place holder for each page. Once we get the help contents delivered by technical writer team, the HelpAction will be updated with correct help ID.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/06/09 18:37:27  jijunwan
+ *  Archive Log:    PR 129069 - Incorrect Help action
+ *  Archive Log:    - moved help action from view to controller
+ *  Archive Log:    - only enable help button when we have HelpID
+ *  Archive Log:    - fixed incorrect HelpIDs
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/05/22 16:21:22  jypak
+ *  Archive Log:    PR 128869 - Add online help on setup wizard.
+ *  Archive Log:    Added help button to MultinetWizardView. The contents will be update when it's available.
  *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/04/07 18:08:21  jypak
  *  Archive Log:    Online Help updates for additional panels.
@@ -67,7 +90,6 @@ import java.awt.event.ActionListener;
 import java.net.URL;
 
 import javax.help.CSH;
-import javax.help.DefaultHelpBroker;
 import javax.help.HelpBroker;
 import javax.help.HelpSet;
 import javax.help.HelpSetException;
@@ -102,9 +124,15 @@ public class HelpAction extends AbstractAction {
     private final String SUBNET_PERFORMANCE =
             "GUID-0F8B013E-084E-4F34-8D8F-1E6679EB85FE";
 
-    private final String TREND = "GUID-13874FF6-49CF-4EE9-A937-40254947787B";
+    private final String UNIT_GROUP =
+            "GUID-13874FF6-49CF-4EE9-A937-40254947787B";
 
-    private final String TOP_N = "GUID-13874FF6-49CF-4EE9-A937-40254947787B";
+    private final String ERROR_GROUP =
+            "GUID-25D1F25A-CC7E-4F46-BDB5-9B10F2624065";
+
+    private final String TREND = "GUID-0A2A33E6-DDBD-4323-9721-40B53A60EAC5";
+
+    private final String TOP_N = "GUID-4C9DB627-99EA-4475-B0FD-677ACEF0D89D";
 
     private final String PERF_SUBNET_SUMMARY =
             "GUID-4A0DC71A-2224-41C4-8BF8-47DDB59AD963";
@@ -130,19 +158,19 @@ public class HelpAction extends AbstractAction {
             "GUID-F4DBA2C1-FFC5-43CA-A499-388060815F2D";
 
     private final String PORT_RCV_PKTS =
-            "GUID-2F075726-6E27-4776-A6F6-0BF920097B51";
+            "GUID-F5CFD46A-C11B-429D-A416-E1186319ADF6";
 
     private final String PORT_TRAN_PKTS =
-            "GUID-2F075726-6E27-4776-A6F6-0BF920097B51";
+            "GUID-A8C4761A-08D5-4440-A94B-BBFEDC156499";
 
     private final String NODE_PERF =
             "GUID-70C75041-ECD6-4300-A93F-F1E121B6D98C";
 
     private final String NODE_RCV_PKTS =
-            "GUID-70C75041-ECD6-4300-A93F-F1E121B6D98C";
+            "GUID-F5CFD46A-C11B-429D-A416-E1186319ADF6";
 
     private final String NODE_TRAN_PKTS =
-            "GUID-70C75041-ECD6-4300-A93F-F1E121B6D98C";
+            "GUID-A8C4761A-08D5-4440-A94B-BBFEDC156499";
 
     private final String COUNTERS = "GUID-2F075726-6E27-4776-A6F6-0BF920097B51";
 
@@ -157,7 +185,7 @@ public class HelpAction extends AbstractAction {
             "GUID-30A92411-3312-45AA-A09F-56AD35F29567";
 
     private final String TOPOLOGY_NODE =
-            "GUID-30A92411-3312-45AA-A09F-56AD35F29567";
+            "GUID-0C3FFAC9-B71D-44B0-A74F-60D7AF20C683";
 
     private final String OVERALL_SUMMARY =
             "GUID-CD12ECBC-7E28-4B82-9419-BF16256A012F";
@@ -166,6 +194,8 @@ public class HelpAction extends AbstractAction {
             "GUID-CD12ECBC-7E28-4B82-9419-BF16256A012F";
 
     private final String LINKS = "GUID-4D0C7193-5343-4D40-AB29-8A1A0D4684FD";
+
+    private final String ROUTES = "GUID-2F669B07-F890-44FA-9771-1C3E427FEDF2";
 
     private final String DEVICE_GROUP =
             "GUID-14B1543F-C9DC-4B01-B2E0-BCAE320CB212";
@@ -217,13 +247,54 @@ public class HelpAction extends AbstractAction {
     private final String FLIT_CONTROL =
             "GUID-9ABCBE5B-D5FE-49B8-8EF3-6FA0E7808CE0";
 
+    private final String PORT_ERROR_ACTIONS =
+            "GUID-040685F8-87FF-4856-A4B4-5645C5D73DB4";
+
+    private final String MISCELLANEOUS =
+            "GUID-AB8249B4-8904-40EF-B056-6570A1207D6A";
+
+    private final String MTU_VL = "GUID-445726B9-7F54-4971-A0F6-055F9364B1D0";
+
+    private final String HOQLIFE_VL =
+            "GUID-E0F13187-54DD-4EA5-AE69-A9A8F901F3FA";
+
+    private final String STALLCOUNT_VL =
+            "GUID-494FB010-B0EA-4B77-BB41-02D7B5419B88";
+
+    private final String QSFP = "GUID-70F1021D-77A6-4AAA-B5CF-9405711066A1";
+
+    private final String SC2VLT = "GUID-E1B4725F-B178-47C3-A257-890E1915BD08";
+
+    private final String SC2VLNT = "GUID-9E5155FF-35AD-4BA8-8C52-12FCE06CF80C";
+
+    private final String LINK_DOWN_ERROR =
+            "GUID-67A138BD-D88A-4C60-93DD-CB4EA5D16717";
+
+    // setup wizard
+    private final String SETUP_WIZARD =
+            "GUID-4B372184-0331-4BEA-9958-578F7E030F39";
+
+    // Admin page
+    private final String ADMIN_APP =
+            "GUID-6F61C532-13BA-4144-9E1B-D80C50F5AF4F";
+
+    private final String ADMIN_DG = "GUID-621E93B2-383E-4EA1-8BA8-E18825C65006";
+
+    private final String ADMIN_VF = "GUID-331F206B-089E-4271-B768-D3BD4846B6A0";
+
+    private final String ADMIN_CONSOLE =
+            "GUID-48853F77-50C1-4650-9205-104455B51088";
+
+    private final String ADMIN_CONSOLE_TERMINAL =
+            "GUID-48853F77-50C1-4650-9205-104455B51088";
+
     // Java Help system navigator type enum.
     private final JavaHelpNavType view;
 
     private static final String FILE_NAME =
-            "GUID-E6C6D081-FE56-4EB5-8287-9873E65B45E6.hs";
+            "GUID-02097852-C3C6-4C04-B7B5-3DADCB0EFF62.hs";
 
-    private DefaultHelpBroker helpBroker;
+    private OnlineHelpBroker helpBroker;
 
     private HelpSet helpSet;
 
@@ -259,7 +330,10 @@ public class HelpAction extends AbstractAction {
 
         helpSet = initHelpSet();
         if (helpSet != null) {
-            helpBroker = (DefaultHelpBroker) helpSet.createHelpBroker();
+            helpSet.setKeyData(HelpSet.implRegistry, HelpSet.helpBrokerClass,
+                    OnlineHelpBroker.class.getName());
+            helpBroker = (OnlineHelpBroker) helpSet.createHelpBroker();
+
         }
 
         displayListener = new CSH.DisplayHelpFromSource(helpBroker);
@@ -305,7 +379,7 @@ public class HelpAction extends AbstractAction {
     /**
      * @return the subnetName
      */
-    public String getSubnetName() {
+    public String getSubnetStatisticsName() {
         return SUBNET_NAME;
     }
 
@@ -337,6 +411,14 @@ public class HelpAction extends AbstractAction {
         return SUBNET_PERFORMANCE;
     }
 
+    public String getUnitGroup() {
+        return UNIT_GROUP;
+    }
+
+    public String getErrorGroup() {
+        return ERROR_GROUP;
+    }
+
     /**
      * @return the trend
      */
@@ -361,7 +443,7 @@ public class HelpAction extends AbstractAction {
     /**
      * @return the statistics
      */
-    public String getStatistics() {
+    public String getPerformanceStatistics() {
         return STATISTICS;
     }
 
@@ -499,6 +581,13 @@ public class HelpAction extends AbstractAction {
     }
 
     /**
+     * @return the rOUTES
+     */
+    public String getRoutes() {
+        return ROUTES;
+    }
+
+    /**
      * @return the switchInformation
      */
     public String getSwitchInformation() {
@@ -545,10 +634,73 @@ public class HelpAction extends AbstractAction {
     }
 
     /**
+     * @return the mTU_VL
+     */
+    public String getMTUByVL() {
+        return MTU_VL;
+    }
+
+    /**
+     * @return the hOQLIFE_VL
+     */
+    public String getHoQLifeByVL() {
+        return HOQLIFE_VL;
+    }
+
+    /**
+     * @return the sTALLCOUNT_VL
+     */
+    public String getStallCountByVL() {
+        return STALLCOUNT_VL;
+    }
+
+    /**
+     * @return the qSFP
+     */
+    public String getQSFP() {
+        return QSFP;
+    }
+
+    /**
      * @return the sC2SL
      */
     public String getSC2SL() {
         return SC2SL;
+    }
+
+    /**
+     * @return the sC2VLT
+     */
+    public String getSC2VLT() {
+        return SC2VLT;
+    }
+
+    /**
+     * @return the sC2VNLT
+     */
+    public String getSC2VLNT() {
+        return SC2VLNT;
+    }
+
+    /**
+     * @return the lINK_DOWN_ERROR
+     */
+    public String getLinkDownError() {
+        return LINK_DOWN_ERROR;
+    }
+
+    /**
+     * @return the pORT_ERROR_ACTIONS
+     */
+    public String getPortErrorActions() {
+        return PORT_ERROR_ACTIONS;
+    }
+
+    /**
+     * @return the mISCELLANEOUS
+     */
+    public String getMisc() {
+        return MISCELLANEOUS;
     }
 
     /**
@@ -612,6 +764,48 @@ public class HelpAction extends AbstractAction {
      */
     public String getFlitControl() {
         return FLIT_CONTROL;
+    }
+
+    /**
+     * @return the sETUP_WIZARD
+     */
+    public String getSetupWizard() {
+        return SETUP_WIZARD;
+    }
+
+    /**
+     * @return the aDMIN_APP
+     */
+    public String getAdminApp() {
+        return ADMIN_APP;
+    }
+
+    /**
+     * @return the aDMIN_DG
+     */
+    public String getAdminDg() {
+        return ADMIN_DG;
+    }
+
+    /**
+     * @return the aDMIN_VF
+     */
+    public String getAdminVf() {
+        return ADMIN_VF;
+    }
+
+    /**
+     * @return the aDMIN_CONSOLE
+     */
+    public String getAdminConsole() {
+        return ADMIN_CONSOLE;
+    }
+
+    /**
+     * @return the aDMIN_CONSOLE_TERMINAL
+     */
+    public String getAdminConsoleTerminal() {
+        return ADMIN_CONSOLE_TERMINAL;
     }
 
 }

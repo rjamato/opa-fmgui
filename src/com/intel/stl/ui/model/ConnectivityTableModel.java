@@ -35,8 +35,27 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7.2.1  2015/08/12 15:26:38  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.12  2015/08/17 18:53:46  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/08/04 23:00:32  jijunwan
+ *  Archive Log:    PR 129821 - connectivity table has no Link Width Down Grade data
+ *  Archive Log:    - added related data to data table
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/07/17 15:39:59  rjtierne
+ *  Archive Log:    PR 129547 - Need to add Node type and lid to the Connectivity
+ *  Archive Log:    Added two new switch cases to getValueAt() to support the retrieval of node lid
+ *  Archive Log:    and type values
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/07/13 21:56:17  rjtierne
+ *  Archive Log:    PR 129355 - Ability to click on cables to get cable info
+ *  Archive Log:    - Added case CABLE_INFO in method getValueAt() to return the cable info
+ *  Archive Log:    - Changed DEVICE_NAME to NODE_NAME to match string value of enumeration
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/06/01 15:01:22  jypak
+ *  Archive Log:    PR 128823 - Improve performance tables to include all portcounters fields.
+ *  Archive Log:    All port counters fields added to performance table and connectivity table.
  *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/04/08 19:44:35  rjtierne
  *  Archive Log:    Removed SYMBOL_ERRORS, TX_32BIT_WORDS, RX_32BIT_WORDS, and VL_15_DROPPED
@@ -135,8 +154,16 @@ public class ConnectivityTableModel extends FVTableModel<ConnectivityTableData> 
             ConnectivityTableColumns col =
                     ConnectivityTableColumns.values()[pCol];
             switch (col) {
-                case DEVICE_NAME:
-                    value = nodeData.getDeviceName();
+                case NODE_NAME:
+                    value = nodeData.getNodeName();
+                    break;
+
+                case NODE_LID:
+                    value = nodeData.getNodeLidValue();
+                    break;
+
+                case NODE_TYPE:
+                    value = nodeData.getNodeType();
                     break;
 
                 case NODE_GUID:
@@ -145,6 +172,10 @@ public class ConnectivityTableModel extends FVTableModel<ConnectivityTableData> 
 
                 case PORT_NUMBER:
                     value = nodeData.getPortNumber();
+                    break;
+
+                case CABLE_INFO:
+                    value = nodeData.getCableInfo();
                     break;
 
                 case LINK_STATE:
@@ -173,6 +204,22 @@ public class ConnectivityTableModel extends FVTableModel<ConnectivityTableData> 
 
                 case SUPPORTED_LINK_WIDTH:
                     value = nodeData.getSupportedLinkWidth();
+                    break;
+
+                case ACTIVE_LINK_WIDTH_DG_TX:
+                    value = nodeData.getActiveLinkWidthDnGrdTx();
+                    break;
+
+                case ACTIVE_LINK_WIDTH_DG_RX:
+                    value = nodeData.getActiveLinkWidthDnGrdRx();
+                    break;
+
+                case ENABLED_LINK_WIDTH_DG:
+                    value = nodeData.getEnabledLinkWidthDnGrd();
+                    break;
+
+                case SUPPORTED_LINK_WIDTH_DG:
+                    value = nodeData.getSupportedLinkWidthDnGrd();
                     break;
 
                 case ACTIVE_LINK_SPEED:
@@ -213,11 +260,11 @@ public class ConnectivityTableModel extends FVTableModel<ConnectivityTableData> 
                 value = perfData.getRxPackets();
                 break;
 
-            case LINK_RECOVERIES:
+            case LINK_ERROR_RECOVERIES:
                 value = perfData.getNumLinkRecoveries();
                 break;
 
-            case LINK_DOWN:
+            case LINK_DOWNED:
                 value = perfData.getNumLinkDown();
                 break;
 
@@ -233,7 +280,7 @@ public class ConnectivityTableModel extends FVTableModel<ConnectivityTableData> 
                 value = perfData.getTxDiscards();
                 break;
 
-            case LOCAL_LINK_INTEGRITY_ERRRORS:
+            case LOCAL_LINK_INTEGRITY:
                 value = perfData.getLocalLinkIntegrityErrors();
                 break;
 
@@ -241,16 +288,76 @@ public class ConnectivityTableModel extends FVTableModel<ConnectivityTableData> 
                 value = perfData.getExcessiveBufferOverruns();
                 break;
 
-            case SWITCH_RELAY_ERRRORS:
+            case RX_SWITCH_RELAY_ERRRORS:
                 value = perfData.getSwitchRelayErrors();
                 break;
 
-            case TX_PORT_CONSTRAINT:
+            case TX_CONSTRAINT:
                 value = perfData.getTxConstraints();
                 break;
 
-            case RX_PORT_CONSTRAINT:
+            case RX_CONSTRAINT:
                 value = perfData.getRxConstraints();
+                break;
+
+            case RX_DATA:
+                value = perfData.getPortRcvData();
+                break;
+
+            case TX_DATA:
+                value = perfData.getPortXmitData();
+                break;
+
+            case FM_CONFIG_ERRORS:
+                value = perfData.getFmConfigErrors();
+                break;
+
+            case RX_MC_PACKETS:
+                value = perfData.getPortMulticastRcvPkts();
+                break;
+
+            case RX_FECN:
+                value = perfData.getPortRcvFECN();
+                break;
+
+            case RX_BECN:
+                value = perfData.getPortRcvBECN();
+                break;
+
+            case RX_BUBBLE:
+                value = perfData.getPortRcvBubble();
+                break;
+
+            case TX_MC_PACKETS:
+                value = perfData.getPortMulticastXmitPkts();
+                break;
+
+            case TX_WAIT:
+                value = perfData.getPortXmitWait();
+                break;
+
+            case TX_TIME_CONG:
+                value = perfData.getPortXmitTimeCong();
+                break;
+
+            case TX_WASTED_BW:
+                value = perfData.getPortXmitWastedBW();
+                break;
+
+            case TX_WAIT_DATA:
+                value = perfData.getPortXmitWaitData();
+                break;
+
+            case MARK_FECN:
+                value = perfData.getPortMarkFECN();
+                break;
+
+            case UNCORRECTABLE_ERRORS:
+                value = perfData.getUncorrectableErrors();
+                break;
+
+            case SW_PORT_CONGESTION:
+                value = perfData.getSwPortCongestion();
                 break;
 
             default:

@@ -24,6 +24,41 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: IFabricView.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.35  2015/08/17 18:54:02  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.34  2015/08/10 17:30:07  robertja
+ *  Archive Log: PR 128974 - Email notification functionality.
+ *  Archive Log:
+ *  Archive Log: Revision 1.33  2015/08/05 02:47:03  jijunwan
+ *  Archive Log: PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log: - introduced UndoHandler to manage undo/redo
+ *  Archive Log: - added undo/redo to main frame
+ *  Archive Log: - improved FabricController to support undoHandler and undo action on page selection
+ *  Archive Log: - improved FabricController to support the new page name based IPageListener
+ *  Archive Log:
+ *  Archive Log: Revision 1.32  2015/06/10 19:58:57  jijunwan
+ *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: jijunwan
+ * 
+ ******************************************************************************/
 package com.intel.stl.ui.main.view;
 
 import java.awt.Component;
@@ -33,6 +68,8 @@ import java.awt.Rectangle;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowListener;
 import java.util.List;
+
+import javax.swing.Action;
 
 import com.intel.stl.ui.common.EventTableController;
 import com.intel.stl.ui.common.IPageController;
@@ -103,6 +140,12 @@ public interface IFabricView {
 
     void setWizardAction(ActionListener listener);
 
+    void setLoggingAction(ActionListener listener);
+    
+    void setAboutDialogAction(ActionListener listener);
+    
+    void setEmailSettingsAction(ActionListener listener);
+
     void setRandomAction(ActionListener listener);
 
     void setWindowAction(WindowListener listener);
@@ -110,6 +153,10 @@ public interface IFabricView {
     void setRefreshAction(ActionListener listener);
 
     void setRefreshRunning(boolean isRunning);
+
+    void setUndoAction(Action action);
+
+    void setRedoAction(Action action);
 
     void setPageListener(IPageListener listener);
 

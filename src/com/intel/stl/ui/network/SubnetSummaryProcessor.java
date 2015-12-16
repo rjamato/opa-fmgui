@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3.2.1  2015/08/12 15:26:50  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.5  2015/08/17 18:54:00  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/08/11 17:37:22  jijunwan
+ *  Archive Log:    PR 126645 - Topology Page does not show correct data after port disable/enable event
+ *  Archive Log:    - improved to get distribution data with argument "refresh". When it's true, calculate distribution rather than get it from cache
  *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/02/23 22:45:59  jijunwan
  *  Archive Log:    improved to include/exclude inactive nodes/links in query
@@ -112,7 +117,8 @@ public class SubnetSummaryProcessor {
                         STLConstants.K0014_ACTIVE_NODES.getValue(), null);
         category.setShowHeader(true);
         try {
-            EnumMap<NodeType, Integer> dist = subnetApi.getNodesTypeDist(false);
+            EnumMap<NodeType, Integer> dist =
+                    subnetApi.getNodesTypeDist(false, false);
 
             NodeTypeViz type = NodeTypeViz.SWITCH;
             Integer count = dist.get(type.getType());
@@ -137,7 +143,8 @@ public class SubnetSummaryProcessor {
                         STLConstants.K0024_ACTIVE_PORTS.getValue(), null);
         category.setShowHeader(true);
         try {
-            EnumMap<NodeType, Long> dist = subnetApi.getPortsTypeDist(true);
+            EnumMap<NodeType, Long> dist =
+                    subnetApi.getPortsTypeDist(true, false);
 
             NodeTypeViz type = NodeTypeViz.SWITCH;
             Long count = dist.get(type.getType());

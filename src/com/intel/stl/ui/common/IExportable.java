@@ -32,8 +32,16 @@
  *
  *  File Name: IExportable.java
  *
- *  Archive Source: 
+ *  Archive Source: $Source$
  *
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.3  2015/08/17 18:54:12  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.2  2015/06/10 21:07:16  jijunwan
+ *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs
+ *  Archive Log: - manual correction on files that our tool cannot  identify
  *  Archive Log:
  *
  *  Overview: 
@@ -46,8 +54,8 @@ package com.intel.stl.ui.common;
 
 /**
  * @author jijunwan
- *
+ * 
  */
 public interface IExportable {
-	//TODO: export to image file, reporter etc.
+    // TODO: export to image file, reporter etc.
 }

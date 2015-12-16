@@ -35,11 +35,25 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.33.2.2  2015/08/12 15:26:34  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.39  2015/09/08 18:34:16  jijunwan
+ *  Archive Log:    PR 130277 - FM GUI Locked up due to [AWT-EventQueue-0] ERROR - Unsupported MTUSize 0x0d java.lang.IllegalArgumentException: Unsupported MTUSize 0x0d
+ *  Archive Log:    - moved isDev to FMGuiPlugin so both backend and frontend can access it
  *  Archive Log:
- *  Archive Log:    Revision 1.33.2.1  2015/05/06 19:39:13  jijunwan
- *  Archive Log:    changed to directly show exception(s)
+ *  Archive Log:    Revision 1.38  2015/09/08 14:59:07  jijunwan
+ *  Archive Log:    PR 130277 - FM GUI Locked up due to [AWT-EventQueue-0] ERROR - Unsupported MTUSize 0x0d java.lang.IllegalArgumentException: Unsupported MTUSize 0x0d
+ *  Archive Log:    - moved isDev logic to backend
+ *  Archive Log:
+ *  Archive Log:    Revision 1.37  2015/08/31 15:53:40  jijunwan
+ *  Archive Log:    PR 130204 - Shortcut launch results in meaningless error and forces me to reboot my machine
+ *  Archive Log:    - changed to put splashScreen on back and then display errors and wait for input
+ *  Archive Log:    - put UI shutdown on EDT
+ *  Archive Log:
+ *  Archive Log:    Revision 1.36  2015/08/17 18:53:38  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.35  2015/05/26 15:53:23  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
  *  Archive Log:
  *  Archive Log:    Revision 1.34  2015/05/01 21:29:06  jijunwan
  *  Archive Log:    changed to directly show exception(s)
@@ -167,6 +181,7 @@ import com.intel.stl.api.ICertsAssistant;
 import com.intel.stl.api.StringUtils;
 import com.intel.stl.ui.common.UIConstants;
 import com.intel.stl.ui.common.Util;
+import com.intel.stl.ui.common.view.DialogFactory;
 import com.intel.stl.ui.main.view.CertsPanel;
 import com.intel.stl.ui.main.view.SplashScreen;
 
@@ -174,11 +189,9 @@ public class FabricPlugin extends FMGuiPlugin {
     private final static Logger log = LoggerFactory
             .getLogger(FMGuiPlugin.class);
 
-    public static String DEV_NAME = "dev";
-
-    public static boolean IS_DEV = false;
-
     SplashScreen splashScreen;
+
+    private ICertsAssistant certsAssistant;
 
     private ISubnetManager subnetMgr;
 
@@ -189,7 +202,7 @@ public class FabricPlugin extends FMGuiPlugin {
     @Override
     public void init(AppContext appContext) {
         CertsPanel certsPanel = new CertsPanel();
-        ICertsAssistant certsAssistant =
+        certsAssistant =
                 new CertsAssistant(certsPanel, appContext.getConfigurationApi());
         appContext.registerCertsAssistant(certsAssistant);
         super.init(appContext);
@@ -203,11 +216,6 @@ public class FabricPlugin extends FMGuiPlugin {
             UIManager.put("SplitPaneDivider.draggingColor",
                     UIConstants.INTEL_LIGHT_GRAY);
 
-            String devValue = System.getProperty(DEV_NAME);
-            if (devValue != null) {
-                IS_DEV =
-                        devValue.isEmpty() || devValue.equalsIgnoreCase("true");
-            }
             Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
             System.setProperty("sun.awt.exception.handler",
                     ExceptionHandler.class.getName());
@@ -248,7 +256,7 @@ public class FabricPlugin extends FMGuiPlugin {
     protected ISubnetManager createSubnetManager() {
         AppContext appContext = getAppContext();
 
-        return new SubnetManager(appContext);
+        return new SubnetManager(appContext, certsAssistant);
     }
 
     @Override
@@ -261,22 +269,30 @@ public class FabricPlugin extends FMGuiPlugin {
         for (Throwable e : errors) {
             e.printStackTrace();
         }
-        Util.showErrors(splashScreen, errors);
+        if (splashShowing) {
+            splashScreen.toBack();
+        }
+        DialogFactory.showModalErrorDialog(null, errors);
     }
 
     @Override
     public void shutdown() {
-        if (splashShowing) {
-            splashScreen.close();
-            splashShowing = false;
-        }
-        if (subnetMgr != null) {
-            try {
-                subnetMgr.cleanup();
-            } catch (Exception e) {
-                e.printStackTrace();
+        Util.runInEDT(new Runnable() {
+            @Override
+            public void run() {
+                if (splashShowing) {
+                    splashScreen.close();
+                    splashShowing = false;
+                }
+                if (subnetMgr != null) {
+                    try {
+                        subnetMgr.cleanup();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-        }
+        });
     }
 
     class ExceptionHandler implements Thread.UncaughtExceptionHandler {

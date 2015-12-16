@@ -35,8 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.24.2.1  2015/08/12 15:26:50  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.25  2015/08/17 18:54:00  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.24  2014/10/23 16:00:04  jijunwan
  *  Archive Log:    changed topology information display to use device property panels, and JSectionView

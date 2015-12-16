@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.17.2.1  2015/08/12 15:27:16  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.19  2015/08/17 18:54:25  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.18  2015/08/05 04:04:48  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on Performance Page
  *  Archive Log:
  *  Archive Log:    Revision 1.17  2015/04/10 20:19:04  fernande
  *  Archive Log:    Changed TopologyView to be passed two background services (graphService and outlineService) which now reside in FabricController and can be properly shutdown when an error occurs.
@@ -134,7 +139,8 @@ import com.intel.stl.ui.main.view.IPageListener;
 import com.intel.stl.ui.monitor.TreeNodeType;
 import com.intel.stl.ui.monitor.tree.FVResourceNode;
 
-public class PerformanceTreeView extends TreeView implements IPerformanceView {
+public class PerformanceTreeView extends TreeView implements IPerformanceView,
+        ChangeListener {
 
     /**
      * Serial Version UID
@@ -152,7 +158,9 @@ public class PerformanceTreeView extends TreeView implements IPerformanceView {
 
     private final JLabel lblNodeName = new JLabel("");
 
-    private int currentTab = 0;
+    private IPageListener listener;
+
+    private String currentTab = null;
 
     /**
      * 
@@ -213,6 +221,8 @@ public class PerformanceTreeView extends TreeView implements IPerformanceView {
 
     @Override
     public void setTabs(List<IPerfSubpageController> subpages, int selection) {
+        tabbedPane.removeChangeListener(this);
+
         // remove all old tabs
         // add the view of each subpage to our tabbed pane
         tabbedPane.removeAll();
@@ -223,6 +233,10 @@ public class PerformanceTreeView extends TreeView implements IPerformanceView {
         }
 
         tabbedPane.setSelectedIndex(selection > 0 ? selection : 0);
+        int index = tabbedPane.getSelectedIndex();
+        currentTab = tabbedPane.getTitleAt(index);
+        tabbedPane.addChangeListener(this);
+        return;
     }
 
     public String getCurrentSubpage() {
@@ -234,10 +248,20 @@ public class PerformanceTreeView extends TreeView implements IPerformanceView {
         }
     }
 
+    public void setCurrentSubpage(String name) {
+        for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+            if (tabbedPane.getTitleAt(i).equals(name)) {
+                tabbedPane.setSelectedIndex(i);
+                break;
+            }
+        }
+    }
+
     public void clearPage(TreeNodeType nodeType) {
         String msg = new String("");
-
+        tabbedPane.removeChangeListener(this);
         tabbedPane.removeAll();
+        tabbedPane.addChangeListener(this);
 
         switch (nodeType) {
 
@@ -271,18 +295,24 @@ public class PerformanceTreeView extends TreeView implements IPerformanceView {
      * @param listener
      */
     public void setPageListener(final IPageListener listener) {
-        tabbedPane.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                // only fire onPageChanged when we have valid oldPageId and
-                // newPageId
-                int oldTab = currentTab;
-                currentTab = tabbedPane.getSelectedIndex();
-                if (oldTab >= 0 && currentTab >= 0) {
-                    listener.onPageChanged(oldTab, currentTab);
-                }
-            }
-        });
+        this.listener = listener;
+        tabbedPane.addChangeListener(this);
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        if (listener == null) {
+            return;
+        }
+
+        // only fire onPageChanged when we have valid oldPageId and
+        // newPageId
+        String oldTab = currentTab;
+        int index = tabbedPane.getSelectedIndex();
+        currentTab = tabbedPane.getTitleAt(index);
+        if (oldTab != null && currentTab != null) {
+            listener.onPageChanged(oldTab, currentTab);
+        }
     }
 
     public void setRunning(boolean isRunning) {

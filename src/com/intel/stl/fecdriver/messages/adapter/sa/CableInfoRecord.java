@@ -34,11 +34,41 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7.2.2  2015/08/12 15:21:36  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.17  2015/09/16 14:37:12  jypak
+ *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
+ *  Archive Log:    For code consistency, added case statements for removed offset back.
  *  Archive Log:
- *  Archive Log:    Revision 1.7.2.1  2015/05/06 19:29:56  jijunwan
- *  Archive Log:    fixed comparison errors found by FindBugs
+ *  Archive Log:    Revision 1.16  2015/09/15 13:31:30  jypak
+ *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
+ *  Archive Log:    Incorporated the FM changes (PR 129390) as of 8/28/15. These changes are mainly from IbPrint/stl_sma.c revision 1.163.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.15  2015/08/19 22:26:34  jijunwan
+ *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
+ *  Archive Log:    - correction on OM length calculation
+ *  Archive Log:
+ *  Archive Log:    Revision 1.14  2015/08/19 21:02:54  jijunwan
+ *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
+ *  Archive Log:    - adapt to latest FM code
+ *  Archive Log:
+ *  Archive Log:    Revision 1.13  2015/08/19 18:08:29  jypak
+ *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
+ *  Archive Log:    Updates for ID and OpticalWaveLength.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.12  2015/08/17 18:48:48  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/08/07 16:13:16  jypak
+ *  Archive Log:    PR 129397 -gaps in cableinfo output and handling.
+ *  Archive Log:    Updates on the formats of the cableinfo output and also new enums were defined for different output values.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/08/07 14:57:52  jypak
+ *  Archive Log:    PR 129397 -gaps in cableinfo output and handling.
+ *  Archive Log:    Updates on the formats of the cableinfo output and also new enums were defined for different output values.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/06/29 15:05:41  jypak
+ *  Archive Log:    PR 129284 - Incorrect QSFP field name.
+ *  Archive Log:    Field name fix has been implemented. Also, introduced a conversion to Date object to add flexibility to display date code.
  *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/05/01 20:52:38  jijunwan
  *  Archive Log:    fixed minor errors
@@ -55,7 +85,11 @@
  *  
  *  Overview: 
  *  
- *  Reference: /All_EMB/IbPrint/stl_sma.c.1.103 for the QSFP interpretation.
+ *  Reference: /All_EMB/IbPrint/stl_sma.c.1.159 for the QSFP interpretation.
+ *             /All_EMB/IbAccess/Common/Inc/stl_helper.h.1.74
+ *             /All_EMB/IbAccess/Common/Inc/stl_sm.h.1.149
+ *             ftp://ftp.seagate.com/sff/SFF-8436.PDF
+ *             
  *
  *  @author: jypak
  *
@@ -65,6 +99,9 @@ package com.intel.stl.fecdriver.messages.adapter.sa;
 
 import com.intel.stl.api.subnet.CableInfoBean;
 import com.intel.stl.api.subnet.CableRecordBean;
+import com.intel.stl.api.subnet.CertifiedRateType;
+import com.intel.stl.api.subnet.OutputModuleType;
+import com.intel.stl.api.subnet.PowerClassType;
 import com.intel.stl.api.subnet.SAConstants;
 import com.intel.stl.common.StringUtils;
 import com.intel.stl.fecdriver.messages.adapter.SimpleDatagram;
@@ -205,13 +242,16 @@ public class CableInfoRecord extends SimpleDatagram<CableRecordBean> {
                 if ((addr + len) < 128) {
                     break;
                 }
-                bean.setId(data[128 - addr]);
+                bean.setId((byte) (data[128 - addr] & 0xFF));
             case 129:
                 if ((addr + len) < 129) {
                     break;
                 }
-                int intExtID = data[129 - addr] & 0xC0;
-                bean.setExtId((byte) intExtID);
+                int extIdent = data[129 - addr] & 0xFF;
+                bean.setPowerClass(stlCableInfoPowerClassType(extIdent >> 6,
+                        extIdent & 0x03));
+                bean.setTxCDRSupported((extIdent & 0x08) == 0x08);
+                bean.setRxCDRSupported((extIdent & 0x04) == 0x04);
             case 130:
                 if ((addr + len) < 130) {
                     break;
@@ -229,47 +269,46 @@ public class CableInfoRecord extends SimpleDatagram<CableRecordBean> {
                 if ((addr + len) < 140) {
                     break;
                 }
-                bean.setNominalBr(data[140 - addr]);
+                bean.setBitRateLow(data[140 - addr]);
             case 141:
             case 142:
-                if ((addr + len) < 142) {
-                    break;
-                }
-                bean.setSmfLength(data[142 - addr]);
+                // SmfLength ignored
             case 143:
                 if ((addr + len) < 143) {
                     break;
                 }
-                bean.setOm3Length(data[143 - addr]);
+                // Unit in meter
+                bean.setOm3Length(getOM3Length(data[143 - addr]));
             case 144:
                 if ((addr + len) < 144) {
                     break;
                 }
-                bean.setOm2Length(data[144 - addr]);
+                // Unit in meter
+                bean.setOm2Length(data[144 - addr] & 0xFF);
             case 145:
-                if ((addr + len) < 145) {
-                    break;
-                }
-                bean.setOm1Length(data[145 - addr]);
+                // Om1Length ignored
             case 146:
                 if ((addr + len) < 146) {
                     break;
                 }
-                bean.setCopperLength(data[146 - addr]);
+                // Unit in meter
+                byte length = data[146 - addr];
+                boolean isValid =
+                        isCableLengthValid(data[147 - addr], data[130 - addr]);
+                bean.setOm4Length(getOM4Length(length, isValid));
             case 147:
                 if ((addr + len) < 147) {
                     break;
                 }
-                bean.setDeviceTech(cableInfoDevTechToText(data[147 - addr]));
+                int codeXmit = data[147 - addr] & 0xFF;
+                bean.setCodeXmit(codeXmit >> 4);
             case 148:
                 if ((addr + len) < 163) {
                     break;
                 }
-                byte[] toVendorName = new byte[16];
                 // From C byte to C char is 8 bits to 8 bits but from C byte to
                 // Java char is 8 bits to 16 bits.
-                System.arraycopy(data, 148 - addr, toVendorName, 0, 16);
-                bean.setVendorName(StringUtils.toString(toVendorName, 0, 16));
+                bean.setVendorName(StringUtils.toString(data, 148 - addr, 16));
             case 149:
             case 150:
             case 151:
@@ -286,10 +325,7 @@ public class CableInfoRecord extends SimpleDatagram<CableRecordBean> {
             case 162:
             case 163:
             case 164:
-                if ((addr + len) < 164) {
-                    break;
-                }
-                bean.setExtendedModule(cableInfoOutputModuleCodeToText(data[164 - addr]));
+                // ExtendedModule ignored
             case 165:
                 if ((addr + len) < 167) {
                     break;
@@ -303,9 +339,7 @@ public class CableInfoRecord extends SimpleDatagram<CableRecordBean> {
                 if ((addr + len) < 183) {
                     break;
                 }
-                byte[] toVendorPN = new byte[16];
-                System.arraycopy(data, 168 - addr, toVendorPN, 0, 16);
-                bean.setVendorPn(StringUtils.toString(toVendorPN, 0, 16));
+                bean.setVendorPn(StringUtils.toString(data, 168 - addr, 16));
             case 169:
             case 170:
             case 171:
@@ -325,22 +359,10 @@ public class CableInfoRecord extends SimpleDatagram<CableRecordBean> {
                 if ((addr + len) < 185) {
                     break;
                 }
-                byte[] toVendorRev = new byte[2];
-                System.arraycopy(data, 184 - addr, toVendorRev, 0, 2);
-                bean.setVendorRev(StringUtils.toString(toVendorRev, 0, 2));
+                bean.setVendorRev(StringUtils.toString(data, 184 - addr, 2));
             case 185:
             case 186:
-                if ((addr + len) < 189) {
-                    break;
-                }
-
-                // Big Endian
-                int opticalWL =
-                        ((data[186 - addr] & 0xFF) << 24)
-                                | ((data[187 - addr] & 0xFF) << 16)
-                                | ((data[188 - addr] & 0xFF) << 8)
-                                | (data[189 - addr] & 0xFF);
-                bean.setOpticalWaveLength(opticalWL);
+                // OpticalWaveLength ignored
             case 187:
             case 188:
             case 189:
@@ -348,70 +370,46 @@ public class CableInfoRecord extends SimpleDatagram<CableRecordBean> {
                 if ((addr + len) < 190) {
                     break;
                 }
-                bean.setMaxCaseTemp(data[190 - addr]);
+                bean.setMaxCaseTemp(data[190 - addr] & 0xFF);
             case 191:
                 if ((addr + len) < 191) {
                     break;
                 }
                 bean.setCcBase(data[191 - addr]);
             case 192:
+                if ((addr + len) < 192) {
+                    break;
+                }
+                bean.setLinkCodes(data[192 - addr]);
             case 193:
                 if ((addr + len) < 193) {
                     break;
                 }
-                boolean rxOutAmpProg =
-                        ((data[193 - addr] & 1) == 1) ? true : false;
-                bean.setRxOutAmpProg(rxOutAmpProg);
+                byte rxtxOptEquemp = data[193 - addr];
+                bean.setTxInpEqAutoAdp((rxtxOptEquemp & 0x08) == 0x08);
+                bean.setTxInpEqFixProg((rxtxOptEquemp & 0x04) == 0x04);
+                bean.setRxOutpEmphFixProg((rxtxOptEquemp & 0x02) == 0x02);
+                bean.setRxOutpAmplFixProg((rxtxOptEquemp & 0x01) == 0x01);
             case 194:
                 if ((addr + len) < 194) {
                     break;
                 }
-                boolean rxSquelchDisImp =
-                        ((data[194 - addr] & (1 << 3)) == 1 << 3) ? true
-                                : false;
-                bean.setRxSquelchDisImp(rxSquelchDisImp);
-                boolean rxOutputDisCap =
-                        ((data[194 - addr] & (1 << 2)) == 1 << 2) ? true
-                                : false;
-                bean.setRxOutputDisCap(rxOutputDisCap);
-                boolean txSquelchDisImp =
-                        ((data[194 - addr] & (1 << 1)) == 1 << 1) ? true
-                                : false;
-                bean.setTxSquelchDisImp(txSquelchDisImp);
-                boolean txSquelchImp =
-                        ((data[194 - addr] & 1) == 1) ? true : false;
-                bean.setTxSquelchImp(txSquelchImp);
+                byte rxtxOptCdrsquel = data[194 - addr];
+                bean.setTxCDROnOffCtrl((rxtxOptCdrsquel & 0x80) == 0x80);
+                bean.setRxCDROnOffCtrl((rxtxOptCdrsquel & 0x40) == 0x40);
+                bean.setTxSquelchImp((rxtxOptCdrsquel & 0x01) == 0x01);
             case 195:
                 if ((addr + len) < 195) {
                     break;
                 }
-                boolean memPage02Provided =
-                        ((data[195 - addr] & (1 << 7)) == 1 << 7) ? true
-                                : false;
-                bean.setMemPage02Provided(memPage02Provided);
-                boolean memPage01Provided =
-                        ((data[195 - addr] & (1 << 6)) == 1 << 6) ? true
-                                : false;
-                bean.setMemPage01Provided(memPage01Provided);
-                boolean txDisImp =
-                        ((data[195 - addr] & (1 << 4)) == 1 << 4) ? true
-                                : false;
-                bean.setTxDisImp(txDisImp);
-                boolean txFaultRepImp =
-                        ((data[195 - addr] & (1 << 3)) == 1 << 3) ? true
-                                : false;
-                bean.setTxFaultRepImp(txFaultRepImp);
-                boolean losReportImp =
-                        ((data[195 - addr] & (1 << 1)) == 1 << 1) ? true
-                                : false;
-                bean.setLosReportImp(losReportImp);
+                byte memtxOptPagesquel = data[195 - addr];
+                bean.setMemPage02Provided((memtxOptPagesquel & 0x80) == 0x80);
+                bean.setMemPage01Provided((memtxOptPagesquel & 0x40) == 0x40);
             case 196:
                 if ((addr + len) < 211) {
                     break;
                 }
-                byte[] toVendorSN = new byte[16];
-                System.arraycopy(data, 196 - addr, toVendorSN, 0, 16);
-                bean.setVendorSN(StringUtils.toString(toVendorSN, 0, 16));
+                bean.setVendorSN(StringUtils.toString(data, 196 - addr, 16));
             case 197:
             case 198:
             case 199:
@@ -431,9 +429,12 @@ public class CableInfoRecord extends SimpleDatagram<CableRecordBean> {
                 if ((addr + len) < 217) {
                     break;
                 }
-                byte[] toDataCode = new byte[6];
-                System.arraycopy(data, 212 - addr, toDataCode, 0, 6);
-                bean.setDataCode(StringUtils.toString(toDataCode, 0, 6));
+                byte[] toDateCode = new byte[6];
+                System.arraycopy(data, 212 - addr, toDateCode, 0, 6);
+                String year = StringUtils.toString(toDateCode, 0, 2);
+                String month = StringUtils.toString(toDateCode, 2, 2);
+                String day = StringUtils.toString(toDateCode, 4, 2);
+                bean.setDateCode(year, month, day);
             case 213:
             case 214:
             case 215:
@@ -443,18 +444,36 @@ public class CableInfoRecord extends SimpleDatagram<CableRecordBean> {
                 if ((addr + len) < 219) {
                     break;
                 }
-                byte[] toLotCode = new byte[2];
-                System.arraycopy(data, 218 - addr, toLotCode, 0, 2);
-                bean.setLotCode(StringUtils.toString(toLotCode, 0, 2));
+                bean.setLotCode(StringUtils.toString(data, 218 - addr, 2));
             case 219:
             case 220:
             case 221:
             case 222:
+                if ((addr + len) < 222) {
+                    break;
+                }
+                bean.setBitRateHigh(data[222 - addr]);
             case 223:
                 if ((addr + len) < 223) {
                     break;
                 }
                 bean.setCcExt(data[223 - addr]);
+            case 250:
+                if ((addr + len) < 250) {
+                    break;
+                }
+                bean.setCertCableFlag(isStlCableInfoCableCertified(data[250 - addr]));
+            case 251:
+                if ((addr + len) < 251) {
+                    break;
+                }
+                bean.setReachClass(data[251 - addr] & 0xFF);
+            case 252:
+                if ((addr + len) < 252) {
+                    break;
+                }
+                bean.setCertDataRate(CertifiedRateType
+                        .getCertifiedRateType(data[252 - addr]));
                 break;
             default:
                 byte[] unknown = new byte[len];
@@ -466,60 +485,48 @@ public class CableInfoRecord extends SimpleDatagram<CableRecordBean> {
         return bean;
     }
 
-    private String cableInfoDevTechToText(byte code) {
-        switch (code) {
-            case 0:
-                return "850 nm VCSEL";
-            case 1:
-                return "1300 nm VCSEL";
-            case 2:
-                return "1550 nm VCSEL";
-            case 3:
-                return "1310 nm FP";
-            case 4:
-                return "1310 nm DFP";
-            case 5:
-                return "1550 nm DFP";
-            case 6:
-                return "1310 nm EML";
-            case 7:
-                return "1550 nm EML";
-            case 8:
-                return "Other";
-            case 9:
-                return "1490 nm DFB";
-            case 10:
-                return "copper cable, unequalized";
-            case 11:
-                return "copper, passive equalized";
-            case 12:
-                return "copper cable, near and far end limiting active equalizers";
-            case 13:
-                return "copper cable, far end limiting active equalizers";
-            case 14:
-                return "copper cable, near end limiting active equalizers";
-            case 15:
-                return "copper cable, linear active equalizers";
-            default:
-                return "Unknown Tech";
+    private OutputModuleType[] stlCableInfoOutputModuleType(byte code) {
+        OutputModuleType[] type = null;
+        type = OutputModuleType.getOuputModuleType(code);
+
+        return type;
+    }
+
+    public boolean isCableLengthValid(byte codeXmit, byte connector) {
+        if ((codeXmit == 0x08)
+                || ((codeXmit <= 0x09) && (connector != SAConstants.CABLEINFO_CONNECTOR_NOSEP))
+                || (codeXmit > 0x0F)) {
+            return false;
+        } else {
+            return true;
         }
     }
 
-    private String cableInfoOutputModuleCodeToText(byte code) {
-        switch (code) {
-            case 0:
-                return "SDR";
-            case 1:
-                return "DDR";
-            case 2:
-                return "QDR";
-            case 3:
-                return "FDR";
-            case 4:
-                return "EDR";
-            default:
-                return "Unknown";
+    private boolean isStlCableInfoCableCertified(byte code_cert) {
+        if (code_cert == SAConstants.CABLEINFO_OPA_CERTIFIED) {
+            return true;
+        } else {
+            return false;
         }
     }
 
+    private int getOM3Length(byte codeLen) {
+        return (codeLen & 0xFF) * 2;
+    }
+
+    private int getOM4Length(byte codeLen, boolean codeValid) {
+        if (codeValid) {
+            return codeLen & 0xFF;
+        } else {
+            return (codeLen & 0xFF) * 2;
+        }
+
+    }
+
+    private PowerClassType stlCableInfoPowerClassType(int codeLow, int codeHigh) {
+        PowerClassType type = null;
+        type = PowerClassType.getPowerClassType(codeHigh, codeLow);
+
+        return type;
+    }
 }

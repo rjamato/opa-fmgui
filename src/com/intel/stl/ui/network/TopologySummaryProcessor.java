@@ -35,8 +35,30 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:26:50  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.10  2015/08/17 18:54:00  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/08/06 22:19:03  jijunwan
+ *  Archive Log:    PR 129860 - Incorrect count of other ports on Topology summary
+ *  Archive Log:    - removed debug info
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/08/06 21:34:45  jijunwan
+ *  Archive Log:    PR 129860 - Incorrect count of other ports on Topology summary
+ *  Archive Log:    - Counted on number of nodes by mistake. Fixed to count on port.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/08/06 17:26:23  jijunwan
+ *  Archive Log:    PR 129825 - Topology summary doesn't catch down graded ports
+ *  Archive Log:    - improved to display "abnormal" ports
+ *  Archive Log:    - added undo navigation support
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/08/05 01:58:13  jijunwan
+ *  Archive Log:    PR 129825 - Topology summary doesn't catch down graded ports
+ *  Archive Log:    - the calculation missed the ports connect to HFIs. Now we include them in calculation
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/05/07 14:18:40  jypak
+ *  Archive Log:    PR 128564 - Topology Tree synchronization issue:
+ *  Archive Log:    Null check the context before update in the TopologyTreeController. Other safe guard code added to avoid potential synchronization issue.
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/02/18 19:32:02  jijunwan
  *  Archive Log:    PR 127102 - Overall summary of Switches under Topology page does not report correct number of switch ports
@@ -170,9 +192,7 @@ public class TopologySummaryProcessor {
             GraphNode refNode = (GraphNode) refCell.getValue();
             if (refNode.getType() == NodeType.SWITCH.getId()) {
                 numSwitches += 1;
-                int activePorts =
-                        refNode.getEndNeighbor().size()
-                                + refNode.getMiddleNeighbor().size();
+                int activePorts = refNode.getActivePorts();
                 // count switch zero port
                 numActiveSwitchPorts += activePorts + 1;
                 numOtherPorts += refNode.getNumPorts() - activePorts;
@@ -211,58 +231,68 @@ public class TopologySummaryProcessor {
             Quality upQuality = new Quality();
             Quality downQuality = new Quality();
             for (int lid : lids) {
-                GraphNode node = (GraphNode) refGraph.getVertex(lid).getValue();
-                totalPorts += node.getNumPorts();
-                Set<GraphNode> neighbors = node.getMiddleNeighbor();
-                for (GraphNode nbr : neighbors) {
-                    Set<Integer> ports = node.getLinkPorts(nbr).keySet();
+                if (!cancelIndicator.isCancelled()) {
 
-                    Quality quality = null;
-                    if (node.getDepth() > nbr.getDepth()) {
-                        quality = downQuality;
-                    } else if (node.getDepth() < nbr.getDepth()) {
-                        quality = upQuality;
-                    } else {
-                        // this shouldn't happen
-                        log.error("Mismatched nodes depth " + node + " " + nbr);
-                        continue;
-                    }
-                    quality.increaseTotalPorts(ports.size());
-                    for (Integer portNum : ports) {
-                        PortRecordBean port =
-                                portMap.get(new Point(node.getLid(), portNum));
-                        if (port != null) {
-                            if (!Utils.isExpectedSpeed(port.getPortInfo(),
-                                    LinkSpeedMask.STL_LINK_SPEED_25G)) {
-                                quality.increaseSlowPorts(1);
-                            }
-                            if (!Utils.isExpectedWidthDowngrade(
-                                    port.getPortInfo(),
-                                    LinkWidthMask.STL_LINK_WIDTH_4X)) {
-                                quality.increaseDegPorts(1);
-                            }
+                    GraphNode node =
+                            (GraphNode) refGraph.getVertex(lid).getValue();
+                    totalPorts += node.getNumPorts();
+                    Set<GraphNode> neighbors = node.getMiddleNeighbor();
+                    for (GraphNode nbr : neighbors) {
+                        Set<Integer> ports = node.getLinkPorts(nbr).keySet();
+
+                        Quality quality = null;
+                        if (node.getDepth() > nbr.getDepth()) {
+                            quality = downQuality;
+                        } else if (node.getDepth() < nbr.getDepth()) {
+                            quality = upQuality;
                         } else {
                             // this shouldn't happen
-                            log.error("Couldn't find port lid=" + node.getLid()
-                                    + " portNim=" + portNum);
+                            log.error("Mismatched nodes depth " + node + " "
+                                    + nbr);
+                            continue;
                         }
+                        updateQuality(quality, node.getLid(), ports, portMap);
                     }
+                    neighbors = node.getEndNeighbor();
+                    for (GraphNode nbr : neighbors) {
+                        Set<Integer> ports = node.getLinkPorts(nbr).keySet();
+                        updateQuality(downQuality, node.getLid(), ports,
+                                portMap);
+                    }
+                    numHFIs += neighbors.size();
                 }
-                neighbors = node.getEndNeighbor();
-                for (GraphNode nbr : neighbors) {
-                    downQuality.increaseTotalPorts(node.getLinkPorts(nbr)
-                            .size());
-                }
-                numHFIs += neighbors.size();
+                tiers[i].setNumHFIs(numHFIs);
+                tiers[i].setUpQuality(upQuality);
+                tiers[i].setDownQuality(downQuality);
+                tiers[i].setNumOtherPorts(totalPorts
+                        - upQuality.getTotalPorts()
+                        - downQuality.getTotalPorts());
+                // System.out.println(tiers[i]);
             }
-            tiers[i].setNumHFIs(numHFIs);
-            tiers[i].setUpQuality(upQuality);
-            tiers[i].setDownQuality(downQuality);
-            tiers[i].setNumOtherPorts(totalPorts - upQuality.getTotalPorts()
-                    - downQuality.getTotalPorts());
-            System.out.println(tiers[i]);
         }
         return tiers;
+    }
+
+    protected void updateQuality(Quality quality, int lid, Set<Integer> ports,
+            Map<Point, PortRecordBean> portMap) {
+        quality.increaseTotalPorts(ports.size());
+        for (Integer portNum : ports) {
+            PortRecordBean port = portMap.get(new Point(lid, portNum));
+            if (port != null) {
+                if (!Utils.isExpectedSpeed(port.getPortInfo(),
+                        LinkSpeedMask.STL_LINK_SPEED_25G)) {
+                    quality.addSlowPort(lid, portNum);
+                }
+                if (!Utils.isExpectedWidthDowngrade(port.getPortInfo(),
+                        LinkWidthMask.STL_LINK_WIDTH_4X)) {
+                    quality.addDegPort(lid, portNum);
+                }
+            } else {
+                // this shouldn't happen
+                log.error("Couldn't find port lid=" + lid + " portNim="
+                        + portNum);
+            }
+        }
     }
 
     protected Map<Point, PortRecordBean> getPortMap() {

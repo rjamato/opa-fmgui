@@ -35,8 +35,24 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6.2.1  2015/08/12 15:27:03  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.10  2015/08/17 18:54:12  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/08/06 13:18:09  jypak
+ *  Archive Log:    PR 129707 - Device Types or Device Groups and All/Internal/External labels.
+ *  Archive Log:    When disable irrelevant data types for different device types (All, HFI, SW etc.), set a default data type for the device type.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/08/05 03:00:43  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on charts to track chart  change, jump event
+ *  Archive Log:    - applied undo mechanism on chart section to track group change
+ *  Archive Log:    - improved OptionChartsView to support undoable data type and history selection
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/06/25 20:50:04  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on dynamic cards that can have different data sources
+ *  Archive Log:    - change to use port counter performance item
  *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/02/13 23:05:37  jijunwan
  *  Archive Log:    PR 126911 - Even though HFI does not represent "Internal" data under opatop, FV still provides drop down for "Internal"
@@ -87,11 +103,15 @@ import net.engio.mbassy.bus.MBassador;
 import com.intel.stl.ui.common.view.ChartsSectionView;
 import com.intel.stl.ui.common.view.ChartsSectionView.TabbedPanel;
 import com.intel.stl.ui.common.view.ISectionListener;
+import com.intel.stl.ui.event.JumpToEvent;
 import com.intel.stl.ui.framework.IAppEvent;
 import com.intel.stl.ui.main.Context;
+import com.intel.stl.ui.main.UndoHandler;
 import com.intel.stl.ui.model.ChartGroup;
 import com.intel.stl.ui.model.DataType;
+import com.intel.stl.ui.performance.GroupSource;
 import com.intel.stl.ui.performance.IGroupController;
+import com.intel.stl.ui.performance.provider.DataProviderName;
 
 public abstract class ChartsSectionController extends
         BaseSectionController<ISectionListener, ChartsSectionView> implements
@@ -102,15 +122,17 @@ public abstract class ChartsSectionController extends
 
     protected int topN = 10;
 
-    private final List<IGroupController> groups =
-            new ArrayList<IGroupController>();
+    private final List<IGroupController<GroupSource>> groups =
+            new ArrayList<IGroupController<GroupSource>>();
+
+    private UndoHandler undoHandler;
 
     public ChartsSectionController(ChartsSectionView view,
             MBassador<IAppEvent> eventBus) {
         super(view, eventBus);
 
         ChartGroup utilGroup = new ChartGroup(UTIL, null);
-        IGroupController[] tmp = getUtilGroups();
+        IGroupController<GroupSource>[] tmp = getUtilGroups();
         for (int i = 0; i < tmp.length; i++) {
             utilGroup.addMember(tmp[i].getGroup());
             groups.add(tmp[i]);
@@ -127,9 +149,9 @@ public abstract class ChartsSectionController extends
         view.setChartGroups(new ChartGroup[] { utilGroup, errGroup });
     }
 
-    protected abstract IGroupController[] getUtilGroups();
+    protected abstract IGroupController<GroupSource>[] getUtilGroups();
 
-    protected abstract IGroupController[] getErrorGroups();
+    protected abstract IGroupController<GroupSource>[] getErrorGroups();
 
     /**
      * @return the topN
@@ -152,6 +174,10 @@ public abstract class ChartsSectionController extends
     }
 
     public void setContext(Context context, IProgressObserver observer) {
+        if (context != null && context.getController() != null) {
+            undoHandler = context.getController().getUndoHandler();
+        }
+
         if (observer == null) {
             observer = new ObserverAdapter();
         }
@@ -179,9 +205,9 @@ public abstract class ChartsSectionController extends
         observer.onFinish();
     }
 
-    public void setSource(String name) {
+    public void setSource(GroupSource name) {
         for (int i = 0; i < groups.size(); i++) {
-            groups.get(i).setDataSources(name);
+            groups.get(i).setDataSources(new GroupSource[] { name });
         }
     }
 
@@ -190,15 +216,21 @@ public abstract class ChartsSectionController extends
      * 
      * @param name
      */
-    public void setDataProvider(String name) {
+    public void setDataProvider(DataProviderName name) {
         for (int i = 0; i < groups.size(); i++) {
             groups.get(i).setDataProvider(name);
         }
     }
 
-    public void setDisabledDataTypes(DataType... types) {
+    public void setDisabledDataTypes(DataType defaultType, DataType... types) {
         for (int i = 0; i < groups.size(); i++) {
-            groups.get(i).setDisabledDataTypes(types);
+            groups.get(i).setDisabledDataTypes(defaultType, types);
+        }
+    }
+
+    public void setOrigin(JumpToEvent origin) {
+        for (IGroupController<GroupSource> group : groups) {
+            group.setOrigin(origin);
         }
     }
 
@@ -224,10 +256,17 @@ public abstract class ChartsSectionController extends
         } else if (category == ERR) {
             initGroup(selection, getErrorGroups());
         }
+
+        if (undoHandler != null && !undoHandler.isInProgress()) {
+            UndoableChartGroupSelection undoSel =
+                    new UndoableChartGroupSelection(panel,
+                            panel.getPreviousSelection(), selection);
+            undoHandler.addUndoAction(undoSel);
+        }
     }
 
-    protected void initGroup(String name, IGroupController[] groups) {
-        for (IGroupController group : groups) {
+    protected void initGroup(String name, IGroupController<GroupSource>[] groups) {
+        for (IGroupController<GroupSource> group : groups) {
             if (group.getGroup().getName().equals(name)) {
                 group.setSleepMode(false);
             } else {

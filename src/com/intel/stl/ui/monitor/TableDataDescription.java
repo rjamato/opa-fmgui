@@ -35,8 +35,16 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:26:58  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.3  2015/08/17 18:53:40  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/05/28 15:29:22  jypak
+ *  Archive Log:    PR 128873 - Add "Flits" in performance table for Data related columns.
+ *  Archive Log:    Added "(MB)" to RcvData, XmitData column header.
+ *  Archive Log:    Added "(MBps)" to data rates.
+ *  Archive Log:    Added data in "Flits" or data rate in "(Flits/sec)" to tool tips.
+ *  Archive Log:    Used the TableDataDescription to convert and format the data.
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2015/04/07 14:38:27  jypak
  *  Archive Log:    PR 126998 - Received/Transmitted data counters for Device Node and Device ports should show in MB rather than Flits. Fixed by converting units to Byte/KB/MB/GB. Also, tool tips were added to show the units for each value.
@@ -51,16 +59,19 @@
 package com.intel.stl.ui.monitor;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 
 public class TableDataDescription implements Serializable {
 
     private static final long serialVersionUID = -929415085901813310L;
 
-    private long data;
+    private double data;
 
     private String description;
 
-    public TableDataDescription(long data, String description) {
+    private final long unit = 1000000;
+
+    public TableDataDescription(double data, String description) {
         this.data = data;
         this.description = description;
     }
@@ -68,7 +79,7 @@ public class TableDataDescription implements Serializable {
     /**
      * @return the data
      */
-    public long getData() {
+    public double getData() {
         return data;
     }
 
@@ -76,7 +87,7 @@ public class TableDataDescription implements Serializable {
      * @param data
      *            the data to set
      */
-    public void setData(long data) {
+    public void setData(double data) {
         this.data = data;
     }
 
@@ -93,6 +104,28 @@ public class TableDataDescription implements Serializable {
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    /**
+     * 
+     * <i>Description:</i>This formatting is related to the unit, so, unit
+     * conversion (MB) is also done in this class.
+     * 
+     * @return
+     */
+    public String getFormattedData() {
+        DecimalFormat df = new DecimalFormat("0");
+        df.setMaximumFractionDigits(6);
+        double dataConverted = data / unit;
+
+        String dataStr = null;
+        if (dataConverted < (1d / unit) && dataConverted != 0) {
+            dataStr = "<0.000001";
+        } else {
+            dataStr = df.format(dataConverted);
+        }
+
+        return dataStr;
     }
 
 }

@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:26:53  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.3  2015/08/17 18:54:02  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/06/30 17:50:10  fisherma
+ *  Archive Log:    PR 129220 - Improvement on secure FE login.
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2015/01/11 21:41:54  jijunwan
  *  Archive Log:    added certs assistant to support certs conf and password prompt
@@ -93,6 +97,8 @@ public class CertsPanel extends JPanel {
     }
 
     protected void initComponents() {
+        setBackground(UIConstants.INTEL_WHITE);
+        
         setLayout(new GridLayout(2, 1, 0, 5));
         chooser = new JFileChooser();
 
@@ -150,6 +156,7 @@ public class CertsPanel extends JPanel {
     public void setTrustStorePwdError(String msg) {
         trustStorePanel.setPwdError(msg);
     }
+    
 
     class StorePanel extends JPanel {
         private static final long serialVersionUID = -4039456864583682621L;
@@ -181,6 +188,8 @@ public class CertsPanel extends JPanel {
         }
 
         protected void initComponents() {
+            setBackground(UIConstants.INTEL_WHITE);
+            
             GridBagLayout gridBag = new GridBagLayout();
             setLayout(gridBag);
 
@@ -273,7 +282,7 @@ public class CertsPanel extends JPanel {
         }
 
         protected JLabel cerateErrLabel() {
-            JLabel label = ComponentFactory.getFieldContent("");
+            JLabel label = ComponentFactory.getFieldContent(" ");
             label.setForeground(UIConstants.INTEL_DARK_RED);
             return label;
         }
@@ -294,7 +303,7 @@ public class CertsPanel extends JPanel {
             password.setText(null);
             pwdDocListener.clearError();
         }
-
+        
         public void setLocError(String msg) {
             locErrLabel.setText(msg);
             location.setBackground(UIConstants.INTEL_LIGHT_RED);
@@ -380,7 +389,7 @@ public class CertsPanel extends JPanel {
 
         protected void clearError() {
             if (!errorLabel.getText().isEmpty()) {
-                errorLabel.setText("");
+                errorLabel.setText(" ");
                 field.setBackground(UIConstants.INTEL_WHITE);
                 parent.revalidate();
             }

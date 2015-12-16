@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.1  2015/08/12 15:22:01  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.7  2015/10/01 17:37:10  jypak
+ *  Archive Log:    PR 130608 - Changes made to SC2VL mapping is not reflected in FM GUI's SC2SL Mapping Table.
+ *  Archive Log:    Each cache's refreshCache method is implemented to remove relevant cahce.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/08/17 18:48:53  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.5  2014/09/17 16:40:46  fernande
  *  Archive Log:    Refactored CacheManager to load caches according to what's defined in enums MemCacheType and DBCacheType, to make it more dynamic and more extensible
@@ -64,15 +69,18 @@
 
 package com.intel.stl.api.subnet.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.intel.stl.api.notice.impl.NoticeProcess;
 import com.intel.stl.api.subnet.SMRecordBean;
 import com.intel.stl.configuration.CacheManager;
 import com.intel.stl.configuration.MemoryCache;
 
-public class SMCacheImpl extends MemoryCache<List<SMRecordBean>> implements
-        SMCache {
+public class SMCacheImpl extends MemoryCache<Map<Integer, SMRecordBean>>
+        implements SMCache {
 
     private final SAHelper helper;
 
@@ -83,29 +91,55 @@ public class SMCacheImpl extends MemoryCache<List<SMRecordBean>> implements
 
     @Override
     public List<SMRecordBean> getSMs() {
-        List<SMRecordBean> res = getCachedObject();
-        return res;
+        Map<Integer, SMRecordBean> map = getCachedObject();
+
+        List<SMRecordBean> res = new ArrayList<SMRecordBean>();
+        if (map != null && !map.isEmpty()) {
+            for (SMRecordBean sm : map.values()) {
+                res.add(sm);
+            }
+        }
+        if (!res.isEmpty()) {
+            return res;
+        } else {
+
+            // might be a new
+            try {
+                res = helper.getSMs();
+                if (res != null) {
+                    setCacheReady(false); // Force a refresh on next call;
+                }
+                return res;
+            } catch (Exception e) {
+                throw SubnetApi.getSubnetException(e);
+            }
+        }
     }
 
     @Override
     public SMRecordBean getSM(int lid) {
-        List<SMRecordBean> sms = getSMs();
-        if (sms != null) {
-            for (SMRecordBean sm : sms) {
-                if (sm.getLid() == lid) {
-                    return sm;
-                }
-            }
+        Map<Integer, SMRecordBean> map = getCachedObject();
+        if (map != null) {
+            return map.get(lid);
         }
 
         return null;
     }
 
     @Override
-    protected List<SMRecordBean> retrieveObjectForCache() throws Exception {
-        List<SMRecordBean> res = helper.getSMs();
-        log.info("Retrieve " + (res == null ? 0 : res.size()) + " SMs from FE");
-        return res;
+    protected Map<Integer, SMRecordBean> retrieveObjectForCache()
+            throws Exception {
+        List<SMRecordBean> sms = helper.getSMs();
+        log.info("Retrieve " + (sms == null ? 0 : sms.size())
+                + " SMs Infos from FE");
+        Map<Integer, SMRecordBean> map = null;
+        if (sms != null) {
+            map = new HashMap<Integer, SMRecordBean>();
+            for (SMRecordBean sm : sms) {
+                map.put(sm.getLid(), sm);
+            }
+        }
+        return map;
     }
 
     /*
@@ -118,6 +152,10 @@ public class SMCacheImpl extends MemoryCache<List<SMRecordBean>> implements
     @Override
     public boolean refreshCache(NoticeProcess notice) throws Exception {
         // No notice applies to this cache
+        Map<Integer, SMRecordBean> map = getCachedObject();
+        if (map != null && !map.isEmpty()) {
+            map.remove(notice.getLid());
+        }
         return true;
     }
 

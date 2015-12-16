@@ -24,6 +24,40 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: ConfigurationApi.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.52  2015/08/17 18:48:56  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - change backend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.51  2015/08/14 19:46:32  fisherma
+ *  Archive Log: Allow user to disable email notifications by leaving the SMTP server name field empty.
+ *  Archive Log:
+ *  Archive Log: Revision 1.50  2015/08/10 17:04:52  robertja
+ *  Archive Log: PR128974 - Email notification functionality.
+ *  Archive Log:
+ *  Archive Log: Revision 1.49  2015/07/09 18:47:04  fernande
+ *  Archive Log: PR 129447 - Database size increases a lot over a short period of time. Added method to expose application settings in the settings.xml file to higher levels in the app
+ *  Archive Log:
+ *  Archive Log: Revision 1.48  2015/06/10 19:36:46  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: jijunwan
+ * 
+ ******************************************************************************/
 package com.intel.stl.api.configuration.impl;
 
 import static com.intel.stl.common.AppDataUtils.FM_GUI_DIR;
@@ -37,6 +71,7 @@ import static com.intel.stl.common.STLMessages.STL30043_ERROR_SAVING_EVENT;
 //import static com.intel.stl.common.STLMessages.STL40005_DATABASE_ERROR_CONFIG;
 import static com.intel.stl.common.STLMessages.STL50008_SUBNET_CONNECTION_ERROR;
 import static com.intel.stl.common.STLMessages.STL50012_SOCKET_CLOSE_FAILURE;
+import static com.intel.stl.configuration.AppSettings.APP_DATA_PATH;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -48,8 +83,6 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.UnresolvedAddressException;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,26 +91,29 @@ import com.intel.stl.api.DatabaseException;
 import com.intel.stl.api.ICertsAssistant;
 import com.intel.stl.api.StringUtils;
 import com.intel.stl.api.configuration.AppInfo;
-import com.intel.stl.api.configuration.AppenderConfig;
 import com.intel.stl.api.configuration.ConfigurationException;
 import com.intel.stl.api.configuration.EventNotFoundException;
 import com.intel.stl.api.configuration.EventRule;
 import com.intel.stl.api.configuration.IConfigurationApi;
+import com.intel.stl.api.configuration.LoggingConfiguration;
 import com.intel.stl.api.configuration.MailProperties;
 import com.intel.stl.api.configuration.UserNotFoundException;
 import com.intel.stl.api.configuration.UserSettings;
+import com.intel.stl.api.notice.IEmailEventListener;
+import com.intel.stl.api.notice.NoticeBean;
 import com.intel.stl.api.performance.PMConfigBean;
 import com.intel.stl.api.subnet.SubnetConnectionException;
 import com.intel.stl.api.subnet.SubnetDataNotFoundException;
 import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.common.STLMessages;
-import com.intel.stl.configuration.ProcessingService;
+import com.intel.stl.configuration.AppConfigurationException;
+import com.intel.stl.configuration.AppSettings;
 import com.intel.stl.datamanager.DatabaseManager;
-import com.intel.stl.fecdriver.impl.STLAdapter;
-import com.intel.stl.fecdriver.impl.STLConnection;
-import com.intel.stl.fecdriver.impl.STLStatement;
+import com.intel.stl.fecdriver.IStatement;
+import com.intel.stl.fecdriver.adapter.IAdapter;
 import com.intel.stl.fecdriver.messages.command.pa.FVCmdGetPMConfig;
 import com.intel.stl.fecdriver.messages.response.FVResponse;
+import com.intel.stl.fecdriver.session.ISession;
 
 /**
  * @author jijunwan
@@ -89,33 +125,25 @@ public class ConfigurationApi implements IConfigurationApi {
 
     private final int PING_TIMEOUT_MS = 2000;
 
-    private final STLAdapter adapter;
+    private final IAdapter adapter;
 
     private final DatabaseManager dbMgr;
 
     private final MailManager mailMgr;
 
-    @SuppressWarnings("unused")
-    private final ProcessingService processingService;
-
-    private String appDataPath;
+    private final String appDataPath;
 
     private ICertsAssistant certsAssistant;
 
-    public ConfigurationApi(STLAdapter adapter, DatabaseManager dbMgr,
-            MailManager mailMgr, ProcessingService processingService) {
+    public ConfigurationApi(IAdapter adapter, DatabaseManager dbMgr,
+            MailManager mailMgr, AppSettings appSettings)
+            throws AppConfigurationException {
         this.adapter = adapter;
         this.dbMgr = dbMgr;
         this.mailMgr = mailMgr;
-        this.processingService = processingService;
-    }
-
-    public void setAppDataPath(String appDataPath) {
-        this.appDataPath = appDataPath;
-    }
-
-    public String getAppDataPath() {
-        return this.appDataPath;
+        // We check that APP_DATA_PATH is defined since Logging Configuration in
+        // the Setup Wizard depends on it.
+        this.appDataPath = appSettings.getConfigOption(APP_DATA_PATH);
     }
 
     /*
@@ -139,32 +167,29 @@ public class ConfigurationApi implements IConfigurationApi {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.intel.stl.api.configuration.IConfigurationApi#connect(com.intel.stl
-     * .api.subnet.SubnetDescription)
-     */
     @Override
     public boolean tryToConnect(SubnetDescription subnet)
             throws SubnetConnectionException {
-        STLConnection conn;
         boolean isConnected = false;
+        ISession session = null;
         try {
-            conn = adapter.tryConnect(subnet);
-            if (conn != null) {
-                isConnected = conn.waitForConnect();
-            }
+            session =
+                    adapter.createTemporarySession(subnet.getCurrentFE(), null);
+            IStatement statement = session.createStatement();
+            FVCmdGetPMConfig cmd = new FVCmdGetPMConfig();
+            statement.execute(cmd);
+            cmd.getResponse().get();
+            isConnected = true;
         } catch (Exception e) {
             SubnetConnectionException sce =
                     new SubnetConnectionException(
                             STL50008_SUBNET_CONNECTION_ERROR, e,
                             subnet.getName(), e.getMessage());
             throw sce;
-        }
-        if (conn != null) {
-            conn.close();
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
         return isConnected;
     }
@@ -281,19 +306,18 @@ public class ConfigurationApi implements IConfigurationApi {
     @Override
     public PMConfigBean getPMConfig(SubnetDescription subnet) {
         PMConfigBean config = null;
-        STLConnection conn = null;
+        ISession session = null;
         try {
-            conn = adapter.tryConnect(subnet);
-            if (conn != null && conn.waitForConnect()) {
-                STLStatement statement = conn.createStatement();
-                FVCmdGetPMConfig cmd = new FVCmdGetPMConfig();
-                statement.execute(cmd);
-                FVResponse<PMConfigBean> response = cmd.getResponse();
-                List<PMConfigBean> results = response.get();
-                if (results != null && !results.isEmpty()) {
-                    conn.close();
-                    return results.get(0);
-                }
+            session =
+                    adapter.createTemporarySession(subnet.getCurrentFE(), null);
+            IStatement statement = session.createStatement();
+            FVCmdGetPMConfig cmd = new FVCmdGetPMConfig();
+            statement.execute(cmd);
+            FVResponse<PMConfigBean> response = cmd.getResponse();
+            List<PMConfigBean> results = response.get();
+            if (results != null && !results.isEmpty()) {
+                session.close();
+                return results.get(0);
             }
         } catch (Exception e) {
             ConfigurationException ce =
@@ -302,20 +326,11 @@ public class ConfigurationApi implements IConfigurationApi {
                             StringUtils.getErrorMessage(e));
             throw ce;
         } finally {
-            if (conn != null) {
-                conn.close();
+            if (session != null) {
+                session.close();
             }
         }
         return config;
-    }
-
-    protected STLConnection connect(SubnetDescription subnet, char[] password)
-            throws IOException {
-        STLConnection conn = adapter.connect(subnet);
-        if (conn != null) {
-            conn.getConnectionDescription().setName(subnet.getName());
-        }
-        return conn;
     }
 
     @Override
@@ -324,8 +339,9 @@ public class ConfigurationApi implements IConfigurationApi {
     }
 
     @Override
-    public void saveAppProperties(Map<String, Properties> appProperties) {
-        dbMgr.saveAppProperties(appProperties);
+    public void saveAppInfo(AppInfo appInfo) {
+
+        dbMgr.saveAppProperties(appInfo.getPropertiesMap());
     }
 
     @Override
@@ -463,7 +479,7 @@ public class ConfigurationApi implements IConfigurationApi {
      * @see com.intel.stl.api.configuration.IConfigurationApi#getLoggingConfig()
      */
     @Override
-    public List<AppenderConfig> getLoggingConfig()
+    public LoggingConfiguration getLoggingConfig()
             throws ConfigurationException {
         return LogbackConfigurationHelper.getLoggingConfiguration(appDataPath);
     }
@@ -476,7 +492,7 @@ public class ConfigurationApi implements IConfigurationApi {
      * (com.intel.stl.api.configuration.LoggingConfiguration)
      */
     @Override
-    public void saveLoggingConfiguration(List<AppenderConfig> config)
+    public void saveLoggingConfiguration(LoggingConfiguration config)
             throws ConfigurationException {
         LogbackConfigurationHelper.updateLoggingConfiguration(appDataPath,
                 config);
@@ -486,52 +502,39 @@ public class ConfigurationApi implements IConfigurationApi {
      * (non-Javadoc)
      * 
      * @see
-     * com.intel.stl.api.configuration.IConfigurationApi#registerMailProperties
-     * (com.intel.stl.api.configuration.MailProperties)
-     */
-    @Override
-    public void registerMailProperties(MailProperties properties) {
-        mailMgr.registerMailProperties(properties);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.intel.stl.api.configuration.IConfigurationApi#deregisterMailProperties
-     * (com.intel.stl.api.configuration.MailProperties)
-     */
-    @Override
-    public void deregisterMailProperties(MailProperties properties) {
-        mailMgr.deregisterMailProperties(properties);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
      * com.intel.stl.api.configuration.IConfigurationApi#updateMailProperties
-     * (com.intel.stl.api.configuration.MailProperties,
-     * com.intel.stl.api.configuration.MailProperties)
+     * (com.intel.stl.api.configuration.MailProperties)
      */
     @Override
-    public void updateMailProperties(MailProperties oldProperties,
-            MailProperties newProperties) {
-        mailMgr.updateMailProperties(oldProperties, newProperties);
+    public void updateMailProperties(MailProperties properties) {
+        mailMgr.updateMailProperties(properties);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.intel.stl.api.configuration.IConfigurationApi#submitMessage(com.intel
-     * .stl.api.configuration.MailProperties, java.lang.String,
-     * java.lang.String)
-     */
     @Override
-    public void submitMessage(MailProperties properties, String subject,
-            String body) {
-        mailMgr.submitMessage(properties, subject, body);
+    public MailProperties getMailProperties() {
+        return mailMgr.getMailProperties();
+    }
+
+    @Override
+    public void submitMessage(String subject, String body,
+            List<String> recipients) {
+        mailMgr.submitMessage(subject, body, recipients);
+    }
+
+    @Override
+    public void sendTestMail(MailProperties properties, String recipient,
+            String messageSubject, String messageBody) {
+        mailMgr.sendTestMail(properties, recipient, messageSubject, messageBody);
+    }
+
+    @Override
+    public void addEmailEventListener(IEmailEventListener<NoticeBean> listener) {
+        mailMgr.addEmailEventListener(listener);
+    }
+
+    @Override
+    public void removeEmailListener(IEmailEventListener<NoticeBean> listener) {
+        mailMgr.removeEmailListener(listener);
     }
 
     @Override
@@ -555,6 +558,11 @@ public class ConfigurationApi implements IConfigurationApi {
     @Override
     public void cleanup() {
         // so far, nothing to do.
+    }
+
+    @Override
+    public boolean isSmtpSettingsValid() {
+        return mailMgr.isSmtpSettingsValid();
     }
 
 }

@@ -32,8 +32,20 @@
  *
  *  File Name: JCard.java
  *
- *  Archive Source: 
+ *  Archive Source: $Source$
  *
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.9  2015/08/17 18:53:36  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.8  2015/06/25 20:24:59  jijunwan
+ *  Archive Log: Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log: - applied pin framework on fabric viewer and simple 'static' cards
+ *  Archive Log:
+ *  Archive Log: Revision 1.7  2015/06/10 21:07:22  jijunwan
+ *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs
+ *  Archive Log: - manual correction on files that our tool cannot  identify
  *  Archive Log:
  *
  *  Overview: 
@@ -75,6 +87,8 @@ public abstract class JCardView<E extends ICardListener> extends JPanel {
 
     protected E listener;
 
+    private JComponent contentComponent;
+
     private String title;
 
     private JPanel titlePanel;
@@ -86,8 +100,6 @@ public abstract class JCardView<E extends ICardListener> extends JPanel {
     private JButton helpBtn;
 
     private JButton pinBtn;
-
-    private ActionListener helpListener;
 
     private ActionListener pinListener;
 
@@ -120,10 +132,10 @@ public abstract class JCardView<E extends ICardListener> extends JPanel {
             }
         }
 
-        JComponent mainComp = getMainComponent();
-        if (mainComp != null) {
-            mainComp.setOpaque(false);
-            add(mainComp, BorderLayout.CENTER);
+        contentComponent = getMainComponent();
+        if (contentComponent != null) {
+            contentComponent.setOpaque(false);
+            add(contentComponent, BorderLayout.CENTER);
         }
     }
 
@@ -166,13 +178,29 @@ public abstract class JCardView<E extends ICardListener> extends JPanel {
                 ComponentFactory.getImageButton(UIImages.PIN_ICON
                         .getImageIcon());
         pinBtn.setToolTipText(STLConstants.K0038_PIN_TOOLTIP.getValue());
+        pinBtn.setEnabled(false);
         toolBar.add(pinBtn);
 
         helpBtn =
                 ComponentFactory.getImageButton(UIImages.HELP_ICON
                         .getImageIcon());
         helpBtn.setToolTipText(STLConstants.K0037_HELP.getValue());
+        helpBtn.setEnabled(false);
         toolBar.add(helpBtn);
+    }
+
+    public void enableHelp(boolean b) {
+        if (helpBtn != null) {
+            helpBtn.setEnabled(b);
+            repaint();
+        }
+    }
+
+    public void enablePin(boolean b) {
+        if (pinBtn != null) {
+            pinBtn.setEnabled(b);
+            repaint();
+        }
     }
 
     protected void setPinListener() {
@@ -188,19 +216,6 @@ public abstract class JCardView<E extends ICardListener> extends JPanel {
         pinBtn.addActionListener(pinListener);
     }
 
-    protected void setHelpListener() {
-        if (helpListener != null) {
-            helpBtn.removeActionListener(helpListener);
-        }
-        helpListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                listener.onPin();
-            }
-        };
-        helpBtn.addActionListener(helpListener);
-    }
-
     public JButton getHelpButton() {
         return helpBtn;
     }
@@ -209,7 +224,8 @@ public abstract class JCardView<E extends ICardListener> extends JPanel {
         this.listener = listener;
         if (listener != null) {
             setPinListener();
-            setHelpListener();
+
+            // help action is set from controller via HelpAction
         }
     }
 
@@ -258,6 +274,13 @@ public abstract class JCardView<E extends ICardListener> extends JPanel {
     }
 
     protected abstract JComponent getMainComponent();
+
+    /**
+     * @return the contentComponent
+     */
+    public JComponent getContentComponent() {
+        return contentComponent;
+    }
 
     /*
      * (non-Javadoc)

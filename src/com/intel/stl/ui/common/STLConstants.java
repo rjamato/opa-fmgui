@@ -24,6 +24,118 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: STLConstants.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.147  2015/10/09 17:48:13  fernande
+ *  Archive Log: PR130753 - XML parse errors when new VF is created from FM GUI. Added check during validation of opaconfig.xml to make sure the "All" application is not added if a PKey is especified.
+ *  Archive Log:
+ *  Archive Log: Revision 1.146  2015/09/25 13:57:31  rjtierne
+ *  Archive Log: PR 130011 - Enhance SM Log Viewer to include Standard and Advanced requirements
+ *  Archive Log: - Added constants K2145-K2147, and K2155-K2161 in support of log viewer enhancements
+ *  Archive Log:
+ *  Archive Log: Revision 1.145  2015/09/15 13:31:33  jypak
+ *  Archive Log: PR 129397 - gaps in cableinfo output and handling.
+ *  Archive Log: Incorporated the FM changes (PR 129390) as of 8/28/15. These changes are mainly from IbPrint/stl_sma.c revision 1.163.
+ *  Archive Log:
+ *  Archive Log: Revision 1.144  2015/09/01 19:04:05  fisherma
+ *  Archive Log: PR 130111 - test button unavalable after entering SMTP information.  Added tooltips and help message to guide user in what is required to be entered in the text fields.
+ *  Archive Log:
+ *  Archive Log: Revision 1.143  2015/08/21 04:01:31  fisherma
+ *  Archive Log: Added property to turn email notifications feature on/off.  Added strings to localization file.  Fixed dialog to be sized properly on different operating systems under various look and feel.
+ *  Archive Log:
+ *  Archive Log: Revision 1.142  2015/08/19 21:06:34  jijunwan
+ *  Archive Log: PR 129397 - gaps in cableinfo output and handling.
+ *  Archive Log: - adapt to latest FM code
+ *  Archive Log:
+ *  Archive Log: Revision 1.141  2015/08/17 18:54:12  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.140  2015/08/17 14:22:43  rjtierne
+ *  Archive Log: PR 128979 - SM Log display
+ *  Archive Log: This is the first version of the Log Viewer which displays select lines of text from the remote SM log file. Updates include searchable raw text from file, user-defined number of lines to display, refreshing end of file, and paging. This PR is now closed and further updates can be found by referencing PR 130011 - "Enhance SM Log Viewer to include Standard and Advanced requirements".
+ *  Archive Log:
+ *  Archive Log: Revision 1.139  2015/08/14 19:51:42  fisherma
+ *  Archive Log: Ensure that email settings dialog always shows up on top of all the FV main windows.  Cleanup and improve validation code on the to/from and smtp server name fields.  Allow empty value for smpt server name field.  Fix re/parenting issue for the error dialog to show up on top of the smpt settings dialog.  Moved title string for the dialog to the resource file.
+ *  Archive Log:
+ *  Archive Log: Revision 1.138  2015/08/10 22:25:06  fisherma
+ *  Archive Log: PR 128974 - Email notification functionality.  Updated layout in the preferences tab.  Added strings to localization file.
+ *  Archive Log:
+ *  Archive Log: Revision 1.137  2015/08/10 17:06:28  jypak
+ *  Archive Log: PR 129919 - Change name from signal integrity to integrity.
+ *  Archive Log: STLConstants and class names are changed.
+ *  Archive Log:
+ *  Archive Log: Revision 1.136  2015/08/10 13:49:01  robertja
+ *  Archive Log: PR 129358 - PR 129556 - Refine congestion chart labeling.
+ *  Archive Log:
+ *  Archive Log: Revision 1.135  2015/08/07 14:57:56  jypak
+ *  Archive Log: PR 129397 -gaps in cableinfo output and handling.
+ *  Archive Log: Updates on the formats of the cableinfo output and also new enums were defined for different output values.
+ *  Archive Log:
+ *  Archive Log: Revision 1.134  2015/08/04 22:59:58  jijunwan
+ *  Archive Log: PR 129821 - connectivity table has no Link Width Down Grade data
+ *  Archive Log: - added related resource
+ *  Archive Log:
+ *  Archive Log: Revision 1.133  2015/07/28 18:29:10  fisherma
+ *  Archive Log: PR 129219 - Admin page login dialog improvement
+ *  Archive Log:
+ *  Archive Log: Revision 1.132  2015/07/17 15:39:22  rjtierne
+ *  Archive Log: PR 129547 - Need to add Node type and lid to the Connectivity
+ *  Archive Log: Changed constant K0501 from LID to NODE_LID to serve as the title for a node lid
+ *  Archive Log: on the connectivity table
+ *  Archive Log:
+ *  Archive Log: Revision 1.131  2015/07/16 16:33:37  jijunwan
+ *  Archive Log: PR 129228 - remove PortLTPCRCMode of Al
+ *  Archive Log: -  removed STL_PORT_LTP_CRC_MODE_ALL and STL_PORT_LINK_MODE_ALL_SUPPORTED
+ *  Archive Log: - changed to use STLConstants for string print out
+ *  Archive Log:
+ *  Archive Log: Revision 1.130  2015/07/16 14:24:25  jijunwan
+ *  Archive Log: PR 129387 - linkspeed and width show as Nop
+ *  Archive Log: - change to show "None"
+ *  Archive Log:
+ *  Archive Log: Revision 1.129  2015/07/13 21:55:30  rjtierne
+ *  Archive Log: PR 129355 - Ability to click on cables to get cable info
+ *  Archive Log: Added constants K3049-K3050 for cable info and tool tip
+ *  Archive Log:
+ *  Archive Log: Revision 1.128  2015/06/30 22:28:02  jijunwan
+ *  Archive Log: PR 129215 - Need short chart name to support pin capability
+ *  Archive Log: - added new resources to support short name and full name
+ *  Archive Log:
+ *  Archive Log: Revision 1.127  2015/06/30 14:36:52  jypak
+ *  Archive Log: PR 129284 - Incorrect QSFP field name.
+ *  Archive Log: For date code, if invalid data, set the property field value as 'Invalid' and if both data code string and Date object are null, set the field value as 'N/A'.
+ *  Archive Log:
+ *  Archive Log: Revision 1.126  2015/06/29 15:05:43  jypak
+ *  Archive Log: PR 129284 - Incorrect QSFP field name.
+ *  Archive Log: Field name fix has been implemented. Also, introduced a conversion to Date object to add flexibility to display date code.
+ *  Archive Log:
+ *  Archive Log: Revision 1.125  2015/06/25 19:08:56  jijunwan
+ *  Archive Log: Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log: - new resources to support pin capability
+ *  Archive Log:
+ *  Archive Log: Revision 1.124  2015/06/22 13:11:56  jypak
+ *  Archive Log: PR 128980 - Be able to search devices by name or lid.
+ *  Archive Log: New feature added to enable search devices by name, lid or node guid. The search results are displayed as a tree and when a result node from the tree is selected, original tree is expanded and the corresponding node is highlighted.
+ *  Archive Log:
+ *  Archive Log: Revision 1.123  2015/06/10 19:58:58  jijunwan
+ *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: Fernando Fernandez
+ * 
+ ******************************************************************************/
 
 package com.intel.stl.ui.common;
 
@@ -35,7 +147,7 @@ import java.util.ResourceBundle.Control;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
+/***
  * @author Fernando Fernandez
  * 
  */
@@ -82,7 +194,7 @@ public enum STLConstants {
     K0039_NOT_AVAILABLE(39),
     K0040_MBPS(40),
     K0041_BANDWIDTH(41),
-    K0042_ERROE_RATE(42),
+    K0042_ERROR_RATE(42),
     K0043_CONGESTION_ERROR(43),
     K0044_NUM_PORTS(44),
     K0045_BANDWIDTH_HISTOGRAM(45),
@@ -107,8 +219,8 @@ public enum STLConstants {
     K0064_FI_STATUS(64),
     K0065_PACKET_RATE(65),
     K0066_KPPS(66),
-    K0067_SIGNAL_INTEGRITY_ERROR(67),
-    K0068_SIGNAL_INTEGRITY_HISTOGRAM(68),
+    K0067_INTEGRITY_ERROR(67),
+    K0068_INTEGRITY_HISTOGRAM(68),
     K0069_CONNECT_TO(69),
     K0070_SMA_CONGESTION_ERROR(70),
     K0071_SMA_CONGESTION_HISTOGRAM(71),
@@ -158,6 +270,21 @@ public enum STLConstants {
 
     K0113_PORT_VALUE(113),
     K0114_NBR_VALUE(114),
+    K0115_TREE_SEARCH(115),
+    K0116_VIRTUAL_FABRIC(116),
+
+    K0117_NONE(117),
+    K0118_NOOP(118),
+    K0119_EHT(119),
+    K0120_STL(120),
+    K0121_14_BIT(121),
+    K0122_16_BIT(122),
+    K0123_48_BIT(123),
+    K0124_12_16_PER_LANE(124),
+
+    K0125_NUM_EVENTS(125),
+    K0126_EVENT_RATE(126),
+    K0127_PERCENT_OF_THRESHOLD(127),
 
     K0200_PERFORMANCE(200),
     K0201_PERFORMANCE_DESCRIPTION(201),
@@ -171,6 +298,8 @@ public enum STLConstants {
     K0209_TX_RX_PACKETS(209),
     K0210_SHOW_OPTIONS(210),
     K0211_APPLY_OPTIONS(211),
+
+    // K0212-K0299 is available
 
     // Property text
     K0300_PROPERTIES(300),
@@ -306,6 +435,9 @@ public enum STLConstants {
     K0416_CONNECTIVITY_DESCRIPTION(416),
     K0417_PATH_CONNECTIVITY(417),
 
+    // K0418 is available
+    // K0419 is available
+
     K0420_ADVANCED_PROPERTIES(420),
     K0421_ADVANCED_PROPERTIES_DESCRIPTION(421),
     K0422_TYPE(422),
@@ -394,7 +526,7 @@ public enum STLConstants {
 
     // Node Table Headings
     K0500_NODE_NAME(500),
-    K0501_LID(501),
+    K0501_NODE_LID(501),
     K0502_REVISION(502),
     K0503_NUMBER_OF_PORTS(503),
     K0504_DEVICE_ID(504),
@@ -421,10 +553,10 @@ public enum STLConstants {
     // K0523 is Available
     K0524_INACTIVE(524),
     K0525_NEIGHBOR(525),
-    // K0526 is Available
-    // K0527 is Available
-    // K0528 is Available
-    // K0529 is Available
+    K0526_TX_LINK_WIDTH_DG(526),
+    K0527_RX_LINK_WIDTH_DG(527),
+    K0528_LINK_WIDTH_DG_ENABLED(528),
+    K0529_LINK_WIDTH_DG_SUPPORTED(529),
     K0530_SHOW_BORDER(530),
     K0531_HIDE_BORDER(531),
     K0532_ALT_ROWS(532),
@@ -467,11 +599,11 @@ public enum STLConstants {
     // Logging Config Panel
     K0630_DEBUG(630),
     K0631_INFO(631),
-    K0632_FATAL(632),
+    K0632_TRACE(632),
     K0633_OUTPUT_DESTINATION(633),
     K0634_DESTINATION_LIST(634),
     K0635_DESTINATION_CONFIGURATION(635),
-    K0636_INFORMATION_LEVEL(636),
+    K0636_APPLICATION_LOG_LEVEL(636),
     K0637_OUTPUT_FORMAT(637),
     K0638_MAX_FILE_SIZE(638),
     K0639_MB(639),
@@ -543,8 +675,10 @@ public enum STLConstants {
     K0698_ALL(698),
     K0699_OFF(699),
 
-    // Performance Performance sub page K0700 - K0799
-    // K0700 is Available
+    // Logging Configuration
+    K0700_CONSOLE_LOG_LEVEL(700),
+
+    // Performance Performance sub page K0701 - K0799
     K0701_BYTE_PER_SEC(701),
     K0702_KB_PER_SEC(702),
     K0703_MB_PER_SEC(703),
@@ -695,6 +829,36 @@ public enum STLConstants {
     // K0845_LINK_DOWN(845),
     // K0846_LINK_QUAL_IND(846),
 
+    // K0847-K0850 are Available
+
+    K0851_SHORT_BW_TREND(851),
+    K0852_SHORT_BW_HISTOGRAM(852),
+    K0853_SHORT_PKT_RATE_TREND(853),
+    K0855_SHORT_INTEG_TREND(855),
+    K0856_SHORT_INTEG_HISTOGRAM(856),
+    K0857_SHORT_CONGST_TREND(857),
+    K0858_SHORT_CONGST_HISTOGRAM(858),
+    K0859_SHORT_SMACONG_TREND(859),
+    K0860_SHORT_SMACONG_HISTOGRAM(860),
+    K0861_SHORT_BUBBLE_TREND(861),
+    K0862_SHORT_BUBBLE_HISTOGRAM(862),
+    K0863_SHORT_SECURE_TREND(863),
+    K0864_SHORT_SECURE_HISTOGRAM(864),
+    K0865_SHORT_ROUTING_TREND(865),
+    K0866_SHORT_ROUTING_HISTOGRAM(866),
+    K0867_SHORT_REC_DATA_RATE(867),
+    K0868_SHORT_REC_PKTS_RATE(868),
+    K0869_SHORT_TRAN_DATA_RATE(869),
+    K0870_SHORT_TRAN_PKTS_RATE(870),
+    K0871_BANDWIDTH_TREND(871),
+    K0872_PACKECT_RATE_TREND(872),
+    K0873_INTEGRITY_TREND(873),
+    K0874_CONGESTION_TREND(874),
+    K0875_SMA_CONGESTION_TREND(875),
+    K0876_BUBBLE_TREND(876),
+    K0877_SECURITY_TREND(877),
+    K0878_ROUTING_TREND(878),
+
     // extra property text
     K0900_LED_ENABLED(900),
 
@@ -746,7 +910,7 @@ public enum STLConstants {
     K1047_NEW_TAB(1047),
     K1048_CONSOLE_COMMAND_PROMPT(1048),
     K1049_PASSWORD(1049),
-    K1050_CONSOLE_LOGIN(1050),
+    K1050_LOGIN(1050),
     K1051_LOCK(1051),
     K1052_UNLOCK(1052),
     K1053_SERVER_INFO(1053),
@@ -770,14 +934,14 @@ public enum STLConstants {
     K1070_VLSTALL_SERIES(1070),
     K1071_QSFP_CABLE_INFO(1071),
     K1072_CABLE_ID(1072),
-    K1073_CABLE_EXT_ID(1073),
+    K1073_CABLE_POWER_CLASS(1073),
     K1074_CABLE_CONNECTOR(1074),
     K1075_CABLE_NOMINAL_BR(1075),
     K1076_CABLE_SMF_LEN(1076),
     K1077_CABLE_OM3_LEN(1077),
     K1078_CABLE_OM2_LEN(1078),
     K1079_CABLE_OM1_LEN(1079),
-    K1080_CABLE_COPPER_LEN(1080),
+    K1080_CABLE_OM4_LEN(1080),
     K1081_CABLE_DEVICE_TECH(1081),
     K1082_CABLE_VENDOR_NAME(1082),
     K1083_CABLE_EXT_MODULE(1083),
@@ -787,18 +951,18 @@ public enum STLConstants {
     K1087_CABLE_OPTICAL_WL(1087),
     K1088_CABLE_MAXCASE_TEMP(1088),
     K1089_CABLE_CC_BASE(1089),
-    K1090_CABLE_RX_OUT_AMP_PROG(1090),
-    K1091_CABLE_RX_SQULECH_DIS_IMP(1091),
-    K1092_CABLE_RX_OUT_DIS_CAP(1092),
-    K1093_CABLE_TX_SQUELCH_DIS_IMP(1093),
+    K1090_CABLE_TX_INP_EQ_AUTO_ADP(1090),
+    K1091_CABLE_TX_INP_EQ_FIX_PROG(1091),
+    K1092_CABLE_RX_OUTP_EMPH_FIX_PROG(1092),
+    K1093_CABLE_RX_OUTP_AMPL_FIX_PROG(1093),
     K1094_CABLE_TX_SQUELCH_IMP(1094),
     K1095_CABLE_MEM_PAGE02_PROV(1095),
     K1096_CABLE_MEM_PAGE01_PROV(1096),
-    K1097_CABLE_TX_DIS_IMP(1097),
-    K1098_CABLE_TX_FAULT_REP_IMP(1098),
-    K1099_CABLE_LOS_REP_IMP(1099),
+    K1097_CABLE_TX_CDR_ON_OFF_CTRL(1097),
+    K1098_CABLE_RX_CDR_ON_OFF_CTRL(1098),
+    K1099_CABLE_TX_CDR_SUP(1099),
     K1100_CABLE_VENDOR_SN(1100),
-    K1101_CABLE_DATA_CODE(1101),
+    K1101_CABLE_DATE_CODE(1101),
     K1102_CABLE_LOT_CODE(1102),
     K1103_CABLE_CC_EXT(1103),
 
@@ -814,6 +978,50 @@ public enum STLConstants {
     K1113_HISTORY_SCOPE(1113),
     K1114_CURRENT(1114),
     K1115_HISTORY_TYPE(1115),
+    K1116_INVALID(1116),
+
+    K1117_CABLE_CERT_CABLE_FLAG(1117),
+    K1118_CABLE_REACH_CLASS(1118),
+    K1119_CABLE_CERT_DATA_RATE(1119),
+    K1120_CABLE_AOC(1120),
+    K1121_CABLE_OPT_TRAN(1121),
+    K1122_CABLE_850NM_VCSEL(1122),
+    K1123_CABLE_1310NM_VCSEL(1123),
+    K1124_CABLE_1550NM_VCSEL(1124),
+    K1125_CABLE_1310NM_FP(1125),
+    K1126_CABLE_1310NM_DFB(1126),
+    K1127_CABLE_1550NM_DFB(1127),
+    K1128_CABLE_1310NM_EML(1128),
+    K1129_CABLE_1550NM_EML(1129),
+    K1130_CABLE_OTH_UNDEFINED(1130),
+    K1131_CABLE_1490NM_DFB(1131),
+    K1132_CABLE_PASS_COPPER(1132),
+    K1133_CABLE_EQU_PASS_COPPER(1133),
+    K1134_CABLE_ACT_COPPER_TX_RX(1134),
+    K1135_CABLE_ACT_COPPER_RX(1135),
+    K1136_CABLE_ACT_COPPER_TX(1136),
+    K1137_CABLE_LINEAR_ACT_COPPER(1137),
+    K1138_CABLE_UNDEFINED(1138),
+    K1139_CABLE_SDR(1139),
+    K1140_CABLE_DDR(1140),
+    K1141_CABLE_QDR(1141),
+    K1142_CABLE_FDR(1142),
+    K1143_CABLE_EDR(1143),
+    K1144_CABLE_4X25G(1144),
+    K1145_CABLE_CLASS1(1145),
+    K1146_CABLE_CLASS2(1146),
+    K1147_CABLE_CLASS3(1147),
+    K1148_CABLE_CLASS4(1148),
+    K1149_CABLE_CLASS5(1149),
+    K1150_CABLE_CLASS6(1150),
+    K1151_CABLE_CLASS7(1151),
+    K1152_CABLE_GB(1152),
+    K1153_CABLE_KM(1153),
+    K1154_CABLE_M(1154),
+    K1155_CABLE_Y(1155),
+    K1156_CABLE_N(1156),
+    K1157_CABLE_RX_CDR_SUP(1157),
+    K1158_CABLE_C(1158),
 
     K1300_NEIGHBOR_LINKDOWN_REASON(1300),
 
@@ -848,6 +1056,7 @@ public enum STLConstants {
     K1601_PORT_LINK_TX_ACTIVE(1601),
     K1602_PORT_LINK_RX_ACTIVE(1602),
 
+    K1609_QUALITY_UNKNOWN(1609),
     K1610_QUALITY_EXCELLENT(1610),
     K1611_QUALITY_VERY_GOOD(1611),
     K1612_QUALITY_GOOD(1612),
@@ -860,6 +1069,7 @@ public enum STLConstants {
     K1619_QUALITY_POOR_DESC(1619),
     K1620_QUALITY_BAD_DESC(1620),
     K1621_QUALITY_NONE_DESC(1621),
+    K1622_QUALITY_UNKNOWN_DESC(1622),
 
     K1630_SEL_UTILIZATION_HIGH(1630),
     K1631_SEL_PACKET_RATE_HIGH(1631),
@@ -954,6 +1164,28 @@ public enum STLConstants {
     K2140_MEMBERS(2140),
     K2141_QOS(2141),
 
+    K2142_SM(2142),
+    K2143_PM(2143),
+    K2144_FE(2144),
+    K2145_WARN(2145),
+    K2146_ERROR(2146),
+    K2147_FILTERS(2147),
+    K2148_LOGIN(2148),
+    K2149_SM_LOG(2149),
+    K2150_LINES_PER_PAGE(2150),
+    K2151_TOTAL_LINES(2151),
+    K2152_UNKNOWN_RESPONSE(2152),
+    K2153_SEARCH(2153),
+    K2154_FILE_NAME(2154),
+    K2155_LINE_RANGE(2155),
+    K2156_RANGE_DELIMITER(2156),
+    K2157_NUM_LINES_DISPLAYED(2157),
+    K2158_NUM_MATCHES(2158),
+    K2159_COPY(2159),
+    K2160_PASTE(2160),
+    K2161_HIGHLIGHT(2161),
+    K2162_PKEY_CHECK(2162),
+
     K3000_SELECT_ACTIONS(3000),
     K3001_DEFAULT_USER(3001),
     K3002_WARN(3002),
@@ -998,6 +1230,14 @@ public enum STLConstants {
     K3040_OR(3040),
     K3041_SSL(3041),
     K3042_HOST_PORT_BLANK(3042),
+    K3043_INVALID_WIZARD_TASK(3043),
+    K3044_REFRESH_FIELD_NULL(3044),
+    K3045_SUBNET_VIEW_NULL(3045),
+    K3046_LINK_SUBPAGE_NULL(3046),
+    K3047_PORT_BEAN_COUNTERS_NULL(3047),
+    K3048_LOGGING_CONFIGURATION(3048),
+    K3049_CABLE_INFO(3049),
+    K3050_CABLE_INFO_TOOL_TIP(3050),
 
     K3100_ABOUT_DIALOG(3100),
     K3101_COPYRIGHT(3101),
@@ -1025,6 +1265,17 @@ public enum STLConstants {
     K3219_RX_DATA_RATE_DESCRIPTION(3219),
     K3220_TX_PACKETS_RATE_DESCRIPTION(3220),
     K3221_TX_DATA_RATE_DESCRIPTION(3221),
+    K3222_FPS(3222),
+    K3223_RX_FECN_DESCRIPTION(3223),
+    K3224_RX_BECN_DESCRIPTION(3224),
+    K3225_RX_BUBBLE_DESCRIPTION(3225),
+    K3226_TX_WAIT_DESCRIPTION(3226),
+    K3227_TX_TIME_CONG_DESCRIPTION(3227),
+    K3228_TX_WASTED_BW_DESCRIPTION(3228),
+    K3229_TX_WAIT_DATA_DESCRIPTION(3229),
+    K3230_SW_PORT_CONG_DESCRIPTION(3230),
+    K3231_MARK_FECN_DESCRIPTION(3231),
+    K3232_UNCORR_ERR_DESCRIPTION(3232),
 
     K3300_BPS_DESCRIPTION(3300),
     K3301_KBPS_DESCRIPTION(3301),
@@ -1034,6 +1285,27 @@ public enum STLConstants {
     K3305_KPPS_DESCRIPTION(3305),
     K3306_MPPS_DESCRIPTION(3306),
     K3307_GPPS_DESCRIPTION(3307),
+
+    K4001_GO_UP(4001),
+    K4002_GO_DOWN(4002),
+    K4003_UNPIN(4003),
+
+    K5001_EMAIL_MENU_ITEM_TEXT(5001),
+    K5002_SMTP_HOST(5002),
+    K5003_FROM_LBL(5003),
+    K5004_LOGIN_ERROR_MSG(5004),
+    K5005_LOGIN_CONNECTION_ERROR_PART1(5005),
+    K5006_LOGIN_CONNECTION_ERROR_PART2(5006),
+    K5007_WIZARD_EMAIL_PREFERENCES_LIST(5007),
+    K5008_WIZARD_EMAIL_TEST_BTN_TOOLTIP(5008),
+    K5009_WIZARD_EMAIL_TEST_LABEL_TEXT(5009),
+    K5010_EMAIL_SETTINGS_TITLE(5010),
+    K5011_EMAIL_TEST_HELP_MSG(5011),
+    K5012_EMAIL_ENABLE_OPTION_TXT(5012),
+    K5013_HIDE_INACTIVE_NODES_MENU_STR(5013),
+    K5014_EMAIL_HINT_TEXT(5014),
+    K5015_EMAIL_TOOLTIP_HINT_TEXT(5015),
+    K5016_EMAIL_TEST_BTN_TOOLTIP_TEXT(5015),
 
     K99999_END_OF_CONSTANTS(99999);
 

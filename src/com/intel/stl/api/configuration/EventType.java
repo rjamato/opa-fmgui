@@ -35,8 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:21:40  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.6  2015/08/17 18:48:36  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/08/11 20:35:13  jijunwan
+ *  Archive Log:    PR 129935 - Need proper default value for user preference
+ *  Archive Log:    - set default notice severity for each event type
+ *  Archive Log:    - use default notice severity from event type as the init value for event table
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/01/21 22:51:00  jijunwan
  *  Archive Log:    improved to throw exception when we encounter unsupported value. This will help us identify problems when it happens.
@@ -68,16 +74,24 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.intel.stl.api.notice.NoticeSeverity;
 import com.intel.stl.api.notice.TrapType;
 
+/**
+ * See STL spec table 20-2 for the default severity level
+ */
 public enum EventType {
-    SM_TOPO_CHANGE(0, EventClass.SUBNET_EVENTS),
-    PORT_ACTIVE(1, EventClass.SUBNET_EVENTS),
-    PORT_INACTIVE(2, EventClass.SUBNET_EVENTS),
-    FE_CONNECTION_LOST(3, EventClass.MISCELLANEOUS_EVENTS),
-    FE_CONNECTION_ESTABLISH(4, EventClass.MISCELLANEOUS_EVENTS),
-    SM_CONNECTION_LOST(5, EventClass.MISCELLANEOUS_EVENTS),
-    SM_CONNECTION_ESTABLISH(6, EventClass.MISCELLANEOUS_EVENTS);
+    SM_TOPO_CHANGE(0, EventClass.SUBNET_EVENTS, NoticeSeverity.ERROR),
+    PORT_ACTIVE(1, EventClass.SUBNET_EVENTS, NoticeSeverity.INFO),
+    PORT_INACTIVE(2, EventClass.SUBNET_EVENTS, NoticeSeverity.WARNING),
+    FE_CONNECTION_LOST(3, EventClass.MISCELLANEOUS_EVENTS,
+            NoticeSeverity.CRITICAL),
+    FE_CONNECTION_ESTABLISH(4, EventClass.MISCELLANEOUS_EVENTS,
+            NoticeSeverity.INFO),
+    SM_CONNECTION_LOST(5, EventClass.MISCELLANEOUS_EVENTS,
+            NoticeSeverity.CRITICAL),
+    SM_CONNECTION_ESTABLISH(6, EventClass.MISCELLANEOUS_EVENTS,
+            NoticeSeverity.INFO);
 
     private final static Map<String, EventType> eventTypeMap =
             new HashMap<String, EventType>();
@@ -93,9 +107,12 @@ public enum EventType {
 
     private EventClass eventClass;
 
-    private EventType(int id, EventClass eventClass) {
+    private NoticeSeverity defaultSeverity;
+
+    private EventType(int id, EventClass eventClass, NoticeSeverity severity) {
         this.id = id;
         this.eventClass = eventClass;
+        this.defaultSeverity = severity;
     }
 
     public static EventType getEventType(TrapType type) {
@@ -134,6 +151,13 @@ public enum EventType {
 
     public EventClass getEventClass() {
         return eventClass;
+    }
+
+    /**
+     * @return the defaultSeverity
+     */
+    public NoticeSeverity getDefaultSeverity() {
+        return defaultSeverity;
     }
 
     public static EventType getEventType(String eventTypeName) {

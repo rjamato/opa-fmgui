@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:21:48  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.6  2015/09/10 15:28:05  fernande
+ *  Archive Log:    PR 129940 - Persisted notices have no time stamp data. Added timestamp to NoticeBean
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/08/17 18:48:43  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2014/10/24 18:47:34  fernande
  *  Archive Log:    Initial batch of fixes for notice processing. Notice updates not working yet but need a stable environment for Bob.
@@ -94,12 +98,14 @@ public class NoticeBean implements Serializable {
 
     private byte[] classData;
 
+    private final long receiveTimestamp;
+
     public NoticeBean() {
         this(false);
     }
 
     public NoticeBean(boolean generateId) {
-        super();
+        this.receiveTimestamp = System.currentTimeMillis();
         if (generateId) {
             id = IdGenerator.id();
         }
@@ -225,6 +231,13 @@ public class NoticeBean implements Serializable {
         this.classData = classData;
     }
 
+    /**
+     * @return the receive timestamp
+     */
+    public long getReceiveTimestamp() {
+        return receiveTimestamp;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -239,4 +252,5 @@ public class NoticeBean implements Serializable {
                 + Arrays.toString(data) + ", classData="
                 + Arrays.toString(classData) + "]";
     }
+
 }

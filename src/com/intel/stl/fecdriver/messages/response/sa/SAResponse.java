@@ -24,6 +24,31 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: SAResponse.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.5  2015/08/17 18:48:55  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - change backend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.4  2015/06/10 19:36:37  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: jijunwan
+ * 
+ ******************************************************************************/
 package com.intel.stl.fecdriver.messages.response.sa;
 
 import java.util.ArrayList;
@@ -41,18 +66,20 @@ import com.intel.stl.fecdriver.messages.response.FVResponse;
 public abstract class SAResponse<V, E extends IDatagram<V>> extends
         FVResponse<V> {
     private static boolean DEBUG = false;
-    
+
     /*
      * (non-Javadoc)
      * 
      * @see com.vieo.fv.message.FVResponse#wrap(byte[], int)
      */
     @Override
-    protected IDatagram<?> wrap(byte[] bytes, int offset) {
+    protected IDatagram<?> wrap(byte[] bytes, int offset, int totalLength) {
         SAData saData = new SAData();
         int pos = saData.wrap(bytes, offset);
         int recSize = saData.getSaHeader().getAttributeOffset() * 8;
-        int numRecs = (isSingleRecord() || recSize == 0) ? 1 : (bytes.length - pos) / recSize;
+        int numRecs =
+                (isSingleRecord() || recSize == 0) ? 1 : (totalLength - pos)
+                        / recSize;
         IDatagram<?>[] records = new IDatagram<?>[numRecs];
         List<V> results = new ArrayList<V>();
         for (int i = 0; i < numRecs; i++) {
@@ -71,7 +98,7 @@ public abstract class SAResponse<V, E extends IDatagram<V>> extends
         }
         return saData;
     }
-    
+
     protected boolean isSingleRecord() {
         return false;
     }

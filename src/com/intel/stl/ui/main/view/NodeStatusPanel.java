@@ -25,7 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
  *	
@@ -36,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:26:53  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.3  2015/08/17 18:54:02  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/06/25 20:24:57  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on fabric viewer and simple 'static' cards
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2014/07/09 21:18:59  jijunwan
  *  Archive Log:    improved status visualization
@@ -62,29 +66,36 @@ import com.intel.stl.ui.model.ChartStyle;
 
 public class NodeStatusPanel extends JPanel {
     private static final long serialVersionUID = -5896416689826992723L;
-    
+
     private ChartStyle style = ChartStyle.PIE;
-    private CardLayout layout;
-    private NodeStatesBar barPanel;
-    private NodeStatesPie piePanel;
-    
+
+    private final CardLayout layout;
+
+    private final NodeStatesBar barPanel;
+
+    private final NodeStatesPie piePanel;
+
     public NodeStatusPanel() {
+        this(false);
+    }
+
+    public NodeStatusPanel(boolean concise) {
         super();
-        
+
         layout = new CardLayout();
         setLayout(layout);
 
-        barPanel = new NodeStatesBar();
+        barPanel = new NodeStatesBar(concise);
         barPanel.setOpaque(false);
         add(barPanel, ChartStyle.BAR.name());
 
-        piePanel = new NodeStatesPie();
+        piePanel = new NodeStatesPie(concise);
         piePanel.setOpaque(false);
         add(piePanel, ChartStyle.PIE.name());
 
         layout.show(this, ChartStyle.PIE.name());
     }
-    
+
     public void setStyle(ChartStyle style) {
         this.style = style;
         layout.show(this, style.name());
@@ -93,7 +104,7 @@ public class NodeStatusPanel extends JPanel {
     public void setDataset(PieDataset dataset, Color[] colors) {
         piePanel.setDataset(dataset, colors);
     }
-    
+
     public void setStates(double[] values, String[] labels, String[] tooltips) {
         if (style == ChartStyle.PIE) {
             piePanel.setStates(values, labels, tooltips);
@@ -101,7 +112,7 @@ public class NodeStatusPanel extends JPanel {
             barPanel.setStates(values, labels, tooltips);
         }
     }
-    
+
     public void clear() {
         barPanel.clear();
         piePanel.clear();

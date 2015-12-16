@@ -35,8 +35,20 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.12.2.1  2015/08/12 15:26:58  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.15  2015/08/17 18:53:40  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.14  2015/06/25 20:50:02  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on dynamic cards that can have different data sources
+ *  Archive Log:    - change to use port counter performance item
+ *  Archive Log:
+ *  Archive Log:    Revision 1.13  2015/06/09 18:37:21  jijunwan
+ *  Archive Log:    PR 129069 - Incorrect Help action
+ *  Archive Log:    - moved help action from view to controller
+ *  Archive Log:    - only enable help button when we have HelpID
+ *  Archive Log:    - fixed incorrect HelpIDs
  *  Archive Log:
  *  Archive Log:    Revision 1.12  2015/03/16 14:41:25  jijunwan
  *  Archive Log:    renamed DevieGroup to DefaultDeviceGroup because it's an enum of default DGs, plus we need to use DeviceGroup for the DG definition used in opafm.xml
@@ -95,19 +107,26 @@ import com.intel.stl.ui.main.HelpAction;
 import com.intel.stl.ui.model.DataType;
 import com.intel.stl.ui.model.HistoryType;
 import com.intel.stl.ui.performance.BaseGroupFactory;
+import com.intel.stl.ui.performance.GroupSource;
 import com.intel.stl.ui.performance.IGroupController;
 
 public class PSGraphSection extends ChartsSectionController {
-    private IGroupController[] utilGroups;
+    private IGroupController<GroupSource>[] utilGroups;
 
-    private IGroupController[] errGroups;
+    private IGroupController<GroupSource>[] errGroups;
 
     public PSGraphSection(ChartsSectionView view, MBassador<IAppEvent> eventBus) {
         super(view, eventBus);
+    }
 
-        HelpAction helpAction = HelpAction.getInstance();
-        helpAction.getHelpBroker().enableHelpOnButton(view.getHelpButton(),
-                helpAction.getGeneralSummary(), helpAction.getHelpSet());
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.BaseSectionController#getHelpID()
+     */
+    @Override
+    public String getHelpID() {
+        return HelpAction.getInstance().getGeneralSummary();
     }
 
     /*
@@ -115,10 +134,13 @@ public class PSGraphSection extends ChartsSectionController {
      * 
      * @see com.intel.stl.ui.main.ChartsSectionController#getUtilGroups()
      */
+    @SuppressWarnings("unchecked")
     @Override
-    protected IGroupController[] getUtilGroups() {
+    protected IGroupController<GroupSource>[] getUtilGroups() {
         if (utilGroups == null) {
-            String source = DefaultDeviceGroup.ALL.getName();
+            GroupSource[] source =
+                    new GroupSource[] { new GroupSource(
+                            DefaultDeviceGroup.ALL.getName()) };
             utilGroups =
                     new IGroupController[] {
                             BaseGroupFactory.createBandwidthGroup(eventBus,
@@ -136,10 +158,13 @@ public class PSGraphSection extends ChartsSectionController {
      * 
      * @see com.intel.stl.ui.main.ChartsSectionController#getErrorGroups()
      */
+    @SuppressWarnings("unchecked")
     @Override
-    protected IGroupController[] getErrorGroups() {
+    protected IGroupController<GroupSource>[] getErrorGroups() {
         if (errGroups == null) {
-            String source = DefaultDeviceGroup.ALL.getName();
+            GroupSource[] source =
+                    new GroupSource[] { new GroupSource(
+                            DefaultDeviceGroup.ALL.getName()) };
             errGroups =
                     new IGroupController[] {
                             BaseGroupFactory.createCongestionGroup(eventBus,

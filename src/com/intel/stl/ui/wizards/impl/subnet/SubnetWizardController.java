@@ -35,8 +35,18 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.24.2.1  2015/08/12 15:26:54  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.27  2015/08/17 18:54:04  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.26  2015/07/17 20:48:25  jijunwan
+ *  Archive Log:    PR 129594 - Apply new input verification on setup wizard
+ *  Archive Log:    - introduced isEditValid to allow us check whether we have valid edit
+ *  Archive Log:
+ *  Archive Log:    Revision 1.25  2015/05/11 12:37:06  rjtierne
+ *  Archive Log:    PR 128585 - Fix errors found by Klocwork and FindBugs
+ *  Archive Log:    In constructor, added null pointer protection to view since invocation of this
+ *  Archive Log:    class flagged potential null error when SubnetWizardView is created
  *  Archive Log:
  *  Archive Log:    Revision 1.24  2015/04/29 19:14:16  rjtierne
  *  Archive Log:    Handle case in validateUserEntry() to not update the model if a connection test is being
@@ -173,7 +183,7 @@ public class SubnetWizardController implements IMultinetWizardTask,
 
     private LinkedHashMap<String, SubnetDescription> subnets;
 
-    private final SubnetWizardView view;
+    private SubnetWizardView view = null;
 
     private final ISubnetManager subnetMgr;
 
@@ -203,12 +213,17 @@ public class SubnetWizardController implements IMultinetWizardTask,
     public SubnetWizardController(SubnetWizardView view,
             ISubnetManager subnetMgr) {
 
-        this.view = view;
         this.subnetMgr = subnetMgr;
-        view.setControlListener(this);
-        view.setWizardListener(this);
-        view.setDirty(false);
         loadSubnets();
+
+        if (view != null) {
+            this.view = view;
+            view.setControlListener(this);
+            view.setWizardListener(this);
+            view.setDirty(false);
+        } else {
+            log.error(STLConstants.K3045_SUBNET_VIEW_NULL.getValue());
+        }
     }
 
     /**
@@ -722,4 +737,15 @@ public class SubnetWizardController implements IMultinetWizardTask,
     public void setConnectable(boolean connectable) {
         this.connectable = connectable;
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.wizards.impl.IWizardTask#isEditValid()
+     */
+    @Override
+    public boolean isEditValid() {
+        return view.isEditValid();
+    }
+
 }

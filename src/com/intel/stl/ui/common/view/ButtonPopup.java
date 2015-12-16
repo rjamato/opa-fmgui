@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3.2.1  2015/08/12 15:26:33  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.5  2015/08/17 18:53:36  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/05/20 20:09:57  jijunwan
+ *  Archive Log:    PR 128826 - Floating Popup menu
+ *  Archive Log:    - listen to parent frame and hide a popup if its parent frame is going to moving, resizing etc.
  *  Archive Log:
  *  Archive Log:    Revision 1.3  2014/12/10 20:52:22  rjtierne
  *  Archive Log:    Support for new Setup Wizard
@@ -63,6 +68,8 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -115,6 +122,8 @@ public abstract class ButtonPopup extends Popup implements WindowFocusListener,
 
     private boolean isFrame = true;
 
+    private ComponentListener parentComponentListener;
+
     public ButtonPopup(AbstractButton button, JComponent component) {
         super();
         this.component = component;
@@ -129,7 +138,40 @@ public abstract class ButtonPopup extends Popup implements WindowFocusListener,
         this.button = button;
         this.button.addMouseListener(this);
         this.isFrame = isFrame;
+    }
 
+    /**
+     * 
+     * <i>Description:</i> added to handle the special case (PR 128826) where a
+     * user can move the parent frame around with the popup showing on screen
+     * 
+     * @return
+     */
+    protected ComponentListener getParentComponentListener() {
+        if (parentComponentListener == null) {
+            parentComponentListener = new ComponentListener() {
+                @Override
+                public void componentResized(ComponentEvent e) {
+                    hidePopup();
+                }
+
+                @Override
+                public void componentMoved(ComponentEvent e) {
+                    hidePopup();
+                }
+
+                @Override
+                public void componentShown(ComponentEvent e) {
+                }
+
+                @Override
+                public void componentHidden(ComponentEvent e) {
+                    hidePopup();
+                }
+
+            };
+        }
+        return parentComponentListener;
     }
 
     @Override
@@ -138,6 +180,7 @@ public abstract class ButtonPopup extends Popup implements WindowFocusListener,
         if (popup == null) {
             createPopup();
         }
+        popup.getParent().addComponentListener(getParentComponentListener());
         Point location = button.getLocation();
         SwingUtilities.convertPointToScreen(location, button.getParent());
         int dy =
@@ -161,10 +204,27 @@ public abstract class ButtonPopup extends Popup implements WindowFocusListener,
 
     @Override
     public void hide() {
+        popup.getParent().removeComponentListener(getParentComponentListener());
         popup.setVisible(false);
         popup.removeWindowFocusListener(this);
         onHide();
         hideReasonNotSet = true;
+    }
+
+    protected void hidePopup() {
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                if (popup.isVisible()) {
+                    if (hideReasonNotSet) {
+                        hideReason = FOCUS_LOST;
+                    }
+                    button.doClick();
+                }
+            }
+        });
+
     }
 
     public boolean isVisible() {
@@ -178,18 +238,7 @@ public abstract class ButtonPopup extends Popup implements WindowFocusListener,
 
     @Override
     public void windowLostFocus(WindowEvent e) {
-        SwingUtilities.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                if (popup.isVisible()) {
-                    if (hideReasonNotSet) {
-                        hideReason = FOCUS_LOST;
-                    }
-                    button.doClick();
-                }
-            }
-        });
+        hidePopup();
     }
 
     @Override

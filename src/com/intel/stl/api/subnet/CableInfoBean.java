@@ -35,11 +35,33 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.2  2015/08/12 15:21:42  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.12  2015/09/15 13:31:31  jypak
+ *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
+ *  Archive Log:    Incorporated the FM changes (PR 129390) as of 8/28/15. These changes are mainly from IbPrint/stl_sma.c revision 1.163.
  *  Archive Log:
- *  Archive Log:    Revision 1.4.2.1  2015/05/06 19:23:03  jijunwan
- *  Archive Log:    fixed printout issue found by FindBugs
+ *  Archive Log:    Revision 1.11  2015/08/19 22:26:35  jijunwan
+ *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
+ *  Archive Log:    - correction on OM length calculation
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/08/19 21:02:55  jijunwan
+ *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
+ *  Archive Log:    - adapt to latest FM code
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/08/19 18:08:30  jypak
+ *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
+ *  Archive Log:    Updates for ID and OpticalWaveLength.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/08/17 18:48:38  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/08/07 14:57:53  jypak
+ *  Archive Log:    PR 129397 -gaps in cableinfo output and handling.
+ *  Archive Log:    Updates on the formats of the cableinfo output and also new enums were defined for different output values.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/06/29 15:05:42  jypak
+ *  Archive Log:    PR 129284 - Incorrect QSFP field name.
+ *  Archive Log:    Field name fix has been implemented. Also, introduced a conversion to Date object to add flexibility to display date code.
  *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/05/01 21:40:03  jijunwan
  *  Archive Log:    fixed minor issue found by FindBug
@@ -62,35 +84,43 @@
 package com.intel.stl.api.subnet;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CableInfoBean implements Serializable {
     // we need to handle unsigned values
     private static final long serialVersionUID = 1L;
 
+    protected static Logger log = LoggerFactory.getLogger(CableInfoBean.class);
+
     private Byte id;
 
-    private Byte extId;
+    private PowerClassType powerClass;
+
+    private Boolean txCDRSupported;
+
+    private Boolean rxCDRSupported;
 
     private Byte connector;
 
-    private Byte nominalBr;
+    private Byte bitRateLow;
 
-    private Byte smfLength;
+    private Byte bitRateHigh;
 
-    private Byte om3Length;
+    private Integer om3Length;
 
-    private Byte om2Length;
+    private Integer om2Length;
 
-    private Byte om1Length;
+    private Integer om4Length;
 
-    private Byte copperLength;
-
-    private String deviceTech;
+    private Integer codeXmit;
 
     private String vendorName;
-
-    private String extendedModule;
 
     private byte[] vendorOui;
 
@@ -98,19 +128,23 @@ public class CableInfoBean implements Serializable {
 
     private String vendorRev;
 
-    private Integer opticalWaveLength;
-
-    private Byte maxCaseTemp;
+    private Integer maxCaseTemp;
 
     private Byte ccBase;
 
-    private Boolean rxOutAmpProg;
+    private Byte linkCodes;
 
-    private Boolean rxSquelchDisImp;
+    private Boolean txInpEqAutoAdp;
 
-    private Boolean rxOutputDisCap;
+    private Boolean txInpEqFixProg;
 
-    private Boolean txSquelchDisImp;
+    private Boolean rxOutpEmphFixProg;
+
+    private Boolean rxOutpAmplFixProg;
+
+    private Boolean txCDROnOffCtrl;
+
+    private Boolean rxCDROnOffCtrl;
 
     private Boolean txSquelchImp;
 
@@ -118,19 +152,21 @@ public class CableInfoBean implements Serializable {
 
     private Boolean memPage01Provided;
 
-    private Boolean txDisImp;
-
-    private Boolean txFaultRepImp;
-
-    private Boolean losReportImp;
-
     private String vendorSN;
 
-    private String dataCode;
+    private String dateCode;
+
+    private Date date;
 
     private String lotCode;
 
     private Byte ccExt;
+
+    private Boolean certCableFlag;
+
+    private Integer reachClass;
+
+    private CertifiedRateType certDataRate;
 
     private String notApplicableData;
 
@@ -150,8 +186,8 @@ public class CableInfoBean implements Serializable {
     /**
      * @return the extId
      */
-    public Byte getExtId() {
-        return extId;
+    public PowerClassType getPowerClass() {
+        return powerClass;
     }
 
     /**
@@ -162,52 +198,45 @@ public class CableInfoBean implements Serializable {
     }
 
     /**
-     * @return the nominalBr
+     * @return the bitRateLow
      */
-    public Byte getNominalBr() {
-        return nominalBr;
+    public Byte getBitRateLow() {
+        return bitRateLow;
     }
 
     /**
-     * @return the smfLength
+     * @return the bitRateHigh
      */
-    public Byte getSmfLength() {
-        return smfLength;
+    public Byte getBitRateHigh() {
+        return bitRateHigh;
     }
 
     /**
      * @return the om3Length
      */
-    public Byte getOm3Length() {
+    public Integer getOm3Length() {
         return om3Length;
     }
 
     /**
      * @return the om2Length
      */
-    public Byte getOm2Length() {
+    public Integer getOm2Length() {
         return om2Length;
-    }
-
-    /**
-     * @return the om1Length
-     */
-    public Byte getOm1Length() {
-        return om1Length;
     }
 
     /**
      * @return the copperLength
      */
-    public Byte getCopperLength() {
-        return copperLength;
+    public Integer getOm4Length() {
+        return om4Length;
     }
 
     /**
-     * @return the deviceTech
+     * @return the codeXmit
      */
-    public String getDeviceTech() {
-        return deviceTech;
+    public Integer getCodeXmit() {
+        return codeXmit;
     }
 
     /**
@@ -215,13 +244,6 @@ public class CableInfoBean implements Serializable {
      */
     public String getVendorName() {
         return vendorName;
-    }
-
-    /**
-     * @return the extendedModule
-     */
-    public String getExtendedModule() {
-        return extendedModule;
     }
 
     /**
@@ -246,16 +268,9 @@ public class CableInfoBean implements Serializable {
     }
 
     /**
-     * @return the opticalWaveLength
-     */
-    public Integer getOpticalWaveLength() {
-        return opticalWaveLength;
-    }
-
-    /**
      * @return the maxCaseTemp
      */
-    public Byte getMaxCaseTemp() {
+    public Integer getMaxCaseTemp() {
         return maxCaseTemp;
     }
 
@@ -267,31 +282,59 @@ public class CableInfoBean implements Serializable {
     }
 
     /**
-     * @return the rxOutApmProg
+     * @return the linkCodes
      */
-    public Boolean isRxOutAmpProg() {
-        return rxOutAmpProg;
+    public Byte getLinkCodes() {
+        return linkCodes;
     }
 
     /**
-     * @return the rxSquelchDisImp
+     * @return the txInpEqAutoAdp
      */
-    public Boolean isRxSquelchDisImp() {
-        return rxSquelchDisImp;
+    public Boolean getTxInpEqAutoAdp() {
+        return txInpEqAutoAdp;
     }
 
     /**
-     * @return the rxOutputDisCap
+     * @return the txInpEqFixProg
      */
-    public Boolean isRxOutputDisCap() {
-        return rxOutputDisCap;
+    public Boolean getTxInpEqFixProg() {
+        return txInpEqFixProg;
     }
 
     /**
-     * @return the txSquelchDisImp
+     * @return the rxOutpEmphFixProg
      */
-    public Boolean isTxSquelchDisImp() {
-        return txSquelchDisImp;
+    public Boolean getRxOutpEmphFixProg() {
+        return rxOutpEmphFixProg;
+    }
+
+    /**
+     * @return the rxOutpAmplFixProg
+     */
+    public Boolean getRxOutpAmplFixProg() {
+        return rxOutpAmplFixProg;
+    }
+
+    /**
+     * @return the txCDROnOffCtrl
+     */
+    public Boolean getTxCDROnOffCtrl() {
+        return txCDROnOffCtrl;
+    }
+
+    /**
+     * @return the rxCDROnOffCtrl
+     */
+    public Boolean getRxCDROnOffCtrl() {
+        return rxCDROnOffCtrl;
+    }
+
+    /**
+     * @return the txSquelchImp
+     */
+    public Boolean getTxSquelchImp() {
+        return txSquelchImp;
     }
 
     /**
@@ -316,27 +359,6 @@ public class CableInfoBean implements Serializable {
     }
 
     /**
-     * @return the txDisImp
-     */
-    public Boolean isTxDisImp() {
-        return txDisImp;
-    }
-
-    /**
-     * @return the txFaultRepImp
-     */
-    public Boolean isTxFaultRepImp() {
-        return txFaultRepImp;
-    }
-
-    /**
-     * @return the losReportImp
-     */
-    public Boolean isLosReportImp() {
-        return losReportImp;
-    }
-
-    /**
      * @return the vendorSN
      */
     public String getVendorSN() {
@@ -346,8 +368,12 @@ public class CableInfoBean implements Serializable {
     /**
      * @return the dataCode
      */
-    public String getDataCode() {
-        return dataCode;
+    public String getDateCode() {
+        return dateCode;
+    }
+
+    public Date getDateCodeAsDate() {
+        return date;
     }
 
     /**
@@ -362,6 +388,27 @@ public class CableInfoBean implements Serializable {
      */
     public Byte getCcExt() {
         return ccExt;
+    }
+
+    /**
+     * @return the certCableFlag
+     */
+    public Boolean getCertCableFlag() {
+        return certCableFlag;
+    }
+
+    /**
+     * @return the reachClass
+     */
+    public Integer getReachClass() {
+        return reachClass;
+    }
+
+    /**
+     * @return the certDataRate
+     */
+    public CertifiedRateType getCertDataRate() {
+        return certDataRate;
     }
 
     /**
@@ -380,11 +427,41 @@ public class CableInfoBean implements Serializable {
     }
 
     /**
-     * @param extId
+     * @param extID
      *            the extId to set
      */
-    public void setExtId(byte extId) {
-        this.extId = extId;
+    public void setPowerClass(PowerClassType extID) {
+        this.powerClass = extID;
+    }
+
+    /**
+     * @return the txCDRSupported
+     */
+    public Boolean getTxCDRSupported() {
+        return txCDRSupported;
+    }
+
+    /**
+     * @param txCDRSupported
+     *            the txCDRSupported to set
+     */
+    public void setTxCDRSupported(Boolean txCDRSupported) {
+        this.txCDRSupported = txCDRSupported;
+    }
+
+    /**
+     * @return the rxCDRSupported
+     */
+    public Boolean getRxCDRSupported() {
+        return rxCDRSupported;
+    }
+
+    /**
+     * @param rxCDRSupported
+     *            the rxCDRSupported to set
+     */
+    public void setRxCDRSupported(Boolean rxCDRSupported) {
+        this.rxCDRSupported = rxCDRSupported;
     }
 
     /**
@@ -396,26 +473,26 @@ public class CableInfoBean implements Serializable {
     }
 
     /**
-     * @param nominalBr
-     *            the nominalBr to set
+     * @param bitRateLow
+     *            the bitRateLow to set
      */
-    public void setNominalBr(byte nominalBr) {
-        this.nominalBr = nominalBr;
+    public void setBitRateLow(byte bitRateLow) {
+        this.bitRateLow = bitRateLow;
     }
 
     /**
-     * @param smfLength
-     *            the smfLength to set
+     * @param bitRateHigh
+     *            the bitRateHigh to set
      */
-    public void setSmfLength(byte smfLength) {
-        this.smfLength = smfLength;
+    public void setBitRateHigh(byte bitRateHigh) {
+        this.bitRateHigh = bitRateHigh;
     }
 
     /**
      * @param om3Length
      *            the om3Length to set
      */
-    public void setOm3Length(byte om3Length) {
+    public void setOm3Length(int om3Length) {
         this.om3Length = om3Length;
     }
 
@@ -423,32 +500,24 @@ public class CableInfoBean implements Serializable {
      * @param om2Length
      *            the om2Length to set
      */
-    public void setOm2Length(byte om2Length) {
+    public void setOm2Length(int om2Length) {
         this.om2Length = om2Length;
-    }
-
-    /**
-     * @param om1Length
-     *            the om1Length to set
-     */
-    public void setOm1Length(byte om1Length) {
-        this.om1Length = om1Length;
     }
 
     /**
      * @param copperLength
      *            the copperLength to set
      */
-    public void setCopperLength(byte copperLength) {
-        this.copperLength = copperLength;
+    public void setOm4Length(int om4Length) {
+        this.om4Length = om4Length;
     }
 
     /**
-     * @param deviceTech
-     *            the deviceTech to set
+     * @param codeXmit
+     *            the codeXmit to set
      */
-    public void setDeviceTech(String deviceTech) {
-        this.deviceTech = deviceTech;
+    public void setCodeXmit(int codeXmit) {
+        this.codeXmit = codeXmit;
     }
 
     /**
@@ -457,14 +526,6 @@ public class CableInfoBean implements Serializable {
      */
     public void setVendorName(String vendorName) {
         this.vendorName = vendorName;
-    }
-
-    /**
-     * @param extendedModule
-     *            the extendedModule to set
-     */
-    public void setExtendedModule(String extendedModule) {
-        this.extendedModule = extendedModule;
     }
 
     /**
@@ -491,19 +552,12 @@ public class CableInfoBean implements Serializable {
         this.vendorRev = vendorRev;
     }
 
-    /**
-     * @param opticalWaveLength
-     *            the opticalWaveLength to set
-     */
-    public void setOpticalWaveLength(int opticalWaveLength) {
-        this.opticalWaveLength = opticalWaveLength;
-    }
 
     /**
      * @param maxCaseTemp
      *            the maxCaseTemp to set
      */
-    public void setMaxCaseTemp(byte maxCaseTemp) {
+    public void setMaxCaseTemp(int maxCaseTemp) {
         this.maxCaseTemp = maxCaseTemp;
     }
 
@@ -516,35 +570,67 @@ public class CableInfoBean implements Serializable {
     }
 
     /**
-     * @param rxOutApmProg
-     *            the rxOutApmProg to set
+     * @param linkCodes
+     *            the linkCodes to set
      */
-    public void setRxOutAmpProg(boolean rxOutAmpProg) {
-        this.rxOutAmpProg = rxOutAmpProg;
+    public void setLinkCodes(Byte linkCodes) {
+        this.linkCodes = linkCodes;
     }
 
     /**
-     * @param rxSquelchDisImp
-     *            the rxSquelchDisImp to set
+     * @param txInpEqAutoAdp
+     *            the txInpEqAutoAdp to set
      */
-    public void setRxSquelchDisImp(boolean rxSquelchDisImp) {
-        this.rxSquelchDisImp = rxSquelchDisImp;
+    public void setTxInpEqAutoAdp(Boolean txInpEqAutoAdp) {
+        this.txInpEqAutoAdp = txInpEqAutoAdp;
     }
 
     /**
-     * @param rxOutputDisCap
-     *            the rxOutputDisCap to set
+     * @param txInpEqFixProg
+     *            the txInpEqFixProg to set
      */
-    public void setRxOutputDisCap(boolean rxOutputDisCap) {
-        this.rxOutputDisCap = rxOutputDisCap;
+    public void setTxInpEqFixProg(Boolean txInpEqFixProg) {
+        this.txInpEqFixProg = txInpEqFixProg;
     }
 
     /**
-     * @param txSquelchDisImp
-     *            the txSquelchDisImp to set
+     * @param rxOutpEmphFixProg
+     *            the rxOutpEmphFixProg to set
      */
-    public void setTxSquelchDisImp(boolean txSquelchDisImp) {
-        this.txSquelchDisImp = txSquelchDisImp;
+    public void setRxOutpEmphFixProg(Boolean rxOutpEmphFixProg) {
+        this.rxOutpEmphFixProg = rxOutpEmphFixProg;
+    }
+
+    /**
+     * @param rxOutpAmplFixProg
+     *            the rxOutpAmplFixProg to set
+     */
+    public void setRxOutpAmplFixProg(Boolean rxOutpAmplFixProg) {
+        this.rxOutpAmplFixProg = rxOutpAmplFixProg;
+    }
+
+    /**
+     * @param txCDROnOffCtrl
+     *            the txCDROnOffCtrl to set
+     */
+    public void setTxCDROnOffCtrl(Boolean txCDROnOffCtrl) {
+        this.txCDROnOffCtrl = txCDROnOffCtrl;
+    }
+
+    /**
+     * @param rxCDROnOffCtrl
+     *            the rxCDROnOffCtrl to set
+     */
+    public void setRxCDROnOffCtrl(Boolean rxCDROnOffCtrl) {
+        this.rxCDROnOffCtrl = rxCDROnOffCtrl;
+    }
+
+    /**
+     * @param txSquelchImp
+     *            the txSquelchImp to set
+     */
+    public void setTxSquelchImp(Boolean txSquelchImp) {
+        this.txSquelchImp = txSquelchImp;
     }
 
     /**
@@ -572,30 +658,6 @@ public class CableInfoBean implements Serializable {
     }
 
     /**
-     * @param txDisImp
-     *            the txDisImp to set
-     */
-    public void setTxDisImp(boolean txDisImp) {
-        this.txDisImp = txDisImp;
-    }
-
-    /**
-     * @param txFaultRepImp
-     *            the txFaultRepImp to set
-     */
-    public void setTxFaultRepImp(boolean txFaultRepImp) {
-        this.txFaultRepImp = txFaultRepImp;
-    }
-
-    /**
-     * @param losReportImp
-     *            the losReportImp to set
-     */
-    public void setLosReportImp(boolean losReportImp) {
-        this.losReportImp = losReportImp;
-    }
-
-    /**
      * @param vendorSN
      *            the vendorSN to set
      */
@@ -604,11 +666,27 @@ public class CableInfoBean implements Serializable {
     }
 
     /**
-     * @param dataCode
-     *            the dataCode to set
+     * @param dateCode
+     *            the dateCode to set
      */
-    public void setDataCode(String dataCode) {
-        this.dataCode = dataCode;
+    public void setDateCode(String year, String month, String day) {
+        dateCode = year + "/" + month + "/" + day;
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yy/MM/dd");
+        try {
+            date = formatter.parse(dateCode);
+        } catch (ParseException e) {
+            date = null;
+            log.warn("Parsing exception for date code string", e);
+        }
+    }
+
+    public void setDateCode(String dateCode) {
+        this.dateCode = dateCode;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     /**
@@ -628,11 +706,71 @@ public class CableInfoBean implements Serializable {
     }
 
     /**
+     * <i>Description:</i>
+     * 
+     * @param certCableFlag
+     */
+    public void setCertCableFlag(boolean certCableFlag) {
+        this.certCableFlag = certCableFlag;
+
+    }
+
+    /**
+     * @param reachClass
+     *            the reachClass to set
+     */
+    public void setReachClass(int reachClass) {
+        this.reachClass = reachClass;
+    }
+
+    /**
+     * @param certDataRate
+     *            the certDataRate to set
+     */
+    public void setCertDataRate(CertifiedRateType certDataRate) {
+        this.certDataRate = certDataRate;
+    }
+
+    /**
      * @param notApplicableData
      *            the notApplicableData to set
      */
     public void setNotApplicableData(String notApplicableData) {
         this.notApplicableData = notApplicableData;
+    }
+
+    /**
+     * 
+     * <i>Description:</i>Unit in Gbps.
+     * 
+     * @param codeLow
+     * @param codeHigh
+     * @return
+     */
+    public Integer stlCableInfoBitRate(byte codeLow, byte codeHigh) {
+        int result;
+        if (codeLow == (byte) 0xFF) {
+            result = (codeHigh / 4);
+        } else {
+            result = (codeLow / 10);
+        }
+        return result;
+    }
+
+    public CableType stlCableInfoCableType(int codeXmit, byte codeConnector) {
+        CableType cableType = null;
+        int connectId = 0;
+        if ((codeXmit <= 9) && (codeXmit != 8)) {
+            if (codeConnector == SAConstants.CABLEINFO_CONNECTOR_NOSEP) {
+                connectId = 1;
+            } else {
+                connectId = 2;
+            }
+        }
+
+        cableType = CableType.getCableType(connectId, codeXmit);
+
+        return cableType;
     }
 
     /*
@@ -642,25 +780,27 @@ public class CableInfoBean implements Serializable {
      */
     @Override
     public String toString() {
-        return "CableInfoBean [id=" + id + ", extId=" + extId + ", connector="
-                + connector + ", nominalBr=" + nominalBr + ", smfLength="
-                + smfLength + ", om3Length=" + om3Length + ", om2Length="
-                + om2Length + ", om1Length=" + om1Length + ", copperLength="
-                + copperLength + ", deviceTech=" + deviceTech + ", vendorName="
-                + vendorName + ", extendedModule=" + extendedModule
-                + ", vendorOui=" + Arrays.toString(vendorOui) + ", vendorPn="
-                + vendorPn + ", vendorRev=" + vendorRev
-                + ", opticalWaveLength=" + opticalWaveLength + ", maxCaseTemp="
-                + maxCaseTemp + ", ccBase=" + ccBase + ", rxOutApmProg="
-                + rxOutAmpProg + ", rxSquelchDisImp=" + rxSquelchDisImp
-                + ", rxOutputDisCap=" + rxOutputDisCap + ", txSquelchDisImp="
-                + txSquelchDisImp + ", txSquelchImp=" + txSquelchImp
+        return "CableInfoBean [id=" + id + ", extId=" + powerClass
+                + ", txCDRSupported=" + txCDRSupported + ", rxCDRSupported="
+                + rxCDRSupported + ", connector=" + connector + ", bitRateLow="
+                + bitRateLow + ", bitRateHigh=" + bitRateHigh + ", om3Length="
+                + om3Length + ", om2Length=" + om2Length + ", om4Length="
+                + om4Length + ", codeXmit=" + codeXmit + ", vendorName="
+                + vendorName + ", vendorOui=" + Arrays.toString(vendorOui)
+                + ", vendorPn=" + vendorPn + ", vendorRev=" + vendorRev
+                + ", maxCaseTemp=" + maxCaseTemp + ", ccBase=" + ccBase
+                + ", txInpEqAutoAdp=" + txInpEqAutoAdp + ", txInpEqFixProg="
+                + txInpEqFixProg + ", rxOutpEmphFixProg=" + rxOutpEmphFixProg
+                + ", rxOutpAmplFixProg=" + rxOutpAmplFixProg
+                + ", txCDROnOffCtrl=" + txCDROnOffCtrl + ", rxCDROnOffCtrl="
+                + rxCDROnOffCtrl + ", txSquelchImp=" + txSquelchImp
                 + ", memPage02Provided=" + memPage02Provided
-                + ", memPage01Provided=" + memPage01Provided + ", txDisImp="
-                + txDisImp + ", txFaultRepImp=" + txFaultRepImp
-                + ", losReportImp=" + losReportImp + ", vendorSN=" + vendorSN
-                + ", dataCode=" + dataCode + ", lotCode=" + lotCode
-                + ", ccExt=" + ccExt + ", notApplicableData="
-                + notApplicableData + "]";
+                + ", memPage01Provided=" + memPage01Provided + ", vendorSN="
+                + vendorSN + ", dateCode=" + dateCode + ", date=" + date
+                + ", lotCode=" + lotCode + ", ccExt=" + ccExt
+                + ", certCableFlag=" + certCableFlag + ", reachClass="
+                + reachClass + ", certDataRate=" + certDataRate
+                + ", notApplicableData=" + notApplicableData + "]";
     }
+
 }

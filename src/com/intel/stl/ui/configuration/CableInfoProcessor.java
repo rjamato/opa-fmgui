@@ -35,8 +35,49 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.1  2015/08/12 15:26:42  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.16  2015/09/15 13:31:34  jypak
+ *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
+ *  Archive Log:    Incorporated the FM changes (PR 129390) as of 8/28/15. These changes are mainly from IbPrint/stl_sma.c revision 1.163.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.15  2015/08/19 22:27:13  jijunwan
+ *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
+ *  Archive Log:    - adapt to integer OM length
+ *  Archive Log:
+ *  Archive Log:    Revision 1.14  2015/08/19 21:06:35  jijunwan
+ *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
+ *  Archive Log:    - adapt to latest FM code
+ *  Archive Log:
+ *  Archive Log:    Revision 1.13  2015/08/19 18:08:31  jypak
+ *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
+ *  Archive Log:    Updates for ID and OpticalWaveLength.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.12  2015/08/18 14:28:32  jijunwan
+ *  Archive Log:    PR 130033 - Fix critical issues found by Klocwork or FindBugs
+ *  Archive Log:    - DateFormat is not thread safe. Changed to create new DateFormat to avoid sharing it among different threads
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/08/17 21:44:01  jijunwan
+ *  Archive Log:    PR 129397 -gaps in cableinfo output and handling.
+ *  Archive Log:    - fixed a typo
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/08/17 18:53:50  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/08/07 14:57:57  jypak
+ *  Archive Log:    PR 129397 -gaps in cableinfo output and handling.
+ *  Archive Log:    Updates on the formats of the cableinfo output and also new enums were defined for different output values.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/07/20 16:33:53  jypak
+ *  Archive Log:    PR 129284 - Incorrect QSFP field name.
+ *  Archive Log:    Avoid adding 'N/A' date code and also 'Invalid' by setting the property only when processing the 2nd bean.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/06/30 14:36:53  jypak
+ *  Archive Log:    PR 129284 - Incorrect QSFP field name.
+ *  Archive Log:    For date code, if invalid data, set the property field value as 'Invalid' and if both data code string and Date object are null, set the field value as 'N/A'.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/06/29 15:05:44  jypak
+ *  Archive Log:    PR 129284 - Incorrect QSFP field name.
+ *  Archive Log:    Field name fix has been implemented. Also, introduced a conversion to Date object to add flexibility to display date code.
  *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/04/29 14:01:06  jypak
  *  Archive Log:    Updates to display unknown data in the address not interpretable in the QSFP port encoding based on the SFF-8636.
@@ -63,31 +104,30 @@ import static com.intel.stl.ui.common.STLConstants.K0385_TRUE;
 import static com.intel.stl.ui.common.STLConstants.K0386_FALSE;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_CC_BASE;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_CC_EXT;
+import static com.intel.stl.ui.model.DeviceProperty.CABLE_CERT_CABLE_FLAG;
+import static com.intel.stl.ui.model.DeviceProperty.CABLE_CERT_DATA_RATE;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_CONNECTOR;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_COPPER_LEN;
-import static com.intel.stl.ui.model.DeviceProperty.CABLE_DATA_CODE;
+import static com.intel.stl.ui.model.DeviceProperty.CABLE_DATE_CODE;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_DEVICE_TECH;
-import static com.intel.stl.ui.model.DeviceProperty.CABLE_EXT_ID;
-import static com.intel.stl.ui.model.DeviceProperty.CABLE_EXT_MODULE;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_ID;
-import static com.intel.stl.ui.model.DeviceProperty.CABLE_LOS_REP_IMP;
-import static com.intel.stl.ui.model.DeviceProperty.CABLE_LOT_CODE;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_MAXCASE_TEMP;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_MEM_PAGE01_PROV;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_MEM_PAGE02_PROV;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_NA;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_NOMINAL_BR;
-import static com.intel.stl.ui.model.DeviceProperty.CABLE_OM1_LEN;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_OM2_LEN;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_OM3_LEN;
-import static com.intel.stl.ui.model.DeviceProperty.CABLE_OPTICAL_WL;
-import static com.intel.stl.ui.model.DeviceProperty.CABLE_RX_OUT_AMP_PROG;
-import static com.intel.stl.ui.model.DeviceProperty.CABLE_RX_OUT_DIS_CAP;
-import static com.intel.stl.ui.model.DeviceProperty.CABLE_RX_SQULECH_DIS_IMP;
-import static com.intel.stl.ui.model.DeviceProperty.CABLE_SMF_LEN;
-import static com.intel.stl.ui.model.DeviceProperty.CABLE_TX_DIS_IMP;
-import static com.intel.stl.ui.model.DeviceProperty.CABLE_TX_FAULT_REP_IMP;
-import static com.intel.stl.ui.model.DeviceProperty.CABLE_TX_SQUELCH_DIS_IMP;
+import static com.intel.stl.ui.model.DeviceProperty.CABLE_POWER_CLASS;
+import static com.intel.stl.ui.model.DeviceProperty.CABLE_REACH_CLASS;
+import static com.intel.stl.ui.model.DeviceProperty.CABLE_RX_CDR_ON_OFF_CTRL;
+import static com.intel.stl.ui.model.DeviceProperty.CABLE_RX_CDR_SUP;
+import static com.intel.stl.ui.model.DeviceProperty.CABLE_RX_OUTP_AMPL_FIX_PROG;
+import static com.intel.stl.ui.model.DeviceProperty.CABLE_RX_OUTP_EMPH_FIX_PROG;
+import static com.intel.stl.ui.model.DeviceProperty.CABLE_TX_CDR_ON_OFF_CTRL;
+import static com.intel.stl.ui.model.DeviceProperty.CABLE_TX_CDR_SUP;
+import static com.intel.stl.ui.model.DeviceProperty.CABLE_TX_INP_EQ_AUTO_ADP;
+import static com.intel.stl.ui.model.DeviceProperty.CABLE_TX_INP_EQ_FIX_PROG;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_TX_SQUELCH_IMP;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_VENDOR_NAME;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_VENDOR_OUI;
@@ -95,19 +135,28 @@ import static com.intel.stl.ui.model.DeviceProperty.CABLE_VENDOR_PN;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_VENDOR_REV;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_VENDOR_SN;
 
+import java.util.Date;
 import java.util.List;
 
 import com.intel.stl.api.subnet.CableInfoBean;
 import com.intel.stl.api.subnet.CableRecordBean;
+import com.intel.stl.api.subnet.CertifiedRateType;
 import com.intel.stl.api.subnet.ISubnetApi;
 import com.intel.stl.api.subnet.PortRecordBean;
+import com.intel.stl.api.subnet.PowerClassType;
 import com.intel.stl.ui.common.STLConstants;
+import com.intel.stl.ui.common.Util;
+import com.intel.stl.ui.model.CableTypeViz;
+import com.intel.stl.ui.model.CertifiedRateTypeViz;
 import com.intel.stl.ui.model.DevicePropertyCategory;
 import com.intel.stl.ui.model.PortTypeViz;
+import com.intel.stl.ui.model.PowerClassTypeViz;
 import com.intel.stl.ui.monitor.TreeNodeType;
 import com.intel.stl.ui.monitor.tree.FVResourceNode;
 
 public class CableInfoProcessor extends BaseCategoryProcessor {
+
+    private String dateCode;
 
     @Override
     public void process(ICategoryProcessorContext context,
@@ -141,61 +190,276 @@ public class CableInfoProcessor extends BaseCategoryProcessor {
             }
         }
 
+        CableInfoBean cableInfoBean = new CableInfoBean();
         for (CableRecordBean cableBean : cableRecordBeans) {
-            getCableInfo(category, cableBean.getCableInfo());
+            combineCableInfo(cableInfoBean, cableBean.getCableInfo());
         }
+
+        getCableInfo(category, cableInfoBean);
+    }
+
+    private void combineCableInfo(CableInfoBean destination,
+            CableInfoBean source) {
+        Byte id = source.getId();
+        if (id != null) {
+            destination.setId(id);
+        }
+        PowerClassType extId = source.getPowerClass();
+        if (extId != null) {
+            destination.setPowerClass(extId);
+        }
+        Boolean txCDRSupported = source.getTxCDRSupported();
+        if (txCDRSupported != null) {
+            destination.setTxCDRSupported(txCDRSupported);
+        }
+        Boolean rxCDRSupported = source.getRxCDRSupported();
+        if (rxCDRSupported != null) {
+            destination.setRxCDRSupported(rxCDRSupported);
+        }
+        Byte connector = source.getConnector();
+        if (connector != null) {
+            destination.setConnector(connector);
+        }
+        Byte bitRateHigh = source.getBitRateHigh();
+        if (bitRateHigh != null) {
+            destination.setBitRateHigh(bitRateHigh);
+        }
+        Byte bitRateLow = source.getBitRateLow();
+        if (bitRateLow != null) {
+            destination.setBitRateLow(bitRateLow);
+        }
+        Integer om3Len = source.getOm3Length();
+        if (om3Len != null) {
+            destination.setOm3Length(om3Len);
+        }
+        Integer om2Len = source.getOm2Length();
+        if (om2Len != null) {
+            destination.setOm2Length(om2Len);
+        }
+        Integer om4Len = source.getOm4Length();
+        if (om4Len != null) {
+            destination.setOm4Length(om4Len);
+        }
+        Integer codeXmit = source.getCodeXmit();
+        if (codeXmit != null) {
+            destination.setCodeXmit(codeXmit);
+        }
+        String vendorName = source.getVendorName();
+        if (vendorName != null) {
+            destination.setVendorName(vendorName);
+        }
+        byte[] vendorOui = source.getVendorOui();
+        if (vendorOui != null) {
+            destination.setVendorOui(vendorOui);
+        }
+        String vendorPn = source.getVendorPn();
+        if (vendorPn != null) {
+            destination.setVendorPn(vendorPn);
+        }
+        String vendorRev = source.getVendorRev();
+        if (vendorRev != null) {
+            destination.setVendorRev(vendorRev);
+        }
+        Integer maxCaseTemp = source.getMaxCaseTemp();
+        if (maxCaseTemp != null) {
+            destination.setMaxCaseTemp(maxCaseTemp);
+        }
+        Byte ccBase = source.getCcBase();
+        if (ccBase != null) {
+            destination.setCcBase(ccBase);
+        }
+        Boolean txInpEqAutoAdp = source.getTxInpEqAutoAdp();
+        if (txInpEqAutoAdp != null) {
+            destination.setTxInpEqAutoAdp(txInpEqAutoAdp);
+        }
+        Boolean txInpEqFixProg = source.getTxInpEqFixProg();
+        if (txInpEqFixProg != null) {
+            destination.setTxInpEqFixProg(txInpEqFixProg);
+        }
+        Boolean rxOutpEmphFixProg = source.getRxOutpEmphFixProg();
+        if (rxOutpEmphFixProg != null) {
+            destination.setRxOutpEmphFixProg(rxOutpEmphFixProg);
+        }
+        Boolean rxOutpAmplFixProg = source.getRxOutpAmplFixProg();
+        if (rxOutpAmplFixProg != null) {
+            destination.setRxOutpAmplFixProg(rxOutpAmplFixProg);
+        }
+        Boolean txCDROnOffCtrl = source.getTxCDROnOffCtrl();
+        if (txCDROnOffCtrl != null) {
+            destination.setTxCDROnOffCtrl(txCDROnOffCtrl);
+        }
+        Boolean rxCDROnOffCtrl = source.getRxCDROnOffCtrl();
+        if (rxCDROnOffCtrl != null) {
+            destination.setRxCDROnOffCtrl(rxCDROnOffCtrl);
+        }
+        Boolean txSquelchImp = source.isTxSquelchImp();
+        if (txSquelchImp != null) {
+            destination.setTxSquelchImp(txSquelchImp);
+        }
+        Boolean memPage02Provided = source.isMemPage02Provided();
+        if (memPage02Provided != null) {
+            destination.setMemPage02Provided(memPage02Provided);
+        }
+        Boolean memPage01Provided = source.isMemPage01Provided();
+        if (memPage01Provided != null) {
+            destination.setMemPage01Provided(memPage01Provided);
+        }
+        String vendorSN = source.getVendorSN();
+        if (vendorSN != null) {
+            destination.setVendorSN(vendorSN);
+        }
+        String dateCode = source.getDateCode();
+        if (dateCode != null) {
+            destination.setDateCode(dateCode);
+        }
+        Date date = source.getDateCodeAsDate();
+        if (date != null) {
+            destination.setDate(date);
+        }
+        String lotCode = source.getLotCode();
+        if (lotCode != null) {
+            destination.setLotCode(lotCode);
+        }
+        Byte ccExt = source.getCcExt();
+        if (ccExt != null) {
+            destination.setCcExt(ccExt);
+        }
+        Boolean certCableFlag = source.getCertCableFlag();
+        if (certCableFlag != null) {
+            destination.setCertCableFlag(certCableFlag);
+        }
+        Integer reachClass = source.getReachClass();
+        if (reachClass != null) {
+            destination.setReachClass(reachClass);
+        }
+        CertifiedRateType certDataRate = source.getCertDataRate();
+        if (certDataRate != null) {
+            destination.setCertDataRate(certDataRate);
+        }
+
     }
 
     public void getCableInfo(DevicePropertyCategory category, CableInfoBean bean) {
 
+        String na = STLConstants.K0039_NOT_AVAILABLE.getValue();
         if (bean != null) {
             Byte id = bean.getId();
             if (id != null) {
                 addProperty(category, CABLE_ID, hex(id));
+            } else {
+                addProperty(category, CABLE_ID, na);
             }
-            Byte extId = bean.getExtId();
-            if (extId != null) {
-                addProperty(category, CABLE_EXT_ID, hex(extId));
+
+            PowerClassType powerClass = bean.getPowerClass();
+            if (powerClass != null) {
+                try {
+                    addProperty(category, CABLE_POWER_CLASS, PowerClassTypeViz
+                            .getPowerClassTypeVizFor(powerClass).getName());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                addProperty(category, CABLE_POWER_CLASS, na);
+            }
+
+            Boolean txCDRSupported = bean.getTxCDRSupported();
+            if (txCDRSupported != null) {
+                addProperty(
+                        category,
+                        CABLE_TX_CDR_SUP,
+                        txCDRSupported ? K0385_TRUE.getValue() : K0386_FALSE
+                                .getValue());
+            } else {
+                addProperty(category, CABLE_TX_CDR_SUP, na);
+            }
+
+            Boolean rxCDRSupported = bean.getTxCDRSupported();
+            if (rxCDRSupported != null) {
+                addProperty(
+                        category,
+                        CABLE_RX_CDR_SUP,
+                        rxCDRSupported ? K0385_TRUE.getValue() : K0386_FALSE
+                                .getValue());
+            } else {
+                addProperty(category, CABLE_RX_CDR_SUP, na);
             }
             Byte connector = bean.getConnector();
             if (connector != null) {
                 addProperty(category, CABLE_CONNECTOR, hex(connector));
+            } else {
+                addProperty(category, CABLE_CONNECTOR, na);
             }
-            Byte nominalBr = bean.getNominalBr();
-            if (nominalBr != null) {
-                addProperty(category, CABLE_NOMINAL_BR, hex(nominalBr));
+
+            Byte bitRateLow = bean.getBitRateLow();
+            Byte bitRateHigh = bean.getBitRateHigh();
+            if (bitRateLow != null && bitRateHigh != null) {
+                Integer nominalBr =
+                        bean.stlCableInfoBitRate(bitRateLow, bitRateHigh);
+                if (nominalBr != null) {
+                    addProperty(category, CABLE_NOMINAL_BR,
+                            nominalBr.toString() + " "
+                                    + STLConstants.K1152_CABLE_GB.getValue());
+                } else {
+                    addProperty(category, CABLE_NOMINAL_BR, na);
+                }
+            } else {
+                addProperty(category, CABLE_NOMINAL_BR, na);
             }
-            Byte smfLength = bean.getSmfLength();
-            if (smfLength != null) {
-                addProperty(category, CABLE_SMF_LEN, hex(smfLength));
-            }
-            Byte om3Length = bean.getOm3Length();
-            if (om3Length != null) {
-                addProperty(category, CABLE_OM3_LEN, hex(om3Length));
-            }
-            Byte om2Length = bean.getOm2Length();
+            Integer om2Length = bean.getOm2Length();
             if (om2Length != null) {
-                addProperty(category, CABLE_OM2_LEN, hex(om2Length));
+                addProperty(category, CABLE_OM2_LEN,
+                        Integer.toString(om2Length) + " "
+                                + STLConstants.K1154_CABLE_M.getValue());
+            } else {
+                addProperty(category, CABLE_OM2_LEN, na);
             }
-            Byte om1Length = bean.getOm1Length();
-            if (om1Length != null) {
-                addProperty(category, CABLE_OM1_LEN, hex(om1Length));
+
+            Integer om3Length = bean.getOm3Length();
+            if (om3Length != null) {
+                addProperty(category, CABLE_OM3_LEN,
+                        Integer.toString(om3Length) + " "
+                                + STLConstants.K1154_CABLE_M.getValue());
+            } else {
+                addProperty(category, CABLE_OM3_LEN, na);
             }
-            Byte copperLength = bean.getCopperLength();
-            if (copperLength != null) {
-                addProperty(category, CABLE_COPPER_LEN, hex(copperLength));
+
+            Integer om4Length = bean.getOm4Length();
+            if (om4Length != null) {
+                addProperty(category, CABLE_COPPER_LEN,
+                        Integer.toString(om4Length) + " "
+                                + STLConstants.K1154_CABLE_M.getValue());
+            } else {
+                addProperty(category, CABLE_COPPER_LEN, na);
             }
-            String deviceTech = bean.getDeviceTech();
-            if (deviceTech != null) {
-                addProperty(category, CABLE_DEVICE_TECH, deviceTech);
+
+            Integer codeXmit = bean.getCodeXmit();
+            Byte codeConnector = bean.getConnector();
+            if (codeXmit != null && codeConnector != null) {
+                try {
+                    {
+                        CableTypeViz cableType =
+                                CableTypeViz.getCableTypeVizFor(bean
+                                        .stlCableInfoCableType(codeXmit,
+                                                codeConnector));
+                        if (cableType != null) {
+                            addProperty(category, CABLE_DEVICE_TECH,
+                                    cableType.getName());
+                        } else {
+                            addProperty(category, CABLE_DEVICE_TECH, na);
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                addProperty(category, CABLE_DEVICE_TECH, na);
             }
+
             String vendorName = bean.getVendorName();
             if (vendorName != null) {
                 addProperty(category, CABLE_VENDOR_NAME, vendorName);
-            }
-            String extendedModule = bean.getExtendedModule();
-            if (extendedModule != null) {
-                addProperty(category, CABLE_EXT_MODULE, extendedModule);
+            } else {
+                addProperty(category, CABLE_VENDOR_NAME, na);
             }
             byte[] vendorOui = bean.getVendorOui();
             if (vendorOui != null) {
@@ -205,69 +469,115 @@ public class CableInfoProcessor extends BaseCategoryProcessor {
                     sb.append(String.format("%02x", b));
                 }
                 addProperty(category, CABLE_VENDOR_OUI, sb.toString());
+            } else {
+                addProperty(category, CABLE_VENDOR_OUI, na);
             }
 
             String vendorPN = bean.getVendorPn();
             if (vendorPN != null) {
                 addProperty(category, CABLE_VENDOR_PN, vendorPN);
+            } else {
+                addProperty(category, CABLE_VENDOR_PN, na);
             }
             String vendorRev = bean.getVendorRev();
             if (vendorRev != null) {
                 addProperty(category, CABLE_VENDOR_REV, vendorRev);
+            } else {
+                addProperty(category, CABLE_VENDOR_REV, na);
             }
-            Integer opticalWaveLength = bean.getOpticalWaveLength();
-            if (opticalWaveLength != null) {
-                addProperty(category, CABLE_OPTICAL_WL,
-                        Integer.toString(opticalWaveLength));
-            }
-            Byte maxCaseTemp = bean.getMaxCaseTemp();
+            Integer maxCaseTemp = bean.getMaxCaseTemp();
             if (maxCaseTemp != null) {
-                addProperty(category, CABLE_MAXCASE_TEMP, hex(maxCaseTemp));
+                addProperty(category, CABLE_MAXCASE_TEMP,
+                        Integer.toString(maxCaseTemp) + " "
+                                + STLConstants.K1158_CABLE_C.getValue());
+            } else {
+                addProperty(category, CABLE_MAXCASE_TEMP, na);
             }
             Byte ccBase = bean.getCcBase();
             if (ccBase != null) {
                 addProperty(category, CABLE_CC_BASE, hex(bean.getCcBase()));
+            } else {
+                addProperty(category, CABLE_CC_BASE, na);
             }
-            Boolean rxOutAmpProg = bean.isRxOutAmpProg();
-            if (rxOutAmpProg != null) {
-                if (rxOutAmpProg) {
-                    addProperty(category, CABLE_RX_OUT_AMP_PROG,
+
+            Boolean txInpEqAutoAdp = bean.getTxInpEqAutoAdp();
+            if (txInpEqAutoAdp != null) {
+                if (txInpEqAutoAdp) {
+                    addProperty(category, CABLE_TX_INP_EQ_AUTO_ADP,
                             K0385_TRUE.getValue());
                 } else {
-                    addProperty(category, CABLE_RX_OUT_AMP_PROG,
+                    addProperty(category, CABLE_TX_INP_EQ_AUTO_ADP,
                             K0386_FALSE.getValue());
                 }
+            } else {
+                addProperty(category, CABLE_TX_INP_EQ_AUTO_ADP, na);
             }
-            Boolean rxSquelchDisImp = bean.isRxSquelchDisImp();
-            if (rxSquelchDisImp != null) {
-                if (rxSquelchDisImp) {
-                    addProperty(category, CABLE_RX_SQULECH_DIS_IMP,
+
+            Boolean txInpEqFixProg = bean.getTxInpEqFixProg();
+            if (txInpEqFixProg != null) {
+                if (txInpEqFixProg) {
+                    addProperty(category, CABLE_TX_INP_EQ_FIX_PROG,
                             K0385_TRUE.getValue());
                 } else {
-                    addProperty(category, CABLE_RX_SQULECH_DIS_IMP,
+                    addProperty(category, CABLE_TX_INP_EQ_FIX_PROG,
                             K0386_FALSE.getValue());
                 }
+            } else {
+                addProperty(category, CABLE_TX_INP_EQ_FIX_PROG, na);
             }
-            Boolean rxOutputDisCap = bean.isRxOutputDisCap();
-            if (rxOutputDisCap != null) {
-                if (rxOutputDisCap) {
-                    addProperty(category, CABLE_RX_OUT_DIS_CAP,
+
+            Boolean rxOutpEmphFixProg = bean.getRxOutpEmphFixProg();
+            if (rxOutpEmphFixProg != null) {
+                if (rxOutpEmphFixProg) {
+                    addProperty(category, CABLE_RX_OUTP_EMPH_FIX_PROG,
                             K0385_TRUE.getValue());
                 } else {
-                    addProperty(category, CABLE_RX_OUT_DIS_CAP,
+                    addProperty(category, CABLE_RX_OUTP_EMPH_FIX_PROG,
                             K0386_FALSE.getValue());
                 }
+            } else {
+                addProperty(category, CABLE_RX_OUTP_EMPH_FIX_PROG, na);
             }
-            Boolean txSquelchDisImp = bean.isTxSquelchDisImp();
-            if (txSquelchDisImp != null) {
-                if (txSquelchDisImp) {
-                    addProperty(category, CABLE_TX_SQUELCH_DIS_IMP,
+
+            Boolean rxOutpAmplFixProg = bean.getRxOutpAmplFixProg();
+            if (rxOutpAmplFixProg != null) {
+                if (rxOutpAmplFixProg) {
+                    addProperty(category, CABLE_RX_OUTP_AMPL_FIX_PROG,
                             K0385_TRUE.getValue());
                 } else {
-                    addProperty(category, CABLE_TX_SQUELCH_DIS_IMP,
+                    addProperty(category, CABLE_RX_OUTP_AMPL_FIX_PROG,
                             K0386_FALSE.getValue());
                 }
+            } else {
+                addProperty(category, CABLE_RX_OUTP_AMPL_FIX_PROG, na);
             }
+
+            Boolean txCDROnOffCtrl = bean.getTxCDROnOffCtrl();
+            if (txCDROnOffCtrl != null) {
+                if (txCDROnOffCtrl) {
+                    addProperty(category, CABLE_TX_CDR_ON_OFF_CTRL,
+                            K0385_TRUE.getValue());
+                } else {
+                    addProperty(category, CABLE_TX_CDR_ON_OFF_CTRL,
+                            K0386_FALSE.getValue());
+                }
+            } else {
+                addProperty(category, CABLE_TX_CDR_ON_OFF_CTRL, na);
+            }
+
+            Boolean rxCDROnOffCtrl = bean.getRxCDROnOffCtrl();
+            if (rxCDROnOffCtrl != null) {
+                if (rxCDROnOffCtrl) {
+                    addProperty(category, CABLE_RX_CDR_ON_OFF_CTRL,
+                            K0385_TRUE.getValue());
+                } else {
+                    addProperty(category, CABLE_RX_CDR_ON_OFF_CTRL,
+                            K0386_FALSE.getValue());
+                }
+            } else {
+                addProperty(category, CABLE_RX_CDR_ON_OFF_CTRL, na);
+            }
+
             Boolean txSquelchImp = bean.isTxSquelchImp();
             if (txSquelchImp != null) {
                 if (txSquelchImp) {
@@ -277,7 +587,10 @@ public class CableInfoProcessor extends BaseCategoryProcessor {
                     addProperty(category, CABLE_TX_SQUELCH_IMP,
                             K0386_FALSE.getValue());
                 }
+            } else {
+                addProperty(category, CABLE_TX_SQUELCH_IMP, na);
             }
+
             Boolean memPage02Provided = bean.isMemPage02Provided();
             if (memPage02Provided != null) {
                 if (memPage02Provided) {
@@ -287,7 +600,10 @@ public class CableInfoProcessor extends BaseCategoryProcessor {
                     addProperty(category, CABLE_MEM_PAGE02_PROV,
                             K0386_FALSE.getValue());
                 }
+            } else {
+                addProperty(category, CABLE_MEM_PAGE02_PROV, na);
             }
+
             Boolean memPage01Provided = bean.isMemPage01Provided();
             if (memPage01Provided != null) {
                 if (memPage01Provided) {
@@ -297,92 +613,117 @@ public class CableInfoProcessor extends BaseCategoryProcessor {
                     addProperty(category, CABLE_MEM_PAGE01_PROV,
                             K0386_FALSE.getValue());
                 }
-            }
-            Boolean txDisImp = bean.isTxDisImp();
-            if (txDisImp != null) {
-                if (txDisImp) {
-                    addProperty(category, CABLE_TX_DIS_IMP,
-                            K0385_TRUE.getValue());
-                } else {
-                    addProperty(category, CABLE_TX_DIS_IMP,
-                            K0386_FALSE.getValue());
-                }
-            }
-            Boolean txFaultRepImp = bean.isTxFaultRepImp();
-            if (txFaultRepImp != null) {
-                if (txFaultRepImp) {
-                    addProperty(category, CABLE_TX_FAULT_REP_IMP,
-                            K0385_TRUE.getValue());
-                } else {
-                    addProperty(category, CABLE_TX_FAULT_REP_IMP,
-                            K0386_FALSE.getValue());
-                }
-            }
-            Boolean losReportImp = bean.isLosReportImp();
-            if (losReportImp != null) {
-                if (losReportImp) {
-                    addProperty(category, CABLE_LOS_REP_IMP,
-                            K0385_TRUE.getValue());
-                } else {
-                    addProperty(category, CABLE_LOS_REP_IMP,
-                            K0386_FALSE.getValue());
-                }
+            } else {
+                addProperty(category, CABLE_MEM_PAGE01_PROV, na);
             }
             String vendorSn = bean.getVendorSN();
             if (vendorSn != null) {
                 addProperty(category, CABLE_VENDOR_SN, vendorSn);
+            } else {
+                addProperty(category, CABLE_VENDOR_SN, na);
             }
-            String dataCode = bean.getDataCode();
-            if (dataCode != null) {
-                addProperty(category, CABLE_DATA_CODE, dataCode);
-            }
+            Date date = bean.getDateCodeAsDate();
             String lotCode = bean.getLotCode();
-            if (lotCode != null) {
-                addProperty(category, CABLE_LOT_CODE, lotCode);
+            if (date != null) {
+                String dateStr = Util.getYYMMDD().format(date);
+                if (dateStr != null) {
+                    dateCode = dateStr;
+                    addProperty(category, CABLE_DATE_CODE, dateCode + "-"
+                            + lotCode);
+                }
+            } else {
+                String beanDateCode = bean.getDateCode();
+                if (beanDateCode != null) {
+                    dateCode = STLConstants.K1116_INVALID.getValue();
+                } else {
+                    dateCode = na;
+
+                }
+                addProperty(category, CABLE_DATE_CODE, dateCode + "-" + lotCode);
             }
+
             Byte ccExt = bean.getCcExt();
             if (ccExt != null) {
                 addProperty(category, CABLE_CC_EXT, hex(ccExt));
+            } else {
+                addProperty(category, CABLE_CC_EXT, na);
             }
+
+            Boolean ccFlag = bean.getCertCableFlag();
+            if (ccFlag != null) {
+                addProperty(category, CABLE_CERT_CABLE_FLAG,
+                        ccFlag ? STLConstants.K1155_CABLE_Y.getValue()
+                                : STLConstants.K1156_CABLE_N.getValue());
+            } else {
+                addProperty(category, CABLE_CERT_CABLE_FLAG, na);
+            }
+
+            Integer reachClass = bean.getReachClass();
+            if (reachClass != null) {
+                addProperty(category, CABLE_REACH_CLASS,
+                        Integer.toString(reachClass));
+            } else {
+                addProperty(category, CABLE_REACH_CLASS, na);
+            }
+
+            CertifiedRateType certDataRate = bean.getCertDataRate();
+            if (certDataRate != null) {
+                try {
+                    addProperty(
+                            category,
+                            CABLE_CERT_DATA_RATE,
+                            CertifiedRateTypeViz.getCertifiedRateTypeVizFor(
+                                    certDataRate).getName());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                addProperty(category, CABLE_CERT_DATA_RATE, na);
+            }
+
             String notApplicableData = bean.getNotApplicableData();
             if (notApplicableData != null) {
                 addProperty(category, CABLE_NA, notApplicableData);
             }
-        } else {
-            String na = STLConstants.K0039_NOT_AVAILABLE.getValue();
 
-            addProperty(category, CABLE_ID, na);
-            addProperty(category, CABLE_EXT_ID, na);
-            addProperty(category, CABLE_CONNECTOR, na);
-            addProperty(category, CABLE_NOMINAL_BR, na);
-            addProperty(category, CABLE_SMF_LEN, na);
-            addProperty(category, CABLE_OM3_LEN, na);
-            addProperty(category, CABLE_OM2_LEN, na);
-            addProperty(category, CABLE_OM1_LEN, na);
-            addProperty(category, CABLE_COPPER_LEN, na);
-            addProperty(category, CABLE_DEVICE_TECH, na);
-            addProperty(category, CABLE_VENDOR_NAME, na);
-            addProperty(category, CABLE_EXT_MODULE, na);
-            addProperty(category, CABLE_VENDOR_OUI, na);
-            addProperty(category, CABLE_VENDOR_PN, na);
-            addProperty(category, CABLE_VENDOR_REV, na);
-            addProperty(category, CABLE_OPTICAL_WL, na);
-            addProperty(category, CABLE_MAXCASE_TEMP, na);
-            addProperty(category, CABLE_CC_BASE, na);
-            addProperty(category, CABLE_RX_OUT_AMP_PROG, na);
-            addProperty(category, CABLE_RX_SQULECH_DIS_IMP, na);
-            addProperty(category, CABLE_RX_OUT_DIS_CAP, na);
-            addProperty(category, CABLE_TX_SQUELCH_DIS_IMP, na);
-            addProperty(category, CABLE_TX_SQUELCH_IMP, na);
-            addProperty(category, CABLE_MEM_PAGE02_PROV, na);
-            addProperty(category, CABLE_MEM_PAGE01_PROV, na);
-            addProperty(category, CABLE_TX_DIS_IMP, na);
-            addProperty(category, CABLE_TX_FAULT_REP_IMP, na);
-            addProperty(category, CABLE_LOS_REP_IMP, na);
-            addProperty(category, CABLE_VENDOR_SN, na);
-            addProperty(category, CABLE_DATA_CODE, na);
-            addProperty(category, CABLE_LOT_CODE, na);
-            addProperty(category, CABLE_CC_EXT, na);
+        } else {
+            getNullCableInfo(category);
         }
     }
+
+    private void getNullCableInfo(DevicePropertyCategory category) {
+        String na = STLConstants.K0039_NOT_AVAILABLE.getValue();
+        addProperty(category, CABLE_ID, na);
+        addProperty(category, CABLE_POWER_CLASS, na);
+        addProperty(category, CABLE_TX_CDR_SUP, na);
+        addProperty(category, CABLE_RX_CDR_SUP, na);
+        addProperty(category, CABLE_CONNECTOR, na);
+        addProperty(category, CABLE_NOMINAL_BR, na);
+        addProperty(category, CABLE_OM2_LEN, na);
+        addProperty(category, CABLE_OM3_LEN, na);
+        addProperty(category, CABLE_COPPER_LEN, na);
+        addProperty(category, CABLE_DEVICE_TECH, na);
+        addProperty(category, CABLE_VENDOR_NAME, na);
+        addProperty(category, CABLE_VENDOR_OUI, na);
+        addProperty(category, CABLE_VENDOR_PN, na);
+        addProperty(category, CABLE_VENDOR_REV, na);
+        addProperty(category, CABLE_MAXCASE_TEMP, na);
+        addProperty(category, CABLE_CC_BASE, na);
+        addProperty(category, CABLE_TX_INP_EQ_AUTO_ADP, na);
+        addProperty(category, CABLE_TX_INP_EQ_FIX_PROG, na);
+        addProperty(category, CABLE_RX_OUTP_EMPH_FIX_PROG, na);
+        addProperty(category, CABLE_RX_OUTP_AMPL_FIX_PROG, na);
+        addProperty(category, CABLE_TX_CDR_ON_OFF_CTRL, na);
+        addProperty(category, CABLE_RX_CDR_ON_OFF_CTRL, na);
+        addProperty(category, CABLE_TX_SQUELCH_IMP, na);
+        addProperty(category, CABLE_MEM_PAGE02_PROV, na);
+        addProperty(category, CABLE_MEM_PAGE01_PROV, na);
+        addProperty(category, CABLE_VENDOR_SN, na);
+        addProperty(category, CABLE_DATE_CODE, na);
+        addProperty(category, CABLE_CC_EXT, na);
+        addProperty(category, CABLE_CERT_CABLE_FLAG, na);
+        addProperty(category, CABLE_REACH_CLASS, na);
+        addProperty(category, CABLE_CERT_DATA_RATE, na);
+    }
+
 }

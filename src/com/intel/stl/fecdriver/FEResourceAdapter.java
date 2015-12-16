@@ -24,14 +24,40 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: FEResourceAdapter.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.6  2015/08/17 18:49:22  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - change backend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.5  2015/06/10 19:36:44  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: 
+ * 
+ ******************************************************************************/
 package com.intel.stl.fecdriver;
 
 import java.io.IOException;
 import java.util.Properties;
 
 import com.intel.stl.api.subnet.SubnetDescription;
+import com.intel.stl.fecdriver.impl.STLConnection;
 
-public interface FEResourceAdapter<E extends IConnection> {
+public interface FEResourceAdapter {
     public static final String HOST = "Host";
 
     public static final String PORT = "Port";
@@ -70,7 +96,8 @@ public interface FEResourceAdapter<E extends IConnection> {
      */
     int getLoginTimeout();
 
-    E connect(SubnetDescription subnet, Properties info) throws IOException;
+    STLConnection connect(SubnetDescription subnet, Properties info)
+            throws IOException;
 
-    E connect(SubnetDescription subnet) throws IOException;
+    STLConnection connect(SubnetDescription subnet) throws IOException;
 }

@@ -35,11 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3.2.2  2015/08/12 15:26:33  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.6  2015/08/17 18:53:36  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.3.2.1  2015/05/06 19:40:33  jijunwan
- *  Archive Log:    L&F improvement on drawing focus border
+ *  Archive Log:    Revision 1.5  2015/06/12 20:51:32  fisherma
+ *  Archive Log:    PR 129207 - removed references to SwingSet2 and DefaultLookup as they are internal proprietary API's and may be removed in a future release.
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/04/30 20:56:53  jijunwan
  *  Archive Log:    added drawing focus border when it gets focus
@@ -73,8 +74,6 @@ import javax.swing.ButtonModel;
 import javax.swing.JComponent;
 import javax.swing.plaf.basic.BasicButtonUI;
 import javax.swing.plaf.basic.BasicGraphicsUtils;
-
-import sun.swing.SwingUtilities2;
 
 import com.intel.stl.ui.common.UIConstants;
 
@@ -233,10 +232,10 @@ public class IntelButtonUI extends BasicButtonUI {
             super.paintText(g, c, textRect, text);
         } else {
             g.setColor(getDisabledForegroundColor());
-            FontMetrics fm = SwingUtilities2.getFontMetrics(c, g);
+            FontMetrics fm = g.getFontMetrics();
             int mnemonicIndex = b.getDisplayedMnemonicIndex();
-            SwingUtilities2.drawStringUnderlineCharAt(c, g, text,
-                    mnemonicIndex, textRect.x, textRect.y + fm.getAscent());
+            BasicGraphicsUtils.drawStringUnderlineCharAt(g, text, mnemonicIndex,
+                    textRect.x, textRect.y + fm.getAscent());
         }
     }
 

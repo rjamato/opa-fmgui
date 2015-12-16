@@ -24,6 +24,38 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: VFPortCounters.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.7  2015/10/08 16:18:01  fernande
+ *  Archive Log: PR130810 - Add 64bit reserved field to PA PortCounters queries for query by GUID in Gen2. Changed commands to match FM spec.
+ *  Archive Log:
+ *  Archive Log: Revision 1.6  2015/09/17 11:51:43  jypak
+ *  Archive Log: PR 129516- vfSID as described in spec not implemented in gen 1 fm or tools
+ *  Archive Log: Removed all vfSID related code.
+ *  Archive Log:
+ *  Archive Log: Revision 1.5  2015/08/17 18:49:17  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - change backend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.4  2015/06/10 19:36:29  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: jijunwan
+ * 
+ ******************************************************************************/
 package com.intel.stl.fecdriver.messages.adapter.pa;
 
 import com.intel.stl.api.performance.ImageIdBean;
@@ -33,7 +65,7 @@ import com.intel.stl.common.StringUtils;
 import com.intel.stl.fecdriver.messages.adapter.SimpleDatagram;
 
 /**
- * ref: /ALL_EMB/IbAccess/Common/Inc/stl_pa.h v1.33
+ * ref: /ALL_EMB/IbAccess/Common/Inc/stl_pa.h v1.52
  * 
  * <pre>
  *  typedef struct _STL_PA_VF_PORT_COUNTERS_DATA {
@@ -42,23 +74,24 @@ import com.intel.stl.fecdriver.messages.adapter.SimpleDatagram;
  * [8]     uint8               reserved[3];
  * [12]    uint32              flags;
  * [16]    uint32              reserved1;
- * [80]    char                vfName[STL_PM_VFNAMELEN];
- * [88]    uint64              vfSID;
- * [104]   STL_PA_IMAGE_ID_DATA imageId;
- * [112]   uint64              portVFXmitData;
- * [120]   uint64              portVFRcvData;
- * [128]   uint64              portVFXmitPkts;
- * [136]   uint64              portVFRcvPkts;
- * [144]   uint64              portVFXmitDiscards;
- * [152]   uint64              swPortVFCongestion;
- * [160]   uint64              portVFXmitWait;
- * [168]   uint64              portVFRcvFECN;
- * [176]   uint64              portVFRcvBECN;
- * [184]   uint64              portVFXmitTimeCong;
- * [192]   uint64              portVFXmitWastedBW;
- * [200]   uint64              portVFXmitWaitData;
- * [208]   uint64              portVFRcvBubble;
- * [216]   uint64              portVFMarkFECN;
+ * [24]    uint64              reserved3;
+ * [88]    char                vfName[STL_PM_VFNAMELEN];
+ * [96]    uint64              reserved2;
+ * [112]   STL_PA_IMAGE_ID_DATA imageId;
+ * [120]   uint64              portVFXmitData;
+ * [128]   uint64              portVFRcvData;
+ * [136]   uint64              portVFXmitPkts;
+ * [144]   uint64              portVFRcvPkts;
+ * [152]   uint64              portVFXmitDiscards;
+ * [160]   uint64              swPortVFCongestion;
+ * [168]   uint64              portVFXmitWait;
+ * [176]   uint64              portVFRcvFECN;
+ * [184]   uint64              portVFRcvBECN;
+ * [192]   uint64              portVFXmitTimeCong;
+ * [200]   uint64              portVFXmitWastedBW;
+ * [208]   uint64              portVFXmitWaitData;
+ * [216]   uint64              portVFRcvBubble;
+ * [224]   uint64              portVFMarkFECN;
  *  } PACK_SUFFIX STL_PA_VF_PORT_COUNTERS_DATA;
  *  
  *  typedef struct _STL_PA_Image_ID_Data {
@@ -72,8 +105,17 @@ import com.intel.stl.fecdriver.messages.adapter.SimpleDatagram;
  * 
  */
 public class VFPortCounters extends SimpleDatagram<VFPortCountersBean> {
+
+    private static final int VFNAME_OFFSET = 24;
+
+    private static final int IMAGEID_OFFSET = 96;
+
+    private static final int IMAGEOFFSET_OFFSET = IMAGEID_OFFSET + 8;
+
+    private static final int COUNTERS_OFFSET = 112;
+
     public VFPortCounters() {
-        super(216);
+        super(224);
     }
 
     public void setNodeLid(int lid) {
@@ -89,20 +131,16 @@ public class VFPortCounters extends SimpleDatagram<VFPortCountersBean> {
     }
 
     public void setVfName(String name) {
-        StringUtils
-                .setString(name, buffer, 16, PAConstants.STL_PM_GROUPNAMELEN);
-    }
-
-    public void setVfSID(long sid) {
-        buffer.putLong(80, sid);
+        StringUtils.setString(name, buffer, VFNAME_OFFSET,
+                PAConstants.STL_PM_GROUPNAMELEN);
     }
 
     public void setImageNumber(long imageNumber) {
-        buffer.putLong(88, imageNumber);
+        buffer.putLong(IMAGEID_OFFSET, imageNumber);
     }
 
     public void setImageOffset(int imageOffset) {
-        buffer.putInt(96, imageOffset);
+        buffer.putInt(IMAGEOFFSET_OFFSET, imageOffset);
     }
 
     /*
@@ -119,11 +157,11 @@ public class VFPortCounters extends SimpleDatagram<VFPortCountersBean> {
         buffer.position(8);
         bean.setFlags(buffer.getInt());
         bean.setVfName(StringUtils.toString(buffer.array(),
-                buffer.arrayOffset() + 16, PAConstants.STL_PM_VFNAMELEN));
-        buffer.position(80);
-        bean.setVfSID(buffer.getLong());
+                buffer.arrayOffset() + VFNAME_OFFSET,
+                PAConstants.STL_PM_VFNAMELEN));
+        buffer.position(IMAGEID_OFFSET);
         bean.setImageId(new ImageIdBean(buffer.getLong(), buffer.getInt()));
-        buffer.position(104);
+        buffer.position(COUNTERS_OFFSET);
         bean.setPortVFXmitData(buffer.getLong());
         bean.setPortVFRcvData(buffer.getLong());
         bean.setPortVFXmitPkts(buffer.getLong());

@@ -32,10 +32,18 @@
  *
  *  File Name: StatisticsController.java
  *
- *  Archive Source: 
- *
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.15  2015/08/17 18:53:38  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
  *  Archive Log:
- *
+ *  Archive Log: Revision 1.14  2015/06/10 21:07:17  jijunwan
+ *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs
+ *  Archive Log: - manual correction on files that our tool cannot  identify
+ *  Archive Log:
+ * 
  *  Overview: 
  *
  *  @author: jijunwan

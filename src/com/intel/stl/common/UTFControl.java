@@ -24,58 +24,125 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: UTFControl.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.4  2015/09/29 20:52:59  fernande
+ *  Archive Log: PR130409 - [Dell]: FMGUI Admin Console login fails when switch is configured without username and password. Changes for Protex
+ *  Archive Log:
+ *  Archive Log: Revision 1.3  2015/08/17 18:49:06  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - change backend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.2  2015/06/10 19:36:45  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: Fernando Fernandez
+ * 
+ ******************************************************************************/
 
 package com.intel.stl.common;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
 
-/** Allows loading resource bundles encode as UTF files
+/**
+ * Allows loading resource bundles encode as UTF files
  * 
  * @author Fernando Fernandez
- *
+ * 
  */
 public class UTFControl extends Control {
-	
-	private static final String PROPERTIES = "properties";
-	private final String encoding;
-	
-	public UTFControl(String encoding) {
-		this.encoding = encoding;
-	}
-	
-	public ResourceBundle newBundle (String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
-			throws IllegalAccessException, InstantiationException, IOException {
-        String bundleName = toBundleName(baseName, locale);
-        String resourceName = toResourceName(bundleName, PROPERTIES);
-        ResourceBundle bundle = null;
-        InputStream stream = null;
-        if (reload) {
-        	URL url = loader.getResource(resourceName);
-        	if (url != null) {
-        		URLConnection connection = url.openConnection();
-        		if (connection != null) {
-        			connection.setUseCaches(false);
-        			stream = connection.getInputStream();
-        		}
-        	}
-        } else {
-        	stream = loader.getResourceAsStream(resourceName);
+
+    private static final String PROPERTIES = "properties";
+
+    private final String encoding;
+
+    public UTFControl(String encoding) {
+        this.encoding = encoding;
+    }
+
+    public ResourceBundle newBundle(String baseName, Locale locale,
+            String format, ClassLoader loader, boolean reload)
+            throws IllegalAccessException, InstantiationException, IOException {
+        if (!format.equals("java.properties")) {
+            throw new IllegalArgumentException("Bundle format '" + format
+                    + "' not supported by this ResourceBundle Control");
         }
+        ResourceBundle bundle = null;
+        String bundleName = toBundleName(baseName, locale);
+        final String resourceName = toResourceName(bundleName, PROPERTIES);
+        InputStream stream = createInputStream(resourceName, loader, reload);
         if (stream != null) {
-        	try {
-        		bundle = new PropertyResourceBundle(new InputStreamReader(stream, encoding));
-        	} finally {
-        		stream.close();
-        	}
+            try {
+                Reader reader = new InputStreamReader(stream, encoding);
+                bundle = new PropertyResourceBundle(reader);
+            } finally {
+                stream.close();
+            }
         }
         return bundle;
     }
+
+    private InputStream createInputStream(final String resourceName,
+            final ClassLoader loader, final boolean reload) throws IOException {
+        InputStream stream = null;
+        try {
+            stream =
+                    AccessController
+                            .doPrivileged(new PrivilegedExceptionAction<InputStream>() {
+                                public InputStream run() throws IOException {
+                                    InputStream is = null;
+                                    if (reload) {
+                                        URL url =
+                                                loader.getResource(resourceName);
+                                        if (url != null) {
+                                            URLConnection connection =
+                                                    url.openConnection();
+                                            if (connection != null) {
+                                                // Disable caches to get fresh
+                                                // data for
+                                                // reloading.
+                                                connection.setUseCaches(false);
+                                                is =
+                                                        connection
+                                                                .getInputStream();
+                                            }
+                                        }
+                                    } else {
+                                        is =
+                                                loader.getResourceAsStream(resourceName);
+                                    }
+                                    return is;
+                                }
+                            });
+        } catch (PrivilegedActionException e) {
+            throw (IOException) e.getException();
+        }
+        return stream;
+    }
+
 }

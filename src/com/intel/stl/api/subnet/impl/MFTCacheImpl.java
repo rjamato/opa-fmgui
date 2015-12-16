@@ -35,8 +35,17 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.1  2015/08/12 15:22:00  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.8  2015/10/07 11:39:58  jypak
+ *  Archive Log:    PR 130608 - Changes made to SC2VL mapping is not reflected in FM GUI's SC2SL Mapping Table.
+ *  Archive Log:    Klocwork issues fixed.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/10/01 17:37:10  jypak
+ *  Archive Log:    PR 130608 - Changes made to SC2VL mapping is not reflected in FM GUI's SC2SL Mapping Table.
+ *  Archive Log:    Each cache's refreshCache method is implemented to remove relevant cahce.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/08/17 18:48:53  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.5  2014/09/17 16:40:08  fernande
  *  Archive Log:    Refactored CacheManager to load caches according to what's defined in enums MemCacheType and DBCacheType, to make it more dynamic
@@ -65,15 +74,17 @@
 package com.intel.stl.api.subnet.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.intel.stl.api.notice.impl.NoticeProcess;
 import com.intel.stl.api.subnet.MFTRecordBean;
 import com.intel.stl.configuration.CacheManager;
 import com.intel.stl.configuration.MemoryCache;
 
-public class MFTCacheImpl extends MemoryCache<List<MFTRecordBean>> implements
-        MFTCache {
+public class MFTCacheImpl extends
+        MemoryCache<Map<Integer, List<MFTRecordBean>>> implements MFTCache {
 
     private final SAHelper helper;
 
@@ -84,22 +95,41 @@ public class MFTCacheImpl extends MemoryCache<List<MFTRecordBean>> implements
 
     @Override
     public List<MFTRecordBean> getMFTs() {
-        List<MFTRecordBean> res = getCachedObject();
-        return res;
-    }
+        Map<Integer, List<MFTRecordBean>> map = getCachedObject();
 
-    @Override
-    public List<MFTRecordBean> getMFT(int lid) {
-        List<MFTRecordBean> mfts = getMFTs();
         List<MFTRecordBean> res = new ArrayList<MFTRecordBean>();
-        if (mfts != null) {
-            for (MFTRecordBean mft : mfts) {
-                if (mft.getLid() == lid) {
+        if (map != null && !map.isEmpty()) {
+            for (List<MFTRecordBean> mfts : map.values()) {
+                for (MFTRecordBean mft : mfts) {
                     res.add(mft);
                 }
             }
         }
+
         if (!res.isEmpty()) {
+            return res;
+        } else {
+            // might be a new
+            try {
+                res = helper.getMFTs();
+                if (res != null) {
+                    setCacheReady(false); // Force a refresh on next call;
+                }
+                return res;
+            } catch (Exception e) {
+                throw SubnetApi.getSubnetException(e);
+            }
+        }
+    }
+
+    @Override
+    public List<MFTRecordBean> getMFT(int lid) {
+        Map<Integer, List<MFTRecordBean>> map = getCachedObject();
+        List<MFTRecordBean> res = new ArrayList<MFTRecordBean>();
+        if (map != null) {
+            res = map.get(lid);
+        }
+        if (res != null && !res.isEmpty()) {
             return res;
         }
 
@@ -118,10 +148,26 @@ public class MFTCacheImpl extends MemoryCache<List<MFTRecordBean>> implements
     }
 
     @Override
-    protected List<MFTRecordBean> retrieveObjectForCache() throws Exception {
-        List<MFTRecordBean> res = helper.getMFTs();
-        log.info("Retrieve " + (res == null ? 0 : res.size()) + " MFTs from FE");
-        return res;
+    protected Map<Integer, List<MFTRecordBean>> retrieveObjectForCache()
+            throws Exception {
+        List<MFTRecordBean> mfts = helper.getMFTs();
+        log.info("Retrieve " + (mfts == null ? 0 : mfts.size())
+                + " MFTs from FE");
+        Map<Integer, List<MFTRecordBean>> map = null;
+        if (mfts != null) {
+            map = new HashMap<Integer, List<MFTRecordBean>>();
+            for (MFTRecordBean mft : mfts) {
+                int lid = mft.getLid();
+                if (map.containsKey(lid)) {
+                    map.get(lid).add(mft);
+                } else {
+                    List<MFTRecordBean> list = new ArrayList<MFTRecordBean>();
+                    list.add(mft);
+                    map.put(mft.getLid(), list);
+                }
+            }
+        }
+        return map;
     }
 
     /*
@@ -134,6 +180,10 @@ public class MFTCacheImpl extends MemoryCache<List<MFTRecordBean>> implements
     @Override
     public boolean refreshCache(NoticeProcess notice) throws Exception {
         // No notice applies to this cache
+        Map<Integer, List<MFTRecordBean>> map = getCachedObject();
+        if (map != null && !map.isEmpty()) {
+            map.remove(notice.getLid());
+        }
         return true;
     }
 

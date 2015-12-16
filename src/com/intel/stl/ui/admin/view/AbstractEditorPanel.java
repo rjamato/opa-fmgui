@@ -35,8 +35,37 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:27:17  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.9  2015/08/17 18:53:52  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/07/16 21:24:30  jijunwan
+ *  Archive Log:    PR 129528 - input validation improvement
+ *  Archive Log:    - apply SafeNameField on Application, DG and VF names
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/07/14 17:05:59  jijunwan
+ *  Archive Log:    PR 129541 - Should forbid save or deploy when there is invalid edit on management panel
+ *  Archive Log:    - throw InvalidEditException when there is invalid edit
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/07/13 18:41:09  jijunwan
+ *  Archive Log:    PR 129528 - input validation improvement
+ *  Archive Log:    - Applied SafeTextField on name field. All the App, DF, or VF name cannot be empty, the max length is 64, and the allowed chars are
+ *  Archive Log:    (A-Z)(a-z)(0-9) "-" "," "=" "." "_" " "
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/06/25 11:54:58  jypak
+ *  Archive Log:    PR 129073 - Add help action for Admin Page.
+ *  Archive Log:    The help action is added to App, DG, VF,Console page and Console terminal. For now, a help ID and a content are being used as a place holder for each page. Once we get the help contents delivered by technical writer team, the HelpAction will be updated with correct help ID.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/05/14 17:19:47  jijunwan
+ *  Archive Log:    PR 128697 - Handle empty list of items
+ *  Archive Log:    - Added code to handle null item
+ *  Archive Log:    - Added code to clean panel when it gets a null item
+ *  Archive Log:    - Enable/disable buttons properly when we get an empty item list or null item
+ *  Archive Log:    - Improved to handle item selection when the index is invalid, such as -1
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/05/12 20:38:00  jijunwan
+ *  Archive Log:    PR 128645 - Device Group Name can be changed for blocked groups - but not saved
+ *  Archive Log:    - Changed code to disable name field when one item is not editable
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/03/16 22:08:15  jijunwan
  *  Archive Log:    added device group visualization on UI
@@ -62,26 +91,32 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 import com.intel.stl.ui.admin.IItemEditorListener;
+import com.intel.stl.ui.admin.InvalidEditException;
 import com.intel.stl.ui.admin.Item;
 import com.intel.stl.ui.common.STLConstants;
+import com.intel.stl.ui.common.UIImages;
+import com.intel.stl.ui.common.UILabels;
 import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.common.view.ComponentFactory;
+import com.intel.stl.ui.common.view.SafeNameField;
 
 public abstract class AbstractEditorPanel<E> extends JPanel {
     private static final long serialVersionUID = 6210030398358856720L;
 
     private JPanel namePanel;
 
-    private JTextField nameField;
+    private JFormattedTextField nameField;
+
+    private JButton helpBtn;
 
     private JPanel ctrPanel;
 
@@ -118,10 +153,28 @@ public abstract class AbstractEditorPanel<E> extends JPanel {
                     ComponentFactory.getH3Label(
                             STLConstants.K2111_NAME.getValue(), Font.BOLD);
             namePanel.add(nameLabel);
-            nameField = new JTextField(32);
+            nameField = new SafeNameField(false);
+            nameField.setColumns(32);
             namePanel.add(nameField);
+
+            helpBtn =
+                    ComponentFactory.getImageButton(UIImages.HELP_ICON
+                            .getImageIcon());
+            helpBtn.setToolTipText(STLConstants.K0037_HELP.getValue());
+            namePanel.add(helpBtn);
+
         }
         return namePanel;
+    }
+
+    public void enableHelp(boolean b) {
+        if (helpBtn != null) {
+            helpBtn.setEnabled(b);
+        }
+    }
+
+    public JButton getHelpButton() {
+        return helpBtn;
     }
 
     protected abstract JComponent getMainComponent();
@@ -248,6 +301,7 @@ public abstract class AbstractEditorPanel<E> extends JPanel {
                 showItemObject(item.getObj(), appNames, item.isEditable());
                 nameField.getDocument().addDocumentListener(getNameListener());
 
+                nameField.setEnabled(item.isEditable());
                 saveBtn.setEnabled(item.isEditable());
                 resetBtn.setEnabled(item.isEditable());
             }
@@ -261,6 +315,14 @@ public abstract class AbstractEditorPanel<E> extends JPanel {
     protected abstract void showItemObject(E obj, String[] itemNames,
             boolean isEditable);
 
+    public void clear() {
+        nameField.getDocument().removeDocumentListener(getNameListener());
+        setItemName(null);
+        nameField.setEnabled(false);
+        saveBtn.setEnabled(false);
+        resetBtn.setEnabled(false);
+    }
+
     protected String getCurrentName() {
         return nameField.getText();
     }
@@ -271,10 +333,18 @@ public abstract class AbstractEditorPanel<E> extends JPanel {
      * 
      * @param item
      */
-    public void updateItem(Item<E> item) {
+    public void updateItem(Item<E> item) throws InvalidEditException {
+        if (!isEditValid()) {
+            throw new InvalidEditException(
+                    UILabels.STL81053_INVALID_EDIT.getDescription());
+        }
         item.setName(getCurrentName());
         updateItemObject(item.getObj());
     }
 
     protected abstract void updateItemObject(E obj);
+
+    protected boolean isEditValid() {
+        return nameField.isEditValid();
+    }
 }

@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.22.2.1  2015/08/12 15:26:58  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.24  2015/08/17 18:53:40  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.23  2015/08/05 04:04:47  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on Performance Page
  *  Archive Log:
  *  Archive Log:    Revision 1.22  2015/04/03 21:06:27  jijunwan
  *  Archive Log:    Introduced canExit to IPageController, and canPageChange to IPageListener to allow us do some checking before we switch to another page. Fixed the following bugs
@@ -115,6 +120,7 @@ import com.intel.stl.ui.monitor.tree.FVTreeManager;
 import com.intel.stl.ui.monitor.view.PerformanceTreeView;
 
 public class PerformancePage implements IPageController {
+    public final static String NAME = STLConstants.K0200_PERFORMANCE.getValue();
 
     /**
      * Performance Tree Controller
@@ -186,7 +192,7 @@ public class PerformancePage implements IPageController {
      */
     @Override
     public String getName() {
-        return STLConstants.K0200_PERFORMANCE.getValue();
+        return NAME;
     }
 
     /*
@@ -275,4 +281,15 @@ public class PerformancePage implements IPageController {
     public PageWeight getRefreshWeight() {
         return MEDIUM;
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return getName();
+    }
+
 }

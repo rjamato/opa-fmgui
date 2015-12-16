@@ -35,11 +35,32 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.40.2.3  2015/08/12 15:22:10  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.49  2015/08/17 18:49:07  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.40.2.2  2015/05/06 19:29:25  jijunwan
- *  Archive Log:    Fix for wait outside a loop, which would not handle "spurious wakeups"
+ *  Archive Log:    Revision 1.48  2015/07/06 21:07:10  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Fix for issue where connection reads and writes are executed before the connection is completed, resulting in a NPE.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.47  2015/06/16 15:55:04  fernande
+ *  Archive Log:    PR 129034 Support secure FE. Changes to the IResponse interface to throw only checked IOExceptions
+ *  Archive Log:
+ *  Archive Log:    Revision 1.46  2015/05/29 20:37:27  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Second wave of changes: the application can be switched between the old adapter and the new; moved out several initialization pieces out of objects constructor to allow subnet initialization with a UI in place; improved generics definitions for FV commands.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.45  2015/05/29 10:15:15  robertja
+ *  Archive Log:    PR128703 - Fix check for fail-over in progress.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.44  2015/05/26 15:40:06  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.43  2015/05/26 14:48:33  robertja
+ *  Archive Log:    PR128703 - Fix check for fail-over in progress.  Also, suppress command response errors during fail-over.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.42  2015/05/12 17:37:50  rjtierne
+ *  Archive Log:    PR 128623 - Klocwork and FindBugs fixes for backend
+ *  Archive Log:    In method submitCmd(), it is necessary to put the call to wait() in a loop and check
+ *  Archive Log:    the condition in case a notify() (or notifyAll()) is called that does not meet the intended condition.
  *  Archive Log:
  *  Archive Log:    Revision 1.41  2015/05/01 21:44:57  jijunwan
  *  Archive Log:    fixed a minor issue found by FindBug
@@ -77,9 +98,9 @@
 
 package com.intel.stl.fecdriver.impl;
 
-import static com.intel.stl.common.STLMessages.STL2001_CONNECTION_ERROR;
-import static com.intel.stl.common.STLMessages.STL2002_CONNECTION_CLOSED;
-import static com.intel.stl.common.STLMessages.STL2003_CONNECTION_TIMEOUT;
+import static com.intel.stl.common.STLMessages.STL20001_CONNECTION_ERROR;
+import static com.intel.stl.common.STLMessages.STL20002_CONNECTION_CLOSED;
+import static com.intel.stl.common.STLMessages.STL20003_CONNECTION_TIMEOUT;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -96,7 +117,6 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -124,15 +144,15 @@ import com.intel.stl.fecdriver.ConnectionEvent;
 import com.intel.stl.fecdriver.FEResourceAdapter;
 import com.intel.stl.fecdriver.IApplicationEventListener;
 import com.intel.stl.fecdriver.IChannel;
+import com.intel.stl.fecdriver.ICommand;
 import com.intel.stl.fecdriver.IConnection;
 import com.intel.stl.fecdriver.IConnectionEventListener;
 import com.intel.stl.fecdriver.IFailoverEventListener;
+import com.intel.stl.fecdriver.IResponse;
 import com.intel.stl.fecdriver.messages.adapter.CommonMad;
 import com.intel.stl.fecdriver.messages.adapter.OobPacket;
 import com.intel.stl.fecdriver.messages.adapter.RmppMad;
 import com.intel.stl.fecdriver.messages.adapter.SimpleDatagram;
-import com.intel.stl.fecdriver.messages.command.FVCommand;
-import com.intel.stl.fecdriver.messages.response.FVResponse;
 import com.intel.stl.fecdriver.messages.response.sa.FVRspNotice;
 
 public class STLConnection implements IConnection {
@@ -182,8 +202,8 @@ public class STLConnection implements IConnection {
     private final ConcurrentLinkedQueue<OobPacket> outPackets =
             new ConcurrentLinkedQueue<OobPacket>();
 
-    private final ConcurrentHashMap<Long, FVCommand<?, ?>> resHandlers =
-            new ConcurrentHashMap<Long, FVCommand<?, ?>>();
+    private final ConcurrentHashMap<Long, ICommand<?, ?>> resHandlers =
+            new ConcurrentHashMap<Long, ICommand<?, ?>>();
 
     private InetAddress inetAddress;
 
@@ -307,7 +327,7 @@ public class STLConnection implements IConnection {
                 e.printStackTrace();
             } finally {
                 socketChannel = null;
-                for (FVCommand<?, ?> cmd : resHandlers.values()) {
+                for (ICommand<?, ?> cmd : resHandlers.values()) {
                     cmd.getResponse().extendWaitTime(waitExtension);
                 }
             }
@@ -368,7 +388,7 @@ public class STLConnection implements IConnection {
             STLStatement stmt = new STLStatement(this);
             // This resubmits commands if this connection is being reconnected,
             // otherwise no pending response handlers should be present
-            for (FVCommand<?, ?> cmd : resHandlers.values()) {
+            for (ICommand<?, ?> cmd : resHandlers.values()) {
                 long msgId = cmd.getMessageID();
                 OobPacket packet = stmt.createSendPacket(cmd);
                 packet.getRmppMad().getCommonMad().setTransactionID(msgId);
@@ -378,7 +398,7 @@ public class STLConnection implements IConnection {
         } else {
             NoticeBean notice = createConnLostNotice();
             fireNotice(new NoticeBean[] { notice });
-            for (FVCommand<?, ?> cmd : resHandlers.values()) {
+            for (ICommand<?, ?> cmd : resHandlers.values()) {
                 ClosedChannelException cce = new ClosedChannelException();
                 cmd.getResponse().setError(cce);
             }
@@ -399,7 +419,7 @@ public class STLConnection implements IConnection {
                 throw (IOException) connectError;
             } else {
                 throw new RuntimeException(
-                        STL2001_CONNECTION_ERROR.getDescription(description
+                        STL20001_CONNECTION_ERROR.getDescription(description
                                 .getName(), (connectError == null ? "N/A"
                                 : StringUtils.getErrorMessage(connectError))),
                         connectError);
@@ -422,8 +442,8 @@ public class STLConnection implements IConnection {
     }
 
     private void setError(Exception e) {
-        for (FVCommand<?, ?> cmd : resHandlers.values()) {
-            FVResponse<?> resp = cmd.getResponse();
+        for (ICommand<?, ?> cmd : resHandlers.values()) {
+            IResponse<?> resp = cmd.getResponse();
             resp.setError(e);
         }
         fireConnectionError(e);
@@ -495,6 +515,9 @@ public class STLConnection implements IConnection {
     }
 
     protected synchronized void write() throws Exception {
+        if (!connected) {
+            return;
+        }
         feChannel.write();
     }
 
@@ -519,6 +542,9 @@ public class STLConnection implements IConnection {
     }
 
     protected synchronized void read() throws Exception {
+        if (!connected) {
+            return;
+        }
         feChannel.read();
     }
 
@@ -563,30 +589,15 @@ public class STLConnection implements IConnection {
             // mad.dump("", System.out);
             try {
                 fireNotice(response.get().toArray(new NoticeBean[0]));
-            } catch (ExecutionException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
-            FVCommand<?, ?> cmd = resHandlers.remove(transId);
+            ICommand<?, ?> cmd = resHandlers.remove(transId);
             if (cmd != null && cmd.getResponse() != null) {
-                FVResponse<?> response = cmd.getResponse();
+                IResponse<?> response = cmd.getResponse();
                 short status = comMad.getNSStatus();
-                if (status != Constants.MAD_STATUS_SUCCESS) {
-                    if (status == Constants.MAD_STATUS_SM_UNAVAILABLE) {
-                        throw new SubnetConfigurationException(
-                                STLMessages.STL2004_SM_UNAVAILABLE,
-                                response.getClass(), attrId, status,
-                                response.getDescription());
-                    } else if (status == Constants.MAD_STATUS_PM_UNAVAILABLE) {
-                        throw new SubnetConfigurationException(
-                                STLMessages.STL2005_PM_UNAVAILABLE,
-                                response.getClass(), attrId, status,
-                                response.getDescription());
-                    }
-
-                    response.setError(new MadException(response.getClass(),
-                            attrId, status, response.getDescription()));
-                } else {
+                if (status == Constants.MAD_STATUS_SUCCESS) {
                     response.processMad(mad);
                     if (response.getError() != null) {
                         // mad.dump("", System.out);
@@ -595,11 +606,26 @@ public class STLConnection implements IConnection {
                                 + " data: TransactionID="
                                 + StringUtils.longHexString(transId));
                     }
+                } else {
+                    if (status == Constants.MAD_STATUS_SM_UNAVAILABLE) {
+                        throw new SubnetConfigurationException(
+                                STLMessages.STL20004_SM_UNAVAILABLE,
+                                response.getClass(), attrId, status,
+                                response.getDescription());
+                    } else if (status == Constants.MAD_STATUS_PM_UNAVAILABLE) {
+                        throw new SubnetConfigurationException(
+                                STLMessages.STL20005_PM_UNAVAILABLE,
+                                response.getClass(), attrId, status,
+                                response.getDescription());
+                    } else {
+                        response.setError(new MadException(response.getClass(),
+                                attrId, status, response.getDescription()));
+                    }
                 }
             } else {
                 // Ignore response already cancelled
                 // mad.dump("", System.out);
-                log.info("No respond found for mad: AttributeID="
+                log.info("No response found for mad: AttributeID="
                         + StringUtils.shortHexString(attrId)
                         + " TransactionID="
                         + StringUtils.longHexString(transId));
@@ -607,9 +633,12 @@ public class STLConnection implements IConnection {
         }
     }
 
-    protected synchronized void submitCmd(long id, OobPacket sendPacket,
-            FVCommand<?, ?> cmd) {
-        if (!connected && connectError == null) {
+    protected synchronized <E extends IResponse<F>, F> void submitCmd(long id,
+            OobPacket sendPacket, ICommand<E, F> cmd) {
+
+        // FindBugs: wait() is put in a loop to prevent a spurious notify
+        // from causing it to wake up under the wrong conditions
+        while (!connected && connectError == null) {
             try {
                 this.wait();
             } catch (InterruptedException e) {
@@ -617,14 +646,14 @@ public class STLConnection implements IConnection {
             if (!connected) {
                 if (connectError != null) {
                     throw new RuntimeException(
-                            STL2001_CONNECTION_ERROR.getDescription(
+                            STL20001_CONNECTION_ERROR.getDescription(
                                     description.getName(),
                                     (connectError == null ? "N/A" : StringUtils
                                             .getErrorMessage(connectError))),
                             connectError);
                 } else {
                     throw new RuntimeException(
-                            STL2003_CONNECTION_TIMEOUT
+                            STL20003_CONNECTION_TIMEOUT
                                     .getDescription(description.getName()));
                 }
             }
@@ -632,7 +661,7 @@ public class STLConnection implements IConnection {
 
         if (isClosed()) {
             throw new RuntimeException(
-                    STL2002_CONNECTION_CLOSED.getDescription(description
+                    STL20002_CONNECTION_CLOSED.getDescription(description
                             .getName(), (connectError == null ? "N/A"
                             : StringUtils.getErrorMessage(connectError))));
         }
@@ -643,8 +672,8 @@ public class STLConnection implements IConnection {
 
     public synchronized void cancelCommandsFor(STLStatement statement) {
         for (long id : resHandlers.keySet()) {
-            FVCommand<?, ?> cmd = resHandlers.get(id);
-            if (cmd.getSubmittingStatement().equals(statement)) {
+            ICommand<?, ?> cmd = resHandlers.get(id);
+            if (cmd.getStatement().equals(statement)) {
                 cmd.getResponse().cancel(true);
                 resHandlers.remove(id);
             }
@@ -673,7 +702,7 @@ public class STLConnection implements IConnection {
         }
     }
 
-    protected void fireConnectionClose() {
+    private void fireConnectionClose() {
         ConnectionEvent event = new ConnectionEvent(this);
         for (IConnectionEventListener listener : connEventListeners) {
             try {
@@ -684,7 +713,7 @@ public class STLConnection implements IConnection {
         }
     }
 
-    protected void fireConnectionError(Throwable error) {
+    private void fireConnectionError(Throwable error) {
         ConnectionEvent event = new ConnectionEvent(this, error);
         for (IConnectionEventListener listener : connEventListeners) {
             try {
@@ -766,7 +795,7 @@ public class STLConnection implements IConnection {
     }
 
     // For testing
-    protected Map<Long, FVCommand<?, ?>> getResHandlers() {
+    protected Map<Long, ICommand<?, ?>> getResHandlers() {
         return resHandlers;
     }
 

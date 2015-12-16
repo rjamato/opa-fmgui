@@ -24,19 +24,106 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: ComponentFactory.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.51  2015/09/14 16:06:59  jijunwan
+ *  Archive Log: PR 130229 - The text component of all editable combo boxes should provide validation of the input
+ *  Archive Log: - apply FormattedComboBoxEditor on ComponentFactory and PreferenceWizard
+ *  Archive Log:
+ *  Archive Log: Revision 1.50  2015/08/18 14:28:33  jijunwan
+ *  Archive Log: PR 130033 - Fix critical issues found by Klocwork or FindBugs
+ *  Archive Log: - DateFormat is not thread safe. Changed to create new DateFormat to avoid sharing it among different threads
+ *  Archive Log:
+ *  Archive Log: Revision 1.49  2015/08/17 18:53:36  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.48  2015/08/17 14:22:37  rjtierne
+ *  Archive Log: PR 128979 - SM Log display
+ *  Archive Log: This is the first version of the Log Viewer which displays select lines of text from the remote SM log file. Updates include searchable raw text from file, user-defined number of lines to display, refreshing end of file, and paging. This PR is now closed and further updates can be found by referencing PR 130011 - "Enhance SM Log Viewer to include Standard and Advanced requirements".
+ *  Archive Log:
+ *  Archive Log: Revision 1.47  2015/08/11 14:36:50  jijunwan
+ *  Archive Log: PR 129917 - No update on event statistics
+ *  Archive Log: - Apply event subscriber on HealthHistoryCard. It will update either by event or period updating.
+ *  Archive Log: - Improved Health Trend chart to draw current data shape
+ *  Archive Log: - Improved Health Trend view to show current value immediately
+ *  Archive Log:
+ *  Archive Log: Revision 1.46  2015/07/28 18:29:12  fisherma
+ *  Archive Log: PR 129219 - Admin page login dialog improvement
+ *  Archive Log:
+ *  Archive Log: Revision 1.45  2015/07/17 21:20:57  jijunwan
+ *  Archive Log: PR 129528 - input validation improvement
+ *  Archive Log: - improved CompomentFactory to create text field based on argument allowEmpty
+ *  Archive Log: - apply it on Log preference and subnet name on Setup Wizard to forbid empty string
+ *  Archive Log: - apply it on key file location on Setup Wizard to allow empty string
+ *  Archive Log:
+ *  Archive Log: Revision 1.44  2015/07/17 20:32:15  jijunwan
+ *  Archive Log: PR 129528 - input validation improvement
+ *  Archive Log: - change default number format to "###", so we need to support character ','
+ *  Archive Log:
+ *  Archive Log: Revision 1.43  2015/07/16 21:22:53  jijunwan
+ *  Archive Log: PR 129528 - input validation improvement
+ *  Archive Log: - extended SafeTextField to apply rules in name check
+ *  Archive Log: - moved valid chars to UIConstants
+ *  Archive Log: - made FieldPair more generic and flexible
+ *  Archive Log:
+ *  Archive Log: Revision 1.42  2015/07/13 19:30:57  jijunwan
+ *  Archive Log: PR 129528 - input validation improvement
+ *  Archive Log: - In interactive console, the port number must be in range (0, 65535) and the password cannot be empty.
+ *  Archive Log:
+ *  Archive Log: Revision 1.41  2015/07/13 18:37:24  jijunwan
+ *  Archive Log: PR 129528 - input validation improvement
+ *  Archive Log: - updated generic classes to use the new text field
+ *  Archive Log:
+ *  Archive Log: Revision 1.40  2015/06/29 15:05:45  jypak
+ *  Archive Log: PR 129284 - Incorrect QSFP field name.
+ *  Archive Log: Field name fix has been implemented. Also, introduced a conversion to Date object to add flexibility to display date code.
+ *  Archive Log:
+ *  Archive Log: Revision 1.39  2015/06/25 22:23:54  jijunwan
+ *  Archive Log: PR 129216 - The labels on a TopN chart may occupy too much space
+ *  Archive Log: -  change parameter to set the maximum label width to be half of the chart
+ *  Archive Log:
+ *  Archive Log: Revision 1.38  2015/06/25 20:51:59  jijunwan
+ *  Archive Log: Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log: - improved to display title annotation properly the chart is very narrow
+ *  Archive Log:
+ *  Archive Log: Revision 1.37  2015/06/22 13:11:51  jypak
+ *  Archive Log: PR 128980 - Be able to search devices by name or lid.
+ *  Archive Log: New feature added to enable search devices by name, lid or node guid. The search results are displayed as a tree and when a result node from the tree is selected, original tree is expanded and the corresponding node is highlighted.
+ *  Archive Log:
+ *  Archive Log: Revision 1.36  2015/06/10 19:58:51  jijunwan
+ *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: jijunwan
+ * 
+ ******************************************************************************/
 package com.intel.stl.ui.common.view;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.swing.AbstractAction;
@@ -49,10 +136,15 @@ import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JPasswordField;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ToolTipManager;
+import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
@@ -75,9 +167,11 @@ import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.labels.XYItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.CrosshairState;
 import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
@@ -85,6 +179,7 @@ import org.jfree.chart.renderer.xy.StackedXYBarRenderer;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYItemRendererState;
 import org.jfree.chart.renderer.xy.XYStepAreaRenderer;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.Range;
@@ -99,10 +194,13 @@ import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.TextAnchor;
 
+import com.intel.stl.api.StringUtils;
 import com.intel.stl.api.Utils;
 import com.intel.stl.ui.common.UIConstants;
 import com.intel.stl.ui.common.UIImages;
 import com.intel.stl.ui.common.UILabels;
+import com.intel.stl.ui.common.Util;
+import com.intel.stl.ui.common.view.SafeTextField.SafeStringFormatter;
 import com.intel.stl.ui.model.NodeTypeViz;
 
 /**
@@ -350,7 +448,26 @@ public class ComponentFactory {
                 UIConstants.INTEL_MEDIUM_DARK_BLUE));
         btn.setBackground(UIConstants.INTEL_BLUE);
         btn.setForeground(UIConstants.INTEL_WHITE);
-        // btn.setFont(UIConstants.H5_FONT);
+        return btn;
+    }
+
+    public static JButton getIntelActionButton(ImageIcon icon,
+            final Color enableColor, final Color disableColor,
+            AbstractAction action) {
+
+        JButton btn = new JButton(action) {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void setEnabled(boolean b) {
+                super.setEnabled(b);
+                setForeground(b ? enableColor : disableColor);
+            }
+        };
+        btn.setIcon(icon);
+        btn.setUI(new IntelButtonUI(UIConstants.INTEL_MEDIUM_BLUE,
+                UIConstants.INTEL_MEDIUM_DARK_BLUE));
+
         return btn;
     }
 
@@ -443,9 +560,18 @@ public class ComponentFactory {
         return box;
     }
 
-    public static JTextField createNumericTextField(
+    public static SafeNumberField<Integer> createNumericTextField(
             DocumentListener... docListeners) {
-        final JTextField field = new JTextField();
+        return createNumericTextField(null, docListeners);
+    }
+
+    public static SafeNumberField<Integer> createNumericTextField(Integer max,
+            DocumentListener... docListeners) {
+        final SafeNumberField<Integer> field =
+                new SafeNumberField<Integer>(new DecimalFormat("###"), 0,
+                        false, max, false);
+        // only positive integer
+        field.setValidChars(UIConstants.DIGITS);
         if (docListeners != null) {
             for (DocumentListener docListener : docListeners) {
                 field.getDocument().addDocumentListener(docListener);
@@ -462,7 +588,7 @@ public class ComponentFactory {
                     JTextComponent tc = (JTextComponent) e.getSource();
                     String txt = tc.getText();
                     if (!txt.isEmpty()) {
-                        Utils.toLong(txt);
+                        field.getFormatter().stringToValue(txt);
                     }
                 } catch (Exception ex) {
                     field.setText("");
@@ -470,6 +596,10 @@ public class ComponentFactory {
             }
         });
 
+        return field;
+    }
+
+    public static void setNumberInputVerifier(JTextField field) {
         // Add the input verifier
         field.setInputVerifier(new InputVerifier() {
             @Override
@@ -495,74 +625,109 @@ public class ComponentFactory {
             }
 
         });
-        return field;
     }
 
-    public static JTextField createTextField(DocumentListener... docListeners) {
-        final JTextField field = new JTextField();
+    /**
+     * 
+     * <i>Description:</i>
+     * 
+     * @param validChars
+     *            the string lists valid characters, such as
+     *            "0123456789abcedfABCDEF"
+     * @param maxLen
+     *            the maximum number of chars
+     * @param docListeners
+     * @return
+     */
+    public static ExFormattedTextField createTextField(String validChars,
+            boolean allowEmpty, int maxLen, DocumentListener... docListeners) {
+        ExFormattedTextField field = new SafeTextField(allowEmpty);
+        SafeStringFormatter formatter =
+                (SafeStringFormatter) field.getFormatter();
+        if (validChars != null && !validChars.isEmpty()) {
+            formatter.setValidCharacters(validChars);
+        }
+        if (maxLen > 0) {
+            formatter.setMaxLength(maxLen);
+        }
         if (docListeners != null) {
             for (DocumentListener docListener : docListeners) {
                 field.getDocument().addDocumentListener(docListener);
                 field.getDocument().putProperty("owner", field);
             }
         }
-
-        // Add the input verifier
-        field.setInputVerifier(new InputVerifier() {
-            @Override
-            public boolean verify(JComponent input) {
-                JTextField field = (JTextField) input;
-                String txt = field.getText();
-                if (txt.isEmpty()) {
-                    field.setToolTipText(UILabels.STL50084_CANT_BE_BLANK
-                            .getDescription());
-                    input.setBackground(UIConstants.INTEL_LIGHT_RED);
-                    return false;
-                } else {
-                    input.setBackground(UIConstants.INTEL_WHITE);
-                    return true;
-                }
-            }
-
-        });
-
         return field;
     }
 
-    public static JTextField createRestrictedTextField(
-            final int maxFieldLength, DocumentListener... docListeners) {
-        final JTextField field = new JTextField();
+    public static JPasswordField createPasswordField(
+            DocumentListener... docListeners) {
+        final JPasswordField field = new JPasswordField();
+        final Border oldBorder = field.getBorder();
         if (docListeners != null) {
             for (DocumentListener docListener : docListeners) {
                 field.getDocument().addDocumentListener(docListener);
                 field.getDocument().putProperty("owner", field);
             }
         }
-
-        // Add the input verifier
-        field.setInputVerifier(new InputVerifier() {
+        final InputVerifier verifier = new InputVerifier() {
             @Override
-            public boolean verify(JComponent input) {
-                JTextField field = (JTextField) input;
-                String txt = field.getText();
-                if (txt.isEmpty()) {
-                    field.setToolTipText(UILabels.STL50084_CANT_BE_BLANK
-                            .getDescription());
-                    input.setBackground(UIConstants.INTEL_LIGHT_RED);
-                    return false;
-                } else if (txt.length() > maxFieldLength) {
-                    field.setToolTipText(UILabels.STL50095_TEXT_FIELD_LIMIT
-                            .getDescription(maxFieldLength));
-                    input.setBackground(UIConstants.INTEL_LIGHT_RED);
+            public boolean verify(final JComponent input) {
+                final JPasswordField field = (JPasswordField) input;
+                char[] txt = field.getPassword();
+                if (txt.length == 0) {
+                    // Run in EDT to avoid deadlock in case this gets called
+                    // from not swing thread
+                    Util.runInEDT(new Runnable() {
+                        @Override
+                        public void run() {
+                            field.setToolTipText(UILabels.STL50084_CANT_BE_BLANK
+                                    .getDescription());
+                            input.setBackground(UIConstants.INTEL_LIGHT_RED);
+                            input.setBorder(BorderFactory.createLineBorder(
+                                    UIConstants.INTEL_RED, 2));
+                            // show tooltip immediately
+                            ToolTipManager.sharedInstance().mouseMoved(
+                                    new MouseEvent(field, 0, 0, 0, 0, 0, 0,
+                                            false));
+                        }
+                    });
                     return false;
                 } else {
-                    input.setBackground(UIConstants.INTEL_WHITE);
-                    field.setToolTipText("");
+                    Util.runInEDT(new Runnable() {
+                        @Override
+                        public void run() {
+                            input.setBackground(UIConstants.INTEL_WHITE);
+                            input.setBorder(oldBorder);
+                        }
+                    });
                     return true;
                 }
             }
 
-        });
+        };
+
+        DocumentListener dynamicChecker = new DocumentListener() {
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                verifier.verify(field);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                verifier.verify(field);
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                verifier.verify(field);
+            }
+
+        };
+        field.getDocument().addDocumentListener(dynamicChecker);
+
+        // Add the input verifier
+        field.setInputVerifier(verifier);
 
         return field;
     }
@@ -570,64 +735,34 @@ public class ComponentFactory {
     public static JComboBox<String> createComboBox(String[] strArray,
             DocumentListener... docListeners) {
 
-        JComboBox<String> cbox = new JComboBox<String>(strArray);
+        JComboBox<String> cbox = new JComboBox<String>(strArray) {
+            private static final long serialVersionUID = -7465791917624978560L;
+
+            @Override
+            public String toString() {
+                return "JComboBox@" + StringUtils.intHexString(hashCode());
+            }
+        };
         cbox.setUI(new IntelComboBoxUI());
 
         // Get the text editor for this combo box
-        final JTextComponent tc =
+        JTextComponent tc =
                 (JTextComponent) cbox.getEditor().getEditorComponent();
 
         // Initialize the document listeners
         for (DocumentListener docListener : docListeners) {
             tc.getDocument().addDocumentListener(docListener);
         }
-
-        // Add a mouse listener to clear out the field before the user types
-        tc.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-
-                try {
-                    JTextComponent tc = (JTextComponent) e.getSource();
-                    String txt = tc.getText();
-                    if (!txt.isEmpty()) {
-                        Utils.toLong(txt);
-                    }
-                } catch (Exception ex) {
-                    tc.setText("");
-                }
-            }
-        });
-
-        // Add the input verifier
-        tc.setInputVerifier(new InputVerifier() {
-            @Override
-            public boolean verify(JComponent input) {
-
-                JTextComponent txtComp = (JTextComponent) input;
-                String txt = txtComp.getText();
-
-                if (txt.isEmpty()) {
-                    txtComp.setToolTipText(UILabels.STL50084_CANT_BE_BLANK
-                            .getDescription());
-                    input.setBackground(UIConstants.INTEL_LIGHT_RED);
-                    return false;
-                } else {
-                    input.setBackground(UIConstants.INTEL_WHITE);
-                    return true;
-                }
-            }
-        });
-
         return cbox;
     }
 
-    public static JComboBox<String> createNumericComboBox(String[] strArray,
-            DocumentListener... docListeners) {
-
-        JComboBox<String> cbox = new JComboBox<String>(strArray);
+    public static <T> JComboBox<T> createComboBox(T[] values,
+            JFormattedTextField textField, DocumentListener... docListeners) {
+        JComboBox<T> cbox = new JComboBox<T>(values);
         cbox.setUI(new IntelComboBoxUI());
+        FormattedComboBoxEditor editor = new FormattedComboBoxEditor(textField);
+        cbox.setEditable(true);
+        cbox.setEditor(editor);
 
         // Get the text editor for this combo box
         final JTextComponent tc =
@@ -637,53 +772,6 @@ public class ComponentFactory {
         for (DocumentListener docListener : docListeners) {
             tc.getDocument().addDocumentListener(docListener);
         }
-
-        // Add a mouse listener to clear out the field before the user types
-        tc.addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-
-                try {
-                    JTextComponent tc = (JTextComponent) e.getSource();
-                    String txt = tc.getText();
-                    if (!txt.isEmpty()) {
-                        Utils.toLong(txt);
-                    }
-                } catch (Exception ex) {
-                    tc.setText("");
-                }
-            }
-        });
-
-        // Add the input verifier
-        tc.setInputVerifier(new InputVerifier() {
-
-            @Override
-            public boolean verify(JComponent input) {
-
-                JTextComponent txtComp = (JTextComponent) input;
-                String txt = txtComp.getText();
-
-                if (txt.isEmpty()) {
-                    input.setBackground(UIConstants.INTEL_LIGHT_RED);
-                    txtComp.setToolTipText(UILabels.STL50084_CANT_BE_BLANK
-                            .getDescription());
-                    return false;
-                }
-                try {
-                    Utils.toLong(txt);
-                    input.setBackground(UIConstants.INTEL_WHITE);
-                    return true;
-                } catch (Exception e) {
-                    txtComp.setToolTipText(UILabels.STL50085_MUST_BE_NUMERIC
-                            .getDescription());
-                    input.setBackground(UIConstants.INTEL_LIGHT_RED);
-                }
-                return false;
-            }
-        });
-
         return cbox;
     }
 
@@ -799,11 +887,27 @@ public class ComponentFactory {
         xyplot.setBackgroundPaint(UIConstants.INTEL_BACKGROUND_GRAY);
         // xyplot.setOutlinePaint(null);
         XYStepAreaRenderer xysteparearenderer =
-                new XYStepAreaRenderer(XYStepAreaRenderer.AREA);
+                new XYStepAreaRenderer(XYStepAreaRenderer.AREA) {
+
+                    @Override
+                    public void drawItem(Graphics2D g2,
+                            XYItemRendererState state, Rectangle2D dataArea,
+                            PlotRenderingInfo info, XYPlot plot,
+                            ValueAxis domainAxis, ValueAxis rangeAxis,
+                            XYDataset dataset, int series, int item,
+                            CrosshairState crosshairState, int pass) {
+                        setShapesVisible(item == dataset.getItemCount(series) - 1);
+                        super.drawItem(g2, state, dataArea, info, plot,
+                                domainAxis, rangeAxis, dataset, series, item,
+                                crosshairState, pass);
+                    }
+
+                };
         xysteparearenderer.setDataBoundsIncludesVisibleSeriesOnly(false);
         xysteparearenderer
                 .setBaseToolTipGenerator(new StandardXYToolTipGenerator());
         xysteparearenderer.setDefaultEntityRadius(6);
+        xysteparearenderer.setShapesFilled(true);
         xyplot.setRenderer(xysteparearenderer);
 
         if (labelGenerator != null) {
@@ -945,20 +1049,18 @@ public class ComponentFactory {
             legendtitle.setPosition(RectangleEdge.BOTTOM);
             XYTitleAnnotation xytitleannotation =
                     new XYTitleAnnotation(0.97999999999999998D,
-                            0.79999999999999998D, legendtitle,
-                            RectangleAnchor.BOTTOM_RIGHT);
-            xytitleannotation.setMaxWidth(0.47999999999999998D);
+                            0.99999999999999998D, legendtitle,
+                            RectangleAnchor.TOP_RIGHT);
+            // xytitleannotation.setMaxWidth(0.47999999999999998D);
             xyplot.addAnnotation(xytitleannotation);
         }
 
         XYItemRenderer xyitemrenderer = xyplot.getRenderer();
         xyitemrenderer.setSeriesPaint(1, UIConstants.INTEL_DARK_GRAY);
         xyitemrenderer.setSeriesPaint(0, NodeTypeViz.SWITCH.getColor());
-        xyitemrenderer
-                .setBaseToolTipGenerator(new StandardXYToolTipGenerator(
-                        "<html><b>{0}</b><br> Time: {1}<br> Data: {2}</html>",
-                        new SimpleDateFormat("HH:mm:ss"), new DecimalFormat(
-                                "#,##0.00")));
+        xyitemrenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator(
+                "<html><b>{0}</b><br> Time: {1}<br> Data: {2}</html>", Util
+                        .getHHMMSS(), new DecimalFormat("#,##0.00")));
         return jfreechart;
     }
 
@@ -1066,7 +1168,7 @@ public class ComponentFactory {
         categoryaxis.setCategoryMargin(0.15D);
         categoryaxis.setUpperMargin(0.02D);
         categoryaxis.setLowerMargin(0.02D);
-        categoryaxis.setMaximumCategoryLabelWidthRatio(0.8F);
+        categoryaxis.setMaximumCategoryLabelWidthRatio(0.5F);
 
         NumberAxis numberaxis = (NumberAxis) categoryplot.getRangeAxis();
         numberaxis.setRangeType(RangeType.POSITIVE);
@@ -1136,6 +1238,11 @@ public class ComponentFactory {
 
         stackedxybarrenderer.setShadowVisible(false);
         stackedxybarrenderer.setDrawBarOutline(false);
+        stackedxybarrenderer.setBarPainter(new StandardXYBarPainter());
+        stackedxybarrenderer
+                .setBaseToolTipGenerator(new StandardXYToolTipGenerator(
+                        "<html><b>{0}</b><br> Time: {1}<br> Data: {2}</html>",
+                        Util.getHHMMSS(), new DecimalFormat("###")));
 
         xyplot.setBackgroundPaint(null);
         xyplot.setOutlinePaint(null);

@@ -24,6 +24,42 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: HSqlDbEngine.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.15  2015/08/17 18:49:34  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - change backend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.14  2015/07/09 19:45:00  fernande
+ *  Archive Log: PR 129447 - Database size increases a lot over a short period of time. Deleted invalid file
+ *  Archive Log:
+ *  Archive Log: Revision 1.13  2015/07/07 23:29:50  jijunwan
+ *  Archive Log: PR 129485 - Out of memory
+ *  Archive Log: - changed to shutdown DB with compact
+ *  Archive Log:
+ *  Archive Log: Revision 1.12  2015/07/07 22:52:21  jijunwan
+ *  Archive Log: PR 129485 - Out of memory
+ *  Archive Log: - changed default table type to cached
+ *  Archive Log:
+ *  Archive Log: Revision 1.11  2015/06/10 19:36:50  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: Fernando Fernandez
+ * 
+ ******************************************************************************/
 
 package com.intel.stl.dbengine.impl;
 
@@ -81,6 +117,8 @@ public class HSqlDbEngine implements DatabaseEngine {
 
     private static final String SLASHES = "//";
 
+    private String databaseDefinition;
+
     private String databaseFolder;
 
     private String databaseName;
@@ -94,17 +132,18 @@ public class HSqlDbEngine implements DatabaseEngine {
     private final JDBCPool pool;
 
     public HSqlDbEngine(AppSettings settings) throws AppConfigurationException {
-        applySettings(settings);
-        this.pool = new JDBCPool();
-        String password = settings.getConfigOption(DB_CONNECTION_PASSWORD);
-        pool.setUrl(connectionUrl);
-        pool.setUser(user);
-        pool.setPassword(password);
+        this(settings, DB_DEFINITION_FILE, new JDBCPool());
     }
 
-    public HSqlDbEngine(AppSettings settings, JDBCPool pool)
+    public HSqlDbEngine(AppSettings settings, String definitionFile)
             throws AppConfigurationException {
+        this(settings, definitionFile, new JDBCPool());
+    }
+
+    public HSqlDbEngine(AppSettings settings, String definitionFile,
+            JDBCPool pool) throws AppConfigurationException {
         applySettings(settings);
+        this.databaseDefinition = definitionFile;
         this.pool = pool;
         String password = settings.getConfigOption(DB_CONNECTION_PASSWORD);
         pool.setUrl(connectionUrl);
@@ -127,7 +166,8 @@ public class HSqlDbEngine implements DatabaseEngine {
         if (connectionUrl == null) {
             this.connectionUrl =
                     "jdbc:hsqldb:file:" + databaseFolder + File.separatorChar
-                            + databaseName;
+                            + databaseName
+                            + ";hsqldb.default_table_type=cached";
         } else {
             this.connectionUrl = connectionUrl;
         }
@@ -154,7 +194,8 @@ public class HSqlDbEngine implements DatabaseEngine {
     public void stop() throws DatabaseException {
         Connection conn = getConnection();
         try {
-            PreparedStatement shutdown = conn.prepareStatement("SHUTDOWN");
+            PreparedStatement shutdown =
+                    conn.prepareStatement("SHUTDOWN COMPACT");
             try {
                 shutdown.execute();
             } finally {
@@ -181,9 +222,9 @@ public class HSqlDbEngine implements DatabaseEngine {
             } finally {
                 drop.close();
             }
-            DatabaseUtils.defineDatabase(conn, DB_DEFINITION_FILE);
+            DatabaseUtils.defineDatabase(conn, databaseDefinition);
             if (!DatabaseUtils.checkDatabase(conn)) {
-                DatabaseUtils.defineDatabase(conn, DB_DEFINITION_FILE);
+                DatabaseUtils.defineDatabase(conn, databaseDefinition);
             } else {
 
             }

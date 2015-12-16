@@ -35,8 +35,22 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:26:55  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/08/17 18:53:43  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/06/30 22:28:49  jijunwan
+ *  Archive Log:    PR 129215 - Need short chart name to support pin capability
+ *  Archive Log:    - introduced short name to performance items
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/06/25 20:42:13  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improved PerformanceItem to support port counters
+ *  Archive Log:    - improved PerformanceItem to use generic ISource to describe data source
+ *  Archive Log:    - improved PerformanceItem to use enum DataProviderName to describe data provider name
+ *  Archive Log:    - improved PerformanceItem to support creating a copy of PerformanceItem
+ *  Archive Log:    - improved TrendItem to share scale with other charts
+ *  Archive Log:    - improved SimpleDataProvider to support hsitory data
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2015/01/30 04:12:58  jijunwan
  *  Archive Log:    PR 126775 - "Bubble" error metric graph is not being plotted even though "opatop" shows bubble errors
@@ -59,6 +73,7 @@ package com.intel.stl.ui.performance.item;
 
 import com.intel.stl.api.subnet.Selection;
 import com.intel.stl.ui.common.UILabels;
+import com.intel.stl.ui.performance.GroupSource;
 
 /**
  * Top N Bubble Errors
@@ -81,8 +96,23 @@ public class BBTopNItem extends TopNItem {
      * @param maxDataPoints
      */
     public BBTopNItem(int maxDataPoints, int topN) {
-        super(UILabels.STL10213_TOPN_BUBBLE.getDescription(topN),
+        super(UILabels.STL10219_SHORT_TOPN_BUBBLE.getDescription(topN),
+                UILabels.STL10213_TOPN_BUBBLE.getDescription(topN),
                 Selection.BUBBLE_ERRORS_HIGH, topN);
+    }
+
+    public BBTopNItem(BBTopNItem item) {
+        super(item);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.performance.item.IPerformanceItem#copy()
+     */
+    @Override
+    public IPerformanceItem<GroupSource> copy() {
+        return new BBTopNItem(this);
     }
 
 }

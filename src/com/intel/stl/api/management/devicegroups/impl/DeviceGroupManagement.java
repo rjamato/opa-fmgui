@@ -35,8 +35,17 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3.2.1  2015/08/12 15:22:51  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.6  2015/08/17 18:49:56  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/08/17 17:33:03  jijunwan
+ *  Archive Log:    PR 128973 - Deploy FM conf changes on all SMs
+ *  Archive Log:    - fixed typo on interface name IApplicationManagement
+ *  Archive Log:    - improved management to maintain changes and be able apply changes on another FM ocnf file
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/07/28 18:20:24  fisherma
+ *  Archive Log:    PR 129219 - Admin page login dialog improvement.
  *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/03/25 18:57:18  jijunwan
  *  Archive Log:    fixed typos
@@ -68,8 +77,10 @@ import static com.intel.stl.api.management.XMLConstants.DEVICE_GROUPS;
 import static com.intel.stl.api.management.XMLConstants.NAME;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
@@ -122,6 +133,8 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
 
     private final FMConfHelper confHelp;
 
+    private final Set<String> changes = new HashSet<String>();
+
     /**
      * Description:
      * 
@@ -153,7 +166,7 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
     public synchronized List<DeviceGroup> getDeviceGroups()
             throws DeviceGroupException {
         try {
-            File confFile = confHelp.getConfFile(false);
+            File confFile = confHelp.getConfFile();
             DeviceGroups groups = unmarshal(confFile);
             log.info("Fetch " + groups.getGroups().size()
                     + " Device Groups from host '" + confHelp.getHost() + "'");
@@ -174,7 +187,7 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
     public synchronized DeviceGroup getDeviceGroup(String name)
             throws DeviceGroupException {
         try {
-            File confFile = confHelp.getConfFile(false);
+            File confFile = confHelp.getConfFile();
             DeviceGroups groups = unmarshal(confFile);
             return groups.getGroup(name);
         } catch (Exception e) {
@@ -217,17 +230,18 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
      * addDeviceGroup(com.intel.stl.api.management.devicegroup.DeviceGroup)
      */
     @Override
-    public synchronized void addDeviceGroup(DeviceGroup app)
+    public synchronized void addDeviceGroup(DeviceGroup group)
             throws DeviceGroupException {
         try {
-            File confFile = confHelp.getConfFile(false);
-            uniqueNameCheck(null, app.getName());
+            File confFile = confHelp.getConfFile();
+            uniqueNameCheck(null, group.getName());
             // TODO loop check
-            addDeviceGroup(confFile, confFile, app);
-            log.info("Added application " + app);
+            addDeviceGroup(confFile, confFile, group);
+            log.info("Added application " + group);
+            changes.add(group.getName());
         } catch (Exception e) {
             throw createDeviceGroupException(STLMessages.STL63012_ADD_DG_ERR,
-                    e, app.getName(), confHelp.getHost(),
+                    e, group.getName(), confHelp.getHost(),
                     StringUtils.getErrorMessage(e));
         }
     }
@@ -271,10 +285,11 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
     public synchronized void removeDeviceGroup(String name)
             throws DeviceGroupException {
         try {
-            File confFile = confHelp.getConfFile(false);
+            File confFile = confHelp.getConfFile();
             referenceCheck(null, name);
             removeDeviceGroup(confFile, confFile, name);
             log.info("Removed application '" + name + "'");
+            changes.add(name);
         } catch (Exception e) {
             throw createDeviceGroupException(
                     STLMessages.STL63013_REMOVE_DG_ERR, e, name,
@@ -311,21 +326,23 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
      * com.intel.stl.api.management.devicegroup.DeviceGroup)
      */
     @Override
-    public synchronized void updateDeviceGroup(String oldName, DeviceGroup app)
+    public synchronized void updateDeviceGroup(String oldName, DeviceGroup group)
             throws DeviceGroupException {
         try {
-            File confFile = confHelp.getConfFile(false);
-            if (!oldName.equals(app.getName())) {
+            File confFile = confHelp.getConfFile();
+            if (!oldName.equals(group.getName())) {
                 DeviceGroups groups = unmarshal(confFile);
-                uniqueNameCheck(groups, app.getName());
+                uniqueNameCheck(groups, group.getName());
                 referenceCheck(groups, oldName);
             }
             // TODO loop check
-            updateDeviceGroup(confFile, confFile, oldName, app, false);
-            log.info("Updated Device Group " + app);
+            updateDeviceGroup(confFile, confFile, oldName, group, false);
+            log.info("Updated Device Group " + group);
+            changes.add(oldName);
+            changes.add(group.getName());
         } catch (Exception e) {
             throw createDeviceGroupException(
-                    STLMessages.STL63014_UPDATE_DG_ERR, e, app.getName(),
+                    STLMessages.STL63014_UPDATE_DG_ERR, e, group.getName(),
                     confHelp.getHost(), StringUtils.getErrorMessage(e));
         }
     }
@@ -341,11 +358,13 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
     public synchronized void addOrUpdateDeviceGroup(String oldName,
             DeviceGroup group) throws DeviceGroupException {
         try {
-            File confFile = confHelp.getConfFile(false);
+            File confFile = confHelp.getConfFile();
             referenceCheck(null, oldName);
             // TODO loop check
             updateDeviceGroup(confFile, confFile, oldName, group, true);
             log.info("Added or updated Device Group " + group);
+            changes.add(oldName);
+            changes.add(group.getName());
         } catch (Exception e) {
             throw createDeviceGroupException(
                     STLMessages.STL63015_ADDUPDATE_DG_ERR, e, group.getName(),
@@ -387,7 +406,7 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
     protected void referenceCheck(DeviceGroups groups, String name)
             throws Exception {
         if (groups == null) {
-            File confFile = confHelp.getConfFile(false);
+            File confFile = confHelp.getConfFile();
             groups = unmarshal(confFile);
         }
         List<DeviceGroup> refs = groups.getReferencedGroups(name);
@@ -403,7 +422,7 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
     protected void uniqueNameCheck(DeviceGroups groups, String name)
             throws Exception {
         if (groups == null) {
-            File confFile = confHelp.getConfFile(false);
+            File confFile = confHelp.getConfFile();
             groups = unmarshal(confFile);
         }
         for (DeviceGroup group : groups.getGroups()) {
@@ -434,4 +453,34 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
         return new DeviceGroupException(msg, error, args);
     }
 
+    /**
+     * 
+     * <i>Description:</i>
+     * 
+     * @return the names of the device group changed
+     */
+    public Set<String> getChanges() {
+        return changes;
+    }
+
+    public void resetChanges() {
+        changes.clear();
+    }
+
+    public void applyChangesTo(DeviceGroupManagement target)
+            throws DeviceGroupException {
+        List<DeviceGroup> groups = getDeviceGroups();
+        Map<String, DeviceGroup> map = new HashMap<String, DeviceGroup>();
+        for (DeviceGroup group : groups) {
+            map.put(group.getName(), group);
+        }
+        for (String change : changes) {
+            DeviceGroup cur = map.get(change);
+            if (cur == null) {
+                target.removeDeviceGroup(change);
+            } else {
+                target.addOrUpdateDeviceGroup(change, cur);
+            }
+        }
+    }
 }

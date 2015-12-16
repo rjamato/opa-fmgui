@@ -35,8 +35,18 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.1  2015/08/12 15:27:11  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.7  2015/08/17 18:54:20  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/06/25 20:42:16  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improved PerformanceItem to support port counters
+ *  Archive Log:    - improved PerformanceItem to use generic ISource to describe data source
+ *  Archive Log:    - improved PerformanceItem to use enum DataProviderName to describe data provider name
+ *  Archive Log:    - improved PerformanceItem to support creating a copy of PerformanceItem
+ *  Archive Log:    - improved TrendItem to share scale with other charts
+ *  Archive Log:    - improved SimpleDataProvider to support hsitory data
  *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/02/12 19:40:12  jijunwan
  *  Archive Log:    short term PA support
@@ -67,12 +77,13 @@ import java.util.Date;
 import com.intel.stl.api.performance.UtilStatsBean;
 import com.intel.stl.api.performance.VFInfoBean;
 import com.intel.stl.ui.model.DataType;
+import com.intel.stl.ui.performance.GroupSource;
 import com.intel.stl.ui.performance.item.TrendItem;
 
 public abstract class VFTrendDataObserver extends
-        AbstractDataObserver<VFInfoBean[], TrendItem> {
+        AbstractDataObserver<VFInfoBean[], TrendItem<GroupSource>> {
 
-    public VFTrendDataObserver(TrendItem controller) {
+    public VFTrendDataObserver(TrendItem<GroupSource> controller) {
         this(controller, DataType.ALL);
     }
 
@@ -82,7 +93,7 @@ public abstract class VFTrendDataObserver extends
      * @param controller
      * @param type
      */
-    public VFTrendDataObserver(TrendItem controller, DataType type) {
+    public VFTrendDataObserver(TrendItem<GroupSource> controller, DataType type) {
         super(controller, type);
     }
 
@@ -110,7 +121,8 @@ public abstract class VFTrendDataObserver extends
             for (UtilStatsBean util : utils) {
                 value += getValue(util);
             }
-            controller.updateTrend(value, time, bean.getVfName());
+            GroupSource sourceName = new GroupSource(bean.getVfName());
+            controller.updateTrend(value, time, sourceName);
         }
     }
 

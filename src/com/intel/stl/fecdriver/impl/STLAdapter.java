@@ -35,8 +35,42 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.38.2.1  2015/08/12 15:22:10  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.50  2015/08/27 19:36:27  fernande
+ *  Archive Log:    PR 128703 - Fail over doesn't work on A0 Fabric. Adding setting to specify the failover timeout
+ *  Archive Log:
+ *  Archive Log:    Revision 1.49  2015/08/18 21:08:53  fernande
+ *  Archive Log:    PR 128703 - Fail over doesn't work on A0 Fabric. Added check for a minimum number of connections available during failover
+ *  Archive Log:
+ *  Archive Log:    Revision 1.48  2015/08/17 18:49:07  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.47  2015/06/10 20:39:37  fernande
+ *  Archive Log:    PR 129034 Support secure FE. Removed println statements and leftovers from debugging.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.46  2015/05/28 12:06:08  robertja
+ *  Archive Log:    PR128703 Return correct subnet ID when fail-over completes.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.45  2015/05/26 20:02:51  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Fix for integration test
+ *  Archive Log:
+ *  Archive Log:    Revision 1.44  2015/05/26 15:40:06  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.43  2015/05/18 14:45:10  robertja
+ *  Archive Log:    PR128586 Updates for unit-testing after code review.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.42  2015/05/08 18:28:39  robertja
+ *  Archive Log:    Further code clean-up for fail-over.  Added shutdown of working FailoverManagers on application close.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.41  2015/05/08 15:05:39  robertja
+ *  Archive Log:    Allow fail-over on multiple subnets simultaneously.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.40  2015/05/08 13:01:51  robertja
+ *  Archive Log:    Clean up fail-over debug.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.39  2015/05/05 18:39:33  robertja
+ *  Archive Log:    Converted FailoverManager to singleton.
  *  Archive Log:
  *  Archive Log:    Revision 1.38  2015/04/29 17:31:58  robertja
  *  Archive Log:    Add debug code for "SM unavailable" testing.
@@ -101,21 +135,25 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeoutException;
 
+import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLHandshakeException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.intel.stl.api.CertsDescription;
 import com.intel.stl.api.ICertsAssistant;
 import com.intel.stl.api.ISecurityHandler;
 import com.intel.stl.api.failure.BaseFailureEvaluator;
 import com.intel.stl.api.failure.BaseTaskFailure;
 import com.intel.stl.api.failure.FailureManager;
+import com.intel.stl.api.failure.IFailureEvaluator;
 import com.intel.stl.api.failure.IFailureManagement;
 import com.intel.stl.api.subnet.HostInfo;
 import com.intel.stl.api.subnet.SubnetConfigurationException;
@@ -130,10 +168,16 @@ import com.intel.stl.configuration.ResultHandler;
 import com.intel.stl.fecdriver.ApplicationEvent;
 import com.intel.stl.fecdriver.FEResourceAdapter;
 import com.intel.stl.fecdriver.IApplicationEventListener;
+import com.intel.stl.fecdriver.IFailoverHelper;
 import com.intel.stl.fecdriver.IFailoverManager;
+import com.intel.stl.fecdriver.IFailoverProgressListener;
+import com.intel.stl.fecdriver.adapter.IAdapter;
+import com.intel.stl.fecdriver.adapter.ISMEventListener;
+import com.intel.stl.fecdriver.dispatcher.IConnectionEventListener;
+import com.intel.stl.fecdriver.session.ISession;
 
-public class STLAdapter implements FEResourceAdapter<STLConnection>,
-        IApplicationEventListener {
+public class STLAdapter implements FEResourceAdapter,
+        IApplicationEventListener, IFailoverHelper, IAdapter {
     public final static String WORKER_THREAD_NAME = "fec-thread";
 
     public final static String VERSION = "1.0";
@@ -160,7 +204,7 @@ public class STLAdapter implements FEResourceAdapter<STLConnection>,
 
     private final BaseFailureEvaluator failureEvaluator;
 
-    private IFailoverManager failoverMgr;
+    private IFailoverManager simFailoverMgr;
 
     private static volatile STLAdapter instance = null;
 
@@ -170,16 +214,18 @@ public class STLAdapter implements FEResourceAdapter<STLConnection>,
 
     private ProcessingService processor;
 
+    private List<IFailoverManager> failoverManagers = null;
+
     private STLAdapter() {
         failureEvaluator = new BaseFailureEvaluator();
-        failoverMgr = new FailoverManager(this);
-        // failoverMgr = new SMFailoverManager(this);
         failureEvaluator.setRecoverableErrors(IOException.class,
                 RuntimeException.class);
         failureEvaluator.setUnrecoverableErrors(ClosedChannelException.class,
                 SSLHandshakeException.class);
+        failoverManagers = new CopyOnWriteArrayList<IFailoverManager>();
 
         init();
+
     }
 
     public static STLAdapter instance() {
@@ -270,6 +316,26 @@ public class STLAdapter implements FEResourceAdapter<STLConnection>,
     }
 
     @Override
+    public ISession createSession(SubnetDescription subnet) throws IOException {
+        return createSession(subnet, null);
+    }
+
+    @Override
+    public ISession createSession(SubnetDescription subnet,
+            ISMEventListener listener) throws IOException {
+        STLConnection subnetApiConn = connect(subnet);
+        STLConnection perfApiConn = connect(subnet);
+        STLConnection noticeApiConn = connect(subnet);
+        if (listener != null) {
+            noticeApiConn.addNoticeListener(listener);
+        }
+        subnetApiConn.waitForConnect();
+        perfApiConn.waitForConnect();
+        noticeApiConn.waitForConnect();
+        return new ConnectionSession(subnetApiConn, perfApiConn, noticeApiConn);
+    }
+
+    @Override
     public STLConnection connect(SubnetDescription subnet) throws IOException {
         return connect(subnet, null);
     }
@@ -310,7 +376,7 @@ public class STLAdapter implements FEResourceAdapter<STLConnection>,
                 }
                 log.info("Created connection " + conn);
             } else {
-                // This should not never happen
+                // This should never happen
                 throw new IllegalArgumentException(
                         "No connections found for subnet " + subnet.getName());
             }
@@ -345,12 +411,24 @@ public class STLAdapter implements FEResourceAdapter<STLConnection>,
         return loginTimeout;
     }
 
+    public IFailoverManager getFailoverManager() {
+        if (simFailoverMgr != null) {
+            return simFailoverMgr;
+        } else {
+            return new FailoverManager(this);
+        }
+    }
+
+    @Override
     public STLConnection tryConnect(SubnetDescription subnet)
             throws IOException {
         if (subnet == null) {
             throw new IllegalArgumentException("Subnet cannot be null");
         }
-        STLConnection conn = createConnection(subnet);
+
+        SubnetDescription tempSubnet = subnet.copy();
+        tempSubnet.setSubnetId(0);
+        STLConnection conn = createConnection(tempSubnet);
         conn.initSocketChannel();
         synchronized (this) {
             newConnections.add(conn);
@@ -363,13 +441,14 @@ public class STLAdapter implements FEResourceAdapter<STLConnection>,
     public SubnetDescription checkConnectivityFor(SubnetDescription subnet) {
         STLConnection conn =
                 new STLConnection(subnet, securityHandler, certsAssistant);
-        return failoverMgr.connectionLost(conn);
+        return getFailoverManager().connectionLost(conn);
 
     }
 
     public void refreshSubnetDescription(SubnetDescription subnet) {
         SubnetDescription connSubnet = getConnectionDescriptionFor(subnet);
         if (connSubnet != null) {
+            connSubnet.setName(subnet.getName());
             connSubnet.setPrimaryFEIndex(subnet.getPrimaryFEIndex());
             HostInfo currFE = connSubnet.getCurrentFE();
             List<HostInfo> feList = subnet.getFEList();
@@ -389,7 +468,7 @@ public class STLAdapter implements FEResourceAdapter<STLConnection>,
         }
     }
 
-    protected STLConnection createConnection(SubnetDescription subnet) {
+    private STLConnection createConnection(SubnetDescription subnet) {
         STLConnection conn =
                 new STLConnection(subnet, securityHandler, certsAssistant);
         conn.addApplicationEventListener(this);
@@ -456,7 +535,8 @@ public class STLAdapter implements FEResourceAdapter<STLConnection>,
     }
 
     protected synchronized void resetConnections(SubnetDescription subnet) {
-        long waitExtension = failoverMgr.getFailoverTimeout();
+        long waitExtension = getFailoverManager().getFailoverTimeout();
+
         List<STLConnection> conns = cachedConnections.get(subnet);
         if (conns != null) {
             // There are connections to reset
@@ -618,15 +698,12 @@ public class STLAdapter implements FEResourceAdapter<STLConnection>,
             log.error("FE server has closed connection " + conn);
             handleConnectionError(conn, sChannel, cce);
         } catch (SubnetConfigurationException sce) {
-
-            System.out
-                    .println("STLAdapter - handleConnectionRead - catch SubnetConfigurationException");
             SocketChannel sChannel = (SocketChannel) selKey.channel();
 
-            if (sce.getErrorCode() == STLMessages.STL2004_SM_UNAVAILABLE
+            if (sce.getErrorCode() == STLMessages.STL20004_SM_UNAVAILABLE
                     .getErrorCode()) {
                 log.error("SM is unavailable through connection " + conn);
-            } else if (sce.getErrorCode() == STLMessages.STL2005_PM_UNAVAILABLE
+            } else if (sce.getErrorCode() == STLMessages.STL20005_PM_UNAVAILABLE
                     .getErrorCode()) {
                 log.error("PM is unavailable through connection " + conn);
             }
@@ -655,36 +732,29 @@ public class STLAdapter implements FEResourceAdapter<STLConnection>,
             SocketChannel socketChannel, Exception e) {
         SubnetDescription subnet = conn.getConnectionDescription();
         boolean isFailoverInProgress = subnet.isFailoverInProgress();
-        System.out.println("STLAdapter - handleConnectionError");
+        log.info("STLAdapter - handleConnectionError");
         if (!conn.isReconnecting()) {
-            System.out
-                    .println("STLAdapter - handleConnectionError - conn.isReconnecting(): false");
             List<STLConnection> conns = cachedConnections.get(subnet);
             if (conns != null) {
                 if (!isFailoverInProgress) {
-                    System.out
-                            .println("STLAdapter - handleConnectionError - isFailoverInProgress: false");
                     if (subnet
                             .setFailoverInProgress(isFailoverInProgress, true)) {
                         log.info("Starting failover processing for subnet "
                                 + subnet.getName());
-                        System.out
-                                .println("STLAdapter - handleConnectionError - start failover processing.");
                         conn.fireFailoverStart();
                         resetConnections(subnet);
                         submitFailoverTask(conn, e);
                     } else {
                         log.info("Another thread has just started failover processing for subnet "
                                 + subnet.getName());
+
                     }
                 } else {
-
-                    System.out
-                            .println("STLAdapter - handleConnectionError - isFailoverInProgress: true");
                     log.info("Failover is already processing for subnet "
                             + subnet.getName());
-                    // This a new connection created after failover was started
-                    long waitExtension = failoverMgr.getFailoverTimeout();
+                    // This a new connection created after failover was started.
+                    long waitExtension =
+                            getFailoverManager().getFailoverTimeout();
                     resetConnection(conn, waitExtension);
                 }
             } else {
@@ -693,8 +763,6 @@ public class STLAdapter implements FEResourceAdapter<STLConnection>,
                 conn.setConnected(false);
             }
         } else {
-            System.out
-                    .println("STLAdapter - handleConnectionError - conn.isReconnecting(): true");
             conn.setConnectError(e);
             conn.setConnected(false);
         }
@@ -705,7 +773,9 @@ public class STLAdapter implements FEResourceAdapter<STLConnection>,
         final SubnetDescription subnet = conn.getConnectionDescription();
         final List<STLConnection> conns = cachedConnections.get(subnet);
         if (conns != null) {
-            FailoverTask failoverTask = new FailoverTask(failoverMgr, conn);
+            final IFailoverManager failoverManager = getFailoverManager();
+            failoverManagers.add(failoverManager);
+            FailoverTask failoverTask = new FailoverTask(failoverManager, conn);
             processor.submit(failoverTask,
                     new ResultHandler<SubnetDescription>() {
 
@@ -722,6 +792,9 @@ public class STLAdapter implements FEResourceAdapter<STLConnection>,
                                 ie.printStackTrace();
                             } catch (ExecutionException e) {
                                 cause = e.getCause();
+                                if (failoverManager != null) {
+                                    failoverManagers.remove(failoverManager);
+                                }
                                 log.error(
                                         "Failover for subnet "
                                                 + subnet.getName()
@@ -781,6 +854,11 @@ public class STLAdapter implements FEResourceAdapter<STLConnection>,
             failureMgr.cleanup();
         } catch (InterruptedException e1) {
         }
+
+        for (IFailoverManager failoverManager : failoverManagers) {
+            failoverManager.stopFailover();
+        }
+        failoverManagers.clear();
 
         newConnections.clear();
         for (List<STLConnection> conns : cachedConnections.values()) {
@@ -916,6 +994,19 @@ public class STLAdapter implements FEResourceAdapter<STLConnection>,
         failureMgr.submit(taskFailure, e);
     }
 
+    public void stopFailoverInstance(SubnetDescription desc) {
+        if (desc != null) {
+            for (IFailoverManager failoverManager : failoverManagers) {
+                SubnetDescription description =
+                        ((FailoverManager) failoverManager)
+                                .getSubnetDescription();
+                if (description.equals(desc)) {
+                    failoverManager.stopFailover();
+                }
+            }
+        }
+    }
+
     private class PrepareHandshakeTask extends AsyncTask<STLConnection> {
 
         private final SelectionKey selKey;
@@ -950,6 +1041,7 @@ public class STLAdapter implements FEResourceAdapter<STLConnection>,
             SubnetDescription connSubnet = conn.getConnectionDescription();
             SubnetDescription modSubnet = failoverMgr.connectionLost(conn);
             connSubnet.setCurrentFEIndex(modSubnet.getCurrentFEIndex());
+            failoverManagers.remove(failoverMgr);
             return modSubnet;
         }
 
@@ -960,15 +1052,15 @@ public class STLAdapter implements FEResourceAdapter<STLConnection>,
         FailOverSimulator simulator = new FailOverSimulator(subnetName);
         simulator.start();
         // Remove this line if you want to use the real failover manager
-        failoverMgr = new SimulatedFailoverManager();
+        simFailoverMgr = new SimulatedFailoverManager();
     }
 
     protected Map<SubnetDescription, List<STLConnection>> getCachedConnections() {
         return cachedConnections;
     }
 
-    public void setFailoverManager(IFailoverManager failoverMgr) {
-        this.failoverMgr = failoverMgr;
+    public void setSimFailoverManager(IFailoverManager failoverMgr) {
+        this.simFailoverMgr = failoverMgr;
     }
 
     private class FailOverSimulator extends Thread {
@@ -1047,6 +1139,11 @@ public class STLAdapter implements FEResourceAdapter<STLConnection>,
         }
 
         @Override
+        public void stopFailover() {
+
+        }
+
+        @Override
         public SubnetDescription connectionLost(STLConnection connection) {
             SubnetDescription subnet = connection.getConnectionDescription();
             List<HostInfo> feList = subnet.getFEList();
@@ -1067,6 +1164,79 @@ public class STLAdapter implements FEResourceAdapter<STLConnection>,
             }
             return subnet;
         }
+
+        @Override
+        public SubnetDescription connectionLost(SubnetDescription subnet,
+                IFailoverProgressListener listener) {
+            return null;
+        }
+    }
+
+    @Override
+    public ISession createTemporarySession(HostInfo host,
+            IConnectionEventListener listener) throws IOException {
+        SubnetDescription tempSubnet = new SubnetDescription("tempsubnet");
+        tempSubnet.getFEList().add(host);
+        STLConnection conn = tryConnect(tempSubnet);
+        return new ConnectionSession(conn, conn, conn);
+    }
+
+    @Override
+    public SSLEngine getSSLEngine(HostInfo hostInfo) throws Exception {
+        if (certsAssistant != null) {
+            return certsAssistant.getSSLEngine(hostInfo);
+        }
+        return null;
+    }
+
+    @Override
+    public SSLEngine getSSLEngine(HostInfo hostInfo, CertsDescription certs)
+            throws Exception {
+        if (certsAssistant != null) {
+            return certsAssistant.getSSLEngine(hostInfo);
+        }
+        return null;
+    }
+
+    @Override
+    public SocketChannel createChannel() {
+        try {
+            return SocketChannel.open();
+        } catch (IOException e) {
+            log.error("Error creating channel", e);
+            return null;
+        }
+    }
+
+    @Override
+    public IFailureManagement getFailureManager() {
+        return failureMgr;
+    }
+
+    @Override
+    public IFailureEvaluator getFailureEvaluator() {
+        return failureEvaluator;
+    }
+
+    @Override
+    public <R> void submitTask(AsyncTask<R> asyncTask,
+            ResultHandler<R> resultHandler) {
+        // This is not implemented here
+    }
+
+    @Override
+    public void shutdownSubnet(SubnetDescription subnet) {
+        // This is not implemented here
+    }
+
+    @Override
+    public int getNumInitialConnections() {
+        return 3;
+    }
+
+    @Override
+    public long getFailoverTimeout() {
+        return 120000;
     }
 
 }

@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3.2.1  2015/08/12 15:26:38  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.5  2015/09/25 20:53:37  fernande
+ *  Archive Log:    PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/08/17 18:53:46  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.3  2014/10/02 21:26:13  jijunwan
  *  Archive Log:    fixed issued found by FindBugs
@@ -69,6 +73,8 @@ public class TimedScore implements Serializable {
 
     private double score;
 
+    private String tip;
+
     /**
      * Description:
      * 
@@ -90,6 +96,20 @@ public class TimedScore implements Serializable {
     }
 
     /**
+     * Description:
+     * 
+     * @param time
+     * @param score
+     * @param tip
+     */
+    public TimedScore(long time, double score, String tip) {
+        super();
+        this.time = time;
+        this.score = score;
+        this.tip = tip;
+    }
+
+    /**
      * @return the time
      */
     public long getTime() {
@@ -101,6 +121,13 @@ public class TimedScore implements Serializable {
      */
     public double getScore() {
         return score;
+    }
+
+    /**
+     * @return the tip
+     */
+    public String getTip() {
+        return tip;
     }
 
     public String getScoreString() {
@@ -127,7 +154,8 @@ public class TimedScore implements Serializable {
      */
     @Override
     public String toString() {
-        return "TimedScore [time=" + time + ", score=" + score + "]";
+        return "TimedScore [time=" + time + ", score=" + score + ", tip=" + tip
+                + "]";
     }
 
 }

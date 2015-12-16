@@ -35,8 +35,20 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7.2.1  2015/08/12 15:26:47  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.10  2015/08/17 18:53:56  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/07/14 17:06:04  jijunwan
+ *  Archive Log:    PR 129541 - Should forbid save or deploy when there is invalid edit on management panel
+ *  Archive Log:    - throw InvalidEditException when there is invalid edit
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/05/14 17:19:48  jijunwan
+ *  Archive Log:    PR 128697 - Handle empty list of items
+ *  Archive Log:    - Added code to handle null item
+ *  Archive Log:    - Added code to clean panel when it gets a null item
+ *  Archive Log:    - Enable/disable buttons properly when we get an empty item list or null item
+ *  Archive Log:    - Improved to handle item selection when the index is invalid, such as -1
  *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/04/06 11:14:15  jypak
  *  Archive Log:    Klockwork: Front End Critical Without Unit Test. Open issues fixed.
@@ -134,6 +146,21 @@ public class AppsEditorPanel extends AbstractEditorPanel<Application> {
         return mainPane;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.admin.view.AbstractEditorPanel#clear()
+     */
+    @Override
+    public void clear() {
+        super.clear();
+        attrsPanel.removeAll();
+        appAttrPanels.clear();
+        rendererModel.setAppNames(new String[0]);
+        revalidate();
+        repaint();
+    }
+
     @Override
     protected void showItemObject(Application app, String[] appNames,
             boolean isEditable) {
@@ -225,4 +252,23 @@ public class AppsEditorPanel extends AbstractEditorPanel<Application> {
         revalidate();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.admin.view.AbstractEditorPanel#isEditValid()
+     */
+    @Override
+    public boolean isEditValid() {
+        if (!super.isEditValid()) {
+            return false;
+        }
+
+        for (AppAttrPanel attrPanel : appAttrPanels) {
+            IAttrRenderer<?> renderer = attrPanel.getAttrRenderer();
+            if (renderer != null && !renderer.isEditValid()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

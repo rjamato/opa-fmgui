@@ -35,8 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8.2.1  2015/08/12 15:27:10  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.10  2015/09/30 13:26:45  fisherma
+ *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/08/17 18:54:19  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/04/16 19:21:45  jijunwan
  *  Archive Log:    removed work around code for bug in FM 390
@@ -241,10 +245,10 @@ public class DeviceGroupsTreeSynchronizer extends TreeSynchronizer<String> {
             nodesUpdater.updateTree(node, members, monitors, observer);
         } else {
             FVResourceNode[] children =
-                    new FVResourceNode[node.getChildCount()];
-            int[] childIndex = new int[node.getChildCount()];
+                    new FVResourceNode[node.getModelChildCount()];
+            int[] childIndex = new int[node.getModelChildCount()];
             int index = 0;
-            while (node.getChildCount() > 0) {
+            while (node.getModelChildCount() > 0) {
                 childIndex[index] = index;
                 children[index++] = node.removeChild(0);
             }

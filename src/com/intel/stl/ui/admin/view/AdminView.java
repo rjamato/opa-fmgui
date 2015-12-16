@@ -35,8 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6.2.1  2015/08/12 15:27:17  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.8  2015/08/17 18:53:52  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/08/17 17:46:44  jijunwan
+ *  Archive Log:    PR 128973 - Deploy FM conf changes on all SMs
+ *  Archive Log:    - improved AdminPage to support adding separator between tabs
+ *  Archive Log:    - improved to use canExit to decide weather is able to switch to another tab or page
  *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/03/05 17:38:18  jijunwan
  *  Archive Log:    init version to support Application management
@@ -114,6 +120,10 @@ public class AdminView extends JPanel {
     public void addViewCard(Icon icon, Component card, String name) {
         navPanel.addItem(name, icon);
         viewPanel.add(card, name);
+    }
+
+    public void addSeperator(int size) {
+        navPanel.addSeparator(size);
     }
 
     public void setView(String name) {

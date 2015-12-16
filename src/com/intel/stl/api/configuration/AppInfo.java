@@ -35,8 +35,24 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3.2.1  2015/08/12 15:21:40  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.9  2015/09/30 12:47:05  fisherma
+ *  Archive Log:    PR 129357 - ability to hide inactive ports.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/09/02 15:55:31  fernande
+ *  Archive Log:    PR 130220 - FM GUI "about" window displays unmatched version and build #. Passing the OPA FM version thru the manifest.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/08/17 18:48:36  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/08/10 17:04:40  robertja
+ *  Archive Log:    PR128974 - Email notification functionality.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/07/10 20:40:58  fernande
+ *  Archive Log:    PR 129522 - Notice is not written to database due to topology not found. Added constants for use in UI
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/07/09 18:40:19  fernande
+ *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Added method to expose application settings in the settings.xml file to higher levels in the app
  *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/03/30 22:28:49  jijunwan
  *  Archive Log:    1) improved AppInfo to include buildDate
@@ -58,13 +74,23 @@
 package com.intel.stl.api.configuration;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AppInfo implements Serializable {
 
+    public final static String PROPERTIES_SUBNET_FRAMES = "SubnetFrames";
+
+    public final static String PROPERTIES_SUBNET_STATE_SUFFIX = "-State";
+
+    public final static String PROPERTIES_SMTP_SETTINGS = "SMTPSettings";
+
+    public final static String PROPERTIES_FM_GUI_APP = "FMGUIApp";
+
     private static final long serialVersionUID = 1L;
+
+    public static final String PROPERTIES_DATABASE = "Database";
 
     private int appVersion;
 
@@ -76,12 +102,14 @@ public class AppInfo implements Serializable {
 
     private String appName;
 
+    private String opaFmVersion;
+
     private String appBuildId;
 
     private String appBuildDate;
 
-    private Map<String, Properties> properties =
-            new HashMap<String, Properties>();
+    private Map<String, Properties> propertiesMap =
+            new ConcurrentHashMap<String, Properties>();
 
     public String getAppName() {
         return appName;
@@ -91,6 +119,12 @@ public class AppInfo implements Serializable {
         this.appName = appName;
     }
 
+    /**
+     * 
+     * <i>Description:</i> returns the FM GUI internal version number
+     * 
+     * @return
+     */
     public int getAppVersion() {
         return appVersion;
     }
@@ -99,6 +133,12 @@ public class AppInfo implements Serializable {
         this.appVersion = appVersion;
     }
 
+    /**
+     * 
+     * <i>Description:</i> returns the FM GUI internal release number
+     * 
+     * @return
+     */
     public int getAppRelease() {
         return appRelease;
     }
@@ -107,6 +147,12 @@ public class AppInfo implements Serializable {
         this.appRelease = appRelease;
     }
 
+    /**
+     * 
+     * <i>Description:</i> returns the FM GUI internal modification level
+     * 
+     * @return
+     */
     public int getAppModLevel() {
         return appModLevel;
     }
@@ -115,6 +161,12 @@ public class AppInfo implements Serializable {
         this.appModLevel = appModLevel;
     }
 
+    /**
+     * 
+     * <i>Description:</i> returns the Build Id, as set in RELEASE_TAG
+     * 
+     * @return
+     */
     public String getAppBuildId() {
         return appBuildId;
     }
@@ -138,6 +190,12 @@ public class AppInfo implements Serializable {
         this.appBuildDate = appBuildDate;
     }
 
+    /**
+     * 
+     * <i>Description:</i> returns the application database schema level
+     * 
+     * @return
+     */
     public int getAppSchemaLevel() {
         return appSchemaLevel;
     }
@@ -146,12 +204,47 @@ public class AppInfo implements Serializable {
         this.appSchemaLevel = appSchemaLevel;
     }
 
-    public Map<String, Properties> getProperties() {
-        return properties;
+    /**
+     * 
+     * <i>Description:</i> returns the OPA FM version corresponding to this
+     * release of the FM GUI
+     * 
+     * @return the OPA FM version
+     */
+    public String getOpaFmVersion() {
+        return opaFmVersion;
     }
 
-    public void setProperties(Map<String, Properties> properties) {
-        this.properties = properties;
+    /**
+     * 
+     * <i>Description:</i> set the OPA FM version
+     * 
+     * @param opaFmVersion
+     */
+    public void setOpaFmVersion(String opaFmVersion) {
+        this.opaFmVersion = opaFmVersion;
+    }
+
+    public Map<String, Properties> getPropertiesMap() {
+        return this.propertiesMap;
+    }
+
+    public void setPropertiesMap(Map<String, Properties> propertiesMap) {
+        this.propertiesMap = propertiesMap;
+    }
+
+    public void setProperty(String string, Properties properties) {
+        if ((string != null) && (properties != null)) {
+            propertiesMap.put(string, properties);
+        }
+    }
+
+    public Properties getProperty(String string) {
+        if (string != null) {
+            return propertiesMap.get(string);
+        } else {
+            return new Properties();
+        }
     }
 
 }

@@ -24,12 +24,73 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: HomePage.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.62  2015/09/26 06:28:35  jijunwan
+ *  Archive Log: 130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
+ *  Archive Log: - changed to do a delayed refresh if there are changes on ImageInfo data
+ *  Archive Log:
+ *  Archive Log: Revision 1.61  2015/09/26 03:23:52  jijunwan
+ *  Archive Log: PR 130522 - OtherPorts doesn't report a value
+ *  Archive Log: - set isRefreshing back to false after we processed imageinfo
+ *  Archive Log:
+ *  Archive Log: Revision 1.60  2015/09/25 20:51:38  fernande
+ *  Archive Log: PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
+ *  Archive Log:
+ *  Archive Log: Revision 1.59  2015/09/25 13:48:16  jijunwan
+ *  Archive Log: changed to log rather than display error message
+ *  Archive Log:
+ *  Archive Log: Revision 1.58  2015/09/20 22:32:42  jijunwan
+ *  Archive Log: PR 130522 - OtherPorts doesn't report a value
+ *  Archive Log: - added back setting port distribution with data from SubnetApi
+ *  Archive Log: - refresh port distribution calculation when there is a notice, or user manually clicking refresh button, or there is changes on ImageInfo's statistics numbers
+ *  Archive Log:
+ *  Archive Log: Revision 1.57  2015/08/31 22:01:42  jijunwan
+ *  Archive Log: PR 130197 - Calculated fabric health above 100% when entire fabric is rebooted
+ *  Archive Log: - changed to only use information from ImageInfo for calculation
+ *  Archive Log:
+ *  Archive Log: Revision 1.56  2015/08/17 18:53:38  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.55  2015/08/11 17:37:23  jijunwan
+ *  Archive Log: PR 126645 - Topology Page does not show correct data after port disable/enable event
+ *  Archive Log: - improved to get distribution data with argument "refresh". When it's true, calculate distribution rather than get it from cache
+ *  Archive Log:
+ *  Archive Log: Revision 1.54  2015/08/11 14:15:00  jijunwan
+ *  Archive Log: PR 129917 - No update on event statistics
+ *  Archive Log: - Apply event subscriber on EventSummaryBar and HomePage to periodically update. Both will update either by event or period updating.
+ *  Archive Log:
+ *  Archive Log: Revision 1.53  2015/08/05 03:09:28  jijunwan
+ *  Archive Log: PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log: - improved HomePage to set origin for jumping event
+ *  Archive Log: - improved IDataTypeListener to include both old and new type to better support undo
+ *  Archive Log: - improved IPageListener to use page name rather than page index, so we can support undo on link selection on Topology Page where links more than 5 are maintained in a drop down menu
+ *  Archive Log:
+ *  Archive Log: Revision 1.52  2015/06/10 19:58:49  jijunwan
+ *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: jijunwan
+ * 
+ ******************************************************************************/
 package com.intel.stl.ui.main;
 
 import static com.intel.stl.ui.common.PageWeight.MEDIUM;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -38,10 +99,12 @@ import javax.swing.JPanel;
 import net.engio.mbassy.bus.MBassador;
 import net.engio.mbassy.listener.Handler;
 
+import org.jfree.util.Log;
+
 import com.intel.stl.api.performance.IPerformanceApi;
 import com.intel.stl.api.performance.ImageInfoBean;
+import com.intel.stl.api.subnet.FabricInfoBean;
 import com.intel.stl.api.subnet.ISubnetApi;
-import com.intel.stl.api.subnet.NodeType;
 import com.intel.stl.api.subnet.SMRecordBean;
 import com.intel.stl.ui.common.IPageController;
 import com.intel.stl.ui.common.IProgressObserver;
@@ -51,6 +114,7 @@ import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.common.view.JSectionView;
 import com.intel.stl.ui.event.NodeUpdateEvent;
+import com.intel.stl.ui.event.PageSelectedEvent;
 import com.intel.stl.ui.event.TaskStatusEvent;
 import com.intel.stl.ui.event.TaskStatusEvent.Status;
 import com.intel.stl.ui.framework.IAppEvent;
@@ -60,10 +124,12 @@ import com.intel.stl.ui.main.view.SummarySectionView;
 import com.intel.stl.ui.model.GroupStatistics;
 import com.intel.stl.ui.model.StateSummary;
 import com.intel.stl.ui.publisher.CallbackAdapter;
+import com.intel.stl.ui.publisher.EventCalculator;
 import com.intel.stl.ui.publisher.ICallback;
 import com.intel.stl.ui.publisher.IStateChangeListener;
 import com.intel.stl.ui.publisher.Task;
 import com.intel.stl.ui.publisher.TaskScheduler;
+import com.intel.stl.ui.publisher.subscriber.EventSubscriber;
 import com.intel.stl.ui.publisher.subscriber.ImageInfoSubscriber;
 import com.intel.stl.ui.publisher.subscriber.SubscriberType;
 
@@ -72,6 +138,8 @@ import com.intel.stl.ui.publisher.subscriber.SubscriberType;
  * 
  */
 public class HomePage implements IPageController, IStateChangeListener {
+    public final static String NAME = STLConstants.K0100_HOME.getValue();
+
     private TaskScheduler scheduler;
 
     private ISubnetApi subnetApi;
@@ -94,9 +162,22 @@ public class HomePage implements IPageController, IStateChangeListener {
 
     private final MBassador<IAppEvent> eventBus;
 
-    private boolean isNewContext;
-
     private ImageInfoSubscriber imageInfoSubscriber;
+
+    private EventSubscriber eventSubscriber;
+
+    private ICallback<StateSummary> stateSummaryCallback;
+
+    private Task<StateSummary> stateSummaryTask;
+
+    private boolean isRefreshing;
+
+    private ImageInfoBean lastImageInfo;
+
+    // refresh after 2 of refresh intervals
+    private static final int DELAYED_REFRESH = 2;
+
+    private int refreshDelayCount;
 
     public HomePage(HomeView view, MBassador<IAppEvent> eventBus) {
 
@@ -110,7 +191,6 @@ public class HomePage implements IPageController, IStateChangeListener {
             sectionViews.add(section.getView());
         }
         view.installSectionViews(sectionViews);
-        isNewContext = false;
     }
 
     /**
@@ -124,6 +204,7 @@ public class HomePage implements IPageController, IStateChangeListener {
         TaskStatusEvent<NodeUpdateEvent> taskEvent =
                 new TaskStatusEvent<NodeUpdateEvent>(this, evt, Status.STARTED);
         eventBus.publish(taskEvent);
+        isRefreshing = true;
         try {
             if (scheduler != null) {
                 IPerformanceApi perfApi = scheduler.getPerformanceApi();
@@ -136,10 +217,12 @@ public class HomePage implements IPageController, IStateChangeListener {
                 performance.onRefresh(null);
             }
         } finally {
+            isRefreshing = false;
             taskEvent =
                     new TaskStatusEvent<NodeUpdateEvent>(this, evt,
                             Status.FINISHED);
             eventBus.publish(taskEvent);
+            refreshDelayCount = DELAYED_REFRESH;
         }
     }
 
@@ -152,6 +235,7 @@ public class HomePage implements IPageController, IStateChangeListener {
 
         performance =
                 new PerformanceSection(new PerformanceSectionView(), eventBus);
+        performance.setOrigin(new PageSelectedEvent(this, NAME));
         sections.add(performance);
 
         return sections;
@@ -162,7 +246,7 @@ public class HomePage implements IPageController, IStateChangeListener {
      *            the context to set
      */
     @Override
-    public void setContext(Context context, IProgressObserver observer) {
+    public void setContext(final Context context, IProgressObserver observer) {
         IProgressObserver[] subObservers = observer.createSubObservers(2);
 
         clear();
@@ -184,7 +268,23 @@ public class HomePage implements IPageController, IStateChangeListener {
             @Override
             public synchronized void onDone(ImageInfoBean result) {
                 if (result != null) {
+                    ImageInfoBean oldImageInfo = lastImageInfo;
                     processImageInfo(result);
+                    if (oldImageInfo != null && oldImageInfo.hasChange(result)) {
+                        // has fabric change, do a delayed refresh
+                        refreshDelayCount = DELAYED_REFRESH;
+                    } else if (refreshDelayCount > 0) {
+                        refreshDelayCount -= 1;
+                        if (refreshDelayCount == 0) {
+                            Util.runInEDT(new Runnable() {
+                                @Override
+                                public void run() {
+                                    ((FabricController) context.getController())
+                                            .onRefresh();
+                                }
+                            });
+                        }
+                    }
                 }
             }
         };
@@ -194,6 +294,26 @@ public class HomePage implements IPageController, IStateChangeListener {
             clear();
             return;
         }
+
+        eventSubscriber =
+                (EventSubscriber) scheduler.getSubscriber(SubscriberType.EVENT);
+        stateSummaryCallback = new CallbackAdapter<StateSummary>() {
+            /*
+             * (non-Javadoc)
+             * 
+             * @see
+             * com.intel.hpc.stl.ui.publisher.CallBackAdapter#onDone(java.lang
+             * .Object)
+             */
+            @Override
+            public synchronized void onDone(StateSummary result) {
+                if (result != null) {
+                    onStateChange(result);
+                }
+            }
+        };
+        stateSummaryTask =
+                eventSubscriber.registerStateSummary(stateSummaryCallback);
 
         if (observer.isCancelled()) {
             clear();
@@ -207,7 +327,6 @@ public class HomePage implements IPageController, IStateChangeListener {
 
         // Register for state change events with Event Calculator.
         this.context.getEvtCal().addListener(this);
-        isNewContext = true;
     }
 
     /*
@@ -219,22 +338,26 @@ public class HomePage implements IPageController, IStateChangeListener {
      */
     @Override
     public void onRefresh(IProgressObserver observer) {
-        IPerformanceApi perfApi = scheduler.getPerformanceApi();
+        isRefreshing = true;
+        try {
+            IPerformanceApi perfApi = scheduler.getPerformanceApi();
+            ImageInfoBean imgInfo = perfApi.getLatestImageInfo();
+            imageInfoCallback.onDone(imgInfo);
+            if (observer.isCancelled()) {
+                return;
+            }
 
-        ImageInfoBean imgInfo = perfApi.getLatestImageInfo();
-        imageInfoCallback.onDone(imgInfo);
-        if (observer.isCancelled()) {
-            return;
+            StateSummary ss = context.getEvtCal().getSummary();
+            onStateChange(ss);
+            if (observer.isCancelled()) {
+                return;
+            }
+
+            performance.onRefresh(observer);
+            observer.onFinish();
+        } finally {
+            isRefreshing = false;
         }
-
-        StateSummary ss = context.getEvtCal().getSummary();
-        onStateChange(ss);
-        if (observer.isCancelled()) {
-            return;
-        }
-
-        performance.onRefresh(observer);
-        observer.onFinish();
     }
 
     /*
@@ -254,10 +377,13 @@ public class HomePage implements IPageController, IStateChangeListener {
                         imageInfoCallback);
             }
 
-            if (context != null) {
-                if (context.getEvtCal() != null) {
-                    context.getEvtCal().removeListener(this);
-                }
+            if (stateSummaryTask != null) {
+                eventSubscriber.deregisterStateSummary(stateSummaryTask,
+                        stateSummaryCallback);
+            }
+
+            if (context != null && context.getEvtCal() != null) {
+                context.getEvtCal().removeListener(this);
             }
         }
 
@@ -267,40 +393,43 @@ public class HomePage implements IPageController, IStateChangeListener {
     }
 
     protected void processImageInfo(ImageInfoBean imageInfo) {
+        EventCalculator evtCal = context.getEvtCal();
+        FabricInfoBean fabricInfo = subnetApi.getFabricInfo();
         synchronized (this) {
             if (groupStatistics == null) {
                 summary.clear();
             }
+
             groupStatistics =
                     new GroupStatistics(subnetApi.getConnectionDescription(),
                             imageInfo);
+
+            isRefreshing =
+                    isRefreshing || lastImageInfo == null
+                            || lastImageInfo.hasChange(imageInfo);
             try {
-                groupStatistics.setNodeTypesDist(subnetApi
-                        .getNodesTypeDist(false));
+                groupStatistics.setPortTypesDist(subnetApi.getPortsTypeDist(
+                        true, isRefreshing));
             } catch (Exception e) {
-                Util.showError(getView(), e);
+                Log.error("Couldn't get PortTypesDist!", e);
+                // Util.showError(getView(), e);
                 e.printStackTrace();
             }
-            try {
-                groupStatistics.setPortTypesDist(subnetApi
-                        .getPortsTypeDist(true));
-            } catch (Exception e) {
-                Util.showError(getView(), e);
-                e.printStackTrace();
-            }
+
             int msmLid = imageInfo.getSMInfo()[0].getLid();
             SMRecordBean msm = subnetApi.getSM(msmLid);
             if (msm != null && msm.getSmInfo() != null) {
                 groupStatistics.setMsmUptimeInSeconds(msm.getSmInfo()
                         .getElapsedTime());
             }
+
+            lastImageInfo = imageInfo;
+            isRefreshing = false;
+            evtCal.processHealthScoreStats(fabricInfo, imageInfo);
         }
+        // System.out.println(imageInfo);
+        // System.out.println(groupStatistics);
         summary.updateStatistics(groupStatistics);
-        if (isNewContext == true) {
-            isNewContext = false;
-            StateSummary summary = context.getEvtCal().getSummary();
-            onStateChange(summary);
-        }
     }
 
     protected void processStateSummary(StateSummary stateSummary) {
@@ -308,20 +437,9 @@ public class HomePage implements IPageController, IStateChangeListener {
             return;
         }
 
-        int totalSWs = 0;
-        int totalCAs = 0;
-        synchronized (this) {
-            EnumMap<NodeType, Integer> typeDist =
-                    groupStatistics.getNodeTypesDist();
-            totalSWs =
-                    typeDist.containsKey(NodeType.SWITCH) ? typeDist
-                            .get(NodeType.SWITCH) : 0;
-            totalCAs =
-                    typeDist.containsKey(NodeType.HFI) ? typeDist
-                            .get(NodeType.HFI) : 0;
-        }
-        summary.updateStates(stateSummary.getSwitchStates(), totalSWs,
-                stateSummary.getHfiStates(), totalCAs);
+        summary.updateStates(stateSummary.getSwitchStates(),
+                stateSummary.getBaseTotalSWs(), stateSummary.getHfiStates(),
+                stateSummary.getBaseTotalHFIs());
         summary.updateHealthScore(stateSummary.getHealthScore());
         summary.updateWorstNodes(stateSummary.getWorstNodes());
     }
@@ -333,7 +451,7 @@ public class HomePage implements IPageController, IStateChangeListener {
      */
     @Override
     public String getName() {
-        return STLConstants.K0100_HOME.getValue();
+        return NAME;
     }
 
     /*
@@ -422,6 +540,6 @@ public class HomePage implements IPageController, IStateChangeListener {
 
     @Override
     public String toString() {
-        return "HomePage";
+        return getName();
     }
 }

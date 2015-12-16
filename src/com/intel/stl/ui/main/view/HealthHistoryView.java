@@ -24,6 +24,44 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: HealthHistoryView.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.13  2015/09/25 20:52:55  fernande
+ *  Archive Log: PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
+ *  Archive Log:
+ *  Archive Log: Revision 1.12  2015/08/17 18:54:02  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.11  2015/08/11 14:36:53  jijunwan
+ *  Archive Log: PR 129917 - No update on event statistics
+ *  Archive Log: - Apply event subscriber on HealthHistoryCard. It will update either by event or period updating.
+ *  Archive Log: - Improved Health Trend chart to draw current data shape
+ *  Archive Log: - Improved Health Trend view to show current value immediately
+ *  Archive Log:
+ *  Archive Log: Revision 1.10  2015/06/25 20:24:57  jijunwan
+ *  Archive Log: Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log: - applied pin framework on fabric viewer and simple 'static' cards
+ *  Archive Log:
+ *  Archive Log: Revision 1.9  2015/06/10 19:58:57  jijunwan
+ *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: jijunwan
+ * 
+ ******************************************************************************/
 package com.intel.stl.ui.main.view;
 
 import java.awt.Color;
@@ -63,6 +101,8 @@ import com.intel.stl.ui.common.view.JCardView;
 public class HealthHistoryView extends JCardView<ICardListener> {
     private static final long serialVersionUID = -7089992232091159132L;
 
+    private final Font scoreFont;
+
     private JPanel mainPanel;
 
     private ChartPanel chartPanel;
@@ -77,14 +117,21 @@ public class HealthHistoryView extends JCardView<ICardListener> {
 
     private Color scoreColor = UIConstants.INTEL_DARK_GRAY;
 
+    private String scoreTip;
+
     /**
      * @param title
      * @param controller
      */
     public HealthHistoryView() {
+        this(UIConstants.H1_FONT.deriveFont(Font.BOLD));
+    }
+
+    public HealthHistoryView(Font scoreFont) {
         super(STLConstants.K0105_HEALTH_HISTORY.getValue());
         // this is unnecessary, but can stop klocwork from complaining
         getMainComponent();
+        this.scoreFont = scoreFont;
     }
 
     /*
@@ -152,27 +199,27 @@ public class HealthHistoryView extends JCardView<ICardListener> {
         chart.addProgressListener(new ChartProgressListener() {
             @Override
             public void chartProgress(ChartProgressEvent event) {
-                if (event.getType() == ChartProgressEvent.DRAWING_FINISHED
+                if (event.getType() == ChartProgressEvent.DRAWING_STARTED
                         && currentValue != null) {
                     currentValue.setText(scoreString);
                     currentValue.setPaint(scoreColor);
+                    currentValue.setToolTipText(scoreTip);
                 }
             }
         });
         XYPlot plot = chart.getXYPlot();
         plot.getRangeAxis().setRange(0, 105);
         plot.getRenderer().setSeriesPaint(0, UIConstants.INTEL_BLUE);
-        currentValue =
-                new TextTitle(scoreString,
-                        UIConstants.H1_FONT.deriveFont(Font.BOLD));
+        currentValue = new TextTitle(scoreString, scoreFont);
         currentValue.setPaint(scoreColor);
+        currentValue.setToolTipText(scoreTip);
         // currentValue.setBackgroundPaint(new Color(255, 255, 255, 128));
         currentValue.setPosition(RectangleEdge.BOTTOM);
         XYTitleAnnotation xytitleannotation =
                 new XYTitleAnnotation(0.49999999999999998D,
                         0.49999999999999998D, currentValue,
                         RectangleAnchor.CENTER);
-        xytitleannotation.setMaxWidth(0.47999999999999998D);
+        // xytitleannotation.setMaxWidth(0.47999999999999998D);
         plot.addAnnotation(xytitleannotation);
 
         chartPanel.setChart(chart);
@@ -190,8 +237,9 @@ public class HealthHistoryView extends JCardView<ICardListener> {
         validate();
     }
 
-    public void setCurrentScore(String score, Color color) {
+    public void setCurrentScore(String score, Color color, String tip) {
         this.scoreString = score;
         this.scoreColor = color;
+        this.scoreTip = tip;
     }
 }

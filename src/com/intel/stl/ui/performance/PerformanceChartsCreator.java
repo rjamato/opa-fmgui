@@ -35,8 +35,22 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7.2.1  2015/08/12 15:26:41  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.11  2015/08/17 18:53:49  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/08/10 17:06:27  jypak
+ *  Archive Log:    PR 129919 - Change name from signal integrity to integrity.
+ *  Archive Log:    STLConstants and class names are changed.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/08/10 13:49:00  robertja
+ *  Archive Log:    PR 129358 - PR 129556 - Refine congestion chart labeling.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/06/30 22:31:42  jijunwan
+ *  Archive Log:    PR 129215 - Need short chart name to support pin capability
+ *  Archive Log:    - use short name as pin card title
+ *  Archive Log:    - improved pin argument to include full name and provide data source description
+ *  Archive Log:    - fixed improper full name issues on trend charts
  *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/03/27 15:48:34  jijunwan
  *  Archive Log:    changed K0072_SECURITY_ERROR to K0072_SECURITY
@@ -112,7 +126,7 @@ public class PerformanceChartsCreator implements IChartCreator {
      */
     @Override
     public JFreeChart createChart(String name, Dataset dataset) {
-        if (STLConstants.K0041_BANDWIDTH.getValue().equals(name)) {
+        if (STLConstants.K0871_BANDWIDTH_TREND.getValue().equals(name)) {
             return getBwTrendChart(dataset);
         } else if (Util.matchPattern(
                 UILabels.STL10200_TOPN_BANDWIDTH.getDescription(), name)) {
@@ -120,19 +134,20 @@ public class PerformanceChartsCreator implements IChartCreator {
         } else if (STLConstants.K0045_BANDWIDTH_HISTOGRAM.getValue().equals(
                 name)) {
             return getBwHistogramChart(dataset);
-        } else if (STLConstants.K0065_PACKET_RATE.getValue().equals(name)) {
+        } else if (STLConstants.K0872_PACKECT_RATE_TREND.getValue()
+                .equals(name)) {
             return getPrTrendChart(dataset);
         } else if (Util.matchPattern(
                 UILabels.STL10205_TOPN_PACKET_RATE.getDescription(), name)) {
             return getPrTopNChart(dataset);
-        } else if (STLConstants.K0043_CONGESTION_ERROR.getValue().equals(name)
-                || STLConstants.K0067_SIGNAL_INTEGRITY_ERROR.getValue().equals(
+        } else if (STLConstants.K0874_CONGESTION_TREND.getValue().equals(name)
+                || STLConstants.K0873_INTEGRITY_TREND.getValue().equals(
                         name)
-                || STLConstants.K0070_SMA_CONGESTION_ERROR.getValue().equals(
+                || STLConstants.K0875_SMA_CONGESTION_TREND.getValue().equals(
                         name)
-                || STLConstants.K0487_BUBBLE_ERROR.getValue().equals(name)
-                || STLConstants.K0072_SECURITY.getValue().equals(name)
-                || STLConstants.K0074_ROUTING_ERROR.getValue().equals(name)) {
+                || STLConstants.K0876_BUBBLE_TREND.getValue().equals(name)
+                || STLConstants.K0877_SECURITY_TREND.getValue().equals(name)
+                || STLConstants.K0878_ROUTING_TREND.getValue().equals(name)) {
             return getErrorTrendChart(dataset);
         } else if (Util.matchPattern(
                 UILabels.STL10201_TOPN_CONGESTION.getDescription(), name)
@@ -150,7 +165,7 @@ public class PerformanceChartsCreator implements IChartCreator {
             return getErrorTopNChart(dataset);
         } else if (STLConstants.K0046_CONGESTION_HISTOGRAM.getValue().equals(
                 name)
-                || STLConstants.K0068_SIGNAL_INTEGRITY_HISTOGRAM.getValue()
+                || STLConstants.K0068_INTEGRITY_HISTOGRAM.getValue()
                         .equals(name)
                 || STLConstants.K0071_SMA_CONGESTION_HISTOGRAM.getValue()
                         .equals(name)
@@ -216,7 +231,7 @@ public class PerformanceChartsCreator implements IChartCreator {
         JFreeChart chart =
                 ComponentFactory.createXYAreaChart(
                         STLConstants.K0035_TIME.getValue(),
-                        STLConstants.K0047_NUM_ERRORS.getValue(),
+                        STLConstants.K0125_NUM_EVENTS.getValue(),
                         (XYDataset) dataset, true);
         // NumberAxis yAxis = (NumberAxis)chart.getXYPlot().getRangeAxis();
         // yAxis.setRange(ErrorChartTickUnit.LOWER_BOUND,
@@ -228,7 +243,7 @@ public class PerformanceChartsCreator implements IChartCreator {
     protected JFreeChart getErrorTopNChart(Dataset dataset) {
         JFreeChart chart =
                 ComponentFactory.createTopNBarChart(
-                        STLConstants.K0042_ERROE_RATE.getValue(),
+                        STLConstants.K0126_EVENT_RATE.getValue(),
                         (CategoryDataset) dataset);
         return chart;
     }
@@ -236,7 +251,7 @@ public class PerformanceChartsCreator implements IChartCreator {
     protected JFreeChart getErrorHistogramChart(Dataset dataset) {
         JFreeChart chart =
                 ComponentFactory.createBarChart(
-                        STLConstants.K0042_ERROE_RATE.getValue(),
+                        STLConstants.K0127_PERCENT_OF_THRESHOLD.getValue(),
                         STLConstants.K0044_NUM_PORTS.getValue(),
                         (CategoryDataset) dataset);
         NumberAxis axis = (NumberAxis) chart.getCategoryPlot().getRangeAxis();

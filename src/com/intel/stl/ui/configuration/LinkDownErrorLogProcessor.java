@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3.2.1  2015/08/12 15:26:42  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.5  2015/09/22 18:28:36  jijunwan
+ *  Archive Log:    PR 130564 - Information missing from device information, but is reported by FF
+ *  Archive Log:    - changed to show none
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/08/17 18:53:50  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/02/06 00:28:13  jijunwan
  *  Archive Log:    added neighbor link down reason to match FM 325
@@ -83,9 +88,9 @@ public class LinkDownErrorLogProcessor extends BaseCategoryProcessor {
             }
         }
         if (category.getItems().isEmpty()) {
-            String na = STLConstants.K0039_NOT_AVAILABLE.getValue();
+            String none = STLConstants.K0056_NONE.getValue();
             DevicePropertyItem property =
-                    new DevicePropertyItem(LINK_DOWN_REASON, na, na);
+                    new DevicePropertyItem(LINK_DOWN_REASON, none, none);
             category.addPropertyItem(property);
         }
     }

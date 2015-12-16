@@ -35,10 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.3  2015/08/12 15:26:58  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.3  2015/08/17 18:53:40  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.1.2.2  2015/05/17 18:30:42  jijunwan
+ *  Archive Log:    Revision 1.2  2015/06/25 20:53:46  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - improved to share scale between all chart (include pinned chart) with the same data type
+ *  Archive Log:
+ *  Archive Log:    Revision 1.1  2015/05/14 17:43:07  jijunwan
  *  Archive Log:    PR 127700 - Delta data on host performance display is accumulating
  *  Archive Log:    - corrected delta value calculation
  *  Archive Log:    - changed to display data/pkts rate rather than delta on chart and table
@@ -79,6 +84,12 @@ import com.intel.stl.ui.main.view.IChartRangeUpdater;
 
 public class DataRateChartScaleGroupManager extends
         ChartScaleGroupManager<TimeSeriesCollection> {
+    private final static DataRateChartScaleGroupManager instance =
+            new DataRateChartScaleGroupManager();
+
+    public static DataRateChartScaleGroupManager getInstance() {
+        return instance;
+    }
 
     /*
      * (non-Javadoc)

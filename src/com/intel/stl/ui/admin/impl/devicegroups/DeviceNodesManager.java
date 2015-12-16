@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1.2.1  2015/08/12 15:27:12  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.3  2015/08/17 18:54:21  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.2  2015/07/13 19:47:25  jijunwan
+ *  Archive Log:    PR 129528 - input validation improvement
+ *  Archive Log:    - some code cleanup
  *  Archive Log:
  *  Archive Log:    Revision 1.1  2015/03/24 17:46:10  jijunwan
  *  Archive Log:    init version of DeviceGroup editor
@@ -63,6 +68,7 @@ import javax.swing.tree.TreePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.intel.stl.api.StringUtils;
 import com.intel.stl.api.management.IAttribute;
 import com.intel.stl.api.management.devicegroups.NodeDesc;
 import com.intel.stl.api.management.devicegroups.NodeGUID;
@@ -155,7 +161,8 @@ public class DeviceNodesManager {
             return res;
         } else {
             throw new IllegalArgumentException(
-                    "Couldn't find SystemImage with SystemImageGUID=" + guid);
+                    "Couldn't find SystemImage with SystemImageGUID="
+                            + StringUtils.longHexString(guid));
         }
     }
 

@@ -35,8 +35,30 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.40.2.1  2015/08/12 15:22:06  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.48  2015/08/19 19:25:28  fernande
+ *  Archive Log:    PR 128703 - Fail over doesn't work on A0 Fabric. FE Adapter not being shutdown during application shutdown
+ *  Archive Log:
+ *  Archive Log:    Revision 1.47  2015/08/17 18:48:56  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.46  2015/08/10 17:04:52  robertja
+ *  Archive Log:    PR128974 - Email notification functionality.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.45  2015/07/10 20:42:19  fernande
+ *  Archive Log:    PR 129522 - Notice is not written to database due to topology not found. Moved FE Helpers to the session object and changed the order of initialization for the SubnetContext.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.44  2015/07/09 18:47:04  fernande
+ *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Added method to expose application settings in the settings.xml file to higher levels in the app
+ *  Archive Log:
+ *  Archive Log:    Revision 1.43  2015/05/29 20:33:53  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Second wave of changes: the application can be switched between the old adapter and the new; moved out several initialization pieces out of objects constructor to allow subnet initialization with a UI in place; improved generics definitions for FV commands.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.42  2015/05/26 15:33:04  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.41  2015/05/18 14:52:05  robertja
+ *  Archive Log:    PR128609 - Added failover to subnet clean-up.
  *  Archive Log:
  *  Archive Log:    Revision 1.40  2015/04/22 16:51:39  fernande
  *  Archive Log:    Reorganized the startup sequence so that the UI plugin could initialize its own CertsAssistant. This way, autoconnect subnets would require a password using the UI CertsAssistant instead of the default CertsAssistant.
@@ -186,10 +208,6 @@ package com.intel.stl.api.configuration.impl;
 import static com.intel.stl.common.STLMessages.STL10020_APPCONTEXT_COMPONENT;
 import static com.intel.stl.common.STLMessages.STL30022_SUBNET_NOT_FOUND;
 import static com.intel.stl.common.STLMessages.STL50008_SUBNET_CONNECTION_ERROR;
-import static com.intel.stl.common.STLMessages.STL50009_SUBNET_CONTEXT_NOT_CREATED;
-import static com.intel.stl.configuration.AppSettings.APP_DATA_PATH;
-import static com.intel.stl.configuration.AppSettings.APP_DB_SUBNET;
-import static com.intel.stl.configuration.AppSettings.APP_DB_SUBNET_INCLUDE_INACTIVE;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -215,18 +233,15 @@ import com.intel.stl.configuration.AppSettings;
 import com.intel.stl.configuration.AsyncProcessingService;
 import com.intel.stl.configuration.SerialProcessingService;
 import com.intel.stl.datamanager.DatabaseManager;
-import com.intel.stl.fecdriver.IConnection;
-import com.intel.stl.fecdriver.IConnectionFactory;
-import com.intel.stl.fecdriver.impl.STLAdapter;
-import com.intel.stl.fecdriver.impl.STLConnection;
+import com.intel.stl.fecdriver.adapter.FEAdapter;
+import com.intel.stl.fecdriver.adapter.IAdapter;
+import com.intel.stl.fecdriver.adapter.ISMEventListener;
+import com.intel.stl.fecdriver.session.ISession;
 
-public class AppContextImpl implements AppComponent, AppContext,
-        IConnectionFactory {
+public class AppContextImpl implements AppComponent, AppContext {
     private static Logger log = LoggerFactory.getLogger(AppContextImpl.class);
 
-    private final STLAdapter adapter;
-
-    private IConfigurationApi confApi;
+    private final IAdapter adapter;
 
     private final DatabaseManager dbMgr;
 
@@ -240,20 +255,29 @@ public class AppContextImpl implements AppComponent, AppContext,
     private final Map<SubnetDescription, SubnetContext> subnetContexts =
             new HashMap<SubnetDescription, SubnetContext>();
 
-    private boolean useDB = true;
+    private IConfigurationApi confApi;
 
-    private boolean includeInactive = false;
+    private AppSettings settings;
+
+    private boolean useNewAdapter;
 
     private final AtomicInteger threadCount = new AtomicInteger(1);
 
-    public AppContextImpl(STLAdapter adapter, DatabaseManager dbMgr,
+    public AppContextImpl(IAdapter adapter, DatabaseManager dbMgr,
             MailManager mailMgr, AsyncProcessingService processingService) {
         this.adapter = adapter;
         this.dbMgr = dbMgr;
         this.mailMgr = mailMgr;
         this.processingService = processingService;
-        this.confApi =
-                new ConfigurationApi(adapter, dbMgr, mailMgr, processingService);
+        if (adapter instanceof FEAdapter) {
+            useNewAdapter = true;
+        } else {
+            useNewAdapter = false;
+        }
+    }
+
+    public MailManager getMailMgr() {
+        return mailMgr;
     }
 
     /*
@@ -276,24 +300,8 @@ public class AppContextImpl implements AppComponent, AppContext,
     @Override
     public void initialize(AppSettings settings)
             throws AppConfigurationException {
-        if (adapter.isClosed()) {
-            adapter.open();
-        }
-        String appDataPath = settings.getConfigOption(APP_DATA_PATH);
-        ((ConfigurationApi) confApi).setAppDataPath(appDataPath);
-        try {
-            useDB =
-                    Boolean.parseBoolean(settings
-                            .getConfigOption(APP_DB_SUBNET));
-        } catch (AppConfigurationException e) {
-        }
-
-        try {
-            includeInactive =
-                    Boolean.parseBoolean(settings
-                            .getConfigOption(APP_DB_SUBNET_INCLUDE_INACTIVE));
-        } catch (AppConfigurationException e) {
-        }
+        this.settings = settings;
+        this.confApi = new ConfigurationApi(adapter, dbMgr, mailMgr, settings);
     }
 
     @Override
@@ -312,20 +320,31 @@ public class AppContextImpl implements AppComponent, AppContext,
     }
 
     @Override
-    public SubnetContext getSubnetContextFor(String subnetName) {
-        return getSubnetContextFor(subnetName, false);
+    public SubnetContext getSubnetContextFor(SubnetDescription subnet) {
+        return getSubnetContextFor(subnet, false);
     }
 
     @Override
-    public SubnetContext getSubnetContextFor(String subnetName,
+    public SubnetContext getSubnetContextFor(SubnetDescription subnet,
             boolean startBackgroundTasks) {
-        SubnetDescription subnet = getSubnet(subnetName);
-        boolean subnetContextCreated = isSubnetContextCreated(subnet);
+        // We use a different SubnetDescription object than the UI just to make
+        // sure it's not changed while being used by the backend
+        SubnetDescription dbSubnet = getSubnet(subnet.getName());
+        dbSubnet.setContent(subnet);
+        boolean subnetContextCreated = isSubnetContextCreated(dbSubnet);
         if (!subnetContextCreated) {
-            addSubnetContext(subnet, startBackgroundTasks);
+            addSubnetContext(dbSubnet, startBackgroundTasks);
         }
-        SubnetContext subnetContext = subnetContexts.get(subnet);
+        SubnetContext subnetContext = subnetContexts.get(dbSubnet);
         return subnetContext;
+    }
+
+    @Override
+    public String getAppSetting(String settingName, String defaultValue) {
+        if (settings != null) {
+            return settings.getConfigOption(settingName, defaultValue);
+        }
+        return defaultValue;
     }
 
     private boolean isSubnetContextCreated(SubnetDescription subnet) {
@@ -347,9 +366,7 @@ public class AppContextImpl implements AppComponent, AppContext,
             boolean startBackgroundTasks) {
         SubnetContext context = subnetContexts.get(subnet);
         if (context == null || !context.isValid() || context.isClosed()) {
-            context =
-                    new SubnetContextImpl(subnet, this, this,
-                            startBackgroundTasks);
+            context = new SubnetContextImpl(subnet, this);
             SubnetContext oldContext = subnetContexts.put(subnet, context);
             if (oldContext != null) {
                 oldContext.cleanup();
@@ -363,41 +380,15 @@ public class AppContextImpl implements AppComponent, AppContext,
     }
 
     @Override
-    public SubnetContext getSubnetContextFor(SubnetDescription subnet)
-            throws ConfigurationException {
-        SubnetContext subnetContext = subnetContexts.get(subnet);
-
-        if (subnetContext == null) {
-            ConfigurationException ce =
-                    new ConfigurationException(
-                            STL50009_SUBNET_CONTEXT_NOT_CREATED,
-                            subnet.getSubnetId());
-            log.warn(StringUtils.getErrorMessage(ce));
-            throw ce;
-        }
-
-        return subnetContext;
-    }
-
-    @Override
-    public void clearCertsInfoFor(SubnetDescription subnet) {
-        adapter.clearCertsInfoFor(subnet);
-    }
-
-    @Override
-    public SubnetDescription checkConnectivityFor(SubnetDescription subnet) {
-        return adapter.checkConnectivityFor(subnet);
-    }
-
-    @Override
     public void shutdown() {
-        log.info("AppContext shutdown");
         processingService.shutdown();
-    }
-
-    @Override
-    public IConnection createConnection(SubnetDescription subnet) {
-        return connect(subnet);
+        for (SubnetContext subnetCtx : subnetContexts.values()) {
+            try {
+                subnetCtx.cleanup();
+            } catch (Exception e) {
+                log.error("Error shutting down SubnetContext", e);
+            }
+        }
     }
 
     public DatabaseManager getDatabaseManager() {
@@ -412,15 +403,8 @@ public class AppContextImpl implements AppComponent, AppContext,
         return threadCount.getAndIncrement();
     }
 
-    public boolean getUseDb() {
-        return useDB;
-    }
-
-    /**
-     * @return the includeInactive
-     */
-    public boolean isIncludeInactive() {
-        return includeInactive;
+    public boolean getUseNewAdapter() {
+        return useNewAdapter;
     }
 
     protected SubnetDescription getSubnet(String subnetName)
@@ -453,13 +437,14 @@ public class AppContextImpl implements AppComponent, AppContext,
         return subnet;
     }
 
-    protected STLConnection connect(SubnetDescription subnet) {
+    protected ISession createSession(SubnetDescription subnet,
+            ISMEventListener listener) {
         try {
-            STLConnection conn = adapter.connect(subnet);
-            if (conn != null) {
-                conn.getConnectionDescription().setName(subnet.getName());
+            ISession session = adapter.createSession(subnet, listener);
+            if (session != null) {
+                session.getSubnetDescription().setName(subnet.getName());
             }
-            return conn;
+            return session;
         } catch (Exception e) {
             ConfigurationException ce =
                     new ConfigurationException(

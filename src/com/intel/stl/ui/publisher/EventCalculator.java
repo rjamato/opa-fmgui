@@ -35,8 +35,47 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.16.2.1  2015/08/12 15:26:59  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.27  2015/09/29 13:29:14  fernande
+ *  Archive Log:    PR129920 - revisit health score calculation. Fixed divide by zero in B2B configuration; the score will be zero if nothing is found in the fabric.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.26  2015/09/25 20:54:02  fernande
+ *  Archive Log:    PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
+ *  Archive Log:
+ *  Archive Log:    Revision 1.25  2015/08/31 22:33:41  jijunwan
+ *  Archive Log:    PR 130197 - Calculated fabric health above 100% when entire fabric is rebooted
+ *  Archive Log:    - handle null pointer
+ *  Archive Log:
+ *  Archive Log:    Revision 1.24  2015/08/31 22:01:44  jijunwan
+ *  Archive Log:    PR 130197 - Calculated fabric health above 100% when entire fabric is rebooted
+ *  Archive Log:    - changed to only use information from ImageInfo for calculation
+ *  Archive Log:
+ *  Archive Log:    Revision 1.23  2015/08/18 14:28:37  jijunwan
+ *  Archive Log:    PR 130033 - Fix critical issues found by Klocwork or FindBugs
+ *  Archive Log:    - DateFormat is not thread safe. Changed to create new DateFormat to avoid sharing it among different threads
+ *  Archive Log:
+ *  Archive Log:    Revision 1.22  2015/08/17 18:54:08  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.21  2015/08/17 17:47:52  jijunwan
+ *  Archive Log:    added null check
+ *  Archive Log:
+ *  Archive Log:    Revision 1.20  2015/08/11 14:10:35  jijunwan
+ *  Archive Log:    PR 129917 - No update on event statistics
+ *  Archive Log:    - Added a new subscriber to allow periodically getting state summary
+ *  Archive Log:
+ *  Archive Log:    Revision 1.19  2015/08/07 19:11:41  jijunwan
+ *  Archive Log:    PR 129775 - disable node not available on Worst Node Card
+ *  Archive Log:    - improved to display event type
+ *  Archive Log:    - improved to disable jumping buttons when event type is PORT_INACTIVE
+ *  Archive Log:
+ *  Archive Log:    Revision 1.18  2015/06/29 15:05:48  jypak
+ *  Archive Log:    PR 129284 - Incorrect QSFP field name.
+ *  Archive Log:    Field name fix has been implemented. Also, introduced a conversion to Date object to add flexibility to display date code.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.17  2015/05/12 17:43:28  rjtierne
+ *  Archive Log:    PR 128624 - Klocwork and FindBugs fixes for UI
+ *  Archive Log:    In method clear(), reorganized code to check events for null before trying synchronize on it.
  *  Archive Log:
  *  Archive Log:    Revision 1.16  2015/03/30 18:34:41  jypak
  *  Archive Log:    Introduce a UserSettingsProcessor to handle different use cases for user settings via Setup Wizard.
@@ -99,28 +138,44 @@
 
 package com.intel.stl.ui.publisher;
 
+import static com.intel.stl.ui.model.HealthScoreAttribute.NUM_HFILINKS;
+import static com.intel.stl.ui.model.HealthScoreAttribute.NUM_HFIS;
+import static com.intel.stl.ui.model.HealthScoreAttribute.NUM_ISLINKS;
+import static com.intel.stl.ui.model.HealthScoreAttribute.NUM_NONDEGRADED_HFILINKS;
+import static com.intel.stl.ui.model.HealthScoreAttribute.NUM_NONDEGRADED_ISLINKS;
+import static com.intel.stl.ui.model.HealthScoreAttribute.NUM_PORTS;
+import static com.intel.stl.ui.model.HealthScoreAttribute.NUM_SWITCHES;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.intel.stl.api.configuration.EventType;
 import com.intel.stl.api.notice.EventDescription;
 import com.intel.stl.api.notice.IEventListener;
 import com.intel.stl.api.notice.IEventSource;
 import com.intel.stl.api.notice.NodeSource;
 import com.intel.stl.api.notice.NoticeSeverity;
+import com.intel.stl.api.performance.ImageInfoBean;
+import com.intel.stl.api.subnet.FabricInfoBean;
 import com.intel.stl.api.subnet.NodeType;
+import com.intel.stl.ui.common.Util;
+import com.intel.stl.ui.model.HealthScoreAttribute;
 import com.intel.stl.ui.model.NodeScore;
 import com.intel.stl.ui.model.StateSummary;
 import com.intel.stl.ui.model.TimedScore;
+import com.intel.stl.ui.model.UserPreference;
+import com.intel.stl.ui.publisher.NodeEvents.EventItem;
 
 public class EventCalculator implements IEventListener<EventDescription>,
         IStateMonitor {
@@ -140,32 +195,22 @@ public class EventCalculator implements IEventListener<EventDescription>,
                 }
             };
 
-    private static Comparator<NodeEvents> HEALTH_COMPARATOR =
-            new Comparator<NodeEvents>() {
+    /**
+     * Initial nodes distribution. NOTE, we set it once when we construct this
+     * class. So if we have a subnet with 100 nodes, and then 50 of them are
+     * down, we will get a bad health score. If we update <code>nodes</code> to
+     * latest distribution, then we will likely get a health score of 100 that
+     * doesn't make sense to a user. If the user close FM GUI and then re-launch
+     * it, we will use the new nodes distribution as the reference. In another
+     * words, we use whatever nodes distribution we get when we start FM GUI as
+     * the reference number.
+     */
+    private final Map<NodeType, Integer> baseNodesDist;
 
-                @Override
-                public int compare(NodeEvents o1, NodeEvents o2) {
-                    int res =
-                            Double.compare(o1.getHealthScore(),
-                                    o2.getHealthScore());
-                    if (res == 0) {
-                        int s1 = o1.getSize();
-                        int s2 = o2.getSize();
-                        res = s1 > s2 ? -1 : (s1 < s2 ? 1 : 0);
-                    }
-                    if (res == 0) {
-                        int l1 = o1.getLid();
-                        int l2 = o2.getLid();
-                        res = l1 > l2 ? 1 : (l1 < l2 ? -1 : 0);
-                    }
-                    // TODO: may need to consider compare by traffic when they
-                    // are tie?
-                    return res;
-                }
-
-            };
-
-    private int totalNodes;
+    /**
+     * The total number of nodes.
+     */
+    private final int totalNodes;
 
     private volatile int numWorstNodes;
 
@@ -189,6 +234,20 @@ public class EventCalculator implements IEventListener<EventDescription>,
 
     private boolean hasSweep;
 
+    private boolean weightsChanged = false;
+
+    private final EnumMap<HealthScoreAttribute, Long> values;
+
+    private final EnumMap<HealthScoreAttribute, Long> totals;
+
+    private final EnumMap<HealthScoreAttribute, Integer> weightSettings;
+
+    private final EnumMap<HealthScoreAttribute, Integer> weights;
+
+    private long[] baseline = new long[] { 0, 0, 0, 0, 0, 0 };
+
+    private int totalWeight;
+
     private final List<IStateChangeListener> stateChangeListeners =
             new CopyOnWriteArrayList<IStateChangeListener>();
 
@@ -197,16 +256,39 @@ public class EventCalculator implements IEventListener<EventDescription>,
      * 
      * @param timeWindowInSeconds
      */
-    public EventCalculator(int timeWindowInSeconds, int totalNodes,
-            int numWorstNodes) {
+    public EventCalculator(EnumMap<NodeType, Integer> nodes,
+            UserPreference userPreference) {
         super();
-        this.timeWindow = timeWindowInSeconds * 1000;
-
-        this.totalNodes = totalNodes;
-        this.numWorstNodes = numWorstNodes;
+        setTimeWindowInSeconds(userPreference.getTimeWindowInSeconds());
+        if (nodes != null) {
+            baseNodesDist = Collections.unmodifiableMap(nodes);
+        } else {
+            baseNodesDist = Collections.emptyMap();
+        }
+        int sum = 0;
+        for (Integer count : baseNodesDist.values()) {
+            if (count != null) {
+                sum += count;
+            }
+        }
+        this.totalNodes = sum;
+        setNumWorstNodes(userPreference.getNumWorstNodes());
         switchStates = new int[NoticeSeverity.values().length];
         hfiStates = new int[NoticeSeverity.values().length];
         events = new LinkedList<NodeEvents>();
+        weightSettings =
+                new EnumMap<HealthScoreAttribute, Integer>(
+                        HealthScoreAttribute.class);
+        values =
+                new EnumMap<HealthScoreAttribute, Long>(
+                        HealthScoreAttribute.class);
+        totals =
+                new EnumMap<HealthScoreAttribute, Long>(
+                        HealthScoreAttribute.class);
+        weights =
+                new EnumMap<HealthScoreAttribute, Integer>(
+                        HealthScoreAttribute.class);
+        setHealthScoreWeights(userPreference);
         // Initialize switch and HFI states.
         sweep();
 
@@ -247,11 +329,10 @@ public class EventCalculator implements IEventListener<EventDescription>,
     }
 
     /**
-     * @param totalNodes
-     *            the totalNodes to set
+     * @return the baseNodesDist
      */
-    public void setTotalNodes(int totalNodes) {
-        this.totalNodes = totalNodes;
+    public Map<NodeType, Integer> getBaseNodesDist() {
+        return baseNodesDist;
     }
 
     /*
@@ -266,13 +347,12 @@ public class EventCalculator implements IEventListener<EventDescription>,
             IEventSource source = ed.getSource();
             if (source instanceof NodeSource) {
                 NodeSource nodeSource = (NodeSource) source;
-                addEvent(nodeSource, ed.getDate().getTime(), ed.getSeverity());
+                addEvent(nodeSource, ed.getDate().getTime(), ed.getType(),
+                        ed.getSeverity());
 
                 if (DEBUG) {
                     Date date = new Date(ed.getDate().getTime());
-                    SimpleDateFormat df2 =
-                            new SimpleDateFormat("dd/MM/yy HH:mm:ss.sss");
-                    String dateText = df2.format(date);
+                    String dateText = Util.getYYYYMMDDHHMMSS().format(date);
 
                     System.out.println("new event time " + dateText);
                 }
@@ -285,7 +365,7 @@ public class EventCalculator implements IEventListener<EventDescription>,
         updateListeners();
     }
 
-    protected void addEvent(NodeSource nodeSource, long time,
+    protected void addEvent(NodeSource nodeSource, long time, EventType type,
             NoticeSeverity severity) {
         synchronized (events) {
             NodeEvents ne = new NodeEvents(nodeSource);
@@ -297,7 +377,7 @@ public class EventCalculator implements IEventListener<EventDescription>,
             } else {
                 events.add(ne);
             }
-            NoticeSeverity newSeverity = ne.addEvent(time, severity);
+            NoticeSeverity newSeverity = ne.addEvent(time, type, severity);
             // System.out.println("AddEvent "+oldSeverity+" "+newSeverity+" "+ne);
             updateStates(nodeSource.getNodeType(), oldSeverity, newSeverity);
         }
@@ -318,8 +398,9 @@ public class EventCalculator implements IEventListener<EventDescription>,
      * @param userSettings
      */
     public void clear() {
-        synchronized (events) {
-            if (events != null && !events.isEmpty()) {
+
+        if (events != null && !events.isEmpty()) {
+            synchronized (events) {
                 events.clear();
                 synchronized (critical) {
                     eventsImage.clear();
@@ -443,23 +524,56 @@ public class EventCalculator implements IEventListener<EventDescription>,
             return null;
         }
 
+        double healthScore = 0;
+        StringBuffer tipBuff = new StringBuffer();
+        tipBuff.append("<html>");
+        synchronized (critical) {
+            for (HealthScoreAttribute attr : values.keySet()) {
+                double value = values.get(attr);
+                double weight = weights.get(attr);
+                double score = (value / totalWeight) * weight;
+                healthScore += score;
+                if (totals.get(attr) > 0) {
+                    long total = totals.get(attr);
+                    String desc = attr.getDescription();
+                    tipBuff.append(String.format("%1$-25s : %2$6.0f / %3$d",
+                            desc, value, total));
+                    tipBuff.append("<br>");
+                }
+            }
+        }
+        tipBuff.append("</html>");
+        // In some instances, we need to round up to show 100% (decimal
+        // positions are truncated); this addition is negligible
+        healthScore += 0.000000000001;
+        return new TimedScore(sweepTime, healthScore * 100, tipBuff.toString());
+    }
+
+    /*-
+    @Override
+    public TimedScore getHealthScore() {
+        if (totalNodes <= 0 || !hasSweep) {
+            return null;
+        }
+
         double penaltySum = 0;
         synchronized (critical) {
             for (int i = 0; i < switchStatesImage.length; i++) {
                 penaltySum +=
                         switchStatesImage[i]
-                                * (1 - HEALTH_WEIGHTS.get(NoticeSeverity
+     * (1 - HEALTH_WEIGHTS.get(NoticeSeverity
                                         .values()[i]));
             }
             for (int i = 0; i < hfiStatesImage.length; i++) {
                 penaltySum +=
                         hfiStatesImage[i]
-                                * (1 - HEALTH_WEIGHTS.get(NoticeSeverity
+     * (1 - HEALTH_WEIGHTS.get(NoticeSeverity
                                         .values()[i]));
             }
         }
         return new TimedScore(sweepTime, (1.0 - penaltySum / totalNodes) * 100);
     }
+     */
 
     /*
      * (non-Javadoc)
@@ -511,16 +625,20 @@ public class EventCalculator implements IEventListener<EventDescription>,
         List<NodeEvents> nodes = null;
         synchronized (critical) {
             nodes = new ArrayList<NodeEvents>(eventsImage);
-            size = Math.min(size, eventsImage.size());
         }
-        Collections.sort(nodes, HEALTH_COMPARATOR);
+        size = Math.min(size, nodes.size());
         NodeScore[] res = new NodeScore[size];
         for (int i = 0; i < size; i++) {
             NodeEvents ne = nodes.get(i);
-            res[i] =
-                    new NodeScore(ne.getName(), ne.getNodeType(), ne.getLid(),
-                            sweepTime, ne.getHealthScore());
+            EventItem item = ne.getLatestEvent();
+            if (item != null) {
+                res[i] =
+                        new NodeScore(ne.getName(), ne.getNodeType(),
+                                ne.getLid(), item.getType(), sweepTime,
+                                item.getHealthScore());
+            }
         }
+        Arrays.sort(res);
         return res;
     }
 
@@ -532,7 +650,8 @@ public class EventCalculator implements IEventListener<EventDescription>,
             return null;
         }
 
-        StateSummary res = new StateSummary();
+        sweep();
+        StateSummary res = new StateSummary(baseNodesDist);
         if (DEBUG) {
             System.out.println("All Events");
             for (NodeEvents ne : eventsImage) {
@@ -562,6 +681,134 @@ public class EventCalculator implements IEventListener<EventDescription>,
         return res;
     }
 
+    public boolean updateUserPreference(UserPreference oldUserPreference,
+            UserPreference newUserPreference) {
+        int oldTimeWindow = oldUserPreference.getTimeWindowInSeconds();
+        int newTimeWindow = newUserPreference.getTimeWindowInSeconds();
+
+        boolean userPrefChanged = false;
+        // Set time window only if it's not same as old one.
+        if (oldTimeWindow < newTimeWindow) {
+            setTimeWindowInSeconds(newTimeWindow);
+            userPrefChanged = true;
+        } else if (oldTimeWindow > newTimeWindow) {
+            setTimeWindowInSeconds(newTimeWindow);
+            sweep();
+            updateListeners();
+            userPrefChanged = true;
+        }
+
+        int oldWorstNodes = oldUserPreference.getNumWorstNodes();
+        int newWorstNodes = newUserPreference.getNumWorstNodes();
+        if (oldWorstNodes != newWorstNodes) {
+            setNumWorstNodes(newUserPreference.getNumWorstNodes());
+            updateListeners();
+            userPrefChanged = true;
+        }
+        setHealthScoreWeights(newUserPreference);
+        return userPrefChanged;
+    }
+
+    public void processHealthScoreStats(FabricInfoBean fabricInfo,
+            ImageInfoBean imageInfo) {
+        long numSwitches = fabricInfo.getNumSwitches();
+        long numHFIs = fabricInfo.getNumHFIs();
+        long numSwitchPorts = imageInfo.getNumSwitchPorts();
+        long numHFIPorts = imageInfo.getNumHFIPorts();
+        long numISLs =
+                fabricInfo.getNumInternalISLs()
+                        + fabricInfo.getNumExternalISLs()
+                        + fabricInfo.getNumDegradedISLs();
+        long numHFILinks =
+                fabricInfo.getNumInternalHFILinks()
+                        + fabricInfo.getNumExternalHFILinks()
+                        + fabricInfo.getNumDegradedHFILinks();
+        long[] newTotal =
+                new long[] { numSwitches, numHFIs, numSwitchPorts, numHFIPorts,
+                        numISLs, numHFILinks };
+        boolean baselineChanged = false;
+        for (int i = 0; i < baseline.length; i++) {
+            if (newTotal[i] > baseline[i]) {
+                baselineChanged = true;
+                baseline[i] = newTotal[i];
+            }
+        }
+        if (weightsChanged || baselineChanged) {
+            resetWeights();
+        }
+        values.put(NUM_SWITCHES, numSwitches);
+        values.put(NUM_HFIS, numHFIs);
+        values.put(NUM_ISLINKS, numISLs);
+        values.put(NUM_HFILINKS, numHFILinks);
+        values.put(NUM_PORTS, numSwitchPorts + numHFIPorts);
+        values.put(NUM_NONDEGRADED_ISLINKS,
+                baseline[4] - fabricInfo.getNumDegradedISLs());
+        values.put(NUM_NONDEGRADED_HFILINKS,
+                baseline[5] - fabricInfo.getNumDegradedHFILinks());
+    }
+
+    private void resetWeights() {
+        int sumBaselinesWeights = 0;
+
+        // Attribute Number of Switches
+        int setting = weightSettings.get(NUM_SWITCHES);
+        int newWeight;
+        if (baseline[0] == 0) {
+            newWeight = 0;
+        } else {
+            newWeight =
+                    (int) ((setting == -1) ? ((baseline[2] / baseline[0]) + 1)
+                            : setting); // numSwitchPorts / numSwitches + 1
+        }
+        weights.put(NUM_SWITCHES, newWeight);
+        totals.put(NUM_SWITCHES, baseline[0]);
+        sumBaselinesWeights += baseline[0] * newWeight;
+
+        // Attribute Number of HFIs
+        setting = weightSettings.get(NUM_HFIS);
+        if (baseline[1] == 0) {
+            newWeight = 0;
+        } else {
+            newWeight =
+                    (int) ((setting == -1) ? ((baseline[3] / baseline[1]) + 1)
+                            : setting); // numHFIPorts / numHFIs + 1
+        }
+        weights.put(NUM_HFIS, newWeight);
+        totals.put(NUM_HFIS, baseline[1]);
+        sumBaselinesWeights += baseline[1] * newWeight;
+
+        // Attribute Number of Ports
+        setting = weightSettings.get(NUM_PORTS);
+        weights.put(NUM_PORTS, setting);
+        totals.put(NUM_PORTS, baseline[2] + baseline[3]);
+        sumBaselinesWeights += (baseline[2] + baseline[3]) * setting;
+
+        // Attribute Number of InterSwitch Links
+        setting = weightSettings.get(NUM_ISLINKS);
+        weights.put(NUM_ISLINKS, setting);
+        totals.put(NUM_ISLINKS, baseline[4]);
+        sumBaselinesWeights += baseline[4] * setting;
+
+        // Attribute Number of HFI Links
+        setting = weightSettings.get(NUM_HFILINKS);
+        weights.put(NUM_HFILINKS, setting);
+        totals.put(NUM_HFILINKS, baseline[5]);
+        sumBaselinesWeights += baseline[5] * setting;
+
+        // Attribute Number of Non-degraded ISLs
+        setting = weightSettings.get(NUM_NONDEGRADED_ISLINKS);
+        weights.put(NUM_NONDEGRADED_ISLINKS, setting);
+        totals.put(NUM_NONDEGRADED_ISLINKS, baseline[4]);
+        sumBaselinesWeights += baseline[4] * setting;
+
+        // Attribute Number of Non-degraded HFI links
+        setting = weightSettings.get(NUM_NONDEGRADED_HFILINKS);
+        weights.put(NUM_NONDEGRADED_HFILINKS, setting);
+        totals.put(NUM_NONDEGRADED_HFILINKS, baseline[5]);
+        sumBaselinesWeights += baseline[5] * setting;
+        this.totalWeight = sumBaselinesWeights;
+    }
+
     public void addListener(IStateChangeListener listener) {
         // System.out.println("EventCalculator.addListener called - "
         // + listener.toString());
@@ -577,5 +824,30 @@ public class EventCalculator implements IEventListener<EventDescription>,
     public void cleanup() {
         events = null;
         eventsImage = null;
+    }
+
+    protected void setHealthScoreWeights(UserPreference userPreference) {
+        weightsChanged = true;
+        for (HealthScoreAttribute attr : HealthScoreAttribute.values()) {
+            int weight = userPreference.getWeightForHealthScoreAttribute(attr);
+            weightSettings.put(attr, weight);
+        }
+    }
+
+    // For testing
+    protected long[] getBaseline() {
+        return baseline;
+    }
+
+    protected EnumMap<HealthScoreAttribute, Long> getValues() {
+        return values;
+    }
+
+    protected EnumMap<HealthScoreAttribute, Long> getTotals() {
+        return totals;
+    }
+
+    protected int getTotalWeight() {
+        return totalWeight;
     }
 }

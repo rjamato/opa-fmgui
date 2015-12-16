@@ -35,11 +35,24 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.15.2.2  2015/08/12 15:22:21  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.21  2015/09/26 06:17:56  jijunwan
+ *  Archive Log:    130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
+ *  Archive Log:    - added more log info
  *  Archive Log:
- *  Archive Log:    Revision 1.15.2.1  2015/05/06 19:26:32  jijunwan
- *  Archive Log:    fixed confusion method name issue found by FinfBug
+ *  Archive Log:    Revision 1.20  2015/08/17 18:49:13  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.19  2015/07/19 20:54:50  jijunwan
+ *  Archive Log:    PR 126645 - Topology Page does not show correct data after port disable/enable event
+ *  Archive Log:    - fixed sync issue on DB update and cached node distribution
+ *  Archive Log:
+ *  Archive Log:    Revision 1.18  2015/06/08 15:57:53  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Stabilizing the new FEAdapter code. Fixing null condition where noticeWrappers are accessed by the NoticeManager and it's null
+ *  Archive Log:
+ *  Archive Log:    Revision 1.17  2015/05/19 19:07:17  jijunwan
+ *  Archive Log:    PR 128797 - Notice update failed to update related notes
+ *  Archive Log:    - created a new class NoticeWrapper to store information about related nodes, and then pass this infor to EventDescription that will allow UI to upate related nodes
  *  Archive Log:
  *  Archive Log:    Revision 1.16  2015/05/01 21:37:41  jijunwan
  *  Archive Log:    fixed typo found by FindBug
@@ -86,6 +99,7 @@ import org.slf4j.LoggerFactory;
 import com.intel.stl.api.StringUtils;
 import com.intel.stl.api.notice.GenericNoticeAttrBean;
 import com.intel.stl.api.notice.NoticeBean;
+import com.intel.stl.api.notice.NoticeWrapper;
 import com.intel.stl.api.notice.TrapType;
 import com.intel.stl.api.performance.GroupInfoBean;
 import com.intel.stl.api.performance.ImageIdBean;
@@ -114,12 +128,22 @@ public class NoticeProcessTask extends AsyncTask<Future<Boolean>> {
 
     private final SAHelper helper;
 
+    private List<NoticeWrapper> noticeWrappers;
+
     public NoticeProcessTask(String subnetName, DatabaseManager dbMgr,
             CacheManager cacheMgr) {
         this.dbMgr = dbMgr;
         this.subnetName = subnetName;
         this.cacheMgr = cacheMgr;
         this.helper = cacheMgr.getSAHelper();
+        this.noticeWrappers = new ArrayList<NoticeWrapper>();
+    }
+
+    /**
+     * @return the noticePrcs
+     */
+    public List<NoticeWrapper> getNoticeWrappers() {
+        return noticeWrappers;
     }
 
     /**
@@ -134,14 +158,14 @@ public class NoticeProcessTask extends AsyncTask<Future<Boolean>> {
         // and that a topology has been saved for it.
         dbMgr.getTopologyId(subnetName);
 
-        log.info("Retrieving notices in the background for subnet: "
-                + subnetName);
-
         // This atomically gets notices in RECEIVED status and change their
         // status to INFLIGHT
         List<NoticeBean> notices =
                 dbMgr.getNotices(subnetName, NoticeStatus.RECEIVED,
                         NoticeStatus.INFLIGHT);
+        log.info("Retrieving " + notices.size()
+                + " notices in the background for subnet: " + subnetName);
+
         if (notices.size() == 0) {
             log.info("No notices to process for subnet: " + subnetName);
             return null;
@@ -163,9 +187,16 @@ public class NoticeProcessTask extends AsyncTask<Future<Boolean>> {
         log.info("waited " + (System.currentTimeMillis() - t)
                 + " ms for PM. State: success=" + success);
 
+        // prepare notices
+        noticeWrappers = new ArrayList<NoticeWrapper>(notices.size());
+        for (NoticeBean notice : notices) {
+            NoticeWrapper nw = prepareNotice(notice);
+            noticeWrappers.add(nw);
+        }
+
         // We pack as much work as possible using multiple threads; but first we
         // need to get information from the FM
-        List<NoticeProcess> noticePrcs = createNoticeProcesses(notices);
+        List<NoticeProcess> noticePrcs = createNoticeProcesses(noticeWrappers);
 
         // Start the thread to update the database; no wait, just keep a hold of
         // the Future.
@@ -177,6 +208,10 @@ public class NoticeProcessTask extends AsyncTask<Future<Boolean>> {
         // status fields (in TopologyNodeRecord and in TopologyLinkRecord),
         // never the objects themselves, which can potentially affect the caches
         // themselves.
+        // Please note that some caches, such as DBNodeCache, rely on DB, i.e.
+        // topology update. This will cause synchronization issues!! It's
+        // important to update these caches again after DB update is done. See
+        // SubnetContextImpl#processNotices for the code.
         for (NoticeProcess noticeProcess : noticePrcs) {
             try {
                 cacheMgr.updateCaches(noticeProcess);
@@ -199,78 +234,92 @@ public class NoticeProcessTask extends AsyncTask<Future<Boolean>> {
         return result;
     }
 
-    private List<NoticeProcess> createNoticeProcesses(List<NoticeBean> notices) {
+    private NoticeWrapper prepareNotice(NoticeBean notice) {
+        TrapType trapType = getTrapType(notice);
+        NoticeWrapper nw = new NoticeWrapper(notice, trapType);
+        long guid = -1;
+        int lid = -1;
+        NodeRecordBean node = null;
+        try {
+            switch (trapType) {
+                case GID_NOW_IN_SERVICE: {
+                    GIDBean gid = TrapDetail.getGID(notice.getData());
+                    guid = gid.getInterfaceID();
+                    node = helper.getNode(guid);
+                    if (node != null) {
+                        lid = node.getLid();
+                        List<LinkRecordBean> links = helper.getLinks(lid);
+                        nw.addRelatedNodes(getRelatedNodes(links));
+                    }
+                    break;
+                }
+                case GID_OUT_OF_SERVICE: {
+                    GIDBean gid = TrapDetail.getGID(notice.getData());
+                    guid = gid.getInterfaceID();
+                    node = dbMgr.getNode(subnetName, guid);
+                    if (node != null) {
+                        lid = node.getLid();
+                        LinkRecordBean link =
+                                dbMgr.getLinkBySource(subnetName, lid,
+                                        (short) 1);
+                        nw.addRelatedNode(link.getToLID());
+                    }
+                    break;
+                }
+                case LINK_PORT_CHANGE_STATE:
+                    lid = TrapDetail.getLid(notice.getData());
+                    node = helper.getNode(lid);
+                    List<LinkRecordBean> links =
+                            dbMgr.getLinks(subnetName, lid);
+                    nw.addRelatedNodes(getRelatedNodes(links));
+                    links = helper.getLinks(lid);
+                    nw.addRelatedNodes(getRelatedNodes(links));
+                    break;
+                default:
+                    log.warn("Unsupported notice " + notice);
+            }
+            if (node == null) {
+                log.error("Node information not found in FM or DB for GUID="
+                        + StringUtils.longHexString(guid) + " or LID=" + lid
+                        + " mentioned in notice: " + notice);
+                dbMgr.updateNotice(subnetName, notice.getId(),
+                        NoticeStatus.FEERROR);
+            }
+        } catch (Exception e) {
+            log.error("Error while preparing notice " + notice.getId() + ": "
+                    + notice, e);
+            dbMgr.updateNotice(subnetName, notice.getId(), NoticeStatus.FEERROR);
+        }
+        nw.setNode(node);
+        return nw;
+    }
+
+    private List<NoticeProcess> createNoticeProcesses(
+            List<NoticeWrapper> noticeWrappers) {
         List<NoticeProcess> noticePrcs = new ArrayList<NoticeProcess>();
-        for (NoticeBean notice : notices) {
-            TrapType trapType = getTrapType(notice);
-            long guid = -1;
-            int lid = -1;
-            NodeRecordBean node = null;
-            Set<Integer> relatedNodes = new HashSet<Integer>();
+        for (NoticeWrapper nw : noticeWrappers) {
             try {
-                switch (trapType) {
-                    case GID_NOW_IN_SERVICE: {
-                        GIDBean gid = TrapDetail.getGID(notice.getData());
-                        guid = gid.getInterfaceID();
-                        node = helper.getNode(guid);
-                        if (node != null) {
-                            lid = node.getLid();
-                            List<LinkRecordBean> links = helper.getLinks(lid);
-                            relatedNodes.addAll(getRelatedNodes(links));
-                        }
-                        break;
-                    }
-                    case GID_OUT_OF_SERVICE: {
-                        GIDBean gid = TrapDetail.getGID(notice.getData());
-                        guid = gid.getInterfaceID();
-                        node = dbMgr.getNode(subnetName, guid);
-                        if (node != null) {
-                            lid = node.getLid();
-                            LinkRecordBean link =
-                                    dbMgr.getLinkBySource(subnetName, lid,
-                                            (short) 1);
-                            relatedNodes.add(link.getToLID());
-                        }
-                        break;
-                    }
-                    case LINK_PORT_CHANGE_STATE:
-                        lid = TrapDetail.getLid(notice.getData());
-                        node = helper.getNode(lid);
-                        List<LinkRecordBean> links =
-                                dbMgr.getLinks(subnetName, lid);
-                        relatedNodes.addAll(getRelatedNodes(links));
-                        links = helper.getLinks(lid);
-                        relatedNodes.addAll(getRelatedNodes(links));
-                        break;
-                    default:
-                        log.warn("Unsupported notice " + notice);
-                        continue;
-                }
-                if (node == null) {
-                    log.error("Node information not found in FM or DB for GUID="
-                            + StringUtils.longHexString(guid)
-                            + " or LID="
-                            + lid + " mentioned in notice: " + notice);
-                    dbMgr.updateNotice(subnetName, notice.getId(),
-                            NoticeStatus.FEERROR);
-                    continue;
-                }
-
-                NoticeProcess np = createNoticeProcess(notice, trapType, node);
-                if (np != null) {
-                    noticePrcs.add(np);
-                }
-
-                for (int relatedLid : relatedNodes) {
-                    node = helper.getNode(relatedLid);
-                    np =
-                            createNoticeProcess(null,
-                                    TrapType.LINK_PORT_CHANGE_STATE, node);
+                NodeRecordBean node = nw.getNode();
+                if (node != null) {
+                    NoticeProcess np =
+                            createNoticeProcess(nw.getNotice(),
+                                    nw.getTrapType(), node);
                     if (np != null) {
                         noticePrcs.add(np);
                     }
+
+                    for (int relatedLid : nw.getRelatedNodes()) {
+                        node = helper.getNode(relatedLid);
+                        np =
+                                createNoticeProcess(null,
+                                        TrapType.LINK_PORT_CHANGE_STATE, node);
+                        if (np != null) {
+                            noticePrcs.add(np);
+                        }
+                    }
                 }
             } catch (Exception e) {
+                NoticeBean notice = nw.getNotice();
                 log.error("Error while processing notice " + notice.getId()
                         + ": " + notice, e);
                 dbMgr.updateNotice(subnetName, notice.getId(),

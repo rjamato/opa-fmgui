@@ -35,11 +35,20 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.24.2.2  2015/08/12 15:27:23  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.29  2015/10/06 20:21:48  fernande
+ *  Archive Log:    PR130749 - FM GUI virtual fabric information doesn't match opafm.xml file. Removed external access to textfield
  *  Archive Log:
- *  Archive Log:    Revision 1.24.2.1  2015/05/06 19:39:20  jijunwan
- *  Archive Log:    changed to directly show exception(s)
+ *  Archive Log:    Revision 1.28  2015/08/17 18:54:33  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.27  2015/07/22 19:12:15  jijunwan
+ *  Archive Log:    PR 129647 - unremovable duplicate hosts in setup wizard
+ *  Archive Log:    - fixed to only make the first one unremovable
+ *  Archive Log:
+ *  Archive Log:    Revision 1.26  2015/07/17 20:48:22  jijunwan
+ *  Archive Log:    PR 129594 - Apply new input verification on setup wizard
+ *  Archive Log:    - introduced isEditValid to allow us check whether we have valid edit
  *  Archive Log:
  *  Archive Log:    Revision 1.25  2015/05/01 21:29:13  jijunwan
  *  Archive Log:    changed to directly show exception(s)
@@ -498,8 +507,7 @@ public class SubnetWizardView extends AbstractTaskView implements ISubnetView,
         boolean secureRequirement =
                 ((keyStoreCount == secureCount) && (trustStoreCount == secureCount));
 
-        if ((multinetWizardViewListener.getTxtfldSubnetName().getText()
-                .length() > 0)
+        if ((multinetWizardViewListener.getSubnetName().length() > 0)
                 && (hostPanelCount > 0)
                 && (basicRequirement && secureRequirement)) {
 
@@ -581,7 +589,7 @@ public class SubnetWizardView extends AbstractTaskView implements ISubnetView,
     public void update(SubnetModel subnetModel) {
         HostInfo host = null;
         SubnetDescription subnet = subnetModel.getSubnet();
-        multinetWizardViewListener.setTxtfldSubnetName(subnet.getName());
+        multinetWizardViewListener.setSubnetName(subnet.getName());
 
         try {
             host = subnet.getCurrentFE();
@@ -648,7 +656,7 @@ public class SubnetWizardView extends AbstractTaskView implements ISubnetView,
      */
     @Override
     public void setSubnetName(String subnetName) {
-        multinetWizardViewListener.setTxtfldSubnetName(subnetName);
+        multinetWizardViewListener.setSubnetName(subnetName);
 
         dirty = false;
     }
@@ -660,7 +668,7 @@ public class SubnetWizardView extends AbstractTaskView implements ISubnetView,
      */
     @Override
     public String getSubnetName() {
-        return multinetWizardViewListener.getTxtfldSubnetName().getText();
+        return multinetWizardViewListener.getSubnetName();
     }
 
     protected void refresh() {
@@ -670,14 +678,16 @@ public class SubnetWizardView extends AbstractTaskView implements ISubnetView,
             @Override
             public void run() {
                 pnlHostContainer.removeAll();
+                boolean isFirst = true;
                 for (HostInfoPanel pnl : hostPanelList) {
                     pnlHostContainer.add(pnl);
                     if (pnl.getHostName().equals("")) {
                         pnl.setFocus();
                     }
 
-                    if (hostPanelList.indexOf(pnl) == 0) {
+                    if (isFirst) {
                         pnl.enableRemove(false);
+                        isFirst = false;
                     }
                 }
 
@@ -808,5 +818,14 @@ public class SubnetWizardView extends AbstractTaskView implements ISubnetView,
         // Open file chooser centered over the wizard
         return chooser.showOpenDialog(this.getParent().getParent().getParent()
                 .getParent());
+    }
+
+    public boolean isEditValid() {
+        for (HostInfoPanel hip : hostPanelList) {
+            if (!hip.isEditValid()) {
+                return false;
+            }
+        }
+        return true;
     }
 }

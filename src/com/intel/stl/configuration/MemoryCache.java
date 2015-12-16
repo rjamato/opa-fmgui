@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:21:45  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/09/26 06:17:08  jijunwan
+ *  Archive Log:    130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
+ *  Archive Log:    - added reset to clear all caches and update DB topology
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/08/17 18:48:40  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2014/11/04 14:14:41  fernande
  *  Archive Log:    NoticeManager performance improvements. Notices are now processed in batches and database update is done in parallel with cache updates. Changes to the management of caches; if a cache is not ready, no updates for a notice are carried out.
@@ -78,7 +83,7 @@ import static com.intel.stl.common.STLMessages.STL60006_EXCEPTION_REFRESHING_CAC
 import java.lang.ref.SoftReference;
 
 public abstract class MemoryCache<H> extends BaseCache {
-    public static final long DEFAULT_TICK_RESOLUTION = 1000; // 1 sec
+    public static final long DEFAULT_TICK_RESOLUTION = 9000; // 1 sec
 
     private SoftReference<H> cachedObjectReference;
 
@@ -125,6 +130,10 @@ public abstract class MemoryCache<H> extends BaseCache {
             throw refreshException;
         }
         H res = cachedObjectReference.get();
+        if (res == null) {
+            updateCache();
+            res = cachedObjectReference.get();
+        }
         return res;
     }
 
@@ -170,6 +179,16 @@ public abstract class MemoryCache<H> extends BaseCache {
             refreshException = processRefreshCacheException(e);
             return false;
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.configuration.ManagedCache#reset()
+     */
+    @Override
+    public void reset() {
+        setCachedObject(null);
     }
 
     protected abstract H retrieveObjectForCache() throws Exception;

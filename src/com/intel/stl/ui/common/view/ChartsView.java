@@ -35,8 +35,24 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7.2.1  2015/08/12 15:26:33  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.11  2015/09/21 21:40:32  jijunwan
+ *  Archive Log:    PR 130229 - The text component of all editable combo boxes should provide validation of the input
+ *  Archive Log:    - adapt to the new IntelComboBoxUI
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/08/17 18:53:36  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/08/05 03:00:44  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on charts to track chart  change, jump event
+ *  Archive Log:    - applied undo mechanism on chart section to track group change
+ *  Archive Log:    - improved OptionChartsView to support undoable data type and history selection
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/06/25 20:50:06  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on dynamic cards that can have different data sources
+ *  Archive Log:    - change to use port counter performance item
  *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/02/17 23:22:16  jijunwan
  *  Archive Log:    PR 127106 - Suggest to use same bucket range for Group Err Summary as shown in "opatop" command to plot performance graphs in FV
@@ -237,7 +253,6 @@ public class ChartsView extends JCardView<IChartsCardListener> {
             chartList =
                     new JComboBox<DatasetDescription>(
                             datasets.toArray(new DatasetDescription[0]));
-            chartList.setBorder(BorderFactory.createEmptyBorder());
             IntelComboBoxUI ui = new IntelComboBoxUI() {
 
                 /*
@@ -265,6 +280,7 @@ public class ChartsView extends JCardView<IChartsCardListener> {
                 }
 
             };
+            ui.setEditorBorder(BorderFactory.createEmptyBorder());
             ui.setArrowButtonTooltip(UILabels.STL10103_MORE_SELECTIONS
                     .getDescription());
             ui.setArrowButtonBorder(null);
@@ -331,11 +347,67 @@ public class ChartsView extends JCardView<IChartsCardListener> {
 
         ChartWrap cw = getChartWrap(name);
         chartPanel.setChart(cw.chart, cw.isJumpable);
+        super.enablePin(cw.isPinnable());
         validate();
+    }
+
+    public void selectChart(String name) {
+        if (chartList != null) {
+            DatasetDescription dd =
+                    (DatasetDescription) chartList.getSelectedItem();
+            if (!dd.getName().equals(name)) {
+                int index = indexOf(name);
+                if (index >= 0) {
+                    chartList.setSelectedIndex(index);
+                }
+                // setChart will get called again via #setSelectedIndex
+                return;
+            }
+        }
+    }
+
+    protected int indexOf(String name) {
+        for (int i = 0; i < chartList.getItemCount(); i++) {
+            DatasetDescription dd = chartList.getItemAt(i);
+            if (dd.getName().equals(name)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public JFreeChart getChart(String name) {
         return getChartWrap(name).chart;
+    }
+
+    /**
+     * <i>Description:</i> enable/disable pin for all charts
+     * 
+     * @see com.intel.stl.ui.common.view.JCardView#enablePin(boolean)
+     */
+    @Override
+    public void enablePin(boolean b) {
+        for (ChartWrap cw : charts.values()) {
+            cw.setPinnable(b);
+        }
+        super.enablePin(b);
+    }
+
+    /**
+     * 
+     * <i>Description:</i> enable/disable pin for a chart
+     * 
+     * @param name
+     *            chart name
+     * @param b
+     *            indicate whether to enable pin the specified chart
+     */
+    public void enablePin(String name, boolean b) {
+        ChartWrap cw = getChartWrap(name);
+        if (chartPanel.getChart() == cw.getChart()) {
+            super.enablePin(b);
+        }
+        cw.setPinnable(b);
     }
 
     public JFreeChart getSparkline(String name) {
@@ -372,6 +444,8 @@ public class ChartsView extends JCardView<IChartsCardListener> {
 
         boolean isJumpable;
 
+        boolean isPinnable;
+
         /**
          * Description:
          * 
@@ -382,6 +456,28 @@ public class ChartsView extends JCardView<IChartsCardListener> {
             super();
             this.chart = chart;
             this.isJumpable = isJumpable;
+        }
+
+        /**
+         * @return the chart
+         */
+        public JFreeChart getChart() {
+            return chart;
+        }
+
+        /**
+         * @return the isPinnable
+         */
+        public boolean isPinnable() {
+            return isPinnable;
+        }
+
+        /**
+         * @param isPinnable
+         *            the isPinnable to set
+         */
+        public void setPinnable(boolean isPinnable) {
+            this.isPinnable = isPinnable;
         }
 
     }

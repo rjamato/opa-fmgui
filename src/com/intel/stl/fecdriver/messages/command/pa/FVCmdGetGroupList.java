@@ -24,10 +24,36 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: FVCmdGetGroupList.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.6  2015/08/17 18:49:11  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - change backend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.5  2015/06/10 19:36:32  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: jijunwan
+ * 
+ ******************************************************************************/
 package com.intel.stl.fecdriver.messages.command.pa;
 
 import com.intel.stl.api.performance.GroupListBean;
 import com.intel.stl.api.performance.PAConstants;
+import com.intel.stl.fecdriver.MultipleResponseCommand;
 import com.intel.stl.fecdriver.messages.adapter.CommonMad;
 import com.intel.stl.fecdriver.messages.adapter.pa.GroupList;
 import com.intel.stl.fecdriver.messages.adapter.sa.SAHeader;
@@ -39,8 +65,8 @@ import com.intel.stl.fecdriver.messages.response.pa.FVRspGetGroupList;
  * @author jijunwan
  * 
  */
-public class FVCmdGetGroupList extends
-        PACommand<GroupListBean, GroupList, GroupListBean> {
+public class FVCmdGetGroupList extends PACommand<GroupList, GroupListBean>
+        implements MultipleResponseCommand<GroupListBean, FVRspGetGroupList> {
     public FVCmdGetGroupList() {
         setResponse(new FVRspGetGroupList());
     }

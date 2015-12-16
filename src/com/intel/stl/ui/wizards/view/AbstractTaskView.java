@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:26:49  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.6  2015/08/17 18:53:58  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/05/11 12:37:19  rjtierne
+ *  Archive Log:    PR 128585 - Fix errors found by Klocwork and FindBugs
+ *  Archive Log:    Remove call to resetPanel()
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/04/06 22:53:49  jijunwan
  *  Archive Log:    first round wizard polishment
@@ -94,7 +99,7 @@ public abstract class AbstractTaskView extends JPanel implements ITaskView {
     public AbstractTaskView(String title) {
         super();
         initComponents(title);
-        resetPanel();
+        // resetPanel();
     }
 
     protected void initComponents(String title) {

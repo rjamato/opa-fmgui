@@ -35,8 +35,47 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.11.2.1  2015/08/12 15:26:40  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.21  2015/09/14 19:04:34  jijunwan
+ *  Archive Log:    PR 130229 - The text component of all editable combo boxes should provide validation of the input
+ *  Archive Log:    - added exception check just in case
+ *  Archive Log:
+ *  Archive Log:    Revision 1.20  2015/09/14 16:06:58  jijunwan
+ *  Archive Log:    PR 130229 - The text component of all editable combo boxes should provide validation of the input
+ *  Archive Log:    - apply FormattedComboBoxEditor on ComponentFactory and PreferenceWizard
+ *  Archive Log:
+ *  Archive Log:    Revision 1.19  2015/09/01 12:56:16  rjtierne
+ *  Archive Log:    PR 130174 - Inconsistent checking for blank subnet "Name" field in wizard
+ *  Archive Log:    - On subnet creation, set the default subnet name to match the subnet button.
+ *  Archive Log:    Then there is no possibility to move to the next wizard with a blank subnet name.
+ *  Archive Log:    Since all fields are populated, if a field is made blank, the Next/Apply button is
+ *  Archive Log:    disabled. If any field is invalid, then clicking on Next/Apply results in an error message.
+ *  Archive Log:    - Changed cboxRefreshRateUnits to be non-editable
+ *  Archive Log:
+ *  Archive Log:    Revision 1.18  2015/08/17 18:53:48  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.17  2015/08/12 20:41:55  fisherma
+ *  Archive Log:    PR 129747 - Time Window failed when updating recommended value in Time Window.  Updated the validation and upper limit on the time property.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.16  2015/08/12 19:28:13  fisherma
+ *  Archive Log:    Store/retrieve SMTP settings in/from SECTION_PREFERENCE properties.  Cleanup unused interface.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.15  2015/08/10 22:25:05  fisherma
+ *  Archive Log:    PR 128974 - Email notification functionality.  Updated layout in the preferences tab.  Added strings to localization file.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.14  2015/08/10 17:55:48  robertja
+ *  Archive Log:    PR 128974 - Email notification functionality.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.13  2015/07/17 20:48:27  jijunwan
+ *  Archive Log:    PR 129594 - Apply new input verification on setup wizard
+ *  Archive Log:    - introduced isEditValid to allow us check whether we have valid edit
+ *  Archive Log:
+ *  Archive Log:    Revision 1.12  2015/05/11 12:37:44  rjtierne
+ *  Archive Log:    PR 128585 - Fix errors found by Klocwork and FindBugs
+ *  Archive Log:    - Added new method addDocumentListeners() which provides null pointer protection
+ *  Archive Log:    to the view form fields.
+ *  Archive Log:    - Invoked addDocumentListeners() in both constructors.
  *  Archive Log:
  *  Archive Log:    Revision 1.11  2015/04/21 21:18:41  rjtierne
  *  Archive Log:    Fixed document listeners on form fields so the Apply and Reset buttons are enabled only
@@ -86,6 +125,7 @@
 
 package com.intel.stl.ui.wizards.view.preferences;
 
+import static com.intel.stl.api.configuration.UserSettings.PROPERTY_MAIL_RECIPIENTS;
 import static com.intel.stl.api.configuration.UserSettings.PROPERTY_NUM_WORST_NODES;
 import static com.intel.stl.api.configuration.UserSettings.PROPERTY_REFRESH_RATE;
 import static com.intel.stl.api.configuration.UserSettings.PROPERTY_REFRESH_RATE_UNITS;
@@ -95,16 +135,28 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.text.DecimalFormat;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
@@ -112,14 +164,15 @@ import javax.swing.text.JTextComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.intel.stl.api.configuration.UserSettings;
 import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.ui.common.STLConstants;
+import com.intel.stl.ui.common.UIConstants;
+import com.intel.stl.ui.common.UIImages;
 import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.common.Validator;
 import com.intel.stl.ui.common.view.ComponentFactory;
+import com.intel.stl.ui.common.view.SafeNumberField;
 import com.intel.stl.ui.wizards.impl.IWizardTask;
-import com.intel.stl.ui.wizards.impl.preferences.IPreferencesControl;
 import com.intel.stl.ui.wizards.impl.preferences.PreferencesInputValidator;
 import com.intel.stl.ui.wizards.model.MultinetWizardModel;
 import com.intel.stl.ui.wizards.model.preferences.PreferencesModel;
@@ -140,16 +193,17 @@ public class PreferencesWizardView extends AbstractTaskView implements
     private static Logger log = LoggerFactory
             .getLogger(PreferencesWizardView.class);
 
-    private final String[] defaultRefreshRates = new String[] { "10", "20",
-            "30" };
+    private Integer[] defaultRefreshRates;
 
-    private JComboBox<String> cboxRefreshRate;
+    private JComboBox<Integer> cboxRefreshRate;
+
+    private SafeNumberField<Integer> txtFldRefreshRate;
 
     private JComboBox<String> cboxRefreshRateUnits;
 
-    private JTextField txtFldTimingWindow;
+    private JFormattedTextField txtFldTimingWindow;
 
-    private JTextField txtFldNumWorstNodes;
+    private JFormattedTextField txtFldNumWorstNodes;
 
     private DocumentListener isDirtyListener;
 
@@ -160,11 +214,19 @@ public class PreferencesWizardView extends AbstractTaskView implements
 
     private IMultinetWizardView multinetWizardViewListener = null;
 
-    private IPreferencesControl preferencesControlListener;
-
     private PreferencesModel preferencesModel;
 
     private boolean dirty;
+
+    private JTextArea emailListArea;
+
+    private JButton emailTestBtn;
+
+    private Pattern pattern;
+
+    private Matcher matcher;
+
+    private JScrollPane scrollPane;
 
     public PreferencesWizardView(IWizardView wizardViewListener) {
 
@@ -175,18 +237,10 @@ public class PreferencesWizardView extends AbstractTaskView implements
             // Set the document listeners again since they weren't available
             // when the super class created these fields
             createDocumentListener();
-            JTextComponent tcRefreshRate =
-                    (JTextComponent) cboxRefreshRate.getEditor()
-                            .getEditorComponent();
-            DocumentListener[] docListeners =
-                    new DocumentListener[] { isDirtyListener, setDirtyListener };
-            for (DocumentListener docListener : docListeners) {
-                tcRefreshRate.getDocument().addDocumentListener(docListener);
-                txtFldTimingWindow.getDocument().addDocumentListener(
-                        docListener);
-                txtFldNumWorstNodes.getDocument().addDocumentListener(
-                        docListener);
-            }
+
+            // Add the document listeners to the fields
+            addDocumentListeners();
+
             dirty = false;
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
@@ -203,6 +257,19 @@ public class PreferencesWizardView extends AbstractTaskView implements
             // Set the document listeners again since they weren't available
             // when the super class created these fields
             createDocumentListener();
+
+            // Add the document listeners to the fields
+            addDocumentListeners();
+
+            dirty = false;
+        } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
+        }
+    }
+
+    protected void addDocumentListeners() {
+
+        if (cboxRefreshRate != null) {
             JTextComponent tcRefreshRate =
                     (JTextComponent) cboxRefreshRate.getEditor()
                             .getEditorComponent();
@@ -214,10 +281,10 @@ public class PreferencesWizardView extends AbstractTaskView implements
                         docListener);
                 txtFldNumWorstNodes.getDocument().addDocumentListener(
                         docListener);
+                emailListArea.getDocument().addDocumentListener(docListener);
             }
-            dirty = false;
-        } catch (Exception ex) {
-            log.error(ex.getMessage(), ex);
+        } else {
+            log.error(STLConstants.K3044_REFRESH_FIELD_NULL.getValue());
         }
     }
 
@@ -229,19 +296,29 @@ public class PreferencesWizardView extends AbstractTaskView implements
     @Override
     protected JComponent getOptionComponent() {
 
-        JPanel mainPanel = new JPanel(new GridBagLayout());
-        mainPanel.setOpaque(true);
-        mainPanel.setBackground(MultinetWizardView.WIZARD_COLOR);
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
+
+        JPanel propertiesPanel = new JPanel(new GridBagLayout());
+        // mainPanel.setOpaque(true);
+        propertiesPanel.setBackground(MultinetWizardView.WIZARD_COLOR);
+        propertiesPanel
+                .setBorder(BorderFactory.createEmptyBorder(5, 25, 5, 25));
         GridBagConstraints gc = new GridBagConstraints();
+        gc.insets = new Insets(5, 10, 5, 10);
         gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.insets = new Insets(5, 2, 3, 2);
         gc.weighty = 1;
 
+        txtFldRefreshRate =
+                new SafeNumberField<Integer>(new DecimalFormat("###"),
+                        MIN_REFRESH_RATE, true, MAX_REFRESH_RATE, true);
+        txtFldRefreshRate.setValidChars(UIConstants.DIGITS);
         cboxRefreshRate =
-                ComponentFactory.createNumericComboBox(new String[] { "10",
-                        "20", "30" }, setDirtyListener, isDirtyListener);
+                ComponentFactory.createComboBox(getDefaultRefreshRates(),
+                        txtFldRefreshRate, setDirtyListener, isDirtyListener);
         cboxRefreshRate.setEditable(true);
         cboxRefreshRate.addItemListener(new ItemListener() {
+
             @Override
             public void itemStateChanged(ItemEvent e) {
                 setDirty();
@@ -251,27 +328,34 @@ public class PreferencesWizardView extends AbstractTaskView implements
         JLabel lblRefreshRate =
                 ComponentFactory.getH5Label(
                         STLConstants.K3007_REFRESH_RATE.getValue(), Font.BOLD);
+        // Right-align the label:
+        lblRefreshRate.setHorizontalAlignment(SwingConstants.RIGHT);
 
         cboxRefreshRateUnits =
                 ComponentFactory.createComboBox(new String[] {
                         STLConstants.K0012_SECONDS.getValue(),
                         STLConstants.K0011_MINUTES.getValue() },
                         setDirtyListener, isDirtyListener);
-        cboxRefreshRateUnits.setEditable(true);
+        cboxRefreshRateUnits.setEditable(false);
         cboxRefreshRateUnits.addItemListener(new ItemListener() {
+
             @Override
             public void itemStateChanged(ItemEvent e) {
-
                 setDirty();
             }
         });
 
         txtFldTimingWindow =
-                ComponentFactory.createNumericTextField(isDirtyListener,
+                ComponentFactory.createNumericTextField(
+                        PreferencesInputValidator.getInstance()
+                                .getMaxTimingLimit(), isDirtyListener,
                         setDirtyListener);
         JLabel lblTimeWindow =
                 ComponentFactory.getH5Label(
                         STLConstants.K3008_TIME_WINDOW.getValue(), Font.BOLD);
+        // Right-align the label:
+        lblTimeWindow.setHorizontalAlignment(SwingConstants.RIGHT);
+
         JLabel lblSeconds =
                 ComponentFactory.getH5Label(
                         STLConstants.K0012_SECONDS.getValue(), Font.BOLD);
@@ -283,34 +367,118 @@ public class PreferencesWizardView extends AbstractTaskView implements
                 ComponentFactory.getH5Label(
                         STLConstants.K3009_NUM_WORST_NODES.getValue(),
                         Font.BOLD);
+        // Right-align the label:
+        lblNumWorstNodes.setHorizontalAlignment(SwingConstants.RIGHT);
+
         JLabel lblNodes =
                 ComponentFactory.getH5Label(
                         STLConstants.K1024_NODE_RESOURCE.getValue(), Font.BOLD);
 
-        gc.weightx = 0;
         gc.gridwidth = 1;
-        mainPanel.add(lblRefreshRate, gc);
+        propertiesPanel.add(lblRefreshRate, gc);
         gc.weightx = 1;
-        mainPanel.add(cboxRefreshRate, gc);
+        propertiesPanel.add(cboxRefreshRate, gc);
         gc.weightx = 0;
-        gc.gridwidth = GridBagConstraints.REMAINDER;
-        mainPanel.add(cboxRefreshRateUnits, gc);
+        propertiesPanel.add(cboxRefreshRateUnits, gc);
 
+        gc.gridy = 1;
+        propertiesPanel.add(lblTimeWindow, gc);
+        gc.weightx = 1;
+        propertiesPanel.add(txtFldTimingWindow, gc);
         gc.weightx = 0;
-        gc.gridwidth = 1;
-        mainPanel.add(lblTimeWindow, gc);
-        mainPanel.add(txtFldTimingWindow, gc);
-        gc.gridwidth = GridBagConstraints.REMAINDER;
-        mainPanel.add(lblSeconds, gc);
+        propertiesPanel.add(lblSeconds, gc);
 
+        gc.gridy = 2;
+        propertiesPanel.add(lblNumWorstNodes, gc);
+        gc.weightx = 1;
+        propertiesPanel.add(txtFldNumWorstNodes, gc);
         gc.weightx = 0;
-        gc.gridwidth = 1;
-        mainPanel.add(lblNumWorstNodes, gc);
-        mainPanel.add(txtFldNumWorstNodes, gc);
-        gc.gridwidth = GridBagConstraints.REMAINDER;
-        mainPanel.add(lblNodes, gc);
+        propertiesPanel.add(lblNodes, gc);
 
+        mainPanel.setOpaque(true);
+        mainPanel.setBackground(UIConstants.INTEL_WHITE);
+        gc.insets = new Insets(10, 5, 10, 5);
+        mainPanel.add(propertiesPanel);
+        mainPanel.add(Box.createVerticalGlue());
+        mainPanel.add(createEmailSettingsPanel());
         return mainPanel;
+    }
+
+    private JPanel createEmailSettingsPanel() {
+        JLabel emailLbl =
+                ComponentFactory.getH5Label(
+                        STLConstants.K5007_WIZARD_EMAIL_PREFERENCES_LIST
+                                .getValue(), Font.BOLD);
+
+        // Email pattern to make sure user enters valid email
+        pattern = Pattern.compile(Util.EMAIL_PATTERN);
+
+        emailListArea = new JTextArea();
+        emailListArea.setText("");
+        emailListArea.setOpaque(true);
+        emailListArea.setRows(3);
+        emailListArea.setFont(UIConstants.H5_FONT.deriveFont(Font.PLAIN));
+        emailListArea.setWrapStyleWord(true);
+        emailListArea.setLineWrap(true);
+        emailListArea.getDocument().putProperty("emailList", emailListArea);
+
+        scrollPane = new JScrollPane(emailListArea);
+        scrollPane.setBorder(BorderFactory
+                .createLineBorder(UIConstants.INTEL_BORDER_GRAY));
+
+        emailTestBtn =
+                ComponentFactory.getImageButton(UIImages.PLAY.getImageIcon());
+        emailTestBtn
+                .setToolTipText(STLConstants.K5008_WIZARD_EMAIL_TEST_BTN_TOOLTIP
+                        .getValue());
+        emailTestBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sendTestEmail();
+            }
+        });
+
+        JLabel emailTestLbl =
+                ComponentFactory.getH5Label(
+                        STLConstants.K5009_WIZARD_EMAIL_TEST_LABEL_TEXT
+                                .getValue(), Font.BOLD);
+        emailTestLbl.setHorizontalAlignment(SwingConstants.RIGHT);
+
+        JPanel emailSettingsPanel = new JPanel();
+        emailSettingsPanel.setOpaque(true);
+        emailSettingsPanel.setBackground(UIConstants.INTEL_WHITE);
+
+        emailSettingsPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0,
+                10));
+        emailSettingsPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 3, 0, 0);
+        gbc.weightx = 1;
+        emailSettingsPanel.add(emailLbl, gbc);
+        gbc.weightx = 0;
+        emailSettingsPanel.add(emailTestLbl, gbc);
+        gbc.insets = new Insets(0, 3, 0, 10);
+        emailSettingsPanel.add(emailTestBtn, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 1;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        emailSettingsPanel.add(scrollPane, gbc);
+
+        return emailSettingsPanel;
+    }
+
+    protected Integer[] getDefaultRefreshRates() {
+        if (defaultRefreshRates == null) {
+            defaultRefreshRates = new Integer[] { 10, 20, 30 };
+        }
+        return defaultRefreshRates;
+    }
+
+    public void sendTestEmail() {
+        String recipients = emailListArea.getText();
+        multinetWizardViewListener.onEmailTest(recipients);
     }
 
     @Override
@@ -318,9 +486,9 @@ public class PreferencesWizardView extends AbstractTaskView implements
         super.setWizardListener(listener);
     }
 
-    protected void addCBoxItem(String item, JComboBox<String> cbox) {
+    protected void addCBoxItem(Integer item, JComboBox<Integer> cbox) {
         for (int i = 0; i < cbox.getItemCount(); i++) {
-            String history = cbox.getItemAt(i);
+            Integer history = cbox.getItemAt(i);
             if (item.equals(history)) {
                 return;
             }
@@ -361,19 +529,33 @@ public class PreferencesWizardView extends AbstractTaskView implements
 
                 @Override
                 public void insertUpdate(DocumentEvent e) {
-                    setDirty();
+                    doOnEdit(e);
                 }
 
                 @Override
                 public void removeUpdate(DocumentEvent e) {
-                    setDirty();
+                    doOnEdit(e);
                 }
 
                 @Override
                 public void changedUpdate(DocumentEvent e) {
-                    setDirty();
+                    doOnEdit(e);
                 }
             };
+        }
+    }
+
+    private void doOnEdit(DocumentEvent e) {
+        Object emailListComp = e.getDocument().getProperty("emailList");
+        if (emailListComp != null && emailListComp.equals(emailListArea)) {
+            // If the change is for the email list, only set dirty
+            // if typed information is correct
+            if (isEmailListValid()) {
+                setDirty();
+            }
+        } else {
+            // For all other components call setDirty():
+            setDirty();
         }
     }
 
@@ -398,6 +580,42 @@ public class PreferencesWizardView extends AbstractTaskView implements
         }
     }
 
+    private boolean isEmailListValid() {
+        boolean valid = false;
+        if (isVisible()) {
+
+            String emailListStr = emailListArea.getText().trim();
+            if (emailListStr.isEmpty()) {
+                // Set border to normal color as empty list is allowed
+                scrollPane.setBorder(BorderFactory
+                        .createLineBorder(UIConstants.INTEL_BORDER_GRAY));
+                valid = true;
+                return valid;
+            }
+
+            String[] emails = emailListStr.split(";");
+            for (int i = 0; i < emails.length; i++) {
+                matcher = pattern.matcher(emails[i].trim());
+                if (matcher.matches()) {
+                    // Set border to normal color
+                    scrollPane.setBorder(BorderFactory
+                            .createLineBorder(UIConstants.INTEL_BORDER_GRAY));
+                    multinetWizardViewListener.enableApply(true);
+                    emailTestBtn.setEnabled(true);
+                    valid = true;
+                } else {
+                    // Set border to red color and disable 'Apply' button
+                    scrollPane.setBorder(BorderFactory
+                            .createLineBorder(UIConstants.INTEL_DARK_RED));
+                    multinetWizardViewListener.enableApply(false);
+                    emailTestBtn.setEnabled(false);
+                    valid = false;
+                }
+            }
+        }
+        return valid;
+    }
+
     public void clearPanel() {
         cboxRefreshRate.setSelectedIndex(0);
         cboxRefreshRateUnits.setSelectedIndex(0);
@@ -412,54 +630,55 @@ public class PreferencesWizardView extends AbstractTaskView implements
      */
     @Override
     public void resetPanel() {
+        // Get properties from the model
+        Properties preferences = preferencesModel.getPreferences();
 
-        if (preferencesControlListener != null) {
-
-            UserSettings userSettings =
-                    preferencesControlListener.getUserSettings();
-            Properties preferences = null;
-            try {
-                preferences = userSettings.getUserPreference();
-            } catch (Exception e) {
-                e.printStackTrace();
+        if (preferences != null) {
+            // Reinitialize combo box
+            for (Integer value : getDefaultRefreshRates()) {
+                addCBoxItem(value, cboxRefreshRate);
             }
 
-            if (preferences != null) {
+            // Select the units previously stored
+            String unitStr =
+                    preferences.getProperty(PROPERTY_REFRESH_RATE_UNITS);
+            TimeUnit unit = TimeUnit.valueOf(unitStr.toUpperCase());
+            unitStr = PreferencesInputValidator.getTimeUnitString(unit);
+            cboxRefreshRateUnits.setSelectedItem(unitStr);
 
-                // Reinitialize combo box
-                for (String str : defaultRefreshRates) {
-                    addCBoxItem(str, cboxRefreshRate);
+            // If units is in minutes, convert the refresh rate value
+            String storeValue = preferences.getProperty(PROPERTY_REFRESH_RATE);
+            int refreshRate = 5;
+            if (storeValue != null) {
+                try {
+                    refreshRate = Integer.parseInt(storeValue);
+                } catch (NumberFormatException nfe) {
+                    // shouldn't happen
+                    log.error("Invalid refresh rate '" + storeValue
+                            + "' from DB.", nfe);
+                    nfe.printStackTrace();
                 }
-
-                // Select the units previously stored
-                String unitStr =
-                        preferences.getProperty(PROPERTY_REFRESH_RATE_UNITS);
-                TimeUnit unit = TimeUnit.valueOf(unitStr.toUpperCase());
-                unitStr = PreferencesInputValidator.getTimeUnitString(unit);
-                cboxRefreshRateUnits.setSelectedItem(unitStr);
-
-                // If units is in minutes, convert the refresh rate value
-                String storeValue =
-                        preferences.getProperty(PROPERTY_REFRESH_RATE);
-                int refreshRate =
-                        storeValue == null ? 5 : Integer.parseInt(storeValue);
-
-                // Add the refresh rate from storage if it's not in the list
-                if (Validator.integerInRange(refreshRate, MIN_REFRESH_RATE,
-                        MAX_REFRESH_RATE)) {
-                    addCBoxItem(String.valueOf(refreshRate), cboxRefreshRate);
-                    cboxRefreshRate.setSelectedItem(refreshRate);
-                }
-
-                // Display the timing window and # worst nodes
-                txtFldTimingWindow.setText(preferences
-                        .getProperty(PROPERTY_TIMING_WINDOW));
-                txtFldNumWorstNodes.setText(preferences
-                        .getProperty(PROPERTY_NUM_WORST_NODES));
-
-                closeStatusPanel();
-                dirty = false;
             }
+
+            // Add the refresh rate from storage if it's not in the list
+            if (Validator.integerInRange(refreshRate, MIN_REFRESH_RATE,
+                    MAX_REFRESH_RATE)) {
+                addCBoxItem(refreshRate, cboxRefreshRate);
+                cboxRefreshRate.setSelectedItem(refreshRate);
+            }
+
+            // Display the timing window and # worst nodes
+            txtFldTimingWindow.setText(preferences
+                    .getProperty(PROPERTY_TIMING_WINDOW));
+            txtFldNumWorstNodes.setText(preferences
+                    .getProperty(PROPERTY_NUM_WORST_NODES));
+
+            emailListArea.setText(preferences
+                    .getProperty(PROPERTY_MAIL_RECIPIENTS));
+            emailTestBtn.setEnabled(true);
+
+            closeStatusPanel();
+            dirty = false;
         }
     }
 
@@ -503,25 +722,11 @@ public class PreferencesWizardView extends AbstractTaskView implements
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.intel.stl.ui.wizards.view.preferences.IPreferencesView#setControlListener
-     * (com.intel.stl.ui.wizards.impl.preferences.IPreferencesControl)
-     */
-    @Override
-    public void setControlListener(IPreferencesControl listener) {
-
-        this.preferencesControlListener = listener;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see com.intel.stl.ui.wizards.view.preferences.IPreferencesView#
      * getRefreshRate()
      */
     @Override
     public String getRefreshRate() {
-
         return cboxRefreshRate.getSelectedItem().toString();
     }
 
@@ -578,8 +783,17 @@ public class PreferencesWizardView extends AbstractTaskView implements
             public void run() {
                 preferencesModel = model.getPreferencesModel();
 
-                cboxRefreshRate.setSelectedItem(Integer
-                        .valueOf(preferencesModel.getRefreshRateInSeconds()));
+                try {
+                    Integer refreshRate =
+                            Integer.valueOf(preferencesModel
+                                    .getRefreshRateInSeconds());
+                    addCBoxItem(refreshRate, cboxRefreshRate);
+                    cboxRefreshRate.setSelectedItem(refreshRate);
+                } catch (NumberFormatException nfe) {
+                    // shouldn't happen
+                    nfe.printStackTrace();
+                    cboxRefreshRate.setSelectedIndex(0);
+                }
 
                 cboxRefreshRateUnits.setSelectedItem(preferencesModel
                         .getRefreshRateUnits());
@@ -588,7 +802,36 @@ public class PreferencesWizardView extends AbstractTaskView implements
                         .getTimingWindowInSeconds());
 
                 txtFldNumWorstNodes.setText(preferencesModel.getNumWorstNodes());
+
+                emailListArea.setText(preferencesModel.getMailRecipients());
+
+                dirty = false;
             }
         });
+    }
+
+    /**
+     * <i>Description:</i>
+     * 
+     * @return
+     */
+    public boolean isEditValid() {
+        return txtFldTimingWindow.isEditValid()
+                && txtFldNumWorstNodes.isEditValid()
+                && txtFldRefreshRate.isEditValid();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.wizards.view.preferences.IPreferencesView#getEmailList()
+     * 
+     * Returns a String of email addresses separated by semicolon. This string
+     * may contain white spaces.
+     */
+    @Override
+    public String getEmailList() {
+        return emailListArea.getText().trim();
     }
 }

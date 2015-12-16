@@ -35,11 +35,16 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5.2.2  2015/08/12 15:26:34  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.9  2015/08/17 18:53:38  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.5.2.1  2015/05/06 19:39:13  jijunwan
- *  Archive Log:    changed to directly show exception(s)
+ *  Archive Log:    Revision 1.8  2015/07/14 17:00:58  jijunwan
+ *  Archive Log:    PR 129541 - Should forbid save or deploy when there is invalid edit on management panel
+ *  Archive Log:    - removed unnecessary argument for warning message display
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/05/29 20:43:46  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Second wave of changes: the application can be switched between the old adapter and the new; moved out several initialization pieces out of objects constructor to allow subnet initialization with a UI in place; improved generics definitions for FV commands.
  *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/05/01 21:29:06  jijunwan
  *  Archive Log:    changed to directly show exception(s)
@@ -67,8 +72,6 @@
  ******************************************************************************/
 
 package com.intel.stl.ui.main;
-
-import static com.intel.stl.ui.common.STLConstants.K0031_WARNING;
 
 import java.awt.Component;
 import java.util.List;
@@ -98,7 +101,8 @@ public class RestartViewerTask extends AbstractTask<String, Context, Void> {
 
     @Override
     public Context processInBackground(Context context) throws Exception {
-        Context newContext = subnetMgr.createContext(subnet);
+        IFabricController controller = context.getController();
+        Context newContext = subnetMgr.createContext(subnet, controller);
         return newContext;
     }
 
@@ -107,8 +111,7 @@ public class RestartViewerTask extends AbstractTask<String, Context, Void> {
         final IFabricController restartingController =
                 (IFabricController) getController();
         String msg = getModel();
-        Util.showWarningMessage((Component) restartingController.getView(),
-                msg, K0031_WARNING.getValue());
+        Util.showWarningMessage((Component) restartingController.getView(), msg);
         // subnetMgr.resetHost(existingHostId, newHostId, restartingController,
         // newContext);
         restartingController.resetContext(newContext);

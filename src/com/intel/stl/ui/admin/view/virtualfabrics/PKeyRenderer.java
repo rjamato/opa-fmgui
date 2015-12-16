@@ -35,8 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2.2.1  2015/08/12 15:26:52  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.4  2015/08/17 18:54:01  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/07/14 17:02:41  jijunwan
+ *  Archive Log:    PR 129541 - Should forbid save or deploy when there is invalid edit on management panel
+ *  Archive Log:    - Introduce isEditValid for attribute renders
  *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/03/30 14:25:37  jijunwan
  *  Archive Log:    1) introduced IRendererModel to create renderer only we nee
@@ -114,6 +119,16 @@ public class PKeyRenderer extends AbstractAttrRenderer<PKey> {
     @Override
     protected Component[] getFields() {
         return new Component[] { keyField };
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.admin.view.IAttrRenderer#isEditValid()
+     */
+    @Override
+    public boolean isEditValid() {
+        return keyField.isEditValid();
     }
 
 }

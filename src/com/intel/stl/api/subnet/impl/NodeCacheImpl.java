@@ -35,8 +35,20 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.14.2.1  2015/08/12 15:22:00  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.18  2015/09/26 06:17:06  jijunwan
+ *  Archive Log:    130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
+ *  Archive Log:    - added reset to clear all caches and update DB topology
+ *  Archive Log:
+ *  Archive Log:    Revision 1.17  2015/08/17 18:48:53  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.16  2015/08/11 17:37:19  jijunwan
+ *  Archive Log:    PR 126645 - Topology Page does not show correct data after port disable/enable event
+ *  Archive Log:    - improved to get distribution data with argument "refresh". When it's true, calculate distribution rather than get it from cache
+ *  Archive Log:
+ *  Archive Log:    Revision 1.15  2015/07/30 13:16:04  fernande
+ *  Archive Log:    PR 129437 - ImageInfo save issue. Fixed issue found in unit test
  *  Archive Log:
  *  Archive Log:    Revision 1.14  2015/02/23 22:22:19  jijunwan
  *  Archive Log:    improved to include/exclude inactive nodes/links in query
@@ -225,18 +237,18 @@ public class NodeCacheImpl extends MemoryCache<Map<Integer, NodeRecordBean>>
     }
 
     @Override
-    public EnumMap<NodeType, Integer> getNodesTypeDist(boolean includeInactive)
-            throws SubnetDataNotFoundException {
+    public EnumMap<NodeType, Integer> getNodesTypeDist(boolean includeInactive,
+            boolean refresh) throws SubnetDataNotFoundException {
         if (includeInactive) {
-            return getNodesTypeDist();
+            return getNodesTypeDist(refresh);
         } else {
-            return getActiveNodesTypeDist();
+            return getActiveNodesTypeDist(refresh);
         }
     }
 
-    protected EnumMap<NodeType, Integer> getActiveNodesTypeDist()
+    protected EnumMap<NodeType, Integer> getActiveNodesTypeDist(boolean refresh)
             throws SubnetDataNotFoundException {
-        if (nodesTypeDist.get() == null) {
+        if (refresh || nodesTypeDist.get() == null) {
             Map<Integer, NodeRecordBean> nodeMap = getCachedObject();
 
             if (nodeMap != null && !nodeMap.isEmpty()) {
@@ -261,9 +273,9 @@ public class NodeCacheImpl extends MemoryCache<Map<Integer, NodeRecordBean>>
         return nodesTypeDist.get();
     }
 
-    protected EnumMap<NodeType, Integer> getNodesTypeDist()
+    protected EnumMap<NodeType, Integer> getNodesTypeDist(boolean refresh)
             throws SubnetDataNotFoundException {
-        if (nodesTypeDist2.get() == null) {
+        if (refresh || nodesTypeDist2.get() == null) {
             Map<Integer, NodeRecordBean> nodeMap = getCachedObject();
 
             if (nodeMap != null && !nodeMap.isEmpty()) {
@@ -282,7 +294,7 @@ public class NodeCacheImpl extends MemoryCache<Map<Integer, NodeRecordBean>>
                         STL30057_NODE_TYPE_DIST_FOUND_IN_CACHE);
             }
         }
-        return nodesTypeDist.get();
+        return nodesTypeDist2.get();
     }
 
     @Override
@@ -301,6 +313,17 @@ public class NodeCacheImpl extends MemoryCache<Map<Integer, NodeRecordBean>>
         nodesTypeDist.set(null);
         nodesTypeDist2.set(null);
         return map;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.configuration.MemoryCache#reset()
+     */
+    @Override
+    public void reset() {
+        super.reset();
+        updateCache();
     }
 
     @Override

@@ -35,8 +35,23 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.20.2.1  2015/08/12 15:21:42  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.25  2015/09/26 06:17:07  jijunwan
+ *  Archive Log:    130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
+ *  Archive Log:    - added reset to clear all caches and update DB topology
+ *  Archive Log:
+ *  Archive Log:    Revision 1.24  2015/09/25 20:47:18  fernande
+ *  Archive Log:    PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
+ *  Archive Log:
+ *  Archive Log:    Revision 1.23  2015/08/17 18:48:38  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - change backend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.22  2015/08/11 17:37:21  jijunwan
+ *  Archive Log:    PR 126645 - Topology Page does not show correct data after port disable/enable event
+ *  Archive Log:    - improved to get distribution data with argument "refresh". When it's true, calculate distribution rather than get it from cache
+ *  Archive Log:
+ *  Archive Log:    Revision 1.21  2015/05/26 15:35:11  fernande
+ *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
  *  Archive Log:
  *  Archive Log:    Revision 1.20  2015/04/21 17:45:53  jypak
  *  Archive Log:    Header comments fixed.
@@ -54,9 +69,7 @@ package com.intel.stl.api.subnet;
 import java.util.EnumMap;
 import java.util.List;
 
-import com.intel.stl.api.IErrorSupport;
-
-public interface ISubnetApi extends IErrorSupport {
+public interface ISubnetApi {
     SubnetDescription getConnectionDescription();
 
     // node related queries
@@ -67,8 +80,8 @@ public interface ISubnetApi extends IErrorSupport {
 
     NodeRecordBean getNode(long portGuid) throws SubnetDataNotFoundException;
 
-    EnumMap<NodeType, Integer> getNodesTypeDist(boolean includeInactive)
-            throws SubnetDataNotFoundException;
+    EnumMap<NodeType, Integer> getNodesTypeDist(boolean includeInactive,
+            boolean refresh) throws SubnetDataNotFoundException;
 
     // link related queries
     List<LinkRecordBean> getLinks(boolean includeInactive)
@@ -93,66 +106,71 @@ public interface ISubnetApi extends IErrorSupport {
 
     boolean hasLocalPort(int lid, short localPortNum);
 
-    EnumMap<NodeType, Long> getPortsTypeDist(boolean countInternalMgrPort)
-            throws SubnetDataNotFoundException;
+    EnumMap<NodeType, Long> getPortsTypeDist(boolean countInternalMgrPort,
+            boolean refresh) throws SubnetDataNotFoundException;
 
     // switch related queries
-    List<SwitchRecordBean> getSwitches() throws SubnetException;
+    List<SwitchRecordBean> getSwitches();
 
-    SwitchRecordBean getSwitch(int lid) throws SubnetException;
+    SwitchRecordBean getSwitch(int lid);
 
     // LFT related queries
-    List<LFTRecordBean> getLFTs() throws SubnetException;
+    List<LFTRecordBean> getLFTs();
 
-    List<LFTRecordBean> getLFT(int lid) throws SubnetException;
+    List<LFTRecordBean> getLFT(int lid);
 
     // MFT related queries
-    List<MFTRecordBean> getMFTs() throws SubnetException;
+    List<MFTRecordBean> getMFTs();
 
-    List<MFTRecordBean> getMFT(int lid) throws SubnetException;
+    List<MFTRecordBean> getMFT(int lid);
 
     // Cable related queries
-    List<CableRecordBean> getCables() throws SubnetException;
+    List<CableRecordBean> getCables();
 
-    List<CableRecordBean> getCable(int lid) throws SubnetException;
+    List<CableRecordBean> getCable(int lid);
 
-    List<CableRecordBean> getCable(int lid, short portNum)
-            throws SubnetException;
+    List<CableRecordBean> getCable(int lid, short portNum);
 
     // P Key related queries
-    List<P_KeyTableRecordBean> getPKeyTables() throws SubnetException;
+    List<P_KeyTableRecordBean> getPKeyTables();
 
     // VLArb related queries
-    List<VLArbTableRecordBean> getVLArbTables() throws SubnetException;
+    List<VLArbTableRecordBean> getVLArbTables();
 
     // SM related queries
-    List<SMRecordBean> getSMs() throws SubnetException;
+    List<SMRecordBean> getSMs();
 
-    SMRecordBean getSM(int lid) throws SubnetException;
+    SMRecordBean getSM(int lid);
 
     // Path/Trace related queries
-    List<PathRecordBean> getPath(int lid) throws SubnetException;
+    List<PathRecordBean> getPath(int lid);
 
-    List<TraceRecordBean> getTrace(int sourceLid, int targetLid)
-            throws SubnetException;
+    List<TraceRecordBean> getTrace(int sourceLid, int targetLid);
 
-    List<SC2SLMTRecordBean> getSC2SLMTs() throws SubnetException;
+    List<SC2SLMTRecordBean> getSC2SLMTs();
 
-    SC2SLMTRecordBean getSC2SLMT(int lid) throws SubnetException;
+    SC2SLMTRecordBean getSC2SLMT(int lid);
 
-    List<SC2VLMTRecordBean> getSC2VLTMTs() throws SubnetException;
+    List<SC2VLMTRecordBean> getSC2VLTMTs();
 
-    List<SC2VLMTRecordBean> getSC2VLTMT(int lid) throws SubnetException;
+    List<SC2VLMTRecordBean> getSC2VLTMT(int lid);
 
-    SC2VLMTRecordBean getSC2VLTMT(int lid, short portNum)
-            throws SubnetException;
+    SC2VLMTRecordBean getSC2VLTMT(int lid, short portNum);
 
-    List<SC2VLMTRecordBean> getSC2VLNTMTs() throws SubnetException;
+    List<SC2VLMTRecordBean> getSC2VLNTMTs();
 
-    List<SC2VLMTRecordBean> getSC2VLNTMT(int lid) throws SubnetException;
+    List<SC2VLMTRecordBean> getSC2VLNTMT(int lid);
 
-    SC2VLMTRecordBean getSC2VLNTMT(int lid, short portNum)
-            throws SubnetException;
+    SC2VLMTRecordBean getSC2VLNTMT(int lid, short portNum);
+
+    FabricInfoBean getFabricInfo();
+
+    /**
+     * 
+     * <i>Description:</i> refresh all data from scratch
+     * 
+     */
+    void reset();
 
     void cleanup();
 }

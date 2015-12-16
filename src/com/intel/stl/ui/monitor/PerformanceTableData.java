@@ -35,10 +35,22 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8.2.2  2015/08/12 15:26:58  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.12  2015/08/17 18:53:40  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
  *  Archive Log:
- *  Archive Log:    Revision 1.8.2.1  2015/05/17 18:30:42  jijunwan
+ *  Archive Log:    Revision 1.11  2015/06/01 15:01:17  jypak
+ *  Archive Log:    PR 128823 - Improve performance tables to include all portcounters fields.
+ *  Archive Log:    All port counters fields added to performance table and connectivity table.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/05/28 15:29:22  jypak
+ *  Archive Log:    PR 128873 - Add "Flits" in performance table for Data related columns.
+ *  Archive Log:    Added "(MB)" to RcvData, XmitData column header.
+ *  Archive Log:    Added "(MBps)" to data rates.
+ *  Archive Log:    Added data in "Flits" or data rate in "(Flits/sec)" to tool tips.
+ *  Archive Log:    Used the TableDataDescription to convert and format the data.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.9  2015/05/14 17:43:07  jijunwan
  *  Archive Log:    PR 127700 - Delta data on host performance display is accumulating
  *  Archive Log:    - corrected delta value calculation
  *  Archive Log:    - changed to display data/pkts rate rather than delta on chart and table
@@ -102,11 +114,11 @@ public class PerformanceTableData implements Serializable {
 
     private long portRxPktsRate;
 
-    private long portRxDataRate;
+    private TableDataDescription portRxDataRate;
 
     private long portRxCumulativePkts;
 
-    private long portRxCumulativeData;
+    private TableDataDescription portRxCumulativeData;
 
     private long portRxSwitchRelayErrors;
 
@@ -114,17 +126,53 @@ public class PerformanceTableData implements Serializable {
 
     private long portTxPktsRate;
 
-    private long portTxDataRate;
+    private TableDataDescription portTxDataRate;
 
     private long portTxCumulativePkts;
 
-    private long portTxCumulativeData;
+    private TableDataDescription portTxCumulativeData;
 
     private long excessiveBufferOverruns;
 
     private long fmConfigErrors;
 
     private int linkQuality;
+
+    private long portMulticastRcvPkts;
+
+    private long portRcvErrors;
+
+    private long portRcvConstraintErrors;
+
+    private long portRcvFECN;
+
+    private long portRcvBECN;
+
+    private long portRcvBubble;
+
+    private long portMulticastXmitPkts;
+
+    private long portXmitConstraintErrors;
+
+    private long portXmitWait;
+
+    private long portXmitTimeCong;
+
+    private long portXmitWastedBW;
+
+    private long portXmitWaitData;
+
+    private long localLinkIntegrityErrors;
+
+    private long portMarkFECN;
+
+    private long linkErrorRecovery;
+
+    private long linkDowned;
+
+    private short uncorrectableErrors;
+
+    private long swPortCongestion;
 
     /**
      * Description:
@@ -191,7 +239,7 @@ public class PerformanceTableData implements Serializable {
     /**
      * @return the portRxDataRate
      */
-    public long getPortRxDataRate() {
+    public TableDataDescription getPortRxDataRate() {
         return portRxDataRate;
     }
 
@@ -199,7 +247,7 @@ public class PerformanceTableData implements Serializable {
      * @param portRxDataRate
      *            the portRxDataRate to set
      */
-    public void setPortRxDataRate(long portRxDataRate) {
+    public void setPortRxDataRate(TableDataDescription portRxDataRate) {
         this.portRxDataRate = portRxDataRate;
     }
 
@@ -221,7 +269,7 @@ public class PerformanceTableData implements Serializable {
     /**
      * @return the portRxCumulativeData
      */
-    public long getPortRxCumulativeData() {
+    public TableDataDescription getPortRxCumulativeData() {
         return portRxCumulativeData;
     }
 
@@ -229,7 +277,8 @@ public class PerformanceTableData implements Serializable {
      * @param portRxCumulativeData
      *            the portRxCumulativeData to set
      */
-    public void setPortRxCumulativeData(long portRxCumulativeData) {
+    public void setPortRxCumulativeData(
+            TableDataDescription portRxCumulativeData) {
         this.portRxCumulativeData = portRxCumulativeData;
     }
 
@@ -281,7 +330,7 @@ public class PerformanceTableData implements Serializable {
     /**
      * @return the portTxDataRate
      */
-    public long getPortTxDataRate() {
+    public TableDataDescription getPortTxDataRate() {
         return portTxDataRate;
     }
 
@@ -289,7 +338,7 @@ public class PerformanceTableData implements Serializable {
      * @param portTxDataRate
      *            the portTxDataRate to set
      */
-    public void setPortTxDataRate(long portTxDataRate) {
+    public void setPortTxDataRate(TableDataDescription portTxDataRate) {
         this.portTxDataRate = portTxDataRate;
     }
 
@@ -311,7 +360,7 @@ public class PerformanceTableData implements Serializable {
     /**
      * @return the portTxCumulativeData
      */
-    public long getPortTxCumulativeData() {
+    public TableDataDescription getPortTxCumulativeData() {
         return portTxCumulativeData;
     }
 
@@ -319,7 +368,8 @@ public class PerformanceTableData implements Serializable {
      * @param portTxCumulativeData
      *            the portTxCumulativeData to set
      */
-    public void setPortTxCumulativeData(long portTxCumulativeData) {
+    public void setPortTxCumulativeData(
+            TableDataDescription portTxCumulativeData) {
         this.portTxCumulativeData = portTxCumulativeData;
     }
 
@@ -366,6 +416,298 @@ public class PerformanceTableData implements Serializable {
      */
     public void setLinkQuality(byte linkQuality) {
         this.linkQuality = linkQuality;
+    }
+
+    /**
+     * @return the serialversionuid
+     */
+    public static long getSerialversionuid() {
+        return serialVersionUID;
+    }
+
+    /**
+     * @return the linkQuality
+     */
+    public int getLinkQuality() {
+        return linkQuality;
+    }
+
+    /**
+     * @return the portMulticastRcvPkts
+     */
+    public long getPortMulticastRcvPkts() {
+        return portMulticastRcvPkts;
+    }
+
+    /**
+     * @return the portRcvErrors
+     */
+    public long getPortRcvErrors() {
+        return portRcvErrors;
+    }
+
+    /**
+     * @return the portRcvConstraintErrors
+     */
+    public long getPortRcvConstraintErrors() {
+        return portRcvConstraintErrors;
+    }
+
+    /**
+     * @return the portRcvFECN
+     */
+    public long getPortRcvFECN() {
+        return portRcvFECN;
+    }
+
+    /**
+     * @return the portRcvBECN
+     */
+    public long getPortRcvBECN() {
+        return portRcvBECN;
+    }
+
+    /**
+     * @return the portRcvBubble
+     */
+    public long getPortRcvBubble() {
+        return portRcvBubble;
+    }
+
+    /**
+     * @return the portMulticastXmitPkts
+     */
+    public long getPortMulticastXmitPkts() {
+        return portMulticastXmitPkts;
+    }
+
+    /**
+     * @return the portXmitConstraintErrors
+     */
+    public long getPortXmitConstraintErrors() {
+        return portXmitConstraintErrors;
+    }
+
+    /**
+     * @return the portXmitWait
+     */
+    public long getPortXmitWait() {
+        return portXmitWait;
+    }
+
+    /**
+     * @return the portXmitTimeCong
+     */
+    public long getPortXmitTimeCong() {
+        return portXmitTimeCong;
+    }
+
+    /**
+     * @return the portXmitWastedBW
+     */
+    public long getPortXmitWastedBW() {
+        return portXmitWastedBW;
+    }
+
+    /**
+     * @return the portXmitWaitData
+     */
+    public long getPortXmitWaitData() {
+        return portXmitWaitData;
+    }
+
+    /**
+     * @return the localLinkIntegrityErrors
+     */
+    public long getLocalLinkIntegrityErrors() {
+        return localLinkIntegrityErrors;
+    }
+
+    /**
+     * @return the portMarkFECN
+     */
+    public long getPortMarkFECN() {
+        return portMarkFECN;
+    }
+
+    /**
+     * @return the linkErrorRecovery
+     */
+    public long getLinkErrorRecovery() {
+        return linkErrorRecovery;
+    }
+
+    /**
+     * @return the linkDowned
+     */
+    public long getLinkDowned() {
+        return linkDowned;
+    }
+
+    /**
+     * @return the uncorrectableErrors
+     */
+    public short getUncorrectableErrors() {
+        return uncorrectableErrors;
+    }
+
+    /**
+     * @return the swPortCongestion
+     */
+    public long getSwPortCongestion() {
+        return swPortCongestion;
+    }
+
+    /**
+     * @param linkQuality
+     *            the linkQuality to set
+     */
+    public void setLinkQuality(int linkQuality) {
+        this.linkQuality = linkQuality;
+    }
+
+    /**
+     * @param portMulticastRcvPkts
+     *            the portMulticastRcvPkts to set
+     */
+    public void setPortMulticastRcvPkts(long portMulticastRcvPkts) {
+        this.portMulticastRcvPkts = portMulticastRcvPkts;
+    }
+
+    /**
+     * @param portRcvErrors
+     *            the portRcvErrors to set
+     */
+    public void setPortRcvErrors(long portRcvErrors) {
+        this.portRcvErrors = portRcvErrors;
+    }
+
+    /**
+     * @param portRcvConstraintErrors
+     *            the portRcvConstraintErrors to set
+     */
+    public void setPortRcvConstraintErrors(long portRcvConstraintErrors) {
+        this.portRcvConstraintErrors = portRcvConstraintErrors;
+    }
+
+    /**
+     * @param portRcvFECN
+     *            the portRcvFECN to set
+     */
+    public void setPortRcvFECN(long portRcvFECN) {
+        this.portRcvFECN = portRcvFECN;
+    }
+
+    /**
+     * @param portRcvBECN
+     *            the portRcvBECN to set
+     */
+    public void setPortRcvBECN(long portRcvBECN) {
+        this.portRcvBECN = portRcvBECN;
+    }
+
+    /**
+     * @param portRcvBubble
+     *            the portRcvBubble to set
+     */
+    public void setPortRcvBubble(long portRcvBubble) {
+        this.portRcvBubble = portRcvBubble;
+    }
+
+    /**
+     * @param portMulticastXmitPkts
+     *            the portMulticastXmitPkts to set
+     */
+    public void setPortMulticastXmitPkts(long portMulticastXmitPkts) {
+        this.portMulticastXmitPkts = portMulticastXmitPkts;
+    }
+
+    /**
+     * @param portXmitConstraintErrors
+     *            the portXmitConstraintErrors to set
+     */
+    public void setPortXmitConstraintErrors(long portXmitConstraintErrors) {
+        this.portXmitConstraintErrors = portXmitConstraintErrors;
+    }
+
+    /**
+     * @param portXmitWait
+     *            the portXmitWait to set
+     */
+    public void setPortXmitWait(long portXmitWait) {
+        this.portXmitWait = portXmitWait;
+    }
+
+    /**
+     * @param portXmitTimeCong
+     *            the portXmitTimeCong to set
+     */
+    public void setPortXmitTimeCong(long portXmitTimeCong) {
+        this.portXmitTimeCong = portXmitTimeCong;
+    }
+
+    /**
+     * @param portXmitWastedBW
+     *            the portXmitWastedBW to set
+     */
+    public void setPortXmitWastedBW(long portXmitWastedBW) {
+        this.portXmitWastedBW = portXmitWastedBW;
+    }
+
+    /**
+     * @param portXmitWaitData
+     *            the portXmitWaitData to set
+     */
+    public void setPortXmitWaitData(long portXmitWaitData) {
+        this.portXmitWaitData = portXmitWaitData;
+    }
+
+    /**
+     * @param localLinkIntegrityErrors
+     *            the localLinkIntegrityErrors to set
+     */
+    public void setLocalLinkIntegrityErrors(long localLinkIntegrityErrors) {
+        this.localLinkIntegrityErrors = localLinkIntegrityErrors;
+    }
+
+    /**
+     * @param portMarkFECN
+     *            the portMarkFECN to set
+     */
+    public void setPortMarkFECN(long portMarkFECN) {
+        this.portMarkFECN = portMarkFECN;
+    }
+
+    /**
+     * @param linkErrorRecovery
+     *            the linkErrorRecovery to set
+     */
+    public void setLinkErrorRecovery(long linkErrorRecovery) {
+        this.linkErrorRecovery = linkErrorRecovery;
+    }
+
+    /**
+     * @param linkDowned
+     *            the linkDowned to set
+     */
+    public void setLinkDowned(long linkDowned) {
+        this.linkDowned = linkDowned;
+    }
+
+    /**
+     * @param uncorrectableErrors
+     *            the uncorrectableErrors to set
+     */
+    public void setUncorrectableErrors(short uncorrectableErrors) {
+        this.uncorrectableErrors = uncorrectableErrors;
+    }
+
+    /**
+     * @param swPortCongestion
+     *            the swPortCongestion to set
+     */
+    public void setSwPortCongestion(long swPortCongestion) {
+        this.swPortCongestion = swPortCongestion;
     }
 
 }

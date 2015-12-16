@@ -35,8 +35,50 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.12.2.1  2015/08/12 15:27:23  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.22  2015/10/06 15:53:49  rjtierne
+ *  Archive Log:    PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
+ *  Archive Log:    - Fixed Typo
+ *  Archive Log:
+ *  Archive Log:    Revision 1.21  2015/08/17 18:54:33  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.20  2015/08/11 13:57:01  jijunwan
+ *  Archive Log:    PR 129925 - Error when entering IP address of host in Configuration setup Wizard screen
+ *  Archive Log:    - changed to allow start with digital
+ *  Archive Log:
+ *  Archive Log:    Revision 1.19  2015/07/17 21:20:56  jijunwan
+ *  Archive Log:    PR 129528 - input validation improvement
+ *  Archive Log:    - improved CompomentFactory to create text field based on argument allowEmpty
+ *  Archive Log:    - apply it on Log preference and subnet name on Setup Wizard to forbid empty string
+ *  Archive Log:    - apply it on key file location on Setup Wizard to allow empty string
+ *  Archive Log:
+ *  Archive Log:    Revision 1.18  2015/07/17 20:48:22  jijunwan
+ *  Archive Log:    PR 129594 - Apply new input verification on setup wizard
+ *  Archive Log:    - introduced isEditValid to allow us check whether we have valid edit
+ *  Archive Log:
+ *  Archive Log:    Revision 1.17  2015/07/16 21:28:14  jijunwan
+ *  Archive Log:    PR 129528 - input validation improvement
+ *  Archive Log:    - restrict host name to follow node desc rules
+ *  Archive Log:    - restrict port number must be positive integer
+ *  Archive Log:
+ *  Archive Log:    Revision 1.16  2015/07/13 19:36:34  jijunwan
+ *  Archive Log:    PR 129528 - input validation improvement
+ *  Archive Log:    - In setup wizard, the max length of host name is 253, the max length for file path is 4096, and the host port number shall in range (0, 65535)
+ *  Archive Log:
+ *  Archive Log:    Revision 1.15  2015/06/26 13:36:43  rjtierne
+ *  Archive Log:    PR 129380 - Subnet Wizard "Next" button disabled when Key/Trust Store fields are filled in
+ *  Archive Log:    In constructor for SecureStorage() pass the document listeners to the FieldPair superclass
+ *  Archive Log:    so it recognizes when the fields are populated and enables the Next/Apply buttons.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.14  2015/05/27 14:36:13  rjtierne
+ *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
+ *  Archive Log:    - Moved inner class FieldPair to standalone class
+ *  Archive Log:    - Added label width to FieldPair
+ *  Archive Log:
+ *  Archive Log:    Revision 1.13  2015/05/11 12:36:41  rjtierne
+ *  Archive Log:    PR 128585 - Fix errors found by Klocwork and FindBugs
+ *  Archive Log:    Use == to compare string to null instead of equals()
  *  Archive Log:
  *  Archive Log:    Revision 1.12  2015/04/29 19:14:42  rjtierne
  *  Archive Log:    Fixed typo
@@ -97,20 +139,25 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.text.DecimalFormat;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.event.DocumentListener;
 
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UIConstants;
 import com.intel.stl.ui.common.UIImages;
 import com.intel.stl.ui.common.UILabels;
 import com.intel.stl.ui.common.view.ComponentFactory;
+import com.intel.stl.ui.common.view.FieldPair;
+import com.intel.stl.ui.common.view.SafeNumberField;
+import com.intel.stl.ui.common.view.SafeTextField;
 
 public class HostInfoPanel extends JPanel {
 
@@ -120,6 +167,8 @@ public class HostInfoPanel extends JPanel {
 
     private final HostInfoPanel hostInfoPanel = this;
 
+    private final int LABEL_WIDTH = 32;
+
     private boolean currentMaster;
 
     private boolean dirty;
@@ -128,17 +177,17 @@ public class HostInfoPanel extends JPanel {
 
     private JButton btnRemove;
 
-    private JTextField txtFldHostName;
+    private JFormattedTextField txtFldHostName;
 
-    private JTextField txtFldPortNum;
+    private JFormattedTextField txtFldPortNum;
 
     private JCheckBox chkboxSecureConnect;
 
-    private JTextField txtFldKeyStoreFile;
+    private JFormattedTextField txtFldKeyStoreFile;
 
     private JButton btnKeyStoreBrowser;
 
-    private JTextField txtFldTrustStoreFile;
+    private JFormattedTextField txtFldTrustStoreFile;
 
     private JButton btnTrustStoreBrowser;
 
@@ -243,6 +292,17 @@ public class HostInfoPanel extends JPanel {
         return pnlConnection;
     }
 
+    /**
+     * 
+     * <i>Description:</i>
+     * 
+     * see <a
+     * href=https://en.wikipedia.org/wiki/Hostname>https://en.wikipedia.org
+     * /wiki/Hostname</a> for valid hostname
+     * 
+     * @return
+     */
+    @SuppressWarnings("unchecked")
     protected JPanel getHostEntryPanel() {
         if (pnlHostEntry == null) {
             pnlHostEntry = new JPanel(new BorderLayout(5, 5));
@@ -250,17 +310,35 @@ public class HostInfoPanel extends JPanel {
 
             JPanel panel = new JPanel(new GridLayout(1, 2, 10, 5));
             panel.setOpaque(false);
-            FieldPair fp =
-                    new FieldPair(STLConstants.K0051_HOST.getValue(), false);
-            txtFldHostName = fp.getTxtFld();
+            String hostNameChars =
+                    UIConstants.DIGITS + UIConstants.LETTERS + "-.";
+            txtFldHostName = new SafeTextField(false, 253);
+            ((SafeTextField) txtFldHostName).setValidChars(hostNameChars);
+            for (DocumentListener listener : hostInfoListener
+                    .getDocumentListeners()) {
+                txtFldHostName.getDocument().addDocumentListener(listener);
+            }
+            FieldPair<JFormattedTextField> fp =
+                    new FieldPair<JFormattedTextField>(
+                            STLConstants.K0051_HOST.getValue(), LABEL_WIDTH,
+                            txtFldHostName);
             panel.add(fp);
 
-            fp =
-                    new FieldPair(
-                            STLConstants.K1035_CONFIGURATION_PORT.getValue(),
-                            true);
-            txtFldPortNum = fp.getTxtFld();
+            txtFldPortNum =
+                    new SafeNumberField<Integer>(new DecimalFormat("###"), 0,
+                            false, 65535, false);
+            // only positive integer
+            ((SafeNumberField<Integer>) txtFldPortNum)
+                    .setValidChars(UIConstants.DIGITS);
+            for (DocumentListener listener : hostInfoListener
+                    .getDocumentListeners()) {
+                txtFldPortNum.getDocument().addDocumentListener(listener);
+            }
             txtFldPortNum.setText(STLConstants.K3015_DEFAULT_PORT.getValue());
+            fp =
+                    new FieldPair<JFormattedTextField>(
+                            STLConstants.K1035_CONFIGURATION_PORT.getValue(),
+                            LABEL_WIDTH, txtFldPortNum);
             panel.add(fp);
             pnlHostEntry.add(panel, BorderLayout.CENTER);
 
@@ -268,7 +346,8 @@ public class HostInfoPanel extends JPanel {
                     ComponentFactory
                             .getIntelCheckBox(STLConstants.K2003_SECURE_CONNECT
                                     .getValue());
-            chkboxSecureConnect.setFont(UIConstants.H5_FONT);
+            chkboxSecureConnect.setFont(UIConstants.H5_FONT
+                    .deriveFont(Font.BOLD));
             chkboxSecureConnect.setForeground(UIConstants.INTEL_DARK_GRAY);
             chkboxSecureConnect.setHorizontalAlignment(JLabel.TRAILING);
             chkboxSecureConnect.setSelected(false);
@@ -293,14 +372,22 @@ public class HostInfoPanel extends JPanel {
             pnlSecurity.setBorder(BorderFactory
                     .createTitledBorder(STLConstants.K3041_SSL.getValue()));
 
+            txtFldKeyStoreFile =
+                    ComponentFactory.createTextField(null, true, 4096,
+                            hostInfoListener.getDocumentListeners());
             SecureStorage ss =
-                    new SecureStorage(STLConstants.K2001_KEY_STORE.getValue());
-            txtFldKeyStoreFile = ss.getTxtFld();
+                    new SecureStorage(STLConstants.K2001_KEY_STORE.getValue(),
+                            txtFldKeyStoreFile);
             btnKeyStoreBrowser = ss.getBtnStoreBrowser();
             pnlSecurity.add(ss);
 
-            ss = new SecureStorage(STLConstants.K2002_TRUST_STORE.getValue());
-            txtFldTrustStoreFile = ss.getTxtFld();
+            txtFldTrustStoreFile =
+                    ComponentFactory.createTextField(null, true, 4096,
+                            hostInfoListener.getDocumentListeners());
+            ss =
+                    new SecureStorage(
+                            STLConstants.K2002_TRUST_STORE.getValue(),
+                            txtFldTrustStoreFile);
             btnTrustStoreBrowser = ss.getBtnStoreBrowser();
             pnlSecurity.add(ss);
         }
@@ -323,6 +410,12 @@ public class HostInfoPanel extends JPanel {
         btnConnectionTest.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (!txtFldHostName.isEditValid()
+                        || !txtFldPortNum.isEditValid()) {
+                    // do nothing if edit is invalid
+                    return;
+                }
+
                 if (btnConnectionTest.isSelected()) {
                     stopConnectionTest();
                 } else {
@@ -389,7 +482,7 @@ public class HostInfoPanel extends JPanel {
         btnConnectionTest.setSelected(false);
         lblConnectionStatus.setIcon(null);
         Color color =
-                (status.equals(STLConstants.K3031_PASS.getValue())) ? UIConstants.DRAK_GREEN
+                (status.equals(STLConstants.K3031_PASS.getValue())) ? UIConstants.DARK_GREEN
                         : UIConstants.INTEL_RED;
         setLabel(lblConnectionStatus, status, color);
         btnConnectionTest.setIcon(UIImages.PLAY.getImageIcon());
@@ -579,19 +672,19 @@ public class HostInfoPanel extends JPanel {
             result =
                     prime
                             * result
-                            + ((getHostName().equals(null)) ? 0 : getHostName()
+                            + ((getHostName() == null) ? 0 : getHostName()
                                     .hashCode());
 
             result = prime * result + Integer.valueOf(getPortNum());
             result =
                     prime
                             * result
-                            + +((getKeyStoreFile().equals(null)) ? 0
+                            + +((getKeyStoreFile() == null) ? 0
                                     : getKeyStoreFile().hashCode());
             result =
                     prime
                             * result
-                            + +((getTrustStoreFile().equals(null)) ? 0
+                            + +((getTrustStoreFile() == null) ? 0
                                     : getTrustStoreFile().hashCode());
 
         } catch (NumberFormatException e) {
@@ -602,64 +695,25 @@ public class HostInfoPanel extends JPanel {
         return result;
     }
 
-    protected class FieldPair extends JPanel {
-        private static final long serialVersionUID = 2171493826241135628L;
+    public boolean isEditValid() {
+        return txtFldHostName.isEditValid() && txtFldPortNum.isEditValid()
+                && txtFldKeyStoreFile.isEditValid()
+                && txtFldTrustStoreFile.isEditValid();
+    }
 
-        protected JLabel label;
-
-        protected JTextField textField;
-
-        public FieldPair(String name, boolean isNumeric) {
-            initComponents(name, isNumeric);
-        }
-
-        protected void initComponents(String name, boolean isNumeric) {
-            setLayout(new BorderLayout());
-            setOpaque(false);
-
-            // Create a label
-            label = createLabel(name);
-            add(label, BorderLayout.WEST);
-
-            textField = crateTextField(isNumeric);
-            add(textField, BorderLayout.CENTER);
-        }
-
-        protected JLabel createLabel(String name) {
-            JLabel lblName =
-                    ComponentFactory.getH6Label(name + ": ", Font.PLAIN);
-            lblName.setHorizontalAlignment(JLabel.LEFT);
-            return lblName;
-        }
-
-        public JLabel getLabel() {
-            return label;
-        }
-
-        protected JTextField crateTextField(boolean isNumeric) {
-            return (isNumeric) ? ComponentFactory
-                    .createNumericTextField(hostInfoListener
-                            .getDocumentListeners()) : ComponentFactory
-                    .createTextField(hostInfoListener.getDocumentListeners());
-        }
-
-        public JTextField getTxtFld() {
-            return textField;
-        }
-    } // class FieldPair
-
-    protected class SecureStorage extends FieldPair {
+    protected class SecureStorage extends FieldPair<JFormattedTextField> {
         private static final long serialVersionUID = -3358500581251310645L;
 
         private JButton btnStoreBrowser;
 
-        public SecureStorage(String name) {
-            super(name, false);
+        public SecureStorage(String name, JFormattedTextField textField) {
+            super(name, (int) (LABEL_WIDTH * 2.2), textField);
         }
 
         @Override
-        protected void initComponents(String name, boolean isNumeric) {
-            super.initComponents(name, isNumeric);
+        protected void initComponents(String name, int labelWidth,
+                final JFormattedTextField textField) {
+            super.initComponents(name, labelWidth, textField);
 
             btnStoreBrowser =
                     ComponentFactory.getImageButton(UIImages.FOLDER_ICON

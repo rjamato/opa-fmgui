@@ -24,6 +24,34 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/*******************************************************************************
+ *                       I N T E L   C O R P O R A T I O N
+ * 
+ *  Functional Group: Fabric Viewer Application
+ * 
+ *  File Name: SimpleDatagram.java
+ * 
+ *  Archive Source: $Source$
+ * 
+ *  Archive Log: $Log$
+ *  Archive Log: Revision 1.7  2015/08/17 18:49:32  jijunwan
+ *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log: - change backend files' headers
+ *  Archive Log:
+ *  Archive Log: Revision 1.6  2015/06/11 17:53:24  fernande
+ *  Archive Log: PR 129034 Support secure FE. Added toString(prefix) method so that we can get a string representation of the datagram to log it if needed.
+ *  Archive Log:
+ *  Archive Log: Revision 1.5  2015/06/10 19:36:35  jijunwan
+ *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
+ *  Archive Log: - wrote a tool to check and insert file header
+ *  Archive Log: - applied on backend files
+ *  Archive Log:
+ * 
+ *  Overview:
+ * 
+ *  @author: jijunwan
+ * 
+ ******************************************************************************/
 package com.intel.stl.fecdriver.messages.adapter;
 
 import java.io.PrintStream;
@@ -32,119 +60,119 @@ import java.nio.ByteOrder;
 
 /**
  * @author jijunwan
- *
+ * 
  */
 public class SimpleDatagram<E> implements IDatagram<E> {
-	protected int length;
-	protected ByteBuffer buffer;
-	
-	public SimpleDatagram(int length) {
-		this.length = length;
-	}
-	
-	public int build(boolean force) {
-		return build(force, ByteOrder.BIG_ENDIAN);
-	}
-	
-	public int build(boolean force, ByteOrder order) {
-		if (buffer==null || force) {
-			buffer = ByteBuffer.allocate(length);
-			buffer.order(order);
-			initData();
-			return buffer.capacity();
-		} else
-			return 0;
-	}
-	
-	protected void initData() {
-		buffer.clear();
-		buffer.put(new byte[buffer.capacity()]);
-	}
-	
-	public int wrap(byte[] data, int offset) {
-		return wrap(data, offset, ByteOrder.BIG_ENDIAN);
-	}
-	
-	public int wrap(byte[] data, int offset, ByteOrder order) {
-		buffer = ByteBuffer.wrap(data, offset, length).slice();
-		buffer.order(order);
-		return offset+length;
-	}
-	
-	/* (non-Javadoc)
-	 * @see com.vieo.fv.resource.stl.data.IDatagram#hasBuffer()
-	 */
-	@Override
-	public boolean hasBuffer() {
-		return buffer!=null;
-	}
+    protected int length;
 
-	public ByteBuffer getByteBuffer() {
-		return buffer;
-	}
+    protected ByteBuffer buffer;
 
-	/* (non-Javadoc)
-	 * @see com.vieo.fv.resource.stl.data.IDatagram#getByteBuffers()
-	 */
-	@Override
-	public ByteBuffer[] getByteBuffers() {
-		if (buffer==null)
-			return null;
-		
-		return new ByteBuffer[]{buffer};
-	}
+    public SimpleDatagram(int length) {
+        this.length = length;
+    }
 
-	/* (non-Javadoc)
-	 * @see com.vieo.fv.resource.stl.internal.IDatagram#getByteOrder()
-	 */
-	@Override
-	public ByteOrder getByteOrder() {
-		return buffer.order();
-	}
+    public int build(boolean force) {
+        return build(force, ByteOrder.BIG_ENDIAN);
+    }
 
-	/* (non-Javadoc)
-	 * @see com.vieo.fv.resource.stl.data.IDatagram#getLength()
-	 */
-	@Override
-	public int getLength() {
-		return length;
-	}
+    public int build(boolean force, ByteOrder order) {
+        if (buffer == null || force) {
+            buffer = ByteBuffer.allocate(length);
+            buffer.order(order);
+            initData();
+            return buffer.capacity();
+        } else
+            return 0;
+    }
 
-	/* (non-Javadoc)
-	 * @see com.vieo.fv.resource.stl.data.IDatagram#dump(java.lang.String, java.io.PrintStream)
-	 */
-	@Override
-	public void dump(String prefix, PrintStream out) {
-		out.println(prefix+getClass().getSimpleName());
-		if (buffer==null) {
-			out.println(prefix+"null");
-			return;
-		}
-		
-		byte[] bytes = buffer.array();
-		int offset = buffer.arrayOffset();
-		out.print(prefix);
-		for (int i=0; i<length; i++) {
-			out.print(String.format("%02x", bytes[i+offset]&0xff)+" ");
-			if ((i+1)%8==0)
-				out.print(" ");
-			if ((i+1)%16==0) {
-				out.println();
-				if ((i+1)<length)
-					out.print(prefix);
-			}
-		}
-		if (length==0 || length%16!=0)
-			out.println();
-		
-	}
+    protected void initData() {
+        buffer.clear();
+        buffer.put(new byte[buffer.capacity()]);
+    }
 
-	/* (non-Javadoc)
-	 * @see com.intel.hpc.stl.resourceadapter.data.IDatagram#toObject()
-	 */
-	@Override
-	public E toObject() {
-		return null;
-	}
+    public int wrap(byte[] data, int offset) {
+        return wrap(data, offset, ByteOrder.BIG_ENDIAN);
+    }
+
+    public int wrap(byte[] data, int offset, ByteOrder order) {
+        buffer = ByteBuffer.wrap(data, offset, length).slice();
+        buffer.order(order);
+        return offset + length;
+    }
+
+    @Override
+    public boolean hasBuffer() {
+        return buffer != null;
+    }
+
+    public ByteBuffer getByteBuffer() {
+        return buffer;
+    }
+
+    @Override
+    public ByteBuffer[] getByteBuffers() {
+        if (buffer == null)
+            return null;
+
+        return new ByteBuffer[] { buffer };
+    }
+
+    @Override
+    public ByteOrder getByteOrder() {
+        return buffer.order();
+    }
+
+    @Override
+    public int getLength() {
+        return length;
+    }
+
+    @Override
+    public void dump(String prefix, PrintStream out) {
+        String formatted = format(prefix);
+        out.print(formatted);
+    }
+
+    @Override
+    public E toObject() {
+        return null;
+    }
+
+    @Override
+    public String toString(String prefix) {
+        return format(prefix);
+    }
+
+    private String format(String prefix) {
+        StringBuffer strBuff = new StringBuffer();
+        strBuff.append(prefix);
+        strBuff.append(getClass().getSimpleName());
+        strBuff.append("\n");
+        if (buffer == null) {
+            strBuff.append(prefix);
+            strBuff.append("null");
+            strBuff.append("\n");
+            return strBuff.toString();
+        }
+
+        byte[] bytes = buffer.array();
+        int offset = buffer.arrayOffset();
+        strBuff.append(prefix);
+        for (int i = 0; i < length; i++) {
+            strBuff.append(String.format("%02x", bytes[i + offset] & 0xff)
+                    + " ");
+            if ((i + 1) % 8 == 0)
+                strBuff.append(" ");
+            if ((i + 1) % 16 == 0) {
+                strBuff.append("\n");
+                if ((i + 1) < length)
+                    strBuff.append(prefix);
+            }
+        }
+        if (length == 0 || length % 16 != 0) {
+            strBuff.append("\n");
+        }
+        return strBuff.toString();
+    }
 
 }

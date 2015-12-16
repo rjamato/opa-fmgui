@@ -35,8 +35,16 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4.2.1  2015/08/12 15:26:57  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.7  2015/08/17 18:53:35  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/05/20 19:07:37  jijunwan
+ *  Archive Log:    fixed unit test issues
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/05/19 19:18:16  jijunwan
+ *  Archive Log:    PR 128797 - Notice update failed to update related notes
+ *  Archive Log:    - put related nodes into lids array
  *  Archive Log:
  *  Archive Log:    Revision 1.4  2014/12/11 18:44:10  fernande
  *  Archive Log:    Switch from log4j to slf4j+logback
@@ -61,7 +69,6 @@
 package com.intel.stl.ui.alert;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -79,7 +86,8 @@ import com.intel.stl.ui.event.NodeUpdateEvent;
 import com.intel.stl.ui.framework.IAppEvent;
 
 public class NodeEventProcessor extends EventBusProcessor<NodeUpdateEvent> {
-    private static Logger log = LoggerFactory.getLogger(NodeEventProcessor.class);
+    private static Logger log = LoggerFactory
+            .getLogger(NodeEventProcessor.class);
 
     /**
      * Description:
@@ -121,20 +129,23 @@ public class NodeEventProcessor extends EventBusProcessor<NodeUpdateEvent> {
      */
     @Override
     protected NodeUpdateEvent toBusEvent(List<EventDescription> evts) {
-        Set<NodeSource> tmp = new LinkedHashSet<NodeSource>(evts.size());
+        Set<Integer> nodesToUpdate = new LinkedHashSet<Integer>();
         for (EventDescription evt : evts) {
             IEventSource source = evt.getSource();
             if (source instanceof NodeSource) {
-                tmp.add((NodeSource) source);
+                nodesToUpdate.add(((NodeSource) source).getLid());
             } else {
                 log.info("Unsupported event source " + source);
             }
-
+            Set<Integer> relatedNodes = evt.getRelatedNodes();
+            if (relatedNodes != null) {
+                nodesToUpdate.addAll(relatedNodes);
+            }
         }
-        Iterator<NodeSource> it = tmp.iterator();
-        int[] lids = new int[tmp.size()];
-        for (int i = 0; i < tmp.size(); i++) {
-            lids[i] = it.next().getLid();
+        int[] lids = new int[nodesToUpdate.size()];
+        int i = 0;
+        for (Integer lid : nodesToUpdate) {
+            lids[i++] = lid;
         }
         return new NodeUpdateEvent(lids, this);
     }

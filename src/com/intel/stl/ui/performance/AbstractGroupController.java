@@ -35,8 +35,38 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.11.2.1  2015/08/12 15:26:41  jijunwan
- *  Archive Log:    PR 129955 - Need to change file header's copyright text to BSD license text
+ *  Archive Log:    Revision 1.18  2015/08/17 18:53:49  jijunwan
+ *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
+ *  Archive Log:    - changed frontend files' headers
+ *  Archive Log:
+ *  Archive Log:    Revision 1.17  2015/08/06 17:20:08  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - improved GroupSelectedEvent to GroupsSelectedEvent to support selecting multiple groups
+ *  Archive Log:    - fixed couple NPE issues
+ *  Archive Log:
+ *  Archive Log:    Revision 1.16  2015/08/06 13:18:07  jypak
+ *  Archive Log:    PR 129707 - Device Types or Device Groups and All/Internal/External labels.
+ *  Archive Log:    When disable irrelevant data types for different device types (All, HFI, SW etc.), set a default data type for the device type.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.15  2015/08/05 03:15:43  jijunwan
+ *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
+ *  Archive Log:    - applied undo mechanism on chart group to support undoable data type and history selection
+ *  Archive Log:    - improved chart group controller to support setting origin so we can undo jumping event
+ *  Archive Log:
+ *  Archive Log:    Revision 1.14  2015/08/04 22:05:32  jijunwan
+ *  Archive Log:    PR 129820 - inactive pin on TopN chart
+ *  Archive Log:    - always try to active a performance item when we recreate pin from persistence
+ *  Archive Log:
+ *  Archive Log:    Revision 1.13  2015/06/30 22:31:41  jijunwan
+ *  Archive Log:    PR 129215 - Need short chart name to support pin capability
+ *  Archive Log:    - use short name as pin card title
+ *  Archive Log:    - improved pin argument to include full name and provide data source description
+ *  Archive Log:    - fixed improper full name issues on trend charts
+ *  Archive Log:
+ *  Archive Log:    Revision 1.12  2015/06/25 20:50:03  jijunwan
+ *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
+ *  Archive Log:    - applied pin framework on dynamic cards that can have different data sources
+ *  Archive Log:    - change to use port counter performance item
  *  Archive Log:
  *  Archive Log:    Revision 1.11  2015/02/13 23:05:35  jijunwan
  *  Archive Log:    PR 126911 - Even though HFI does not represent "Internal" data under opatop, FV still provides drop down for "Internal"
@@ -82,29 +112,49 @@
 
 package com.intel.stl.ui.performance;
 
+import java.awt.Component;
+import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.engio.mbassy.bus.MBassador;
 
 import com.intel.stl.ui.common.ChartsCard;
+import com.intel.stl.ui.common.IPinCard;
+import com.intel.stl.ui.common.IPinDelegator;
 import com.intel.stl.ui.common.IProgressObserver;
+import com.intel.stl.ui.common.PinArgument;
+import com.intel.stl.ui.common.PinDescription;
+import com.intel.stl.ui.common.PinDescription.PinID;
 import com.intel.stl.ui.common.view.ChartsView;
+import com.intel.stl.ui.common.view.IChartCreator;
 import com.intel.stl.ui.common.view.OptionChartsView;
+import com.intel.stl.ui.event.JumpToEvent;
 import com.intel.stl.ui.framework.IAppEvent;
 import com.intel.stl.ui.main.Context;
+import com.intel.stl.ui.main.PinBoardController;
+import com.intel.stl.ui.main.UndoHandler;
+import com.intel.stl.ui.main.view.IDataTypeListener;
 import com.intel.stl.ui.model.ChartGroup;
 import com.intel.stl.ui.model.DataType;
 import com.intel.stl.ui.model.DatasetDescription;
 import com.intel.stl.ui.model.HistoryType;
 import com.intel.stl.ui.performance.item.IPerformanceItem;
+import com.intel.stl.ui.performance.provider.DataProviderName;
 
-public abstract class AbstractGroupController implements IGroupController {
+public abstract class AbstractGroupController<S extends ISource> implements
+        IGroupController<S>, IPinDelegator {
     private final static boolean DEBUG = false;
 
     protected MBassador<IAppEvent> eventBus;
+
+    protected Context context;
 
     protected int maxDataPoints = 10;
 
@@ -114,9 +164,26 @@ public abstract class AbstractGroupController implements IGroupController {
 
     private boolean isSleepMode;
 
-    protected IPerformanceItem[] allItems;
+    protected IPerformanceItem<S>[] allItems;
+
+    protected List<ChartsCard> cards;
 
     protected ChartGroup group;
+
+    // pin capability support
+    private PinID pinID;
+
+    protected PinBoardController pinBoardCtr;
+
+    protected Map<ChartArgument<S>, IPerformanceItem<S>> pinItems =
+            new ConcurrentHashMap<ChartArgument<S>, IPerformanceItem<S>>();
+
+    protected Map<ChartArgument<S>, ChartsCard> pinCards =
+            new ConcurrentHashMap<ChartArgument<S>, ChartsCard>();
+
+    protected UndoHandler undoHandler;
+
+    protected JumpToEvent origin;
 
     /**
      * Description:
@@ -126,19 +193,26 @@ public abstract class AbstractGroupController implements IGroupController {
      * @param histogramName
      */
     public AbstractGroupController(MBassador<IAppEvent> eventBus, String name,
-            IPerformanceItem... items) {
+            IPerformanceItem<S>[] items) {
         super();
-        this.eventBus = eventBus;
         allItems = items;
+        this.eventBus = eventBus;
 
         Map<String, DatasetDescription> map = initDataset();
-        List<ChartsCard> cards = initCards(map);
+        cards = initCards(map);
         if (cards != null && !cards.isEmpty()) {
             group = new ChartGroup(name, cards.get(0).getView());
             for (ChartsCard card : cards) {
                 group.addMember(new ChartGroup(card.getView()));
             }
         }
+    }
+
+    /**
+     * @return the cards
+     */
+    public List<ChartsCard> getCards() {
+        return cards;
     }
 
     /*
@@ -149,8 +223,8 @@ public abstract class AbstractGroupController implements IGroupController {
      * .String)
      */
     @Override
-    public void setDataProvider(String name) {
-        for (IPerformanceItem item : allItems) {
+    public void setDataProvider(DataProviderName name) {
+        for (IPerformanceItem<S> item : allItems) {
             if (item != null) {
                 item.setDataProvider(name);
             }
@@ -165,10 +239,31 @@ public abstract class AbstractGroupController implements IGroupController {
      * .lang.String[])
      */
     @Override
-    public void setDataSources(String... names) {
-        for (IPerformanceItem item : allItems) {
+    public void setDataSources(S[] names) {
+        for (IPerformanceItem<S> item : allItems) {
             if (item != null) {
                 item.setSources(names);
+            }
+        }
+        resetViews();
+    }
+
+    protected void resetViews() {
+        boolean hasPin = getPinID() != null;
+        for (IPerformanceItem<S> item : allItems) {
+            if (item == null) {
+                continue;
+            }
+
+            String name = item.getName();
+            ChartArgument<S> arg = getChartArgument(item);
+            ChartsView view = getItemView(item);
+            if (pinCards.containsKey(arg)
+                    || (pinBoardCtr != null && pinBoardCtr.contains(
+                            item.getFullName(), arg))) {
+                view.enablePin(name, false);
+            } else {
+                view.enablePin(name, hasPin);
             }
         }
     }
@@ -180,11 +275,13 @@ public abstract class AbstractGroupController implements IGroupController {
     public void setType(DataType type) {
         this.type = type;
 
-        for (IPerformanceItem item : allItems) {
+        for (IPerformanceItem<S> item : allItems) {
             if (item != null) {
                 item.setType(type);
             }
         }
+
+        // pin items shouldn't be impacted by this
     }
 
     /*
@@ -195,10 +292,15 @@ public abstract class AbstractGroupController implements IGroupController {
      * intel.stl.ui.model.DataType[])
      */
     @Override
-    public void setDisabledDataTypes(DataType... types) {
+    public void setDisabledDataTypes(DataType defaultType, DataType... types) {
+        if (group == null) {
+            return;
+        }
+
         for (ChartGroup cg : group.getMembers()) {
             ChartsView view = cg.getChartView();
             if (view instanceof OptionChartsView) {
+                ((OptionChartsView) view).setType(defaultType);
                 ((OptionChartsView) view).setDisbaledDataTypes(types);
             }
         }
@@ -207,17 +309,19 @@ public abstract class AbstractGroupController implements IGroupController {
     public void setHistoryType(HistoryType type) {
         this.historyType = type;
 
-        for (IPerformanceItem item : allItems) {
+        for (IPerformanceItem<S> item : allItems) {
             if (item != null) {
                 item.setHistoryType(type);
             }
         }
+
+        // pin items shouldn't be impacted by this
     }
 
     protected Map<String, DatasetDescription> initDataset() {
         Map<String, DatasetDescription> map =
                 new LinkedHashMap<String, DatasetDescription>();
-        for (IPerformanceItem item : allItems) {
+        for (IPerformanceItem<S> item : allItems) {
             if (item != null) {
                 map.put(item.getName(), item.getDatasetDescription());
             }
@@ -226,12 +330,106 @@ public abstract class AbstractGroupController implements IGroupController {
     }
 
     /**
-     * Description:
+     * Description: create ChartsCard based on Dataset
      * 
      * @param map
      */
     protected abstract List<ChartsCard> initCards(
             Map<String, DatasetDescription> map);
+
+    protected ChartsCard createCard(IPerformanceItem<S> item,
+            Map<String, DatasetDescription> map) {
+        String name = item.getName();
+        ChartsView view = new ChartsView(name, getChartCreator());
+        return createChartsCard(view, map, name);
+    }
+
+    /**
+     * 
+     * <i>Description:</i> create card with history type option
+     * 
+     * @param item
+     * @param map
+     * @return
+     */
+    protected ChartsCard createOptionCard(final IPerformanceItem<S> item,
+            Map<String, DatasetDescription> map, boolean historyType,
+            boolean dataType) {
+        String name = item.getName();
+        final OptionChartsView view =
+                new OptionChartsView(name, getChartCreator());
+        if (dataType) {
+            view.setDataTypeListener(new IDataTypeListener<DataType>() {
+                @Override
+                public void onDataTypeChange(DataType oldType, DataType newType) {
+                    item.setType(newType);
+                    view.setType(newType);
+
+                    UndoHandler undoHandler = getUndoHandler();
+                    if (undoHandler != null && !undoHandler.isInProgress()) {
+                        UndoableDataTypeSelection sel =
+                                new UndoableDataTypeSelection(item, view,
+                                        oldType, newType);
+                        undoHandler.addUndoAction(sel);
+                    }
+                }
+            });
+        }
+
+        ChartsCard chartsCard = createChartsCard(view, map, name);
+
+        if (historyType) {
+            view.setHistoryTypeListener(new IDataTypeListener<HistoryType>() {
+                @Override
+                public void onDataTypeChange(HistoryType oldType,
+                        HistoryType newType) {
+                    // Get the refresh rate here and calculate the maxDataPoints
+                    // here.
+                    item.setHistoryType(newType);
+                    view.setHistoryType(newType);
+
+                    UndoHandler undoHandler = getUndoHandler();
+                    if (undoHandler != null && !undoHandler.isInProgress()) {
+                        UndoableChartHistorySelection sel =
+                                new UndoableChartHistorySelection(item, view,
+                                        oldType, newType);
+                        undoHandler.addUndoAction(sel);
+                    }
+                }
+            });
+        }
+
+        return chartsCard;
+    }
+
+    /**
+     * 
+     * <i>Description:</i> create card with multiple IPerformanceItem
+     * 
+     * @param items
+     * @param map
+     * @return
+     */
+    protected ChartsCard createCard(IPerformanceItem<S>[] items,
+            Map<String, DatasetDescription> map) {
+        ChartsView auxView = new ChartsView("", getChartCreator());
+        String[] names = new String[items.length];
+        String name = null;
+        for (int i = 0; i < items.length; i++) {
+            if (items[i] != null) {
+                names[i] = getItemName(items[i]);
+                if (name == null) {
+                    name = names[i];
+                }
+            }
+        }
+        auxView.setTitle(name);
+        return createChartsCard(auxView, map, names);
+    }
+
+    protected String getItemName(IPerformanceItem<S> item) {
+        return item == null ? null : item.getName();
+    }
 
     protected ChartsCard createChartsCard(ChartsView view,
             Map<String, DatasetDescription> datasets, String... datasetNames) {
@@ -252,6 +450,18 @@ public abstract class AbstractGroupController implements IGroupController {
         return group;
     }
 
+    /**
+     * @param origin
+     *            the origin to set
+     */
+    @Override
+    public void setOrigin(JumpToEvent origin) {
+        this.origin = origin;
+        for (ChartsCard card : cards) {
+            card.setOrigin(origin);
+        }
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -261,15 +471,55 @@ public abstract class AbstractGroupController implements IGroupController {
      */
     @Override
     public void setContext(Context context, IProgressObserver observer) {
-        for (IPerformanceItem item : allItems) {
+        this.context = context;
+
+        if (context == null || context.getController() == null) {
+            return;
+        }
+
+        undoHandler = context.getController().getUndoHandler();
+        for (ChartsCard card : cards) {
+            card.setUndoHandler(undoHandler, origin);
+        }
+
+        for (IPerformanceItem<S> item : allItems) {
             if (item != null) {
                 item.setContext(context, null);
             }
         }
 
+        for (IPerformanceItem<S> item : pinItems.values()) {
+            if (item != null) {
+                item.setContext(context, null);
+            }
+        }
+
+        initPinBoardController(context);
+
         if (observer != null) {
             observer.onFinish();
         }
+    }
+
+    protected void initPinBoardController(Context context) {
+        PinBoardController ctr =
+                context.getController().getPinBoardController();
+        if (pinBoardCtr != ctr && getPinID() != null) {
+            if (pinBoardCtr != null) {
+                pinBoardCtr.deregisterPinProvider(getPinID());
+            } else {
+                for (ChartsCard card : cards) {
+                    card.getView().enablePin(true);
+                    card.setPinDelegator(this);
+                }
+            }
+            pinBoardCtr = ctr;
+            pinBoardCtr.registerPinProvider(getPinID(), this);
+        }
+    }
+
+    protected UndoHandler getUndoHandler() {
+        return undoHandler;
     }
 
     /*
@@ -281,7 +531,17 @@ public abstract class AbstractGroupController implements IGroupController {
      */
     @Override
     public void onRefresh(IProgressObserver observer) {
-        for (IPerformanceItem item : allItems) {
+        for (IPerformanceItem<S> item : allItems) {
+            if (item != null) {
+                item.onRefresh(null);
+            }
+
+            if (observer != null && observer.isCancelled()) {
+                break;
+            }
+        }
+
+        for (IPerformanceItem<S> item : pinItems.values()) {
             if (item != null) {
                 item.onRefresh(null);
             }
@@ -304,23 +564,24 @@ public abstract class AbstractGroupController implements IGroupController {
     @Override
     public void setSleepMode(boolean b) {
         if (DEBUG) {
-            System.out.println("[" + getGroup().getName() + "] sleep mode = "
-                    + b);
+            System.out.println("["
+                    + (getGroup() == null ? "null" : getGroup().getName())
+                    + "] sleep mode = " + b);
         }
 
         isSleepMode = b;
-        IPerformanceItem primary = getPrimaryItem();
+        IPerformanceItem<S> primary = getPrimaryItem();
         // primary should always be active because it will provide data for
         // sparkline display
         primary.setActive(true);
-        for (IPerformanceItem item : allItems) {
+        for (IPerformanceItem<S> item : allItems) {
             if (item != null && item != primary) {
                 item.setActive(!b);
             }
         }
     }
 
-    protected IPerformanceItem getPrimaryItem() {
+    protected IPerformanceItem<S> getPrimaryItem() {
         return allItems[0];
     }
 
@@ -332,5 +593,188 @@ public abstract class AbstractGroupController implements IGroupController {
     @Override
     public boolean isSleepMode() {
         return isSleepMode;
+    }
+
+    public void clear() {
+        for (IPerformanceItem<S> item : allItems) {
+            item.clear();
+        }
+    }
+
+    protected IPerformanceItem<S> findItem(String name) {
+        for (IPerformanceItem<S> item : allItems) {
+            if (item != null && item.getName().equals(name)) {
+                return item;
+            }
+        }
+        throw new IllegalArgumentException("Cannot find PerformanItem '" + name
+                + "'");
+    }
+
+    /**
+     * @return the pinID
+     */
+    @Override
+    public PinID getPinID() {
+        return pinID;
+    }
+
+    /**
+     * @param pinID
+     *            the pinID to set
+     */
+    public void setPinID(PinID pinID) {
+        this.pinID = pinID;
+    }
+
+    @Override
+    public void addPin(String title, PinArgument argument) {
+        if (pinBoardCtr != null) {
+            String name = argument.getProperty(ChartArgument.NAME);
+            // fill pin argument
+            IPerformanceItem<S> item = findItem(name);
+            ChartArgument<S> chartArg = getChartArgument(item);
+            PinDescription pin =
+                    new PinDescription(getPinID(), getPinTitle(item), chartArg);
+            pinBoardCtr.addPin(pin);
+            if (DEBUG) {
+                System.out.println("Register to pin board: " + pin);
+            }
+        }
+    }
+
+    protected abstract ChartArgument<S> getChartArgument(
+            IPerformanceItem<S> item);
+
+    protected String getPinTitle(IPerformanceItem<S> item) {
+        return item.getShortName();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.IPinnable#createPin(com.intel.stl.ui.common.
+     * PinDescription)
+     */
+    @Override
+    public IPinCard createPin(PinDescription pin) {
+        if (DEBUG) {
+            System.out.println("Create pin card for " + pin);
+        }
+        if (pin.getID() != getPinID()) {
+            // shouldn't happen
+            throw new IllegalArgumentException("Unmatched PinID. Expect "
+                    + getPinID() + ", got " + pin.getID());
+        }
+
+        String name = pin.getArgument().getProperty(ChartArgument.NAME);
+        if (name == null) {
+            // shouldn't happen
+            throw new IllegalArgumentException("No chart name in Pin " + pin);
+        }
+
+        IPerformanceItem<S> item = findItem(name);
+        ChartsView view = getItemView(item);
+        if (view != null) {
+            view.enablePin(name, false);
+            return createPinCard(pin, item);
+        } else {
+            // this shouldn't happen
+            throw new IllegalArgumentException("Cannot find view for pin "
+                    + pin);
+        }
+    }
+
+    protected abstract ChartsView getItemView(IPerformanceItem<S> item);
+
+    @SuppressWarnings("unchecked")
+    protected IPinCard createPinCard(final PinDescription pin,
+            final IPerformanceItem<S> source) {
+        // the argument restored from persistence is a Properties object, we
+        // need to convert it to ChartArgument
+        Properties arg = pin.getArgument();
+        final ChartArgument<S> chartArg =
+                (ChartArgument<S>) ChartArgument.asChartArgument(arg);
+
+        return new IPinCard() {
+
+            @Override
+            public PinDescription getDescription() {
+                return pin;
+            }
+
+            @Override
+            public Component getView() {
+                ChartsCard card = getPinCard(chartArg, source);
+                ChartsView view = card.getView();
+                Component comp = view.getContentComponent();
+                Dimension size =
+                        getItemView(source).getContentComponent().getSize();
+                int height = pin.getHeight();
+                if (height > 0) {
+                    comp.setPreferredSize(new Dimension(size.width, height));
+                } else {
+                    comp.setPreferredSize(size);
+                    pin.setHeight(size.height);
+                }
+                return comp;
+            }
+
+            @Override
+            public void unpin() {
+                getItemView(source).enablePin(chartArg.getName(), true);
+                ChartsCard pinCard = pinCards.remove(chartArg);
+                IPerformanceItem<S> pinItem = pinItems.remove(chartArg);
+                clearPin(pinCard, pinItem);
+            }
+        };
+    };
+
+    protected void clearPin(ChartsCard pinCard, IPerformanceItem<S> pinItem) {
+        if (pinItem != null) {
+            pinItem.setActive(false);
+            pinItem.clear();
+        }
+    }
+
+    protected ChartsCard getPinCard(ChartArgument<S> arg,
+            IPerformanceItem<S> source) {
+        ChartsCard card = pinCards.get(arg);
+        if (card == null) {
+            String name = arg.getName();
+            IPerformanceItem<S> pinItem = source.copy();
+            if (!pinItem.isActive()) {
+                pinItem.setActive(true);
+            }
+            // System.out.println("============== " + item + " --> " + pinItem);
+            if (!pinItem.getCurrentProviderName().name()
+                    .equals(arg.getProvider())) {
+                pinItem.setDataProvider(DataProviderName.valueOf(arg
+                        .getProvider()));
+                pinItem.setSources(arg.getSources());
+            } else if (!Arrays.equals(pinItem.getSources(), arg.getSources())) {
+                pinItem.setSources(arg.getSources());
+            }
+            DataType dataType = arg.getDataType();
+            if (dataType != null) {
+                pinItem.setType(dataType);
+            }
+            HistoryType historyType = arg.getHistoryTpe();
+            if (historyType != null) {
+                pinItem.setHistoryType(historyType);
+            }
+            pinItems.put(arg, pinItem);
+            ChartsView view = new ChartsView(name, getChartCreator());
+            Map<String, DatasetDescription> dataMap =
+                    Collections.singletonMap(name,
+                            pinItem.getDatasetDescription());
+            card = createChartsCard(view, dataMap, name);
+            pinCards.put(arg, card);
+        }
+        return card;
+    }
+
+    protected IChartCreator getChartCreator() {
+        return PerformanceChartsCreator.instance();
     }
 }
