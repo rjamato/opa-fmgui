@@ -96,18 +96,32 @@ Change the name of the directory from opa-fmgui to IntelOPA-FMGUI-10_0_0_0_2
 
 Create a tar file of the opa-fmgui sources in the rpmbuild/SOURCES directory
 
-       tar -cvf $HOME/rpmbuild/SOURCES/IntelOPA-FMGUI-10_0_0_0_2.source.tar --exclude-vcs IntelOPA-FMGUI-10_0_0_0_2
+       tar -cvf $HOME/rpmbuild/SOURCES/IntelOPA-FMGUI-10_0_0_0_2.source.tar IntelOPA-FMGUI-10_0_0_0_2
 
 Change directory back into the opa-fmgui directory now called IntelOPA-FMGUI-10_0_0_0_2
 
        cd IntelOPA-FMGUI-10_0_0_0_2
 
-Create the RPMs using the rpmbuild program
+Create RPM build environment:
+cd {$HOME}
+mkdir -p ~/rpmbuild/{RPMS,SRPMS,BUILD,SOURCES,SPECS,tmp}
+cat <<EOF >~/.rpmmacros
+%_topdir   %(echo $HOME)/rpmbuild
+%_tmppath  %{_topdir}/tmp
+EOF
 
-       rpmbuild -ba fmgui.spec
+Copy tar file to the SOURCES directory:
+cp {path-to-tar}/IntelOPA-FMGUI-10_0_0_0_2.source.tar ~/rpmbuild/SOURCES/
+
+Copy the spec file from the opa-fmgui directory into SPECS directory:
+cp {opa-fmgui}/fmgui.spec ~/rpmbuild/SPECS
+
+Build the rpm:
+rpmbuild -ba ~/rpmbuild/SPECS/fmgui.spec
+
+Upon completion you’ll find the rpm in ~/rpmbuild/RPMS directory.
 
 Put the directory back to its original name
 
        cd ..; mv IntelOPA-FMGUI-10_0_0_0_2 opa-fmgui; cd opa-fmgui
 
-This will create an RPM file in the the $HOME/rpmbuild/RPMS/noarch directory.
