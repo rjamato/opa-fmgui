@@ -34,6 +34,10 @@
  *  Archive Source: $Source$
  * 
  *  Archive Log: $Log$
+ *  Archive Log: Revision 1.47  2015/12/17 21:51:08  jijunwan
+ *  Archive Log: PR 132124 - Newly created VF not displayed after reboot of SM
+ *  Archive Log: - improved the arch to do cache reset
+ *  Archive Log:
  *  Archive Log: Revision 1.46  2015/09/26 06:17:06  jijunwan
  *  Archive Log: 130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
  *  Archive Log: - added reset to clear all caches and update DB topology
@@ -605,8 +609,8 @@ public class SubnetApi implements ISubnetApi {
      */
     @Override
     public void reset() {
-        cacheMgr.reset();
-        cacheMgr.startTopologyUpdateTask();
+        // nothing to do here since we will reset CacheManager from
+        // SubnetContext
     }
 
     /*

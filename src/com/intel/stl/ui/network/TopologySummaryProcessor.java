@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.11  2015/12/16 21:38:59  jijunwan
+ *  Archive Log:    PR 132107 - Error messages in log file that are not really errors
+ *  Archive Log:    - change to level to warning and show message rather then stack trace
+ *  Archive Log:
  *  Archive Log:    Revision 1.10  2015/08/17 18:54:00  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -246,8 +250,8 @@ public class TopologySummaryProcessor {
                         } else if (node.getDepth() < nbr.getDepth()) {
                             quality = upQuality;
                         } else {
-                            // this shouldn't happen
-                            log.error("Mismatched nodes depth " + node + " "
+                            // happens on irregular tree
+                            log.warn("Mismatched nodes depth " + node + " "
                                     + nbr);
                             continue;
                         }

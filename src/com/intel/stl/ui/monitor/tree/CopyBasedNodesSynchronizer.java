@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.8  2015/10/23 19:07:57  jijunwan
+ *  Archive Log:    PR 129357 - Be able to hide inactive ports
+ *  Archive Log:    - revert back to the old version without visible node support
+ *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/09/30 13:26:45  fisherma
  *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
  *  Archive Log:
@@ -139,13 +143,11 @@ public class CopyBasedNodesSynchronizer extends TreeSynchronizer<Integer> {
         Map<Integer, FVResourceNode> updated =
                 new HashMap<Integer, FVResourceNode>();
         boolean hasStructureChange = false;
-        int toUpdate =
-                Math.min(refNode.getModelChildCount(),
-                        node.getModelChildCount());
+        int toUpdate = Math.min(refNode.getChildCount(), node.getChildCount());
         for (int i = 0; i < toUpdate; i++) {
             // update ports
-            FVResourceNode port = node.getModelChildAt(i);
-            FVResourceNode refPort = refNode.getModelChildAt(i);
+            FVResourceNode port = node.getChildAt(i);
+            FVResourceNode refPort = refNode.getChildAt(i);
             if (port.getType() != refPort.getType()) {
                 boolean hasChanged = port.getType() != refPort.getType();
                 if (hasChanged) {
@@ -154,18 +156,18 @@ public class CopyBasedNodesSynchronizer extends TreeSynchronizer<Integer> {
                 }
             }
         }
-        if (toUpdate < node.getModelChildCount()) {
+        if (toUpdate < node.getChildCount()) {
             // remove ports
-            for (int i = toUpdate; i < node.getModelChildCount(); i++) {
+            for (int i = toUpdate; i < node.getChildCount(); i++) {
                 node.removeChild(toUpdate);
                 if (!hasStructureChange) {
                     hasStructureChange = true;
                 }
             }
-        } else if (toUpdate < refNode.getModelChildCount()) {
+        } else if (toUpdate < refNode.getChildCount()) {
             // add ports
-            for (int i = toUpdate; i < refNode.getModelChildCount(); i++) {
-                FVResourceNode port = refNode.getModelChildAt(i).copy();
+            for (int i = toUpdate; i < refNode.getChildCount(); i++) {
+                FVResourceNode port = refNode.getChildAt(i).copy();
                 node.addChild(port);
                 if (!hasStructureChange) {
                     hasStructureChange = true;
@@ -181,8 +183,7 @@ public class CopyBasedNodesSynchronizer extends TreeSynchronizer<Integer> {
             fireStructureChanged(monitors, node);
         } else if (!updated.isEmpty()) {
             for (Integer childIndex : updated.keySet()) {
-                int viewIndex = node.getViewIndex(childIndex);
-                fireNodesUpdated(monitors, node, viewIndex,
+                fireNodesUpdated(monitors, node, childIndex,
                         updated.get(childIndex));
             }
         }

@@ -35,6 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.31  2015/11/02 23:56:53  jijunwan
+ *  Archive Log:    PR 131396 - Incorrect Connectivity Table for a VF port
+ *  Archive Log:    - adapted to the new connectivity table controller to support VF port
+ *  Archive Log:
+ *  Archive Log:    Revision 1.30  2015/10/23 19:07:58  jijunwan
+ *  Archive Log:    PR 129357 - Be able to hide inactive ports
+ *  Archive Log:    - revert back to the old version without visible node support
+ *  Archive Log:
  *  Archive Log:    Revision 1.29  2015/09/30 13:26:50  fisherma
  *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
  *  Archive Log:
@@ -272,8 +280,13 @@ public class ConnectivitySubpageController implements IPerfSubpageController,
                         && Byte.decode(node.getName()) == 0) {
                     processSwitch(parent, observer);
                 } else {
+                    String vfName = null;
+                    FVResourceNode group = parent.getParent();
+                    if (group.getType() == TreeNodeType.VIRTUAL_FABRIC) {
+                        vfName = group.getTitle();
+                    }
                     tableController.showConnectivity(node.getParent().getId(),
-                            observer, (short) node.getId());
+                            vfName, observer, (short) node.getId());
                 }
                 break;
 
@@ -291,27 +304,39 @@ public class ConnectivitySubpageController implements IPerfSubpageController,
     }
 
     protected void processSwitch(FVResourceNode node, IProgressObserver observer) {
-        Vector<FVResourceNode> children = node.getVisibleChildren();
+        Vector<FVResourceNode> children = node.getChildren();
         if (children.size() > 1) {
+            String vfName = null;
+            FVResourceNode group = node.getParent();
+            if (group.getType() == TreeNodeType.VIRTUAL_FABRIC) {
+                vfName = group.getTitle();
+            }
             short[] ports = new short[children.size() - 1];
             for (int i = 1; i < children.size(); i++) {
                 ports[i - 1] = (short) children.get(i).getId();
             }
-            tableController.showConnectivity(node.getId(), observer, ports);
+            tableController.showConnectivity(node.getId(), vfName, observer,
+                    ports);
         } else {
             observer.onFinish();
         }
     }
 
     protected void processHFI(FVResourceNode node, IProgressObserver observer) {
-        Vector<FVResourceNode> children = node.getVisibleChildren();
+        Vector<FVResourceNode> children = node.getChildren();
         if (children.size() > 0) {
+            String vfName = null;
+            FVResourceNode group = node.getParent();
+            if (group.getType() == TreeNodeType.VIRTUAL_FABRIC) {
+                vfName = group.getTitle();
+            }
             short[] ports = new short[children.size()];
             for (int i = 0; i < children.size(); i++) {
                 // set local port number
                 ports[i] = (short) children.get(i).getId();
             }
-            tableController.showConnectivity(node.getId(), observer, ports);
+            tableController.showConnectivity(node.getId(), vfName, observer,
+                    ports);
         } else {
             observer.onFinish();
         }

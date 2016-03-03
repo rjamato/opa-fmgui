@@ -34,6 +34,10 @@
  *  Archive Source: $Source$
  * 
  *  Archive Log: $Log$
+ *  Archive Log: Revision 1.63  2015/10/15 21:16:03  jijunwan
+ *  Archive Log: PR 131044 - Switch/HFI status can go beyond 100%
+ *  Archive Log: - changed to use larger number of nodes
+ *  Archive Log:
  *  Archive Log: Revision 1.62  2015/09/26 06:28:35  jijunwan
  *  Archive Log: 130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
  *  Archive Log: - changed to do a delayed refresh if there are changes on ImageInfo data
@@ -437,9 +441,17 @@ public class HomePage implements IPageController, IStateChangeListener {
             return;
         }
 
-        summary.updateStates(stateSummary.getSwitchStates(),
-                stateSummary.getBaseTotalSWs(), stateSummary.getHfiStates(),
-                stateSummary.getBaseTotalHFIs());
+        int totalSWs = stateSummary.getBaseTotalSWs();
+        if (lastImageInfo != null
+                && lastImageInfo.getNumSwitchNodes() > totalSWs) {
+            totalSWs = lastImageInfo.getNumSwitchNodes();
+        }
+        int totalHFIs = stateSummary.getBaseTotalHFIs();
+        if (lastImageInfo != null && lastImageInfo.getNumHFIPorts() > totalHFIs) {
+            totalHFIs = lastImageInfo.getNumHFIPorts();
+        }
+        summary.updateStates(stateSummary.getSwitchStates(), totalSWs,
+                stateSummary.getHfiStates(), totalHFIs);
         summary.updateHealthScore(stateSummary.getHealthScore());
         summary.updateWorstNodes(stateSummary.getWorstNodes());
     }

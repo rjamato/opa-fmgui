@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.4  2015/10/21 15:06:57  jijunwan
+ *  Archive Log:    PR 131077 - Virtual Fabrics list does not reflect enabled status per item in "list tile" of admin window
+ *  Archive Log:    - Extended VF to use its own renderer for item panel
+ *  Archive Log:    - Extended VF to update item panel when there is a change on enabled check box
+ *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/08/17 18:54:01  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -56,9 +61,24 @@
 
 package com.intel.stl.ui.admin.view.virtualfabrics;
 
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Font;
+
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
+
 import com.intel.stl.api.management.virtualfabrics.VirtualFabric;
+import com.intel.stl.ui.admin.Item;
 import com.intel.stl.ui.admin.impl.virtualfabrics.VirtualFabricRendererModel;
 import com.intel.stl.ui.admin.view.AbstractConfView;
+import com.intel.stl.ui.admin.view.ItemListPanel;
+import com.intel.stl.ui.common.UIConstants;
+import com.intel.stl.ui.common.UIImages;
+import com.intel.stl.ui.common.view.ComponentFactory;
 
 public class VirtualFabricsSubpageView extends
         AbstractConfView<VirtualFabric, VirtualFabricsEditorPanel> {
@@ -81,5 +101,81 @@ public class VirtualFabricsSubpageView extends
     @Override
     protected VirtualFabricsEditorPanel createrEditorPanel() {
         return new VirtualFabricsEditorPanel(new VirtualFabricRendererModel());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.admin.view.AbstractConfView#createItemSelectionPanel()
+     */
+    @Override
+    protected ItemListPanel<VirtualFabric> createItemSelectionPanel() {
+        ItemListPanel<VirtualFabric> listPanel =
+                new ItemListPanel<VirtualFabric>(getName());
+        listPanel.setItemRenderer(new ListCellRenderer<Item<VirtualFabric>>() {
+
+            @Override
+            public Component getListCellRendererComponent(
+                    JList<? extends Item<VirtualFabric>> list,
+                    Item<VirtualFabric> value, int index, boolean isSelected,
+                    boolean cellHasFocus) {
+                Item<?> item = value;
+                VirtualFabric vf = (VirtualFabric) item.getObj();
+                ItemPanel ip = new ItemPanel(item.getName());
+                ip.setState(isSelected, item.isEditable(), vf.getEnable()
+                        .isSelected());
+                return ip;
+            }
+
+        });
+        return listPanel;
+    }
+
+    class ItemPanel extends JPanel {
+        private static final long serialVersionUID = 2072583310868638992L;
+
+        private final JLabel enableLabel;
+
+        private final JLabel itemLabel;
+
+        public ItemPanel(String name) {
+            super(new FlowLayout(FlowLayout.LEADING, 2, 2));
+            setBorder(BorderFactory.createEmptyBorder(4, 2, 4, 2));
+
+            enableLabel = new JLabel();
+            add(enableLabel);
+
+            itemLabel = ComponentFactory.getH5Label(name, Font.PLAIN);
+            add(itemLabel);
+        }
+
+        public void setState(boolean selected, boolean editable, boolean enabled) {
+            if (selected) {
+                setBackground(UIConstants.INTEL_BLUE);
+                itemLabel.setForeground(UIConstants.INTEL_WHITE);
+            } else {
+                setBackground(UIConstants.INTEL_WHITE);
+            }
+
+            if (!editable) {
+                itemLabel.setIcon(UIImages.UNEDITABLE.getImageIcon());
+            } else {
+                itemLabel.setIcon(null);
+            }
+
+            if (enabled) {
+                if (selected) {
+                    enableLabel.setIcon(UIImages.CHECK_WHITE_ICON
+                            .getImageIcon());
+                } else {
+                    enableLabel
+                            .setIcon(UIImages.CHECK_BLUE_ICON.getImageIcon());
+                }
+            } else {
+                enableLabel.setIcon(null);
+            }
+        }
+
     }
 }

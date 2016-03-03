@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.27  2015/11/11 13:26:28  robertja
+ *  Archive Log:    PR 130278 - Store console tab help pane state on a per-tab basis so that help info is restored when focus returns to a tab.
+ *  Archive Log:
  *  Archive Log:    Revision 1.26  2015/09/08 21:21:58  jijunwan
  *  Archive Log:    PR 130329 - Windows FM GUI - Admin tab - Console sidetab - need space between login buttons
  *  Archive Log:    - adjusted insets to increase space between buttons
@@ -351,12 +354,17 @@ public class ConsoleTerminalView extends JPanel implements
                 if (entry.startsWith("iba_report -o ")) {
                     entry = "iba_report -reporttypes";
                 }
-                consoleListener.getHelpController().parseCommand(entry);
-
-                // Only pass the command name to the Help comboBox
-                if (entry.split(" ").length > 0) {
-                    consoleListener.getHelpController().updateSelection(
-                            entry.split(" ")[0]);
+                
+                if(!entry.isEmpty()){
+	                consoleListener.getHelpController().parseCommand(entry);
+	
+	                
+	                // Only pass the command name to the Help comboBox
+	                if (entry.split(" ").length > 0) {
+	                    consoleListener.getHelpController().updateSelection(
+	                            entry.split(" ")[0]);
+	                }
+	                consoleListener.setLastCommand(entry);
                 }
             }
 

@@ -35,6 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.8  2015/11/18 23:55:00  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Separated sections of component building so derived classes can change the order of the components.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/10/19 22:30:09  jijunwan
+ *  Archive Log:    PR 131091 - On an unsuccessful Failover, the Admin | Applications doesn't show the login window
+ *  Archive Log:    - show login panel when not initialized properly with corresponding message
+ *  Archive Log:    - added feature to fully enable/disable a login panel
+ *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/10/01 21:54:36  fernande
  *  Archive Log:    PR130409 - [Dell]: FMGUI Admin Console login fails when switch is configured without username and password. Removed restriction on user and password not empty
  *  Archive Log:
@@ -81,8 +90,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.AbstractDocument;
 
@@ -93,23 +102,30 @@ import com.intel.stl.ui.console.LoginBean;
 
 public class LoginPanel extends JPanel {
 
-    private JTextField hostField, userField;
+    protected JFormattedTextField hostField;
 
-    private JFormattedTextField portField;
+    protected JFormattedTextField userField;
 
-    JPasswordField passwordField;
+    protected JFormattedTextField portField;
+
+    protected JPasswordField passwordField;
 
     private LoginBean credentials = new LoginBean();
 
     private JTextArea messageArea;
 
-    private JProgressBar progressBar;
+    protected JProgressBar progressBar;
 
-    private ILoginListener listener;
+    protected ILoginListener listener;
 
-    /**
-     * 
-     */
+    private JButton cancelBtn;
+
+    private JButton loginBtn;
+
+    protected JPanel btnPanel;
+
+    protected GridBagConstraints gc;
+
     private static final long serialVersionUID = -3922793376630351870L;
 
     // Constructor to create this class when the login listener isn't ready yet
@@ -122,18 +138,49 @@ public class LoginPanel extends JPanel {
         initLoginPanel();
     }
 
-    private void initLoginPanel() {
-        setBorder(BorderFactory.createTitledBorder(STLConstants.K1050_LOGIN
-                .getValue()));
-        setLayout(new GridBagLayout());
-        GridBagConstraints gc = new GridBagConstraints();
+    protected void initLoginPanel() {
+        setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(UIConstants.INTEL_BLUE, 2),
+                STLConstants.K1050_LOGIN.getValue(), TitledBorder.LEFT,
+                TitledBorder.TOP, UIConstants.H5_FONT.deriveFont(Font.BOLD)));
 
+        setLayout(new GridBagLayout());
+        gc = new GridBagConstraints();
         gc.gridx = 0;
         gc.gridy = 0;
+        gc.weightx = 1;
         gc.insets = new Insets(10, 10, 10, 10);
         gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1;
         gc.gridwidth = GridBagConstraints.REMAINDER;
+
+        // Add a message area for errors
+        messageArea = createMessageArea();
+        this.add(messageArea, gc);
+
+        // Add Host, Port, User, and Password fields
+        int row = addCredentialFields(2);
+
+        gc.gridx = 1;
+        gc.gridy = row++;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.anchor = GridBagConstraints.CENTER;
+        gc.gridwidth = GridBagConstraints.REMAINDER;
+        progressBar = createProgressBar();
+        this.add(progressBar, gc);
+
+        // Create the button panel for Cancel and Login
+        gc.gridx = 1;
+        gc.gridy = row;
+        gc.gridwidth = GridBagConstraints.REMAINDER;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        btnPanel = createButtonPanel();
+        this.add(btnPanel, gc);
+
+        this.setBackground(UIConstants.INTEL_WHITE);
+        this.setPreferredSize(new Dimension(400, 400));
+    }
+
+    protected JTextArea createMessageArea() {
         messageArea = new JTextArea();
 
         // Initial message to user to request login credentials for the server
@@ -143,11 +190,24 @@ public class LoginPanel extends JPanel {
         messageArea.setLineWrap(true);
         messageArea.setEditable(false);
         messageArea.setFocusable(false);
-        this.add(messageArea, gc);
 
+        return messageArea;
+    }
+
+    protected JProgressBar createProgressBar() {
+        progressBar = new JProgressBar();
+        progressBar.setStringPainted(false);
+
+        return progressBar;
+    }
+
+    protected int addCredentialFields(int row) {
         gc.gridx = 0;
-        gc.gridy = 1;
-        gc.weightx = 0.1;
+        gc.gridy = row;
+        gc.insets = new Insets(10, 10, 10, 10);
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.gridwidth = GridBagConstraints.REMAINDER;
+        gc.weightx = 0;
         gc.gridwidth = 1;
         JLabel label =
                 ComponentFactory.getH5Label(STLConstants.K0051_HOST.getValue()
@@ -155,27 +215,26 @@ public class LoginPanel extends JPanel {
         label.setHorizontalAlignment(SwingConstants.RIGHT);
         this.add(label, gc);
 
-        gc.weightx = 0.8;
+        gc.weightx = 1;
         gc.gridwidth = GridBagConstraints.REMAINDER;
         gc.gridx = 1;
-        gc.gridy = 1;
         hostField =
                 ComponentFactory.createTextField(null, true, 100,
                         (DocumentListener[]) null);
         hostField.setText("");
         hostField.setEnabled(true);
 
-        // for authentication the host name is being taken from the HostInfo
+        // For authentication the host name is being taken from the HostInfo;
         // in most cases it is not editable. In case if you need to make
         // this field editable, call method setHostFieldEditable(true)
         hostField.setEditable(false);
         this.add(hostField, gc);
 
+        row++;
         gc.gridx = 0;
-        gc.gridy = 2;
-        gc.weightx = 0.1;
+        gc.gridy = row;
+        gc.weightx = 0;
         gc.gridwidth = 1;
-        gc.weightx = 0.2;
         label =
                 ComponentFactory.getH5Label(
                         STLConstants.K0404_PORT_NUMBER.getValue() + " :",
@@ -184,8 +243,8 @@ public class LoginPanel extends JPanel {
         this.add(label, gc);
 
         gc.gridx = 1;
+        gc.weightx = 1;
         gc.gridwidth = GridBagConstraints.REMAINDER;
-        // portField = new JFormattedTextField(new Integer(22));
         portField =
                 ComponentFactory.createTextField("0123456789", false, 5,
                         (DocumentListener[]) null);
@@ -193,9 +252,10 @@ public class LoginPanel extends JPanel {
         portField.setText("22");
         this.add(portField, gc);
 
-        gc.weightx = 0.1;
+        row++;
+        gc.weightx = 0;
         gc.gridx = 0;
-        gc.gridy = 3;
+        gc.gridy = row;
         gc.gridwidth = 1;
         label =
                 ComponentFactory.getH5Label(
@@ -205,6 +265,7 @@ public class LoginPanel extends JPanel {
         this.add(label, gc);
 
         gc.gridx = 1;
+        gc.weightx = 1;
         gc.gridwidth = GridBagConstraints.REMAINDER;
         userField =
                 ComponentFactory.createTextField(null, true, 40,
@@ -212,9 +273,10 @@ public class LoginPanel extends JPanel {
         userField.setText("");
         this.add(userField, gc);
 
-        gc.weightx = 0.1;
+        row++;
+        gc.weightx = 0;
         gc.gridx = 0;
-        gc.gridy = 4;
+        gc.gridy = row;
         gc.gridwidth = 1;
         label =
                 ComponentFactory.getH5Label(
@@ -223,6 +285,7 @@ public class LoginPanel extends JPanel {
         label.setHorizontalAlignment(SwingConstants.RIGHT);
         this.add(label, gc);
 
+        gc.weightx = 1;
         gc.gridx = 1;
         gc.gridwidth = GridBagConstraints.REMAINDER;
         passwordField =
@@ -236,17 +299,13 @@ public class LoginPanel extends JPanel {
 
         });
         this.add(passwordField, gc);
+        row++;
 
-        gc.gridx = 1;
-        gc.gridy = 5;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.gridwidth = GridBagConstraints.REMAINDER;
-        progressBar = new JProgressBar();
-        progressBar.setStringPainted(false);
-        this.add(progressBar, gc);
+        return row;
+    }
 
-        JButton cancelBtn =
+    protected JPanel createButtonPanel() {
+        cancelBtn =
                 ComponentFactory.getIntelActionButton(STLConstants.K0621_CANCEL
                         .getValue());
         cancelBtn.addActionListener(new ActionListener() {
@@ -256,7 +315,7 @@ public class LoginPanel extends JPanel {
             }
         });
 
-        JPanel btnPanel = new JPanel();
+        btnPanel = new JPanel();
         btnPanel.setLayout(new GridBagLayout());
         btnPanel.setOpaque(false);
         GridBagConstraints gbc = new GridBagConstraints();
@@ -269,7 +328,7 @@ public class LoginPanel extends JPanel {
 
         btnPanel.add(cancelBtn, gbc);
 
-        JButton loginBtn =
+        loginBtn =
                 ComponentFactory.getIntelActionButton(STLConstants.K1050_LOGIN
                         .getValue());
         loginBtn.addActionListener(new ActionListener() {
@@ -279,30 +338,16 @@ public class LoginPanel extends JPanel {
             }
 
         });
+
         gbc.gridx = 1;
         gbc.insets = new Insets(10, 0, 10, 0);
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         btnPanel.add(loginBtn, gbc);
 
-        gc.gridx = 1;
-        gc.gridy = 6;
-        gc.gridwidth = GridBagConstraints.REMAINDER;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        this.add(btnPanel, gc);
-
-        this.setBackground(UIConstants.INTEL_WHITE);
-        this.setPreferredSize(new Dimension(400, 350));
-
+        return btnPanel;
     }
 
-    // Cannot tell if the credentials valid at this point, but we
-    // can at least check if all the fields in the login form have been filled
-    // out by user
-    private boolean checkCredentials() {
-        return credentials.isFilled();
-    }
-
-    private void loginBtnAction() {
+    protected void loginBtnAction() {
         String hostName = hostField.getText();
         credentials.setHostName(hostName);
         credentials.setPortNum(portField.getText());
@@ -324,10 +369,25 @@ public class LoginPanel extends JPanel {
 
     }
 
-    private void cancelBtnAction() {
-        // cancel login action");
+    protected void cancelBtnAction() {
         listener.cancelLogin();
         progressBar.setIndeterminate(false);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.JComponent#setEnabled(boolean)
+     */
+    @Override
+    public void setEnabled(boolean enabled) {
+        hostField.setEnabled(enabled);
+        userField.setEnabled(enabled);
+        portField.setEnabled(enabled);
+        passwordField.setEnabled(enabled);
+        cancelBtn.setEnabled(enabled);
+        loginBtn.setEnabled(enabled);
+        super.setEnabled(enabled);
     }
 
     /**
@@ -343,7 +403,8 @@ public class LoginPanel extends JPanel {
         for (DocumentListener listener : listeners) {
             passwordField.getDocument().removeDocumentListener(listener);
         }
-        passwordField.setText(null);
+        passwordField.setText("");
+        passwordField.setCaretPosition(0);
         for (DocumentListener listener : listeners) {
             passwordField.getDocument().addDocumentListener(listener);
         }
@@ -417,4 +478,7 @@ public class LoginPanel extends JPanel {
         hostField.setEditable(editable);
     }
 
+    public void setHostFieldEnabled(boolean b) {
+        hostField.setEnabled(b);
+    }
 }

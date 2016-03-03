@@ -35,6 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.24  2015/12/29 20:09:03  jijunwan
+ *  Archive Log:    PR 131988 - Failover as I switch networks results in ERROR - Statement is closed to be dispalyed
+ *  Archive Log:    - fixed one typo
+ *  Archive Log:
+ *  Archive Log:    Revision 1.23  2015/12/21 21:48:33  jijunwan
+ *  Archive Log:    PR 131988 - Failover as I switch networks results in ERROR - Statement is closed to be dispalyed
+ *  Archive Log:    - improved the SubnetSwitchTask to support both foreground and background tasks
+ *  Archive Log:    - changed to put tree builder on foreground tasks to ensure we set context for tree builder first
+ *  Archive Log:
  *  Archive Log:    Revision 1.22  2015/08/17 18:53:38  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -115,6 +124,7 @@ package com.intel.stl.ui.main;
 
 import static com.intel.stl.api.configuration.UserSettings.PROPERTY_LASTSUBNETACCESSED;
 import static com.intel.stl.api.configuration.UserSettings.SECTION_USERSTATE;
+import static com.intel.stl.ui.common.UILabels.STL10108_INIT_PAGE;
 import static com.intel.stl.ui.main.FabricController.PROGRESS_NOTE_PROPERTY;
 
 import java.util.ArrayList;
@@ -128,6 +138,7 @@ import com.intel.stl.api.StringUtils;
 import com.intel.stl.api.configuration.UserSettings;
 import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.ui.common.IContextAware;
+import com.intel.stl.ui.common.ProgressObserver;
 import com.intel.stl.ui.common.UILabels;
 import com.intel.stl.ui.framework.AbstractTask;
 import com.intel.stl.ui.framework.IController;
@@ -143,17 +154,26 @@ public class SubnetSwitchTask extends
 
     private final List<ContextSwitchTask> subtasks;
 
-    private final List<IContextAware> contextPages;
+    private final List<IContextAware> backgroundContextPages;
+
+    /**
+     * IContextAware that run in current thread in order
+     */
+    private final List<IContextAware> foregroundContextPages;
+
+    private Exception foregroundFailure;
 
     private final Context newContext;
 
     private final Object mutex = new Object();
 
     public SubnetSwitchTask(FabricModel model, Context newContext,
-            List<IContextAware> contextPages) {
+            List<IContextAware> foregroundContextPages,
+            List<IContextAware> backgroundContextPages) {
         super(model);
         this.newContext = newContext;
-        this.contextPages = contextPages;
+        this.foregroundContextPages = foregroundContextPages;
+        this.backgroundContextPages = backgroundContextPages;
         this.subtasks = new ArrayList<ContextSwitchTask>();
     }
 
@@ -181,6 +201,7 @@ public class SubnetSwitchTask extends
 
     @Override
     public Context processInBackground(Context context) throws Exception {
+        foregroundFailure = null;
         oldContext = context;
         previousContextCleared = false;
         newContext.initialize();
@@ -215,7 +236,28 @@ public class SubnetSwitchTask extends
             previousContextCleared = true;
         }
 
-        for (IContextAware page : contextPages) {
+        // run IContextAware in current thread in order
+        for (IContextAware page : foregroundContextPages) {
+            int work = page.getContextSwitchWeight().getWeight();
+            ProgressObserver observer = new ProgressObserver(this, work);
+            try {
+                publishProgressNote(STL10108_INIT_PAGE.getDescription(page
+                        .getName()));
+                page.setContext(newContext, observer);
+                publishProgressNote(UILabels.STL10112_INIT_PAGE_COMPLETED
+                        .getDescription(page.getName()));
+            } catch (Exception e) {
+                if (foregroundFailure == null) {
+                    // only remember the first failure
+                    foregroundFailure = e;
+                }
+            } finally {
+                observer.onFinish();
+            }
+        }
+
+        // run IContextAware in parallel in background
+        for (IContextAware page : backgroundContextPages) {
             ContextSwitchTask subtask =
                     new ContextSwitchTask(model, newContext, this, page);
             subtasks.add(subtask);
@@ -259,6 +301,11 @@ public class SubnetSwitchTask extends
 
     @Override
     public void onTaskSuccess(Context result) {
+        if (foregroundFailure != null) {
+            onTaskFailure(foregroundFailure);
+            return;
+        }
+
         for (ContextSwitchTask subtask : subtasks) {
             if (subtask.hasException()) {
                 onTaskFailure(subtask.getExecutionException());

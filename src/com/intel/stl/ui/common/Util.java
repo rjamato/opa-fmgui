@@ -34,6 +34,9 @@
  *  Archive Source: $Source$
  * 
  *  Archive Log: $Log$
+ *  Archive Log: Revision 1.19  2015/11/16 18:44:49  jypak
+ *  Archive Log: PR 130970 - Console commands produced by arrow keys can't be detected if user changes prompt in session. JUnit updated not to use Swing.
+ *  Archive Log:
  *  Archive Log: Revision 1.18  2015/08/18 14:28:35  jijunwan
  *  Archive Log: PR 130033 - Fix critical issues found by Klocwork or FindBugs
  *  Archive Log: - DateFormat is not thread safe. Changed to create new DateFormat to avoid sharing it among different threads
@@ -79,6 +82,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
@@ -304,5 +308,16 @@ public class Util {
 
     public static final DateFormat getYYYYMMDDHHMMSS() {
         return new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a, z");
+    }
+    
+    public static final String extractCommand(String cmd, String prompt){
+        String[] commands = cmd.split(Pattern.quote(prompt));
+        String command = null;
+        if (commands.length > 1) {
+            String commandLine = commands[1];
+            commandLine = commandLine.trim();
+            command = commandLine.split(" ")[0];
+        }
+        return command;
     }
 }

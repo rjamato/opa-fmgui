@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.8  2015/12/17 22:38:29  jijunwan
+ *  Archive Log:    PR 131988 - Failover as I switch networks results in ERROR - Statement is closed to be dispalyed
+ *  Archive Log:    - changed code to be silent on StatementClose on UI side
+ *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/09/08 18:34:14  jijunwan
  *  Archive Log:    PR 130277 - FM GUI Locked up due to [AWT-EventQueue-0] ERROR - Unsupported MTUSize 0x0d java.lang.IllegalArgumentException: Unsupported MTUSize 0x0d
  *  Archive Log:    - moved isDev to FMGuiPlugin so both backend and frontend can access it
@@ -80,6 +84,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.intel.stl.api.FMGuiPlugin;
+import com.intel.stl.api.StatementClosedException;
 import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.fecdriver.ICommand;
 import com.intel.stl.fecdriver.IResponse;
@@ -188,7 +193,7 @@ public class Statement implements IStatement {
     public <E extends IResponse<F>, F> void submit(ICommand<E, F> cmd)
             throws Exception {
         if (isClosed()) {
-            RuntimeException rte = new RuntimeException("Statement is closed");
+            RuntimeException rte = new StatementClosedException();
             cmd.getResponse().setError(rte);
             throw rte;
         }

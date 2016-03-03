@@ -35,6 +35,23 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.9  2015/11/24 15:35:57  rjtierne
+ *  Archive Log:    PR 130965 : ESM Support on Log Viewer
+ *  Archive Log:    - Moved HelpAction references to the view since it uses a view component
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/11/18 23:55:12  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Re-factored main panel consisting of control and status panels.
+ *  Archive Log:    - Added running icon to show running icon on refresh
+ *  Archive Log:    - Added a Configuration button to allow the user to log out of the Log Viewer and modify the login criteria
+ *  Archive Log:    - Fixed enable problem on the paging buttons
+ *  Archive Log:    - Added a help button
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/10/19 22:30:12  jijunwan
+ *  Archive Log:    PR 131091 - On an unsuccessful Failover, the Admin | Applications doesn't show the login window
+ *  Archive Log:    - show login panel when not initialized properly with corresponding message
+ *  Archive Log:    - added feature to fully enable/disable a login panel
+ *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/10/06 15:53:18  rjtierne
  *  Archive Log:    PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
  *  Archive Log:    - Added enableControlPanel() to enable/disable log viewer controls; used for ESM disabling
@@ -112,15 +129,16 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
+import com.intel.stl.api.logs.LogConfigType;
 import com.intel.stl.ui.admin.impl.SMLogModel;
 import com.intel.stl.ui.admin.impl.logs.FilterType;
+import com.intel.stl.ui.admin.impl.logs.ILogController;
 import com.intel.stl.ui.admin.impl.logs.ILogViewListener;
 import com.intel.stl.ui.admin.impl.logs.SearchKey;
 import com.intel.stl.ui.admin.impl.logs.SearchPositionBean;
 import com.intel.stl.ui.admin.impl.logs.SearchState;
 import com.intel.stl.ui.admin.impl.logs.TextEventType;
 import com.intel.stl.ui.admin.view.ILoginListener;
-import com.intel.stl.ui.admin.view.LoginPanel;
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UIConstants;
 import com.intel.stl.ui.common.UIImages;
@@ -129,6 +147,7 @@ import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.common.view.ComponentFactory;
 import com.intel.stl.ui.common.view.SafeNumberField;
 import com.intel.stl.ui.console.LoginBean;
+import com.intel.stl.ui.main.HelpAction;
 
 public abstract class AbstractLogView extends JPanel {
 
@@ -138,11 +157,15 @@ public abstract class AbstractLogView extends JPanel {
 
     private final long MAX_NUM_LINES = 1000;
 
-    private LoginPanel pnlLogin;
+    private SMLoginView smLoginView;
 
-    protected JPanel pnlFileControl;
+    protected JPanel pnlRefresh;
+
+    private JButton btnHelp;
 
     private JButton btnRefresh;
+
+    private JLabel lblRefreshRunning;
 
     private SafeNumberField<Long> txtFldLinesPerPage;
 
@@ -174,6 +197,8 @@ public abstract class AbstractLogView extends JPanel {
 
     protected ILogViewListener logViewListener;
 
+    private ILogController logController;
+
     private long numLinesRequested = 100;
 
     private JCheckBox chkboxSM;
@@ -188,7 +213,7 @@ public abstract class AbstractLogView extends JPanel {
 
     private final List<JCheckBox> chkboxFilterList = new ArrayList<JCheckBox>();
 
-    private JLabel lblRunning;
+    private JLabel lblPageRunning;
 
     protected JTextComponent textContent;
 
@@ -200,11 +225,13 @@ public abstract class AbstractLogView extends JPanel {
 
     private boolean[] lastButtonState;
 
-    private JLabel lblNumMatches;
-
     private JLabel lblNumMatchesValue;
 
     protected TextMenuPanel pnlSearchMenu;
+
+    private boolean enableUserActions;
+
+    protected ILoginListener loginListener;
 
     public AbstractLogView() {
         super();
@@ -242,18 +269,32 @@ public abstract class AbstractLogView extends JPanel {
                 .createLineBorder(UIConstants.INTEL_BORDER_GRAY, 1, true),
                 BorderFactory.createEmptyBorder(2, 5, 2, 2)));
 
-        // Control panel
-        JPanel pnlControl = createControlPanel();
+        // Main panel
+        JPanel pnlMain = createMainPanel();
+
+        // Add the panels for the log view
+        pnlLogCard.add(pnlMain, BorderLayout.NORTH);
+        pnlLogCard.add(getMainComponent(), BorderLayout.CENTER);
+        add(pnlLogCard, LogViewType.SM_LOG.getValue());
 
         // Login Panel
         JPanel pnlLoginCard = new JPanel(new FlowLayout());
-        pnlLogin = new LoginPanel();
+        smLoginView = new SMLoginView();
         pnlLoginCard.setBackground(UIConstants.INTEL_WHITE);
-        pnlLoginCard.add(pnlLogin);
+        if (smLoginView != null) {
+            smLoginView.enableForm(false);
+        }
+        pnlLoginCard.add(smLoginView);
 
-        // Add the panels for the log view
-        pnlLogCard.add(pnlControl, BorderLayout.NORTH);
-        pnlLogCard.add(getMainComponent(), BorderLayout.CENTER);
+        // Add the login and log view panels to the card layout
+        add(pnlLoginCard, LogViewType.LOGIN.getValue());
+
+        // Initialize last button states
+        buttons = new JButton[] { btnRefresh, btnNext, btnPrevious };
+        lastButtonState =
+                new boolean[] { btnRefresh.isEnabled(), btnNext.isEnabled(),
+                        btnPrevious.isEnabled() };
+
         textContent = getTextContent();
         textContent.addMouseListener(new MouseAdapter() {
             @Override
@@ -268,223 +309,207 @@ public abstract class AbstractLogView extends JPanel {
             }
         });
 
-        // Add the login and log view panels to the card layout
-        add(pnlLoginCard, LogViewType.LOGIN.getValue());
-        add(pnlLogCard, LogViewType.SM_LOG.getValue());
-
-        // Initialize last button states
-        buttons = new JButton[] { btnNext, btnPrevious };
-        lastButtonState =
-                new boolean[] { btnNext.isEnabled(), btnPrevious.isEnabled() };
+        // Initialize the Help button
+        HelpAction helpAction = HelpAction.getInstance();
+        helpAction.getHelpBroker().enableHelpOnButton(btnHelp,
+                helpAction.getAdminLogViewer(), helpAction.getHelpSet());
     }
 
-    protected JPanel createControlPanel() {
-
+    protected JPanel createMainPanel() {
         // Main Panel
         JPanel pnlMain = new JPanel();
         pnlMain.setLayout(new BorderLayout());
 
-        // Status Panel
+        JPanel pnlControl = createControlPanel();
+
         JPanel pnlStatus = createStatusPanel();
 
-        // Control Panel
+        // Add the control and status panels to the main panel
+        pnlMain.add(pnlControl, BorderLayout.NORTH);
+        pnlMain.add(pnlStatus, BorderLayout.SOUTH);
+
+        return pnlMain;
+    }
+
+    protected JPanel createControlPanel() {
+
         JPanel pnlControl = new JPanel();
         pnlControl.setBackground(UIConstants.INTEL_WHITE);
         pnlControl.setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
         gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.insets = new Insets(3, 2, 5, 2);
-        gc.weighty = 1;
+        gc.insets = new Insets(2, 5, 2, 5);
         gc.weightx = 1;
         gc.gridwidth = 1;
 
         // Filters Panel
-        pnlControl.add(Box.createHorizontalStrut(25));
         JPanel pnlFilters = createFiltersPanel();
+        pnlControl.add(pnlFilters, gc);
 
         // File Control Panel
-        pnlFileControl = createRefreshPanel();
+        pnlRefresh = createRefreshPanel();
+        pnlControl.add(pnlRefresh, gc);
 
         // Search Panel
         JPanel pnlSearch = createSearchPanel();
-
-        // Navigation Panel
-        JPanel pnlNav = createNavPanel();
-
-        // Add components to the Main Control Panel
-        gc.weightx = 0;
-        gc.anchor = GridBagConstraints.EAST;
-        pnlControl.add(pnlFilters, gc);
-
-        gc.weightx = 1;
-        pnlControl.add(Box.createHorizontalStrut(100));
-
-        gc.weightx = 0;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        pnlControl.add(pnlFileControl, gc);
-
-        gc.weightx = 1;
-        pnlControl.add(Box.createHorizontalStrut(25));
-
-        gc.weightx = 1;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.fill = GridBagConstraints.REMAINDER;
         pnlControl.add(pnlSearch, gc);
 
-        gc.weightx = 1;
-        pnlControl.add(Box.createHorizontalStrut(25));
-
-        gc.weightx = 1;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.fill = GridBagConstraints.REMAINDER;
+        gc.weightx = 0;
+        // Navigation Panel
+        JPanel pnlNav = createNavPanel();
         pnlControl.add(pnlNav, gc);
-        pnlControl.add(Box.createHorizontalStrut(25));
 
-        pnlMain.add(pnlControl, BorderLayout.NORTH);
-        pnlMain.add(pnlStatus, BorderLayout.CENTER);
+        // Configure Button
+        JButton btnConfig =
+                ComponentFactory.getImageButton(UIImages.SETTING_ICON
+                        .getImageIcon());
+        btnConfig.setToolTipText(STLConstants.K2166_CONFIGURE_LOG_HOST
+                .getValue());
+        btnConfig.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                logViewListener.onConfigure();
+            }
+        });
+        pnlControl.add(btnConfig, gc);
 
-        return pnlMain;
+        // Help Button
+        btnHelp =
+                ComponentFactory.getImageButton(UIImages.HELP_ICON
+                        .getImageIcon());
+        btnHelp.setToolTipText(STLConstants.K0037_HELP.getValue());
+        pnlControl.add(btnHelp);
+
+        return pnlControl;
     }
 
     protected JPanel createStatusPanel() {
-
         // Status Panel
         JPanel pnlStatus = new JPanel();
-        pnlStatus.setLayout(new GridBagLayout());
         pnlStatus.setBackground(UIConstants.INTEL_WHITE);
-        pnlStatus.setBorder(BorderFactory.createEmptyBorder(5, 2, 5, 2));
+        pnlStatus.setLayout(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.insets = new Insets(3, 2, 5, 2);
-        gc.weighty = 1;
+        gc.insets = new Insets(2, 5, 5, 5);
         gc.weightx = 1;
         gc.gridwidth = 1;
 
         // File Name
-        gc.weightx = 0;
+        gc.anchor = GridBagConstraints.WEST;
+        JPanel pnlFileName = createFileNamePanel();
+        pnlStatus.add(pnlFileName, gc);
+
+        // Total Lines
+        gc.anchor = GridBagConstraints.CENTER;
+        JPanel pnlTotalLines = createTotalLinesPanel();
+        pnlStatus.add(pnlTotalLines, gc);
+
+        // # Matches
+        JPanel pnlNumMatches = createNumMatchesPanel();
+        pnlStatus.add(pnlNumMatches, gc);
+
+        // Line Range
         gc.anchor = GridBagConstraints.EAST;
-        JPanel pnlName = new JPanel();
-        pnlName.setBackground(UIConstants.INTEL_WHITE);
-        pnlName.setLayout(new BoxLayout(pnlName, BoxLayout.X_AXIS));
+        JPanel pnlLineRange = createLineRangePanel();
+        pnlStatus.add(pnlLineRange, gc);
+
+        return pnlStatus;
+    }
+
+    protected JPanel createFileNamePanel() {
+        JPanel pnlStatus = new JPanel();
+        pnlStatus.setBackground(UIConstants.INTEL_WHITE);
+        pnlStatus.setLayout(new BoxLayout(pnlStatus, BoxLayout.X_AXIS));
+
+        // File Name Label
         JLabel lblFileName =
                 ComponentFactory.getFieldLabel(STLConstants.K2154_FILE_NAME
                         .getValue() + ":");
-        lblFileName.setAlignmentX(SwingConstants.RIGHT);
+        lblFileName.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
+        pnlStatus.add(lblFileName);
 
-        pnlStatus.add(Box.createHorizontalStrut(25), gc);
-        pnlName.add(lblFileName);
+        // File Name Value
         lblFileNameValue =
                 ComponentFactory
                         .deriveLabel(
                                 ComponentFactory.getH6Label("", Font.PLAIN),
                                 false, 200);
-        lblFileNameValue.setPreferredSize(new Dimension(1000, 25));
-        lblFileNameValue.setMaximumSize(lblFileNameValue.getPreferredSize());
-        lblFileNameValue.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
-        pnlName.add(lblFileNameValue);
-        pnlName.setPreferredSize(new Dimension(260, 25));
-        pnlName.setMinimumSize(pnlName.getPreferredSize());
-        pnlName.setMaximumSize(pnlName.getPreferredSize());
-        pnlStatus.add(pnlName, gc);
+        pnlStatus.add(lblFileNameValue);
 
-        gc.weightx = 1;
-        pnlStatus.add(Box.createHorizontalStrut(100), gc);
+        return pnlStatus;
+    }
 
-        // Total Number of Lines
-        gc.weightx = 0;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.fill = GridBagConstraints.HORIZONTAL;
+    protected JPanel createTotalLinesPanel() {
+
         JPanel pnlTotalLines = new JPanel();
         pnlTotalLines.setBackground(UIConstants.INTEL_WHITE);
         pnlTotalLines.setLayout(new BoxLayout(pnlTotalLines, BoxLayout.X_AXIS));
+
+        // Total Lines Label
         JLabel lblTotalLines =
                 ComponentFactory.getFieldLabel(STLConstants.K2151_TOTAL_LINES
                         .getValue() + ":");
-        lblTotalLines.setAlignmentX(SwingConstants.RIGHT);
+        lblTotalLines.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
         pnlTotalLines.add(lblTotalLines);
+
+        // Total Lines Value
         lblTotalLinesValue = ComponentFactory.getH6Label("", Font.PLAIN);
-        lblTotalLinesValue.setPreferredSize(new Dimension(1000, 25));
-        lblTotalLinesValue
-                .setMaximumSize(lblTotalLinesValue.getPreferredSize());
-        lblTotalLinesValue.setBorder(BorderFactory
-                .createEmptyBorder(0, 5, 0, 5));
         pnlTotalLines.add(lblTotalLinesValue);
-        pnlTotalLines.setPreferredSize(new Dimension(150, 25));
-        pnlTotalLines.setMinimumSize(pnlTotalLines.getPreferredSize());
-        pnlTotalLines.setMaximumSize(pnlTotalLines.getPreferredSize());
-        pnlStatus.add(pnlTotalLines, gc);
 
-        gc.weightx = 1;
-        pnlStatus.add(Box.createHorizontalStrut(100), gc);
+        return pnlTotalLines;
+    }
 
-        // Number of matched search results
-        gc.weightx = 1;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.fill = GridBagConstraints.REMAINDER;
+    protected JPanel createNumMatchesPanel() {
+
         JPanel pnlNumMatches = new JPanel();
         pnlNumMatches.setBackground(UIConstants.INTEL_WHITE);
         pnlNumMatches.setLayout(new BoxLayout(pnlNumMatches, BoxLayout.X_AXIS));
-        lblNumMatches =
+
+        // # Matches Label
+        JLabel lblNumMatches =
                 ComponentFactory.getFieldLabel(STLConstants.K2158_NUM_MATCHES
                         .getValue() + ":");
-        lblNumMatches.setAlignmentX(SwingConstants.RIGHT);
+        lblNumMatches.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
         pnlNumMatches.add(lblNumMatches);
+
+        // # Matches Value
         lblNumMatchesValue = ComponentFactory.getH6Label("", Font.PLAIN);
-        lblNumMatchesValue.setPreferredSize(new Dimension(1000, 25));
-        lblNumMatchesValue
-                .setMaximumSize(lblNumMatchesValue.getPreferredSize());
-        lblNumMatchesValue.setBorder(BorderFactory
-                .createEmptyBorder(0, 5, 0, 5));
         pnlNumMatches.add(lblNumMatchesValue);
-        pnlNumMatches.setPreferredSize(new Dimension(200, 25));
-        pnlNumMatches.setMinimumSize(pnlNumMatches.getPreferredSize());
-        pnlNumMatches.setMaximumSize(pnlNumMatches.getPreferredSize());
-        pnlStatus.add(pnlNumMatches, gc);
 
-        gc.weightx = 1;
-        pnlStatus.add(Box.createHorizontalStrut(25), gc);
+        return pnlNumMatches;
+    }
 
-        // Line Range
-        gc.weightx = 1;
-        gc.anchor = GridBagConstraints.EAST;
-        gc.fill = GridBagConstraints.REMAINDER;
-        JPanel pnlRange = new JPanel();
-        pnlRange.setBackground(UIConstants.INTEL_WHITE);
-        pnlRange.setLayout(new BoxLayout(pnlRange, BoxLayout.X_AXIS));
+    protected JPanel createLineRangePanel() {
+
+        JPanel pnlLineRange = new JPanel();
+        pnlLineRange.setBackground(UIConstants.INTEL_WHITE);
+        pnlLineRange.setLayout(new BoxLayout(pnlLineRange, BoxLayout.X_AXIS));
+
+        // Line Range Label
         JLabel lblLineRange =
                 ComponentFactory.getFieldLabel(STLConstants.K2155_LINE_RANGE
                         .getValue() + ":");
-        lblLineRange.setAlignmentX(SwingConstants.RIGHT);
-        pnlRange.add(lblLineRange);
+        lblLineRange.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
+        pnlLineRange.add(lblLineRange);
+
+        // Line Range Value
         lblStartLineValue = ComponentFactory.getH6Label("", Font.PLAIN);
-        lblStartLineValue.setPreferredSize(new Dimension(1000, 25));
-        lblStartLineValue.setMaximumSize(lblStartLineValue.getPreferredSize());
-        lblStartLineValue
-                .setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 0));
-        pnlRange.add(lblStartLineValue);
         lblRangeDelimiter =
                 ComponentFactory.getH6Label(
                         STLConstants.K2156_RANGE_DELIMITER.getValue(),
                         Font.PLAIN);
-        lblRangeDelimiter.setPreferredSize(new Dimension(10, 25));
-        lblRangeDelimiter.setMaximumSize(lblRangeDelimiter.getPreferredSize());
-        lblRangeDelimiter
-                .setBorder(BorderFactory.createEmptyBorder(0, 2, 0, 2));
-        pnlRange.add(lblRangeDelimiter);
         lblEndLineValue = ComponentFactory.getH6Label("", Font.PLAIN);
-        lblEndLineValue.setPreferredSize(new Dimension(1000, 25));
-        lblEndLineValue.setMaximumSize(lblEndLineValue.getPreferredSize());
-        lblEndLineValue.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
-        pnlRange.add(lblEndLineValue);
-        pnlStatus.add(pnlRange, gc);
+        pnlLineRange.add(lblStartLineValue);
+        pnlLineRange.add(lblRangeDelimiter);
+        pnlLineRange.add(lblEndLineValue);
 
-        return pnlStatus;
+        return pnlLineRange;
     }
 
     protected JPanel createFiltersPanel() {
         // Filters Panel
         JPanel pnlFilters = new JPanel();
+        pnlFilters
+                .setToolTipText(STLConstants.K2170_SHOW_SELECTIONS.getValue());
         pnlFilters.setBackground(UIConstants.INTEL_WHITE);
         pnlFilters.setBorder(BorderFactory
                 .createTitledBorder(STLConstants.K2147_FILTERS.getValue()));
@@ -529,6 +554,7 @@ public abstract class AbstractLogView extends JPanel {
                         .getFieldLabel(STLConstants.K2150_LINES_PER_PAGE
                                 .getValue() + ":");
         lblLinesPerPage.setAlignmentX(SwingConstants.RIGHT);
+        pnlRefresh.setMaximumSize(new Dimension(225, 44));
         pnlRefresh.add(lblLinesPerPage);
 
         txtFldLinesPerPage =
@@ -554,6 +580,7 @@ public abstract class AbstractLogView extends JPanel {
         btnRefresh =
                 ComponentFactory
                         .getImageButton(UIImages.REFRESH.getImageIcon());
+        btnRefresh.setToolTipText(STLConstants.K0107_REFRESH.getValue());
         btnRefresh.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -561,10 +588,18 @@ public abstract class AbstractLogView extends JPanel {
             }
         });
 
+        // Create running icon next to the refresh panel. The initial icon is
+        // set to INVISIBLE and then changed to RUNNING when necessary. This
+        // makes it possible to display an icon without shifting widgets to
+        // the right
+        lblRefreshRunning = new JLabel();
+        lblRefreshRunning.setIcon(UIImages.INVISIBLE.getImageIcon());
+
         pnlRefresh.add(Box.createHorizontalStrut(5));
         pnlRefresh.add(cboxLinesPerPageValue);
         pnlRefresh.add(Box.createHorizontalStrut(5));
         pnlRefresh.add(btnRefresh);
+        pnlRefresh.add(lblRefreshRunning);
 
         return pnlRefresh;
     }
@@ -576,6 +611,7 @@ public abstract class AbstractLogView extends JPanel {
         pnlSearch.setBorder(BorderFactory
                 .createTitledBorder(STLConstants.K2153_SEARCH.getValue()));
         pnlSearch.setLayout(new BoxLayout(pnlSearch, BoxLayout.X_AXIS));
+        pnlSearch.setMaximumSize(new Dimension(250, 44));
 
         // Add a text box to the Search panel
         txtfldSearch = new JTextField();
@@ -613,6 +649,8 @@ public abstract class AbstractLogView extends JPanel {
         btnCancelSearch =
                 ComponentFactory.getImageButton(UIImages.CLOSE_GRAY
                         .getImageIcon());
+        btnCancelSearch.setToolTipText(STLConstants.K2169_CLEAR_SEARCH
+                .getValue());
         btnCancelSearch.addActionListener(new ActionListener() {
 
             @Override
@@ -634,10 +672,6 @@ public abstract class AbstractLogView extends JPanel {
     }
 
     public void enableControlPanel(boolean b) {
-        btnSearch.setEnabled(b);
-        btnSearch.setEnabled(b);
-        btnRefresh.setEnabled(b);
-        txtfldSearch.setEnabled(b);
         cboxLinesPerPageValue.setEnabled(b);
 
         for (JCheckBox chkbox : chkboxFilterList) {
@@ -665,13 +699,15 @@ public abstract class AbstractLogView extends JPanel {
         txtfldSearch.setText("");
     }
 
+    public void resetLogin() {
+        smLoginView.resetLogin();
+    }
+
     public String getDocument() {
         // The search field is a JTextField which cannot contain carriage
-        // returns
-        // So in order to match multiple lines in the search field, replace all
-        // carriage returns in the textContent with blanks, and trim off the
-        // blank
-        // space at the beginning/end of the string.
+        // returns. So in order to match multiple lines in the search field,
+        // replace all carriage returns in the textContent with blanks, and
+        // trim off the blank space at the beginning/end of the string.
         return textContent.getText().replaceAll("\\n", " ").trim();
     }
 
@@ -691,11 +727,12 @@ public abstract class AbstractLogView extends JPanel {
 
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        logViewListener.onPrevious(numLinesRequested);
-                        setRunningVisible(true);
+                        setPageRunningVisible(true);
                         disableUserActions();
+                        logViewListener.onPrevious(numLinesRequested);
                     }
                 });
+        btnPrevious.setToolTipText(STLConstants.K2168_PREVIOUS.getValue());
         btnPrevious.setIcon(UIImages.BACK_WHITE_ICON.getImageIcon());
         pnlNav.add(btnPrevious);
 
@@ -708,20 +745,24 @@ public abstract class AbstractLogView extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                logViewListener.onNext(numLinesRequested);
-                setRunningVisible(true);
+                setPageRunningVisible(true);
                 disableUserActions();
+                logViewListener.onNext(numLinesRequested);
             }
         });
+        btnNext.setToolTipText(STLConstants.K0622_NEXT.getValue());
+
         // Last page is up first, so disable this button
         btnNext.setEnabled(false);
         btnNext.setIcon(UIImages.FORWARD_WHITE_ICON.getImageIcon());
         pnlNav.add(btnNext);
 
-        // Add a Running icon
-        lblRunning = new JLabel();
-        lblRunning.setIcon(UIImages.RUNNING.getImageIcon());
-        pnlNav.add(lblRunning);
+        // Add a Running icon for paging. The initial icon is set to INVISIBLE
+        // and then changed to RUNNING when necessary. This makes it possible to
+        // display an icon without shifting widgets to the right
+        lblPageRunning = new JLabel();
+        lblPageRunning.setIcon(UIImages.INVISIBLE.getImageIcon());
+        pnlNav.add(lblPageRunning);
 
         return pnlNav;
     }
@@ -737,11 +778,11 @@ public abstract class AbstractLogView extends JPanel {
         boolean ok = checkNumLines(numLinesRequested);
         if (ok) {
             // Refresh the log
-            logViewListener.onLastLines(numLinesRequested);
-            setRunningVisible(true);
             disableUserActions();
+            setRefreshRunningVisible(true);
+            logViewListener.onLastLines(numLinesRequested);
         } else {
-            Util.showErrorMessage(pnlFileControl,
+            Util.showErrorMessage(pnlRefresh,
                     UILabels.STL50213_LINES_PER_PAGE_ERROR.getDescription(
                             numLinesRequested, MIN_NUM_LINES, MAX_NUM_LINES));
             cboxLinesPerPageValue.setSelectedIndex(numLineIndex);
@@ -761,8 +802,20 @@ public abstract class AbstractLogView extends JPanel {
         return ((MIN_NUM_LINES <= numLines) && (numLines <= MAX_NUM_LINES));
     }
 
-    public void setRunningVisible(boolean b) {
-        lblRunning.setVisible(b);
+    public void setPageRunningVisible(boolean b) {
+        if (b) {
+            lblPageRunning.setIcon(UIImages.RUNNING.getImageIcon());
+        } else {
+            lblPageRunning.setIcon(UIImages.INVISIBLE.getImageIcon());
+        }
+    }
+
+    public void setRefreshRunningVisible(boolean b) {
+        if (b) {
+            lblRefreshRunning.setIcon(UIImages.RUNNING.getImageIcon());
+        } else {
+            lblRefreshRunning.setIcon(UIImages.INVISIBLE.getImageIcon());
+        }
     }
 
     public List<FilterType> getSelectedFilters() {
@@ -776,13 +829,13 @@ public abstract class AbstractLogView extends JPanel {
         return filters;
     }
 
-    public void updateView(final SMLogModel model) {
+    public void updateLogView(final SMLogModel model) {
 
         Util.runInEDT(new Runnable() {
 
             @Override
             public void run() {
-                showFileName(model.getFileName());
+                showFileName(model.getLogFilePath());
                 showLogEntry(model.getFilteredDoc());
                 showTotalLines(model);
                 showLineRange(model.getStartLine(), model.getEndLine());
@@ -790,16 +843,27 @@ public abstract class AbstractLogView extends JPanel {
                 if (model.getLogMsg() != null) {
                     logViewListener.onFilter();
                 }
+
+                setPageRunningVisible(false);
+                setRefreshRunningVisible(false);
             }
         });
     }
 
-    public void setNextEnabled(boolean b) {
-        btnNext.setEnabled(b);
+    public void updateLoginView(final SMLogModel model) {
+        smLoginView.updateView(model);
     }
 
-    public void setPreviousEnabled(boolean b) {
-        btnPrevious.setEnabled(b);
+    public synchronized void setNextEnabled(boolean b) {
+        if (enableUserActions) {
+            btnNext.setEnabled(b);
+        }
+    }
+
+    public synchronized void setPreviousEnabled(boolean b) {
+        if (enableUserActions) {
+            btnPrevious.setEnabled(b);
+        }
     }
 
     public void showTotalLines(final SMLogModel model) {
@@ -821,10 +885,6 @@ public abstract class AbstractLogView extends JPanel {
         }
     }
 
-    public void setNumLinesLabel(String value) {
-        lblNumMatches.setText(value);
-    }
-
     public void showNumMatches(long matches) {
         lblNumMatchesValue.setText(String.valueOf(matches));
     }
@@ -834,15 +894,21 @@ public abstract class AbstractLogView extends JPanel {
     }
 
     public void setLoginListener(ILoginListener listener) {
-        pnlLogin.setListener(listener);
+        this.loginListener = listener;
+        smLoginView.setListener(listener);
+    }
+
+    public void setLogController(ILogController controller) {
+        logController = controller;
     }
 
     public void setLogViewListener(ILogViewListener listener) {
         logViewListener = listener;
+        smLoginView.setLoginViewListener(listener);
 
         // Add the document listener to the search text field
         txtfldSearch.getDocument().addDocumentListener(
-                logViewListener.getDocumentListener());
+                logController.getDocumentListener());
     }
 
     public void setView(String name) {
@@ -850,41 +916,54 @@ public abstract class AbstractLogView extends JPanel {
     }
 
     public void showLogView() {
-        pnlLogin.showProgress(false);
+        smLoginView.showProgress(false);
         setView(LogViewType.SM_LOG.getValue());
     }
 
     public void showLoginView() {
-        pnlLogin.showProgress(false);
+        smLoginView.showProgress(false);
         setView(LogViewType.LOGIN.getValue());
     }
 
+    /**
+     * <i>Description:</i>
+     * 
+     * @param b
+     */
+    public void setLoginEnabled(boolean b) {
+        smLoginView.setEnabled(b);
+    }
+
     public void showProgress(boolean show) {
-        pnlLogin.showProgress(show);
+        smLoginView.showProgress(show);
     }
 
     public void showError(String message) {
-        pnlLogin.setMessage(message);
+        smLoginView.setMessage(message);
     }
 
     public void showErrorDialog(String message) {
-        Util.showErrorMessage(pnlLogin, message);
+        Util.showErrorMessage(smLoginView, message);
     }
 
     public void clearLoginData() {
-        pnlLogin.clearLoginData();
-        pnlLogin.setMessage("");
-        pnlLogin.repaint();
+        smLoginView.clearLoginData();
+        smLoginView.setMessage("");
+        smLoginView.repaint();
     }
 
     public LoginBean getCredentials() {
-        return pnlLogin.getCredentials();
+        return smLoginView.getCredentials();
+    }
+
+    public String getLogFilePath() {
+        return smLoginView.getLogFilePath();
     }
 
     public void setCredentials(LoginBean credentials) {
-        pnlLogin.setHostNameField(credentials.getHostName());
-        pnlLogin.setPortNumber(credentials.getPortNum());
-        pnlLogin.setUserNameField(credentials.getUserName());
+        smLoginView.setHostNameField(credentials.getHostName());
+        smLoginView.setPortNumber(credentials.getPortNum());
+        smLoginView.setUserNameField(credentials.getUserName());
     }
 
     public void setNumLineIcon(boolean b) {
@@ -899,7 +978,11 @@ public abstract class AbstractLogView extends JPanel {
         return (lblTotalLinesValue.getIcon() != null);
     }
 
-    public void disableUserActions() {
+    public synchronized void disableUserActions() {
+
+        // Disabling user actions prevents any updates to the paging buttons
+        // enables from the back end
+        enableUserActions = false;
 
         Util.runInEDT(new Runnable() {
 
@@ -914,8 +997,11 @@ public abstract class AbstractLogView extends JPanel {
         });
     }
 
-    public void restoreUserActions(final boolean isFirstPage,
+    public synchronized void restoreUserActions(final boolean isFirstPage,
             final boolean isLastPage) {
+
+        // Allow updates to the paging button enables from the back end
+        enableUserActions = true;
 
         Util.runInEDT(new Runnable() {
 
@@ -934,6 +1020,10 @@ public abstract class AbstractLogView extends JPanel {
         });
     }
 
+    public LogConfigType getConfigType() {
+        return smLoginView.getConfigType().getType();
+    }
+
     abstract Component getMainComponent();
 
     abstract JTextComponent getTextContent();
@@ -942,4 +1032,6 @@ public abstract class AbstractLogView extends JPanel {
 
     abstract public void highlightText(List<SearchKey> searchKeys,
             List<SearchPositionBean> searchResults, SearchState searchState);
+
+    abstract public void moveToText(int start, int end);
 }

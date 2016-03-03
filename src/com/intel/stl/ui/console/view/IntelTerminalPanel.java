@@ -35,6 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.9  2015/11/16 18:44:46  jypak
+ *  Archive Log:    PR 130970 - Console commands produced by arrow keys can't be detected if user changes prompt in session. JUnit updated not to use Swing.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/11/11 13:26:28  robertja
+ *  Archive Log:    PR 130278 - Store console tab help pane state on a per-tab basis so that help info is restored when focus returns to a tab.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.7  2015/11/09 13:35:02  jypak
+ *  Archive Log:    PR 130970 - Console commands produced by arrow keys can't be detected if user changes prompt in session. Check if a prompt is in a valid format and if not, don't pass anything to the help system.
+ *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/10/09 13:40:41  rjtierne
  *  Archive Log:    PR 129027 - Need to handle customized command prompts when detecting commands on console
  *  Archive Log:    - Overriding Gritty TermPanel#consumeRun() to identify what the customized prompt is and
@@ -77,7 +86,9 @@ package com.intel.stl.ui.console.view;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import com.intel.stl.ui.common.ConsolePromptType;
 import com.intel.stl.ui.common.IHelp;
+import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.console.IConsole;
 import com.wittams.gritty.BackBuffer;
 import com.wittams.gritty.ScrollBuffer;
@@ -124,33 +135,21 @@ public class IntelTerminalPanel extends TermPanel {
             String cmd = null;
             if (consoleController.isInitialized()) {
 
-                //Get the prompt and command from the buffer
+                // Get the prompt and command from the buffer
                 int begin = start - old;
                 int end = len + old;
                 cmd = new String(buf, begin, end);
-                cmd = cmd.trim();
 
-                // Initialize the prompt so we know where commands are
-                if (consoleController.isPromptReady()) {
-                    consoleController.setPrompt(cmd);
-                    consoleController.setPromptReady(false);
-                    System.out.println("prompt = "
-                            + consoleController.getPrompt());
-                }
-
-                // Next time around the cmd string will be the prompt
-                if (cmd.equals("done")) {
-                    consoleController.setPromptReady(true);
-                }
-
-                cmd = (cmd.equals("done")) ? "toc" : cmd;
-                if ((cmd != null) && (consoleController.getPrompt() != null)) {
-                    String commandLine =
-                            cmd.replace(consoleController.getPrompt(), "")
-                                    .trim();
-                    String command = commandLine.split(" ")[0];
-                    consoleHelpListener.parseCommand(command);
-                    consoleHelpListener.updateSelection(command);
+                String prompt = getPrompt(cmd);
+                if ((cmd != null) && (prompt != null)) {
+                    if (cmd.contains(prompt)) {
+                        String command = Util.extractCommand(cmd, prompt);
+                        if(command != null && !command.isEmpty()){
+	                        consoleHelpListener.parseCommand(command);
+	                        consoleHelpListener.updateSelection(command);
+	                        consoleController.setLastCommand(command);
+                        } 
+                    }
                 }
             }
         } catch (StringIndexOutOfBoundsException e) {
@@ -181,5 +180,17 @@ public class IntelTerminalPanel extends TermPanel {
 
     public void enableKeyHandler(boolean enable) {
         keyHandlerEnable = enable;
+    }
+
+    private String getPrompt(String cmd) {
+        if (cmd.contains(ConsolePromptType.ESM.getPrompt())) {
+            return ConsolePromptType.ESM.getPrompt();
+        } else if (cmd.contains(ConsolePromptType.HSM_ROOT.getPrompt())) {
+            return ConsolePromptType.HSM_ROOT.getPrompt();
+        } else if (cmd.contains(ConsolePromptType.HSM_USER.getPrompt())) {
+            return ConsolePromptType.HSM_USER.getPrompt();
+        }
+
+        return null;
     }
 }

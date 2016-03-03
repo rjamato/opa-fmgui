@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.10  2015/10/23 19:07:57  jijunwan
+ *  Archive Log:    PR 129357 - Be able to hide inactive ports
+ *  Archive Log:    - revert back to the old version without visible node support
+ *  Archive Log:
  *  Archive Log:    Revision 1.9  2015/09/30 13:26:45  fisherma
  *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
  *  Archive Log:
@@ -181,18 +185,18 @@ public class CreationBasedNodesSynchronizer extends TreeSynchronizer<Integer> {
         if (node.getType() == TreeNodeType.SWITCH) {
             numPorts += 1; // count in internal port
         }
-        int toUpdate = Math.min(numPorts, node.getModelChildCount());
+        int toUpdate = Math.min(numPorts, node.getChildCount());
         for (int i = 0; i < toUpdate; i++) {
             // update ports
-            FVResourceNode port = node.getModelChildAt(i);
+            FVResourceNode port = node.getChildAt(i);
             boolean statusChanged = setPortStatus(node, port);
             if (statusChanged) {
                 updated.put(i, port);
             }
         }
-        if (toUpdate < node.getModelChildCount()) {
+        if (toUpdate < node.getChildCount()) {
             // remove ports
-            while (node.getModelChildCount() > toUpdate) {
+            while (node.getChildCount() > toUpdate) {
                 node.removeChild(toUpdate);
                 if (!hasStructureChange) {
                     hasStructureChange = true;
@@ -227,8 +231,7 @@ public class CreationBasedNodesSynchronizer extends TreeSynchronizer<Integer> {
             fireStructureChanged(monitors, node);
         } else if (!updated.isEmpty()) {
             for (Integer childIndex : updated.keySet()) {
-                int viewIndex = node.getViewIndex(childIndex);
-                fireNodesUpdated(monitors, node, viewIndex,
+                fireNodesUpdated(monitors, node, childIndex,
                         updated.get(childIndex));
             }
         }

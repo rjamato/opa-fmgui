@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.9  2015/10/23 19:09:33  jijunwan
+ *  Archive Log:    PR 129357 - Be able to hide inactive ports
+ *  Archive Log:    - changed input argument to FVTreeModel rather than TreeModel
+ *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/09/21 21:40:30  jijunwan
  *  Archive Log:    PR 130229 - The text component of all editable combo boxes should provide validation of the input
  *  Archive Log:    - adapt to the new IntelComboBoxUI
@@ -104,7 +108,6 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.ScrollPaneLayout;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.plaf.basic.BasicProgressBarUI;
-import javax.swing.tree.TreeModel;
 
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UIConstants;
@@ -119,6 +122,7 @@ import com.intel.stl.ui.common.view.SafeTextField.SafeStringFormatter;
 import com.intel.stl.ui.monitor.ISearchListener;
 import com.intel.stl.ui.monitor.TreeSearchType;
 import com.intel.stl.ui.monitor.TreeTypeEnum;
+import com.intel.stl.ui.monitor.tree.FVTreeModel;
 
 public class SearchView extends JPanel implements ISearchView, IStack {
 
@@ -491,7 +495,7 @@ public class SearchView extends JPanel implements ISearchView, IStack {
 
     @Override
     public void setTreeModel(final TreeTypeEnum treeType,
-            final TreeModel pModel, final int nodeCount) {
+            final FVTreeModel pModel, final int nodeCount) {
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {

@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.7  2015/11/09 20:50:25  fernande
+ *  Archive Log:    PR130231 - Cannot delete subnet from Wizard if subnet name is "Unknown Subnet". Fixed bug where the first time an action is set would not dirty the task
+ *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/08/17 18:54:40  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -177,14 +180,6 @@ public class ActionPanel extends JPanel {
                     boolean found = false;
                     while (it.hasNext() && !found) {
                         JCheckBox chkbox = it.next();
-                        chkbox.addActionListener(new ActionListener() {
-
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                eventWizardControlListener.setDirty(true);
-                            }
-
-                        });
                         found =
                                 (action.name().equals(chkbox.getText())) ? true
                                         : false;
@@ -240,19 +235,17 @@ public class ActionPanel extends JPanel {
      * intel/stl/ui/wizards/view/event/ActionPanel.java,v $
      * 
      * Archive Log: $Log$
-     * Archive Log: Revision 1.6  2015/08/17 18:54:40  jijunwan
-     * Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
-     * Archive Log: - changed frontend files' headers
-     * Archive Log:
-     * Archive Log: Revision 1.5  2015/03/30 15:12:50  rjtierne
-     * Archive Log: Updated panel backgrounds to use static variable
-     * Archive Log:
-     * Archive Log: Revision 1.4  2015/02/13 21:31:52  rjtierne
-     * Archive Log: Multinet Wizard
-     * Archive Log:
-     * Archive Log: Revision 1.3  2015/01/13 19:01:25  rjtierne
-     * Archive Log: Removed warnings by specifying generic types
-     * Archive Log: Archive Log: Revision 1.2
+     * Archive Log: Revision 1.7  2015/11/09 20:50:25  fernande
+     * Archive Log: PR130231 - Cannot delete subnet from Wizard if subnet name is "Unknown Subnet". Fixed bug where the first time an action is set would not dirty the task
+     * Archive Log: Archive Log: Revision 1.6
+     * 2015/08/17 18:54:40 jijunwan Archive Log: PR 129983 - Need to change file
+     * header's copyright text to BSD license txt Archive Log: - changed
+     * frontend files' headers Archive Log: Archive Log: Revision 1.5 2015/03/30
+     * 15:12:50 rjtierne Archive Log: Updated panel backgrounds to use static
+     * variable Archive Log: Archive Log: Revision 1.4 2015/02/13 21:31:52
+     * rjtierne Archive Log: Multinet Wizard Archive Log: Archive Log: Revision
+     * 1.3 2015/01/13 19:01:25 rjtierne Archive Log: Removed warnings by
+     * specifying generic types Archive Log: Archive Log: Revision 1.2
      * 2014/12/23 18:36:59 rjtierne Archive Log: Set dirty state in view when
      * new selections are made on action list Archive Log: Archive Log: Revision
      * 1.1 2014/12/10 21:31:10 rjtierne Archive Log: New Setup Wizard based on
@@ -292,6 +285,14 @@ public class ActionPanel extends JPanel {
                 final JCheckBox chkBox =
                         ComponentFactory.getIntelCheckBox(action.name());
                 cbActionList.add(chkBox);
+                chkBox.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        eventWizardControlListener.setDirty(true);
+                    }
+
+                });
                 listModel.addElement(chkBox);
                 pnlActionList.add(chkBox);
             }

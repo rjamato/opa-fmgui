@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.9  2015/12/09 16:08:42  jijunwan
+ *  Archive Log:    PR 131944 - If "# Worst Nodes" is <10 or >100, there is a Entry Validation warning for the Refresh Rate
+ *  Archive Log:
+ *  Archive Log:    - improved PreferencesValidatorError to use local data rather than shared static data
+ *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/08/17 18:54:52  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -146,19 +151,16 @@ public class PreferencesInputValidator {
 
             if (!Validator.integerInRange(refreshRateInSeconds, sweepInterval,
                     MAX_REFRESH_RATE)) {
-                PreferencesValidatorError.data =
-                        new Object[] { sweepInterval, MAX_REFRESH_RATE };
-                errorCode =
-                        PreferencesValidatorError.REFRESH_RATE_OUT_OF_RANGE
-                                .getId();
-
+                PreferencesValidatorError error =
+                        PreferencesValidatorError.REFRESH_RATE_OUT_OF_RANGE;
+                error.setData(new Object[] { sweepInterval, MAX_REFRESH_RATE });
+                errorCode = error.getId();
                 // TODO get the real sweep interval and update the error message
             } else if (refreshRateInSeconds < sweepInterval) {
-
-                PreferencesValidatorError.data = new Object[] { sweepInterval };
-                errorCode =
-                        PreferencesValidatorError.REFRESH_RATE_THRESHOLD_ERROR
-                                .getId();
+                PreferencesValidatorError error =
+                        PreferencesValidatorError.REFRESH_RATE_THRESHOLD_ERROR;
+                error.setData(new Object[] { sweepInterval });
+                errorCode = error.getId();
             }
         } catch (NumberFormatException e) {
 
@@ -232,11 +234,11 @@ public class PreferencesInputValidator {
                                     .getId();
                 } else if (!Validator.integerInRange(timingWindow,
                         MIN_TIMING_WINDOW, MAX_TIMING_WINDOW)) {
-                    PreferencesValidatorError.data =
-                            new Object[] { MIN_TIMING_WINDOW, MAX_TIMING_WINDOW };
-                    errorCode =
-                            PreferencesValidatorError.TIMING_WINDOW_OUT_OF_RANGE
-                                    .getId();
+                    PreferencesValidatorError error =
+                            PreferencesValidatorError.TIMING_WINDOW_OUT_OF_RANGE;
+                    error.setData(new Object[] { MIN_TIMING_WINDOW,
+                            MAX_TIMING_WINDOW });
+                    errorCode = error.getId();
 
                 }
             }
@@ -270,13 +272,11 @@ public class PreferencesInputValidator {
                                     .getId();
                 } else if (!Validator.integerInRange(numWorstNodes,
                         MIN_NUM_WORST_NODES, MAX_NUM_WORST_NODES)) {
-
-                    PreferencesValidatorError.data =
-                            new Object[] { MIN_NUM_WORST_NODES,
-                                    MAX_NUM_WORST_NODES };
-                    errorCode =
-                            PreferencesValidatorError.NUM_WORST_NODES_OUT_OF_RANGE
-                                    .getId();
+                    PreferencesValidatorError error =
+                            PreferencesValidatorError.NUM_WORST_NODES_OUT_OF_RANGE;
+                    error.setData(new Object[] { MIN_NUM_WORST_NODES,
+                            MAX_NUM_WORST_NODES });
+                    errorCode = error.getId();
                 }
             }
         } catch (NumberFormatException e) {
@@ -349,4 +349,11 @@ public class PreferencesInputValidator {
         return MAX_TIMING_WINDOW;
     }
 
+    public int getMinNumWorstNode() {
+        return MIN_NUM_WORST_NODES;
+    }
+
+    public int getMaxNumWorstNode() {
+        return MAX_NUM_WORST_NODES;
+    }
 }

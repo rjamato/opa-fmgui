@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.5  2015/10/21 15:06:58  jijunwan
+ *  Archive Log:    PR 131077 - Virtual Fabrics list does not reflect enabled status per item in "list tile" of admin window
+ *  Archive Log:    - Extended VF to use its own renderer for item panel
+ *  Archive Log:    - Extended VF to update item panel when there is a change on enabled check box
+ *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/08/17 18:53:52  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -189,6 +194,10 @@ public class ItemListPanel<T> extends JPanel {
         ctrPanel.setOpaque(false);
         installButtons(ctrPanel);
         add(ctrPanel, BorderLayout.SOUTH);
+    }
+
+    public void setItemRenderer(ListCellRenderer<Item<T>> renderer) {
+        itemList.setCellRenderer(renderer);
     }
 
     protected void installButtons(JPanel panel) {

@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.3  2015/11/18 23:50:21  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Added CHECK_FILE_ACCESS
+ *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/08/17 18:48:54  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - change backend files' headers
@@ -54,13 +58,14 @@ package com.intel.stl.api.logs;
 public enum LogMessageType {
 
     CHECK_FOR_FILE(0),
-    PREVIOUS_PAGE(1),
-    NEXT_PAGE(2),
-    NUM_LINES(3),
-    LAST_LINES(4),
-    FILE_SIZE(5),
-    EXIT(6),
-    UNKNOWN(7);
+    CHECK_FILE_ACCESS(1),
+    PREVIOUS_PAGE(2),
+    NEXT_PAGE(3),
+    NUM_LINES(4),
+    LAST_LINES(5),
+    FILE_SIZE(6),
+    EXIT(7),
+    UNKNOWN(8);
 
     private final int id;
 

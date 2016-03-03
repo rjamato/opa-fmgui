@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.15  2015/11/11 13:26:28  robertja
+ *  Archive Log:    PR 130278 - Store console tab help pane state on a per-tab basis so that help info is restored when focus returns to a tab.
+ *  Archive Log:
  *  Archive Log:    Revision 1.14  2015/08/17 18:54:14  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -110,6 +113,7 @@ import com.intel.stl.ui.common.UIImages;
 import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.common.view.ComponentFactory;
 import com.intel.stl.ui.common.view.IntelTabbedPaneUI;
+import com.intel.stl.ui.console.ConsoleTerminalController;
 import com.intel.stl.ui.console.IConsoleEventListener;
 import com.intel.stl.ui.console.IConsoleListener;
 import com.intel.stl.ui.console.ITabListener;
@@ -167,7 +171,18 @@ public class ConsoleSubpageView extends JPanel implements ITabListener {
                     @Override
                     public void run() {
                         if (tabbedPane.getSelectedIndex() >= 0) {
-                            highlightTabs();
+                            highlightTabs();     
+                            Integer tabbedPaneIndex = tabbedPane.getSelectedIndex();                          
+                            // Console indices start at 1, tabbedPane indices start at 0.
+                            ConsoleTerminalController  consoleController = 
+                            		consoleEventListener.getConsoleController(tabbedPaneIndex + 1);
+                            if(consoleController != null){
+                            String command = consoleController.getLastCommand();
+	                            if(command != null){
+		                            consoleHelpListener.parseCommand(command);
+		                            consoleHelpListener.updateSelection(command);
+	                            }
+                            }
                         }
                     }
                 };
@@ -181,7 +196,7 @@ public class ConsoleSubpageView extends JPanel implements ITabListener {
         helpBtn.setToolTipText(STLConstants.K0037_HELP.getValue());
         ctrPanel.add(helpBtn);
     }
-
+    
     public void enableHelp(boolean b) {
         if (helpBtn != null) {
             helpBtn.setEnabled(b);
@@ -218,6 +233,7 @@ public class ConsoleSubpageView extends JPanel implements ITabListener {
         tabbedPane.addTab(symbol, new JLabel());
         tabbedPane.setTabComponentAt(tabbedPane.indexOfTab(symbol), newTabView);
         tabbedPane.setEnabledAt(tabbedPane.indexOfTab(symbol), false);
+        consoleHelpListener.resetView();
     }
 
     synchronized public void setTab(IConsoleListener subpage) {

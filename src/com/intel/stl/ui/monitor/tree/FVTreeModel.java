@@ -35,6 +35,20 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.13  2015/12/03 17:15:52  jijunwan
+ *  Archive Log:    PR 131865 - Klocwork Issue on TreeController
+ *  Archive Log:    - fixed null pointer issues
+ *  Archive Log:
+ *  Archive Log:    Revision 1.12  2015/10/23 19:19:11  jijunwan
+ *  Archive Log:    PR 129357 - Be able to hide inactive ports
+ *  Archive Log:    - improved to support both model tree and view tree
+ *  Archive Log:    - change to always use view tree for interaction
+ *  Archive Log:    - added helper method to transfer a TreePath to current view tree's TreePath
+ *  Archive Log:    - improved to fire tree event with checking on whether the event is for the current view tree
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/10/15 21:20:59  jijunwan
+ *  Archive Log:    catch exception on treeNodesRemoved
+ *  Archive Log:
  *  Archive Log:    Revision 1.10  2015/09/30 13:26:45  fisherma
  *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
  *  Archive Log:
@@ -108,7 +122,9 @@
  ******************************************************************************/
 package com.intel.stl.ui.monitor.tree;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Vector;
 
@@ -118,6 +134,9 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.monitor.TreeNodeType;
 
@@ -126,8 +145,12 @@ import com.intel.stl.ui.monitor.TreeNodeType;
  * 
  */
 public class FVTreeModel implements TreeModel, ITreeMonitor {
+    private final static Logger log = LoggerFactory
+            .getLogger(FVTreeModel.class);
 
     private final FVResourceNode mRootNode;
+
+    private FVResourceNode vizRootNode;
 
     private final Vector<TreeModelListener> mListeners =
             new Vector<TreeModelListener>();
@@ -143,7 +166,19 @@ public class FVTreeModel implements TreeModel, ITreeMonitor {
      */
     @Override
     public Object getRoot() {
+        return vizRootNode;
+    }
+
+    public Object getOrgRoot() {
         return mRootNode;
+    }
+
+    public void filter(INodeVisbilityIndicator indicator) {
+        if (mRootNode != null) {
+            this.vizRootNode =
+                    indicator.isEnabled() ? mRootNode.filter(indicator)
+                            : mRootNode;
+        }
     }
 
     /*
@@ -153,11 +188,6 @@ public class FVTreeModel implements TreeModel, ITreeMonitor {
      */
     @Override
     public Object getChild(Object pParent, int pIndex) {
-        if (pIndex == -1) {
-            // handle the case we have invisible node which will have a index of
-            // -1
-            return null;
-        }
         TreeNode parent = (TreeNode) pParent;
         return parent.getChildAt(pIndex);
     }
@@ -238,6 +268,50 @@ public class FVTreeModel implements TreeModel, ITreeMonitor {
 
     /**
      * 
+     * <i>Description:</i> update TreePath from one tree model to TreePath in
+     * this model
+     * 
+     * @param old
+     * @return
+     */
+    public TreePath getTreePath(TreePath old) throws IllegalArgumentException {
+        Object[] elements = old.getPath();
+        FVResourceNode currentRoot = (FVResourceNode) getRoot();
+        if (elements[0] == currentRoot) {
+            // the same tree model
+            return old;
+        }
+
+        FVResourceNode[] newElements = new FVResourceNode[elements.length];
+        newElements[0] = currentRoot;
+        for (int i = 1; i < elements.length; i++) {
+            int index =
+                    newElements[i - 1].getIndex((FVResourceNode) elements[i]);
+            if (index == -1) {
+                throw new IllegalArgumentException(
+                        "Source TreePath doesn't match this model");
+            } else {
+                newElements[i] = newElements[i - 1].getChildAt(index);
+            }
+        }
+        return new TreePath(newElements);
+    }
+
+    public TreePath[] getTreePaths(TreePath[] old) {
+        List<TreePath> res = new ArrayList<TreePath>();
+        for (TreePath path : old) {
+            try {
+                TreePath newPath = getTreePath(path);
+                res.add(newPath);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return res.toArray(new TreePath[0]);
+    }
+
+    /**
+     * 
      * Description: find tree node by lid based on closest first search
      * 
      * @param lid
@@ -250,7 +324,7 @@ public class FVTreeModel implements TreeModel, ITreeMonitor {
      */
     public TreePath getTreePath(int lid, TreeNodeType type, FVResourceNode hint) {
         FVResourceNode tmp =
-                navigateTree(hint == null ? mRootNode : hint, lid, type);
+                navigateTree(hint == null ? vizRootNode : hint, lid, type);
         if (tmp == null && hint != null) {
             tmp = siblingSearch(hint, lid, type);
         }
@@ -319,7 +393,7 @@ public class FVTreeModel implements TreeModel, ITreeMonitor {
     public TreePath getTreePathForPort(int lid, short portNum,
             FVResourceNode hint) {
         FVResourceNode tmp =
-                navigateTree(hint == null ? mRootNode : hint, lid,
+                navigateTree(hint == null ? vizRootNode : hint, lid,
                         TreeNodeType.NODE);
         if (tmp == null && hint != null) {
             tmp = siblingSearch(hint, lid, TreeNodeType.NODE);
@@ -359,17 +433,17 @@ public class FVTreeModel implements TreeModel, ITreeMonitor {
 
     // breadth first search
     protected FVResourceNode navigateTree(String name, TreeNodeType type) {
-        if (mRootNode.getTitle().equals(name) && mRootNode.getType() == type) {
-            return mRootNode;
+        if (vizRootNode.getTitle().equals(name)
+                && vizRootNode.getType() == type) {
+            return vizRootNode;
         }
 
         Queue<FVResourceNode> toDo = new LinkedList<FVResourceNode>();
-        toDo.add(mRootNode);
+        toDo.add(vizRootNode);
         while (!toDo.isEmpty()) {
             FVResourceNode node = toDo.poll();
             if (node.getChildCount() > 0) {
                 for (FVResourceNode child : node.getChildren()) {
-                    System.out.println(child.getName() + " " + child.getType());
                     if (child.getTitle().equals(name)
                             && child.getType() == type) {
                         return child;
@@ -383,8 +457,13 @@ public class FVTreeModel implements TreeModel, ITreeMonitor {
     }
 
     @Override
-    public void fireTreeNodesRemoved(Object source, Object[] path,
+    public void fireTreeNodesRemoved(Object source, final Object[] path,
             int[] childIndices, Object[] children) {
+        if (vizRootNode != path[0]) {
+            // if we are using filtered tree, these events doesn't apply
+            return;
+        }
+
         final TreeModelEvent e =
                 new TreeModelEvent(source, path, childIndices, children);
         // System.out.println("TreeNodesRemoved " + e);
@@ -392,15 +471,26 @@ public class FVTreeModel implements TreeModel, ITreeMonitor {
             @Override
             public void run() {
                 for (TreeModelListener listener : mListeners) {
-                    listener.treeNodesRemoved(e);
+                    try {
+                        listener.treeNodesRemoved(e);
+                    } catch (Exception e1) {
+                        log.warn("Error on remove nodes event " + e, e1);
+                        ((FVResourceNode) path[path.length - 1]).dump(
+                                System.out, "E ");
+                    }
                 }
             }
         });
     }
 
     @Override
-    public void fireTreeNodesInserted(Object source, Object[] path,
+    public void fireTreeNodesInserted(Object source, final Object[] path,
             int[] childIndices, Object[] children) {
+        if (vizRootNode != path[0]) {
+            // if we are using filtered tree, these events doesn't apply
+            return;
+        }
+
         final TreeModelEvent e =
                 new TreeModelEvent(source, path, childIndices, children);
         // System.out.println("TreeNodesInserted " + e);
@@ -408,7 +498,13 @@ public class FVTreeModel implements TreeModel, ITreeMonitor {
             @Override
             public void run() {
                 for (TreeModelListener listener : mListeners) {
-                    listener.treeNodesInserted(e);
+                    try {
+                        listener.treeNodesInserted(e);
+                    } catch (Exception e1) {
+                        log.warn("Error on insert nodes event " + e, e1);
+                        ((FVResourceNode) path[path.length - 1]).dump(
+                                System.out, "E ");
+                    }
                 }
             }
         });
@@ -422,8 +518,13 @@ public class FVTreeModel implements TreeModel, ITreeMonitor {
      * lang.Object, java.lang.Object[], int[], java.lang.Object[])
      */
     @Override
-    public void fireTreeNodesChanged(Object source, Object[] path,
-            int[] childIndices, Object[] children) {
+    public void fireTreeNodesChanged(Object source, final Object[] path,
+            final int[] childIndices, Object[] children) {
+        if (vizRootNode != path[0]) {
+            // if we are using filtered tree, these events doesn't apply
+            return;
+        }
+
         final TreeModelEvent e =
                 new TreeModelEvent(source, path, childIndices, children);
         // System.out.println("TreeNodesChaneed " + e);
@@ -431,21 +532,38 @@ public class FVTreeModel implements TreeModel, ITreeMonitor {
             @Override
             public void run() {
                 for (TreeModelListener listener : mListeners) {
-                    listener.treeNodesChanged(e);
+                    try {
+                        listener.treeNodesChanged(e);
+                    } catch (Exception e1) {
+                        log.warn("Error on nodes change event " + e, e1);
+                        ((FVResourceNode) path[path.length - 1]).dump(
+                                System.out, "E ");
+                    }
                 }
             }
         });
     }
 
     @Override
-    public void fireTreeStructureChanged(Object source, TreePath path) {
+    public void fireTreeStructureChanged(Object source, final TreePath path) {
+        if (vizRootNode != path.getPath()[0]) {
+            // if we are using filtered tree, these events doesn't apply
+            return;
+        }
+
         final TreeModelEvent e = new TreeModelEvent(source, path);
         // System.out.println("TreeStructureChanged " + e);
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
                 for (TreeModelListener listener : mListeners) {
-                    listener.treeStructureChanged(e);
+                    try {
+                        listener.treeStructureChanged(e);
+                    } catch (Exception e1) {
+                        log.warn("Error on structure change event " + e, e1);
+                        ((FVResourceNode) path.getLastPathComponent()).dump(
+                                System.out, "E ");
+                    }
                 }
             }
         });

@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.23  2015/11/02 23:56:52  jijunwan
+ *  Archive Log:    PR 131396 - Incorrect Connectivity Table for a VF port
+ *  Archive Log:    - adapted to the new connectivity table controller to support VF port
+ *  Archive Log:
  *  Archive Log:    Revision 1.22  2015/08/17 18:54:00  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -275,7 +279,7 @@ public class ResourceController {
         });
     }
 
-    public void showLinks(final List<GraphEdge> links) {
+    public void showLinks(final List<GraphEdge> links, final String vfName) {
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
@@ -288,13 +292,14 @@ public class ResourceController {
                 ResourceLinkSection resourceLinkSection =
                         (ResourceLinkSection) cards.get(currentResourceType);
                 if (resourceLinkSection != null) {
-                    resourceLinkSection.showLinks(links);
+                    resourceLinkSection.showLinks(links, vfName);
                 }
             }
         });
     }
 
-    public void showPath(final Map<GraphEdge, List<GraphEdge>> traceMap) {
+    public void showPath(final Map<GraphEdge, List<GraphEdge>> traceMap,
+            final String vfName) {
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
@@ -307,7 +312,7 @@ public class ResourceController {
                 ResourceLinkSection resourceLinkSection =
                         (ResourceLinkSection) cards.get(currentResourceType);
                 if (resourceLinkSection != null) {
-                    resourceLinkSection.showPath(traceMap);
+                    resourceLinkSection.showPath(traceMap, vfName);
                 }
             }
         });

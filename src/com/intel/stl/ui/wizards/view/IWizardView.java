@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.8  2015/11/09 20:48:16  fernande
+ *  Archive Log:    PR130231 - Cannot delete subnet from Wizard if subnet name is "Unknown Subnet". Some refactoring to decouple tasks from main wizard controller
+ *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/08/17 18:53:58  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -69,16 +72,9 @@
  ******************************************************************************/
 package com.intel.stl.ui.wizards.view;
 
-import java.util.List;
-
 import com.intel.stl.ui.wizards.impl.IWizardListener;
-import com.intel.stl.ui.wizards.impl.IWizardTask;
 
 public interface IWizardView {
-
-    public void showWizard(boolean enable);
-
-    public void setTasks(List<IWizardTask> tasks);
 
     public void showTaskView(String name);
 

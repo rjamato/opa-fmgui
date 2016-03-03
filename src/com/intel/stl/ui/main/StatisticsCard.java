@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  * 
  *  Archive Log: $Log$
+ *  Archive Log: Revision 1.23  2015/11/02 23:57:30  jijunwan
+ *  Archive Log: Fixed -1 numSwitchLinks issue on b2b topology
+ *  Archive Log:
  *  Archive Log: Revision 1.22  2015/08/17 18:53:38  jijunwan
  *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log: - changed frontend files' headers
@@ -150,7 +153,8 @@ public class StatisticsCard extends
                 long numHostLinks = sta.getNodeTypesDist().get(NodeType.HFI);
                 long numSwitchLinks = 0;
                 // for special case b2b, numSwitchLinks should be zero
-                if (sta.getNodeTypesDist().get(NodeType.SWITCH) != null) {
+                Integer switches = sta.getNodeTypesDist().get(NodeType.SWITCH);
+                if (switches != null && switches.intValue() > 0) {
                     numSwitchLinks = numLinks - numHostLinks;
                 }
                 view.setNumSwitchLinks(UIConstants.INTEGER

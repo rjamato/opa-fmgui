@@ -34,6 +34,10 @@
  *  Archive Source: $Source$
  * 
  *  Archive Log: $Log$
+ *  Archive Log: Revision 1.26  2015/10/14 23:26:32  jypak
+ *  Archive Log: PR 130913 - Java Help Window missing icon.
+ *  Archive Log: Use a correct JDialog constructor in HelpMainWindow.
+ *  Archive Log:
  *  Archive Log: Revision 1.25  2015/09/30 13:26:47  fisherma
  *  Archive Log: PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
  *  Archive Log:
@@ -72,7 +76,6 @@
 package com.intel.stl.ui.main;
 
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -136,8 +139,6 @@ public interface IFabricController extends ISubnetEventListener {
     Rectangle getBounds();
 
     boolean isMaximized();
-
-    void applyHelpAction(ActionEvent event);
 
     JFrame getViewFrame();
 

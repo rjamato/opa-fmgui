@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.3  2015/11/18 23:51:58  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Stores the SshKeyType key for the session
+ *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/08/17 18:49:18  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - change backend files' headers
@@ -77,6 +81,8 @@ public class JSchSession implements IJSchSession {
     private final static Logger log = LoggerFactory
             .getLogger(JSchSession.class);
 
+    private final boolean DEBUG_SESSION = false;
+
     private final String CONNECTION_THREAD_NAME =
             "JSchSession:connectionThread";
 
@@ -87,6 +93,8 @@ public class JSchSession implements IJSchSession {
     private final SubnetDescription subnet;
 
     private final boolean strictHostKey;
+
+    private final String sshKey;
 
     /**
      * Threads
@@ -111,10 +119,11 @@ public class JSchSession implements IJSchSession {
      * @throws Exception
      */
     public JSchSession(SubnetDescription subnet, boolean strictHostKey,
-            char[] password) throws JSchException, Exception {
+            char[] password, String sshKey) throws JSchException {
         super();
         this.subnet = subnet;
         this.strictHostKey = strictHostKey;
+        this.sshKey = sshKey;
         createSession(password);
     }
 
@@ -129,25 +138,26 @@ public class JSchSession implements IJSchSession {
      * @throws JSchException
      * @throws Exception
      */
-    protected void createSession(char[] password) throws JSchException,
-            Exception {
+    protected void createSession(char[] password) throws JSchException {
         HostInfo hostInfo = subnet.getCurrentFE();
         String host = hostInfo.getHost();
         String userName = hostInfo.getSshUserName();
         int port = hostInfo.getSshPortNum();
 
-        try {
-            // Create the session and connect
-            JSch jsch = Utils.createJSch();
-            session = jsch.getSession(userName, host, port);
-            session.setPassword(new String(password));
-            Properties config = new java.util.Properties();
-            config.put("StrictHostKeyChecking", (strictHostKey) ? "yes" : "no");
-            session.setConfig(config);
-            session.connect();
-            connected = session.isConnected();
-        } finally {
-            startConnectionThread();
+        // Create the session and connect
+        JSch jsch = Utils.createJSch();
+        session = jsch.getSession(userName, host, port);
+        session.setPassword(new String(password));
+        Properties config = new java.util.Properties();
+        config.put("StrictHostKeyChecking", (strictHostKey) ? "yes" : "no");
+        session.setConfig(config);
+        session.connect();
+        connected = session.isConnected();
+
+        if (DEBUG_SESSION) {
+            if (connected) {
+                startConnectionThread();
+            }
         }
     }
 
@@ -228,6 +238,10 @@ public class JSchSession implements IJSchSession {
         session.disconnect();
     }
 
+    public String getSshKeyType() {
+        return sshKey;
+    }
+
     /**************************************************************************
      * Threads: connectionThread
      **************************************************************************/
@@ -256,12 +270,11 @@ public class JSchSession implements IJSchSession {
                     try {
                         // Try to send a keep alive message
                         session.sendKeepAliveMsg();
+                        System.out.println("JSchSession: connected="
+                                + session.isConnected());
                     } catch (Exception e) {
-                        connected = session.isConnected();
-
                         // TODO If the keep alive fails, restart the session
                         // notify the UI and stop the connection thread
-
                     }
 
                     // Delay before trying again
@@ -274,7 +287,7 @@ public class JSchSession implements IJSchSession {
         });
         connectionThread.setName(CONNECTION_THREAD_NAME);
         connectionThreadRunning = true;
-        // connectionThread.start();
+        connectionThread.start();
     }
 
     /*

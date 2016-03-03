@@ -35,6 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.6  2015/11/18 23:54:11  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Removed consideration of the HostType, behaviour is now the same for ESM and HSM
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/10/19 22:30:11  jijunwan
+ *  Archive Log:    PR 131091 - On an unsuccessful Failover, the Admin | Applications doesn't show the login window
+ *  Archive Log:    - show login panel when not initialized properly with corresponding message
+ *  Archive Log:    - added feature to fully enable/disable a login panel
+ *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/10/06 15:51:46  rjtierne
  *  Archive Log:    PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
  *  Archive Log:    - In method onEnter(), added an additional condition to check hostType=ESM to show the Log Viewer
@@ -65,8 +74,6 @@ import java.awt.Component;
 import javax.swing.ImageIcon;
 
 import com.intel.stl.api.logs.ILogApi;
-import com.intel.stl.api.subnet.HostInfo;
-import com.intel.stl.api.subnet.HostType;
 import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.ui.admin.FunctionType;
 import com.intel.stl.ui.admin.view.logs.LogViewType;
@@ -74,7 +81,6 @@ import com.intel.stl.ui.admin.view.logs.SMLogView;
 import com.intel.stl.ui.common.IPageController;
 import com.intel.stl.ui.common.IProgressObserver;
 import com.intel.stl.ui.common.PageWeight;
-import com.intel.stl.ui.console.LoginBean;
 import com.intel.stl.ui.main.Context;
 
 public class LogPage implements IPageController {
@@ -186,37 +192,12 @@ public class LogPage implements IPageController {
      */
     @Override
     public void onEnter() {
-
-        HostType hostType = smLogController.getHostInfo().getHostType();
-
-        // Session was created by another Admin page
-        if (logApi.hasSession(subnet)
-                || ((hostType != null) && hostType.equals(HostType.ESM))) {
-            showLog();
+        if (logApi.hasSession(subnet)) {
+            // smLogController.startLog();
+            smLogController.showView(LogViewType.SM_LOG.getValue());
         } else {
-            // A new session needs to be created
-            showLogin();
+            smLogController.showLoginView();
         }
-    }
-
-    protected void showLogin() {
-        // Show the login view
-        HostInfo hostInfo = smLogController.getHostInfo();
-        LoginBean credentials =
-                new LoginBean(hostInfo.getSshUserName(), hostInfo.getHost(),
-                        String.valueOf(hostInfo.getSshPortNum()));
-        smLogController.getView().setCredentials(credentials);
-        smLogController.showView(LogViewType.LOGIN.getValue());
-    }
-
-    protected void showLog() {
-        // Start the log if it's not running
-        if (!logApi.isRunning()) {
-            smLogController.startLog();
-        }
-
-        // Show the log view
-        smLogController.showView(LogViewType.SM_LOG.getValue());
     }
 
     /*

@@ -35,6 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.5  2015/10/26 20:19:09  jijunwan
+ *  Archive Log:    PR 131169 - Unable to delete Device Groups created within the opafm.xml file
+ *  Archive Log:    - introduced ChangeManager to maintain changes
+ *  Archive Log:    - changed changes from set to list because when the changes depend on each other, the order does matter
+ *  Archive Log:    - changed xxxManagement to use ChangeManager
+ *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/08/17 18:48:39  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - change backend files' headers
@@ -105,6 +111,7 @@ import org.w3c.dom.NodeList;
 
 import com.intel.stl.api.IMessage;
 import com.intel.stl.api.StringUtils;
+import com.intel.stl.api.management.ChangeManager;
 import com.intel.stl.api.management.DuplicateNameException;
 import com.intel.stl.api.management.FMConfHelper;
 import com.intel.stl.api.management.ReferenceConflictException;
@@ -133,7 +140,7 @@ public class ApplicationManagement implements IApplicationManagement {
 
     private final FMConfHelper confHelp;
 
-    private final Set<String> changes = new HashSet<String>();
+    private final ChangeManager changeMgr = new ChangeManager();
 
     /**
      * Description:
@@ -219,7 +226,7 @@ public class ApplicationManagement implements IApplicationManagement {
             // TODO loop check
             addApplication(confFile, confFile, app);
             log.info("Added application " + app);
-            changes.add(app.getName());
+            changeMgr.addChange(app.getName());
         } catch (Exception e) {
             throw createApplicationException(STLMessages.STL63002_ADD_APP_ERR,
                     e, app.getName(), confHelp.getHost(),
@@ -264,7 +271,7 @@ public class ApplicationManagement implements IApplicationManagement {
             referenceCheck(null, name);
             removeApplication(confFile, confFile, name);
             log.info("Removed application '" + name + "'");
-            changes.add(name);
+            changeMgr.addChange(name);
         } catch (Exception e) {
             throw createApplicationException(
                     STLMessages.STL63003_REMOVE_APP_ERR, e, name,
@@ -306,8 +313,8 @@ public class ApplicationManagement implements IApplicationManagement {
             // TODO loop check
             updateApplication(confFile, confFile, oldName, app, false);
             log.info("Updated application " + app);
-            changes.add(oldName);
-            changes.add(app.getName());
+            changeMgr.addChange(oldName);
+            changeMgr.addChange(app.getName());
         } catch (Exception e) {
             throw createApplicationException(
                     STLMessages.STL63004_UPDATE_APP_ERR, e, app.getName(),
@@ -328,8 +335,8 @@ public class ApplicationManagement implements IApplicationManagement {
             // TODO loop check
             updateApplication(confFile, confFile, oldName, app, true);
             log.info("Added or updated application " + app);
-            changes.add(oldName);
-            changes.add(app.getName());
+            changeMgr.addChange(oldName);
+            changeMgr.addChange(app.getName());
         } catch (Exception e) {
             throw createApplicationException(
                     STLMessages.STL63005_ADDUPDATE_APP_ERR, e, app.getName(),
@@ -418,18 +425,8 @@ public class ApplicationManagement implements IApplicationManagement {
         return new ApplicationException(msg, error, args);
     }
 
-    /**
-     * 
-     * <i>Description:</i>
-     * 
-     * @return the names of the applications changed
-     */
-    public Set<String> getChanges() {
-        return changes;
-    }
-
-    public void resetChanges() {
-        changes.clear();
+    public boolean hasChanges() {
+        return !changeMgr.getChanges().isEmpty();
     }
 
     public void applyChangesTo(ApplicationManagement target)
@@ -439,7 +436,7 @@ public class ApplicationManagement implements IApplicationManagement {
         for (Application app : apps) {
             map.put(app.getName(), app);
         }
-        for (String change : changes) {
+        for (String change : changeMgr.getChanges()) {
             Application cur = map.get(change);
             if (cur == null) {
                 target.removeApplication(change);

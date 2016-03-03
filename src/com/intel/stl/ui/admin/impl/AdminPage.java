@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.20  2015/10/19 22:31:41  jijunwan
+ *  Archive Log:    PR 131091 - On an unsuccessful Failover, the Admin | Applications doesn't show the login window
+ *  Archive Log:    - null pointer check
+ *  Archive Log:
  *  Archive Log:    Revision 1.19  2015/08/17 18:54:28  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -506,7 +510,9 @@ public class AdminPage implements IPageController, ChangeListener {
         if (isShowing && currentPage != null) {
             currentPage.onRefresh(observer);
         }
-        observer.onFinish();
+        if (observer != null) {
+            observer.onFinish();
+        }
     }
 
     /*

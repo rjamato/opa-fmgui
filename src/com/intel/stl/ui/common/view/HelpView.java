@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.5  2015/11/11 13:26:30  robertja
+ *  Archive Log:    PR 130278 - Store console tab help pane state on a per-tab basis so that help info is restored when focus returns to a tab.
+ *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/08/17 18:53:36  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -178,5 +181,10 @@ public class HelpView extends JPanel {
 
     public void updateSelection(String value) {
         cboxTopic.setSelectedItem(value);
+    }
+    
+    public void resetView(){
+    	updateSelection("");
+    	topicPanel.clear();
     }
 }

@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.4  2015/11/18 23:48:56  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Removed onEsmHost() since distinction between ESM and HSM no longer applies
+ *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/10/06 15:50:03  rjtierne
  *  Archive Log:    PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
  *  Archive Log:    - Added onEsmHost() to the interface
@@ -63,8 +67,6 @@ public interface ILogStateListener extends ILogPageListener {
     public void onReady();
 
     public void onError(LogErrorType errorCode, Object... data);
-
-    public void onEsmHost(LogErrorType errorCode, Object... data);
 
     public void onSessionDown(String errorMessage);
 }

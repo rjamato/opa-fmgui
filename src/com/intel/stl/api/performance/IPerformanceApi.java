@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.23  2015/12/17 21:07:31  jijunwan
+ *  Archive Log:    PR 132124 - Newly created VF not displayed after reboot of SM
+ *  Archive Log:    - added code to clear vf and dg list cache
+ *  Archive Log:
  *  Archive Log:    Revision 1.22  2015/08/17 18:48:41  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - change backend files' headers
@@ -137,6 +141,8 @@ public interface IPerformanceApi extends IRandomable {
             throws PerformanceDataNotFoundException;
 
     PMConfigBean getPMConfig();
+
+    void reset();
 
     void cleanup();
 }

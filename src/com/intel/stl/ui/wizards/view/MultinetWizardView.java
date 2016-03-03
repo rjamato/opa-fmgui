@@ -35,6 +35,18 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.45  2015/12/09 16:13:56  jijunwan
+ *  Archive Log:    PR 131944 - If "# Worst Nodes" is <10 or >100, there is a Entry Validation warning for the Refresh Rate
+ *  Archive Log:
+ *  Archive Log:    - improved to display error messages based on errors in ConfigTaskStatus
+ *  Archive Log:    - some improvement on error message text
+ *  Archive Log:
+ *  Archive Log:    Revision 1.44  2015/11/13 20:46:56  fernande
+ *  Archive Log:    PR130852 - The 1st subnet in the Subnet Wizard displays "Abandon Changes" message when no changes are made. Properly reset state when wizard is closed.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.43  2015/11/09 20:40:23  fernande
+ *  Archive Log:    PR130231 - Cannot delete subnet from Wizard if subnet name is "Unknown Subnet". Some refactoring to decouple tasks from main wizard controller
+ *  Archive Log:
  *  Archive Log:    Revision 1.42  2015/10/06 20:21:23  fernande
  *  Archive Log:    PR130749 - FM GUI virtual fabric information doesn't match opafm.xml file. Removed external access to textfield
  *  Archive Log:
@@ -245,6 +257,8 @@
  ******************************************************************************/
 package com.intel.stl.ui.wizards.view;
 
+import static com.intel.stl.ui.common.STLConstants.K0622_NEXT;
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -258,16 +272,15 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -282,15 +295,17 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.jdesktop.swingx.VerticalLayout;
 
-import com.intel.stl.api.subnet.HostInfo;
 import com.intel.stl.api.subnet.SubnetDescription;
+import com.intel.stl.ui.common.DocumentDirtyListener;
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UIConstants;
 import com.intel.stl.ui.common.UIImages;
@@ -309,9 +324,7 @@ import com.intel.stl.ui.wizards.impl.IMultinetWizardListener;
 import com.intel.stl.ui.wizards.impl.IMultinetWizardTask;
 import com.intel.stl.ui.wizards.impl.IWizardListener;
 import com.intel.stl.ui.wizards.impl.IWizardTask;
-import com.intel.stl.ui.wizards.impl.WizardType;
 import com.intel.stl.ui.wizards.model.MultinetWizardModel;
-import com.intel.stl.ui.wizards.model.subnet.SubnetModel;
 
 public class MultinetWizardView extends JDialog implements IMultinetWizardView {
 
@@ -325,11 +338,11 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
 
     public static final int DIALOG_HEIGHT = 500;
 
+    private static final String CLIENT_KEY = "SUBNET";
+
     private final int MAX_SUBNET_NAME_LEN = 56;
 
     private IMultinetWizardListener wizardListener;
-
-    private final MultinetWizardModel wizardModel;
 
     private JPanel pnlNavigation;
 
@@ -379,11 +392,7 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
 
     private boolean manualSelect = false;
 
-    private String selectedButtonName;
-
     private boolean newWizardInProgress = false;
-
-    private List<IMultinetWizardTask> tasks;
 
     private final CardLayout wizardLayout = new CardLayout();
 
@@ -392,12 +401,6 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
     private final CardLayout welcomeLayout = new CardLayout();
 
     private JPanel pnlWelcomeContent;
-
-    private final LinkedHashMap<String, JButton> subnetButtonMap =
-            new LinkedHashMap<String, JButton>();
-
-    private final LinkedHashMap<JButton, SubnetDescription> subnetMap =
-            new LinkedHashMap<JButton, SubnetDescription>();
 
     private ProgressPanel progressPanel;
 
@@ -432,6 +435,10 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
     // when we are deleting we need to check whether edit is valid or not
     private boolean ignoreEditCheck;
 
+    private WizardViewType wizardViewType;
+
+    private boolean dirty;
+
     /**
      * 
      * Description: Constructor for the MultinetWizardView
@@ -440,11 +447,10 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
      *            top level window of the application to center this dialog
      *            around
      */
-    public MultinetWizardView(IFabricView owner, MultinetWizardModel wizardModel) {
+    public MultinetWizardView(IFabricView owner) {
 
         super((JFrame) owner,
                 STLConstants.K0667_CONFIG_SETUP_WIZARD.getValue(), true);
-        this.wizardModel = wizardModel;
 
         initComponents();
 
@@ -573,6 +579,45 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
                             false, MAX_SUBNET_NAME_LEN,
                             (DocumentListener[]) null);
             originalSubnetNameBorder = txtFldSubnetName.getBorder();
+            txtFldSubnetName.getDocument().addDocumentListener(
+                    createDocumentListener());
+            txtFldSubnetName.addFocusListener(new FocusListener() {
+
+                @Override
+                public void focusGained(FocusEvent e) {
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            txtFldSubnetName.selectAll();
+                        }
+                    });
+                }
+
+                @Override
+                public void focusLost(FocusEvent e) {
+                    if (btnSelected != null) {
+                        String name = txtFldSubnetName.getText();
+                        btnSelected.setText(name);
+                    }
+                }
+
+            });
+
+            this.addWindowListener(new WindowAdapter() {
+
+                @Override
+                public void windowActivated(WindowEvent e) {
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            txtFldSubnetName.requestFocusInWindow();
+                        }
+                    });
+                }
+
+            });
 
             pnlHeading = new JPanel();
             pnlHeading.setBackground(CONTENT_COLOR);
@@ -636,8 +681,9 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
                     updateNextButton(str);
 
                     // Only do this if the tab was selected
+                    Component[] comps = pnlNavigationButtons.getComponents();
                     if ((!nextSelected && !subnetBtnSelected)
-                            && (subnetButtonMap.size() > 0)) {
+                            && (comps.length > 0)) {
                         int tabIndex = tabbedPane.getSelectedIndex();
 
                         if (tabIndex >= 0) {
@@ -802,6 +848,7 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
             @Override
             public void actionPerformed(ActionEvent e) {
                 manualSelect = true;
+                setSelectedTask(0);
                 onSubnetButtonClick(btnSelected);
             }
 
@@ -850,7 +897,14 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
             btnAddSubnet.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    onAddSubnet();
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            onAddSubnet();
+                        }
+
+                    });
                 }
             });
             pnlMainCtrl.add(btnAddSubnet);
@@ -901,7 +955,7 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
             btnRun.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {
-                    ((JButton) e.getSource()).requestFocusInWindow();
+                    // ((JButton) e.getSource()).requestFocusInWindow();
                 }
             });
             pnlMainCtrl.add(btnRun);
@@ -925,6 +979,19 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
                     btnClose });
         }
         return pnlMainCtrl;
+    }
+
+    private DocumentListener createDocumentListener() {
+        DocumentListener listener = new DocumentDirtyListener() {
+
+            @Override
+            public void setDirty(DocumentEvent e) {
+                dirty = true;
+                wizardListener.setDirty(true);
+            }
+
+        };
+        return listener;
     }
 
     public void setWelcomeOkEnabled(boolean enable) {
@@ -1070,10 +1137,6 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
         return pnlCreateSubnet;
     }
 
-    public JButton getBtnSelected() {
-        return btnSelected;
-    }
-
     public JButton getHelpButton() {
         return helpBtn;
     }
@@ -1084,47 +1147,61 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
     }
 
     @Override
-    public void initButtonMap(List<SubnetDescription> subnets,
-            SubnetDescription currentSubnet) {
+    public void setSubnets(final List<SubnetDescription> subnets) {
+        Util.runInEDT(new Runnable() {
 
-        for (SubnetDescription subnet : subnets) {
-            if (subnet.getName() != null) {
-
-                // Create the button if it doesn't exist in the map
-                if (!isSubnetInMap(subnet)) {
-                    createSubnetButton(subnet);
+            @Override
+            public void run() {
+                pnlNavigationButtons.removeAll();
+                if (subnets != null) {
+                    for (SubnetDescription subnet : subnets) {
+                        JButton btn = createSubnetButton();
+                        btn.setText(subnet.getName());
+                        btn.putClientProperty(CLIENT_KEY, subnet);
+                        pnlNavigationButtons.add(btn);
+                    }
                 }
-
+                revalidate();
+                // Repaint the panel with the new components
+                pnlNavigationButtons.repaint();
             }
-        }
-        // Select the first button in the list
-        if (subnetMap.size() > 0) {
-            updateSelectedButton(subnetButtonMap.get(currentSubnet.getName()));
 
-            if (btnSelected == null) {
-                updateSelectedButton((JButton) subnetMap.keySet().toArray()[0]);
-            }
-            controlLayout.show(pnlSubwizardCtrl,
-                    WizardControlType.EXISTING.getName());
-            highlightButtons();
-
-            // Update the model
-            wizardModel.getSubnetModel().setSubnet(subnetMap.get(btnSelected));
-            wizardModel.notifyModelChange(WizardType.SUBNET);
-        }
+        });
     }
 
-    protected boolean isSubnetInMap(SubnetDescription subnet) {
+    @Override
+    public void addSubnet(final SubnetDescription subnet) {
+        Util.runInEDT(new Runnable() {
 
-        boolean found = false;
-        Iterator<SubnetDescription> it = subnetMap.values().iterator();
+            @Override
+            public void run() {
+                JButton btn = createSubnetButton();
+                btn.setText(subnet.getName());
+                btn.putClientProperty(CLIENT_KEY, subnet);
+                pnlNavigationButtons.add(btn);
+                revalidate();
+                // Repaint the panel with the new components
+                pnlNavigationButtons.repaint();
+                tabbedPane.setSelectedIndex(0);
+                if (subnet.getSubnetId() == 0) {
+                    updateNextButton(K0622_NEXT.getValue());
+                }
+                txtFldSubnetName.setText(subnet.getName());
+            }
 
-        while (!found && it.hasNext()) {
-            SubnetDescription mappedSubnet = it.next();
-            found = (subnet.getSubnetId() == mappedSubnet.getSubnetId());
-        }
+        });
+    }
 
-        return found;
+    @Override
+    public void resetSubnet(final SubnetDescription subnet) {
+        Util.runInEDT(new Runnable() {
+
+            @Override
+            public void run() {
+                btnSelected.putClientProperty(CLIENT_KEY, subnet);
+            }
+
+        });
     }
 
     public void setNewWizardInProgress(boolean newWizardInProgress) {
@@ -1135,11 +1212,6 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
         return this.newWizardInProgress;
     }
 
-    public SubnetDescription getSelectedSubnet() {
-
-        return subnetMap.get(btnSelected);
-    }
-
     /**
      * 
      * <i>Description: Create button for new subnet </i>
@@ -1147,7 +1219,7 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
      * @param control
      * @return
      */
-    protected JButton createSubnetButton() {
+    private JButton createSubnetButton() {
         JButton btnUnknown =
                 new JButton(STLConstants.K3018_UNKNOWN_SUBNET.getValue());
         btnUnknown.setUI(new IntelButtonUI(UIConstants.INTEL_MEDIUM_BLUE,
@@ -1171,83 +1243,11 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
                 subnetBtnSelected = false;
             }
         });
-        updateSelectedButton(btnUnknown);
 
         return btnUnknown;
     }
 
-    /**
-     * 
-     * <i>Description: Create button for existing subnet</i>
-     * 
-     * @param control
-     * @param subnet
-     */
-    protected JButton createSubnetButton(SubnetDescription subnet) {
-
-        // Create a new button and update with the subnet name
-        JButton btn = createSubnetButton();
-        btn.setText(subnet.getName());
-
-        // Add the new button to the button map and assign it as selected
-        updateMaps(btn, subnet, STLConstants.K3018_UNKNOWN_SUBNET.getValue());
-        updateSelectedButton(btn);
-
-        return btn;
-    }
-
-    public void updateSubnetMap(SubnetDescription subnet) {
-
-        // Locate the button with the corresponding subnet name
-        // and use it to update the subnet map
-        if ((subnet != null) && !subnet.getName().equals("")) {
-            JButton btn = subnetButtonMap.get(subnet.getName());
-            if (btn != null) {
-                subnetMap.put(btn, subnet);
-            }
-        }
-    }
-
-    protected void updateMaps(JButton btn, SubnetDescription subnet, String key) {
-        subnetMap.put(btn, subnet);
-        subnetButtonMap.remove(key);
-        subnetButtonMap.put(subnet.getName(), btn);
-    }
-
-    public void updateMaps(SubnetDescription subnet) {
-        subnetMap.put(btnSelected, subnet);
-
-        if (selectedButtonName != null) {
-            if (!selectedButtonName.equals(btnSelected.getText())) {
-                subnetButtonMap.remove(selectedButtonName);
-                subnetButtonMap.put(subnet.getName(), btnSelected);
-            }
-        }
-    }
-
-    protected void highlightButtons() {
-        for (JButton btn : subnetMap.keySet()) {
-            if (btn.equals(btnSelected)) {
-                btn.setBackground(UIConstants.INTEL_LIGHT_BLUE);
-                btn.setForeground(UIConstants.INTEL_WHITE);
-            } else {
-                btn.setBackground(UIConstants.INTEL_WHITE);
-                btn.setForeground(UIConstants.INTEL_DARK_GRAY);
-            }
-        }
-    }
-
-    protected synchronized void addSubnetButtons() {
-        // Iterate through the button map and put the buttons back on the panel
-        for (JButton btn : subnetMap.keySet()) {
-            pnlNavigationButtons.add(btn);
-        }
-
-        // Update button highlighting
-        highlightButtons();
-    }
-
-    public synchronized void onSubnetButtonClick(final JButton buttonSource) {
+    private void onSubnetButtonClick(final JButton buttonSource) {
 
         if (buttonSource == null || !isEditValid()) {
             return;
@@ -1275,83 +1275,27 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
                 onReset();
                 btnAddSubnet.setEnabled(true);
                 if ((btnSelected != null)
-                        && btnSelected.getText().equals(
-                                STLConstants.K3018_UNKNOWN_SUBNET.getValue())) {
+                        && ((SubnetDescription) btnSelected
+                                .getClientProperty(CLIENT_KEY)).getSubnetId() == 0) {
                     newWizardCleanup();
                 }
             }
         }
 
+        SubnetDescription subnet =
+                (SubnetDescription) buttonSource.getClientProperty(CLIENT_KEY);
+        ignoreEditCheck = true;
         try {
-            // Clear the subnet certificate factories
-            SubnetDescription subnet = subnetMap.get(buttonSource);
-            HostInfo currentHost = null;
-            if (subnet != null) {
-                currentHost = subnet.getCurrentFE();
-            }
-            if ((currentHost != null) && currentHost.isSecureConnect()) {
-                wizardListener.clearSubnetFactories(subnet);
-            }
-
-            Util.runInEDT(new Runnable() {
-
-                @Override
-                public void run() {
-                    ignoreEditCheck = true;
-                    try {
-                        btnRun.setEnabled(true);
-                        btnApply.setEnabled(true);
-
-                        // Stop the connection test
-                        stopSubnetConnectionTest();
-
-                        // Make the heading panel visible
-                        pnlHeading.setVisible(true);
-
-                        // Show wizard view
-                        wizardLayout.show(pnlMain,
-                                WizardViewType.WIZARD.getName());
-                        updateSelectedButton(buttonSource);
-                        highlightButtons();
-
-                        // Update the subnet attribute in the controller
-                        wizardListener.setCurrentSubnet(getSelectedSubnet());
-
-                        // Determine if this is a new "unknown" button
-                        boolean unknownButton =
-                                (btnSelected.getText()
-                                        .equals(STLConstants.K3018_UNKNOWN_SUBNET
-                                                .getValue()));
-
-                        // Set control layout depending on whether button is new
-                        // or not
-                        WizardControlType controlType =
-                                unknownButton ? WizardControlType.CREATION
-                                        : WizardControlType.EXISTING;
-                        controlLayout.show(pnlSubwizardCtrl,
-                                controlType.getName());
-
-                        // Set the tabs
-                        setTabs(wizardListener.getTasks(), unknownButton, false);
-
-                        // Update the models
-                        wizardListener.updateModels(getSelectedSubnet());
-
-                        // Assume no changes have been made yet
-                        for (IMultinetWizardTask task : tasks) {
-                            task.setDirty(false);
-                        }
-                    } finally {
-                        ignoreEditCheck = false;
-                    }
-                }
-            });
+            wizardListener.onSelectSubnet(subnet);
         } catch (Exception e) {
             onSubnetError(buttonSource);
+        } finally {
+            ignoreEditCheck = false;
         }
+
     }
 
-    protected void onSubnetError(final JButton subnetButton) {
+    private void onSubnetError(final JButton subnetButton) {
 
         Util.runInEDT(new Runnable() {
 
@@ -1359,8 +1303,7 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
             public void run() {
                 btnRun.setEnabled(false);
                 String subnetName = subnetButton.getText();
-                updateSelectedButton(subnetButton);
-                highlightButtons();
+                // updateSelectedButton(subnetButton);
                 lblWelcomeError.setText(UILabels.STL50094_WELCOME_ERROR
                         .getDescription(subnetName));
                 welcomeLayout.show(pnlWelcomeContent,
@@ -1371,7 +1314,6 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
     }
 
     public void enableNavPanel(boolean enable) {
-
         for (Component c : pnlNavigationButtons.getComponents()) {
             c.setEnabled(enable);
         }
@@ -1384,7 +1326,7 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
     }
 
     // Button control begins
-    protected void onAddSubnet() {
+    private void onAddSubnet() {
 
         try {
             // Handle unsaved changes when adding a new subnet
@@ -1394,7 +1336,7 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
             }
 
             // Don't check for edit errors if there aren't any subnets
-            if (subnetMap.size() <= 0) {
+            if (pnlNavigationButtons.getComponents().length == 0) {
                 ignoreEditCheck = true;
                 txtFldSubnetName.setBackground(UIConstants.INTEL_WHITE);
                 txtFldSubnetName.setBorder(originalSubnetNameBorder);
@@ -1404,53 +1346,17 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
                 return;
             }
 
-            // Stop the connection test
-            stopSubnetConnectionTest();
-
             // Disable the '+' button so only one subnet can be a added at a
             // time
             btnAddSubnet.setEnabled(false);
-
-            // Show wizard view
-            wizardLayout.show(pnlMain, WizardViewType.WIZARD.getName());
-
-            // Clear the header subnet name
-            pnlHeading.setVisible(true);
-            setSubnetName("");
 
             // Disable all the control buttons
             btnPrevious.setEnabled(false);
             btnNext.setEnabled(false);
             btnRun.setEnabled(false);
 
-            // Add a new subnet, display new empty tabs and subnet button
-            // This subnet will be updated when the subnet controller updates
-            // the model with a subnet from the subnetMgr
-            SubnetDescription subnet =
-                    new SubnetDescription(
-                            STLConstants.K3018_UNKNOWN_SUBNET.getValue(),
-                            STLConstants.K3018_UNKNOWN_SUBNET.getValue(),
-                            SubnetModel.DEFAULT_PORT_NUM);
-            JButton btn = createSubnetButton();
-            updateMaps(btn, subnet,
-                    STLConstants.K3018_UNKNOWN_SUBNET.getValue());
-            controlLayout.show(pnlSubwizardCtrl,
-                    WizardControlType.CREATION.getName());
-            updateNavPanel();
+            wizardListener.onNewSubnet();
 
-            // Initialize the tasks
-            wizardListener.clearTasks();
-
-            // Update the Subnet Model with the new subnet
-            wizardModel.getSubnetModel().setSubnet(subnet);
-            wizardModel.notifyModelChange(WizardType.SUBNET);
-            setTabs(wizardListener.getTasks(), true, false);
-
-            // Initialize the subnet name field to match the
-            txtFldSubnetName.setText(subnet.getName());
-            txtFldSubnetName.selectAll();
-
-            txtFldSubnetName.requestFocusInWindow();
             newWizardInProgress = true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -1459,68 +1365,63 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
         }
     }
 
-    protected void onDeleteSubnet() {
+    private void onDeleteSubnet() {
+        if (btnSelected == null) {
+            return;
+        }
         // Delete selected subnet and button and change selected button
         // to next in list
-        int position = 0;
+        int position = -1;
         boolean found = false;
-        boolean deleted = false;
-        Iterator<Entry<JButton, SubnetDescription>> it =
-                subnetMap.entrySet().iterator();
-
-        while (!found && it.hasNext()) {
-            JButton btn = it.next().getKey();
+        Component[] comps = pnlNavigationButtons.getComponents();
+        for (int i = 0; i < comps.length; i++) {
+            JButton btn = (JButton) comps[i];
             if (btn.equals(btnSelected)) {
-
-                // Warn the user first
-                int result =
-                        showWarningDialog(UILabels.STL50082_DELETE_SUBNET_MESSAGE
-                                .getDescription());
-                if (result == JOptionPane.YES_OPTION) {
-                    newWizardInProgress = false;
-                    if (!btnSelected.getText().equals(
-                            STLConstants.K3018_UNKNOWN_SUBNET.getValue())) {
-                        wizardListener.deleteSubnet(subnetMap.get(btnSelected));
-                    }
-                    subnetMap.remove(btn);
-                    subnetButtonMap.remove(btn.getText());
-                    pnlHeading.setVisible(false);
-
-                    // Enable the '+' button so more subnets can be added
-                    btnAddSubnet.setEnabled(true);
-
-                    deleted = true;
-                }
+                position = i;
                 found = true;
-
-            } else {
-                position++;
+                break;
             }
+
         }
 
-        // Assign the selected button
-        // Update the tabbed pane with the selected subnet or if no subnet
-        // is selected, then remove all tabs
-        if (deleted && (position >= 0)) {
+        JButton nextBtn = null;
+        if (found) {
+            // Warn the user first
+            int result =
+                    showWarningDialog(UILabels.STL50082_DELETE_SUBNET_MESSAGE
+                            .getDescription());
+            if (result == JOptionPane.YES_OPTION) {
+                newWizardInProgress = false;
+                SubnetDescription subnet =
+                        (SubnetDescription) btnSelected
+                                .getClientProperty(CLIENT_KEY);
+                wizardListener.deleteSubnet(subnet);
 
-            position = (position == 0) ? position : position - 1;
-            updateSelectedButton((subnetMap.size() == 0) ? null
-                    : (JButton) subnetMap.keySet().toArray()[position]);
+                if (position < (comps.length - 1)) {
+                    nextBtn = (JButton) comps[position + 1];
+                } else if (comps.length > 0) {
+                    nextBtn = (JButton) comps[0];
+                }
+                pnlNavigationButtons.remove(btnSelected);
+                revalidate();
+                pnlNavigationButtons.repaint();
+                comps = pnlNavigationButtons.getComponents();
+                pnlHeading.setVisible(false);
 
-            updateNavPanel();
-            setTabs(tasks, false, false);
+                // Enable the '+' button so more subnets can be added
+                btnAddSubnet.setEnabled(true);
 
-            // Update the view as though the selected button was clicked
-            if (btnSelected != null) {
-                manualSelect = true;
-                onSubnetButtonClick(btnSelected);
+                // Update the view as though the selected button was clicked
+                if (nextBtn != null) {
+                    manualSelect = true;
+                    onSubnetButtonClick(nextBtn);
+                }
             }
         }
 
         // When all subnets have been removed, clear the tabbed pane, disable
         // buttons
-        if (subnetMap.size() == 0) {
-            tabbedPane.removeAll();
+        if (comps.length == 0) {
             newWizardInProgress = false;
             btnApply.setEnabled(false);
             btnReset.setEnabled(false);
@@ -1532,19 +1433,18 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
         }
     }
 
-    protected void onApply(boolean finished) {
+    private void onApply(boolean finished) {
         if (isEditValid()) {
-            // Capture the selected button name
-            selectedButtonName = btnSelected.getText();
-            wizardModel.getSubnetModel().getSubnet()
-                    .setName(txtFldSubnetName.getText());
-            wizardModel.notifyModelChange(WizardType.SUBNET);
-
             wizardListener.onFinish();
         }
     }
 
     protected void onReset() {
+        SubnetDescription subnet =
+                (SubnetDescription) btnSelected.getClientProperty(CLIENT_KEY);
+        String name = subnet.getName();
+        btnSelected.setText(name);
+        txtFldSubnetName.setText(name);
         wizardListener.onReset();
     }
 
@@ -1554,7 +1454,7 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
         }
     }
 
-    protected void onNext() {
+    private void onNext() {
         if (!isEditValid()) {
             return;
         }
@@ -1581,14 +1481,7 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
         nextSelected = false;
     }
 
-    protected void onFinish() {
-
-        // Check for duplicate subnets
-        if (hasDuplicateSubnets()) {
-            Util.showErrorMessage(this,
-                    UILabels.STL50087_DUPLICATE_SUBNETS.getDescription());
-            return;
-        }
+    private void onFinish() {
 
         // Check for duplicates backup hosts
         if (wizardListener.getSubnetView().hasDuplicateHosts()) {
@@ -1597,22 +1490,15 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
             return;
         }
 
-        // Update the button in case the subnet name changed
-        // But make sure not to enter a duplicate
-        String oldName = btnSelected.getText();
         String newName = txtFldSubnetName.getText();
 
-        if (!oldName.equals(newName)) {
-            if (!hasDuplicateSubnetNames(newName)) {
-                btnSelected.setText(newName);
-                subnetButtonMap.remove(oldName);
-                subnetButtonMap.put(newName, btnSelected);
-                updateNavPanel();
-            } else {
-                Util.showErrorMessage(this,
-                        UILabels.STL50087_DUPLICATE_SUBNETS.getDescription());
-                return;
-            }
+        if (!hasDuplicateSubnetNames(newName)) {
+            btnSelected.setText(newName);
+            pnlNavigationButtons.repaint();
+        } else {
+            Util.showErrorMessage(this,
+                    UILabels.STL50087_DUPLICATE_SUBNETS.getDescription());
+            return;
         }
 
         // Disable the buttons on the Navigation panel and the +/- buttons
@@ -1625,7 +1511,6 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
                 WizardWelcomeType.STATUS.getName());
         wizardLayout.show(pnlMain, WizardViewType.WELCOME.getName());
         wizardListener.onFinish();
-
     }
 
     protected boolean isEditValid() {
@@ -1645,13 +1530,16 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
         return true;
     }
 
-    protected boolean hasDuplicateSubnets() {
+    private boolean hasDuplicateSubnets() {
 
         Set<String> subnetNameSet = new HashSet<String>();
 
         // Duplicate subnet names can't be added to the set
         // so we will return true
-        for (SubnetDescription subnet : subnetMap.values()) {
+        for (Component comp : pnlNavigationButtons.getComponents()) {
+            JButton btn = (JButton) comp;
+            SubnetDescription subnet =
+                    (SubnetDescription) btn.getClientProperty(CLIENT_KEY);
             if (!subnetNameSet.add(subnet.getName().toLowerCase())) {
                 return true;
             }
@@ -1667,8 +1555,14 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
 
         // Duplicate subnet names can't be added to the set
         // so we will return true
-        for (String name : subnetButtonMap.keySet()) {
-            if (!subnetNameSet.add(name.toLowerCase())) {
+        for (Component comp : pnlNavigationButtons.getComponents()) {
+            JButton btn = (JButton) comp;
+            if (btn.equals(btnSelected)) {
+                continue;
+            }
+            SubnetDescription subnet =
+                    (SubnetDescription) btn.getClientProperty(CLIENT_KEY);
+            if (!subnetNameSet.add(subnet.getName().toLowerCase())) {
                 return true;
             }
         }
@@ -1738,9 +1632,13 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
                 lblEntryValidationStatus.setText(resultStr);
 
                 if (!status.isSuccess()) {
-                    lblEntryValidationNotes
-                            .setText(UILabels.STL50089_UNABLE_TO_VALIDATE
-                                    .getDescription());
+                    List<? extends Exception> errors = status.getErrors();
+                    StringBuffer sb = new StringBuffer("<html>");
+                    for (Exception error : errors) {
+                        sb.append(error.getMessage() + "<br>");
+                    }
+                    sb.append("<html>");
+                    lblEntryValidationNotes.setText(sb.toString());
                 }
                 break;
 
@@ -1785,7 +1683,7 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
         progressPanel.setProgressNote(taskType.getName());
     }
 
-    protected void onRun() {
+    private void onRun() {
         if (!isEditValid()) {
             return;
         }
@@ -1807,7 +1705,7 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
         }
     }
 
-    protected void onClose(boolean running) {
+    private void onClose(boolean running) {
 
         boolean okayToClose = true;
 
@@ -1819,6 +1717,7 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
             // Remove the new button/subnet and close the wizard
             // otherwise leave the wizard open
             if (result == JOptionPane.YES_OPTION) {
+                onReset();
                 newWizardCleanup();
                 okayToClose = true;
             } else {
@@ -1832,9 +1731,7 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
                             .getDescription());
 
             if (result == JOptionPane.YES_OPTION) {
-                for (IWizardTask task : tasks) {
-                    task.onReset();
-                }
+                onReset();
                 newWizardCleanup();
                 okayToClose = true;
             } else {
@@ -1851,6 +1748,7 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
             enableSubnetModifiers(true);
 
             wizardListener.closeStatusPanels();
+            btnSelected = null;
             closeWizard();
 
             // Shutdown the configuration thread
@@ -1860,20 +1758,8 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
         }
     }
 
-    protected boolean haveUnsavedChanges() {
-
-        // Check if any of the wizards have been edited
-        byte editInProgress = 0;
-
-        if ((tasks != null) && (tasks.size() > 0)) {
-            for (IWizardTask task : tasks) {
-                if (task.isDirty()) {
-                    editInProgress++;
-                }
-            }
-        }
-
-        return (editInProgress > 0);
+    private boolean haveUnsavedChanges() {
+        return wizardListener.haveUnsavedChanges();
     }
 
     protected boolean onAbandonEdits() {
@@ -1904,35 +1790,18 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
         return result;
     }
 
-    protected void newWizardCleanup() {
+    private void newWizardCleanup() {
+        newWizardInProgress = false;
 
-        if (subnetButtonMap.containsKey(STLConstants.K3018_UNKNOWN_SUBNET
-                .getValue())) {
-            subnetMap.remove(subnetButtonMap
-                    .get(STLConstants.K3018_UNKNOWN_SUBNET.getValue()));
-            subnetButtonMap
-                    .remove(STLConstants.K3018_UNKNOWN_SUBNET.getValue());
-        } else {
-            if (btnSelected != null) {
-                subnetMap.remove(btnSelected);
-                subnetButtonMap.remove(btnSelected.getText());
-            }
-        }
-
-        // Clear the navigation panel
-        updateNavPanel();
-
-        // Remove the tabs
-        tabbedPane.removeAll();
+        pnlNavigationButtons.remove(btnSelected);
+        revalidate();
+        pnlNavigationButtons.repaint();
 
         // Clear all the models
-        for (IMultinetWizardTask task : tasks) {
-            task.clear();
-        }
-
-        newWizardInProgress = false;
+        wizardListener.clearTasks();
     }
 
+    @Override
     public boolean nextTab() {
 
         boolean result = false;
@@ -1952,6 +1821,7 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
         return result;
     }
 
+    @Override
     public boolean previousTab() {
 
         boolean result = false;
@@ -1999,84 +1869,41 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
     /*
      * (non-Javadoc)
      * 
-     * @see com.intel.stl.ui.wizards.view.IWizardView#showWizard(boolean)
-     */
-    @Override
-    public void showWizard(boolean enable) {
-        // Used in single subnet wizard only
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see
      * com.intel.stl.ui.wizards.view.IWizardView#showWizard(SubnetDescription,
      * boolean)
      */
     @Override
     public void showWizard(SubnetDescription subnet, boolean isFirstRun,
-            IFabricView mainFrame) {
+            final IFabricView mainFrame) {
+        Util.runInEDT(new Runnable() {
 
-        String type =
-                (wizardListener.getSubnets().size() > 0) ? WizardViewType.WIZARD
-                        .getName() : WizardViewType.WELCOME.getName();
-        wizardLayout.show(pnlMain, type);
+            @Override
+            public void run() {
+                try {
+                    String type = wizardViewType.getName();
+                    wizardLayout.show(pnlMain, type);
+                    btnNext.setEnabled(false);
+                    btnRun.setEnabled(false);
+                    if (wizardViewType == WizardViewType.WIZARD) {
+                        pnlHeading.setVisible(true);
+                    } else {
+                        pnlHeading.setVisible(false);
+                    }
 
-        // Initially assume no subnets and disable buttons
-        btnNext.setEnabled(false);
-        btnRun.setEnabled(false);
-        pnlHeading.setVisible(false);
-
-        try {
-            // Clear the tabbed pane and navigation panels
-            // and reinitialize them
-            if ((tasks != null) && (subnetMap.size() > 0)) {
-
-                pnlHeading.setVisible(true);
-                if (subnet != null) {
-                    updateSelectedButton(subnetButtonMap.get(subnet.getName()));
-                }
-                wizardModel.getSubnetModel().setSubnet(
-                        subnetMap.get(btnSelected));
-
-                // Update the UI as though the first subnet button were clicked
-                // This will clear the key factories in certAssistant
-                manualSelect = true;
-                onSubnetButtonClick(btnSelected);
-
-                // Set the tabs and update the navigation panel
-                setTabs(tasks, false, true);
-                updateNavPanel();
-
-                // Loop through the tasks and reset the dirty variable
-                for (IMultinetWizardTask task : tasks) {
-                    task.setDirty(false);
+                    manualSelect = true;
+                    onSubnetButtonClick(btnSelected);
+                } finally {
+                    centerDialog(mainFrame);
+                    showWindow(true);
                 }
 
-                // Enable buttons since there are subnets
-                btnNext.setEnabled(true);
-                btnRun.setEnabled(true);
             }
-
-        } catch (IllegalArgumentException e) {
-            Util.showError(this, e);
-        } finally {
-            centerDialog(mainFrame);
-            this.setVisible(true);
-        }
+        });
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.intel.stl.ui.wizards.view.IWizardView#setTasks(java.util.List)
-     */
-    @Override
-    public void setTasks(List<IWizardTask> tasks) {
-
-        for (IWizardTask task : tasks) {
-            tabbedPane.add(task.getName(), task.getView());
-        }
+    private void showWindow(boolean show) {
+        this.setVisible(true);
     }
 
     /*
@@ -2188,32 +2015,6 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
     /*
      * (non-Javadoc)
      * 
-     * @see com.intel.stl.ui.wizards.view.IWizardView#update()
-     */
-    @Override
-    public void updateNavPanel() {
-
-        Util.runInEDT(new Runnable() {
-
-            @Override
-            public void run() {
-
-                // Clear panel and put back the subnet label without the glue
-                pnlNavigationButtons.removeAll();
-
-                // Add one button for each subnet
-                addSubnetButtons();
-
-                revalidate();
-                // Repaint the panel with the new components
-                pnlNavigationButtons.repaint();
-            }
-        });
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see
      * com.intel.stl.ui.wizards.view.IWizardView#setWizardListener(com.intel
      * .stl.ui.wizards.impl.IWizardListener)
@@ -2270,91 +2071,114 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
     }
 
     @Override
-    public synchronized void updateSelectedButtonText(String name) {
-
-        if (btnSelected != null) {
-            btnSelected.setText(name);
-        }
-    }
-
-    protected synchronized void updateSelectedButton(JButton btn) {
-        btnSelected = btn;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.intel.stl.ui.wizards.view.IMultinetWizardView#setMultinetTasks(java
-     * .util.List)
-     */
-    @Override
-    public void setTabs(final List<IMultinetWizardTask> tasks,
-            final boolean newSubnet, final boolean wizardStartup) {
-
-        this.tasks = tasks;
-
+    public void setSelectedSubnet(final SubnetDescription subnet) {
+        final Component[] comps = pnlNavigationButtons.getComponents();
         Util.runInEDT(new Runnable() {
 
             @Override
             public void run() {
-                int currentTab = tabbedPane.getSelectedIndex();
-
-                // Add the tasks to the tabbed pane first
-                for (int i = 0; i < tasks.size(); i++) {
-
-                    // Get the current task
-                    IMultinetWizardTask task = tasks.get(i);
-
-                    // Add this task to the tabbed pane
-                    tabbedPane.add(task.getName(), task.getView());
-                }
-
-                // Once the tabs are present, set their enables
-                for (int i = 0; i < tasks.size(); i++) {
-
-                    // Clear the dirty flag
-                    tasks.get(i).setDirty(false);
-
-                    // Disable all but the first tab
-                    if (newSubnet && (i > 0)) {
-                        tabbedPane.setEnabledAt(i, false);
+                btnSelected = null;
+                dirty = false;
+                txtFldSubnetName.setText(subnet.getName());
+                for (Component comp : comps) {
+                    JButton btn = (JButton) comp;
+                    SubnetDescription btnSubnet =
+                            (SubnetDescription) btn
+                                    .getClientProperty(CLIENT_KEY);
+                    if (btnSubnet.equals(subnet)) {
+                        btnSelected = btn;
+                        btn.setBackground(UIConstants.INTEL_LIGHT_BLUE);
+                        btn.setForeground(UIConstants.INTEL_WHITE);
+                    } else {
+                        btn.setBackground(UIConstants.INTEL_WHITE);
+                        btn.setForeground(UIConstants.INTEL_DARK_GRAY);
                     }
                 }
-
-                if (wizardStartup || newSubnet) {
-                    wizardListener.setCurrentTask(0);
-                } else {
-                    if ((0 <= currentTab)
-                            && (currentTab < tabbedPane.getTabCount())) {
-                        tabbedPane.setSelectedIndex(currentTab);
-                        wizardListener.setCurrentTask(currentTab);
-                    }
-                }
-
-                // Make sure the creation control panel has a "Next" button
-                updateNextButton(STLConstants.K0622_NEXT.getValue());
-
-                // Disable all the control buttons
-                btnPrevious.setEnabled(false);
-                btnNext.setEnabled(false);
-                // btnRun.setEnabled(false);
+                resetButtons((subnet.getSubnetId() == 0));
+                txtFldSubnetName.requestFocusInWindow();
             }
         });
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.intel.stl.ui.wizards.view.IMultinetWizardView#updateSubnetName(java
-     * .lang.String)
-     */
+    private void resetButtons(boolean isNewSubnet) {
+        ignoreEditCheck = true;
+        try {
+            // Stop the connection test
+            stopSubnetConnectionTest();
+
+            // Make the heading panel visible
+            pnlHeading.setVisible(true);
+
+            // Show wizard view
+            wizardLayout.show(pnlMain, WizardViewType.WIZARD.getName());
+
+            // Set control layout depending on whether button is new
+            // or not
+            WizardControlType controlType =
+                    isNewSubnet ? WizardControlType.CREATION
+                            : WizardControlType.EXISTING;
+            controlLayout.show(pnlSubwizardCtrl, controlType.getName());
+
+            btnApply.setEnabled(false);
+            btnReset.setEnabled(false);
+
+            // Set the tabs
+            if (isNewSubnet) {
+                setEnableForAllTasks(false);
+                tabbedPane.setEnabledAt(0, true);
+
+                btnRun.setEnabled(false);
+            } else {
+                setEnableForAllTasks(true);
+                btnRun.setEnabled(true);
+            }
+        } finally {
+            ignoreEditCheck = false;
+        }
+    }
+
     @Override
-    public void setSubnetName(String name) {
+    public void setTasks(List<IMultinetWizardTask> tasks) {
+        tabbedPane.removeAll();
+        for (IMultinetWizardTask task : tasks) {
+            tabbedPane.add(task.getName(), task.getView());
+        }
+    }
 
-        txtFldSubnetName.setText(name);
+    @Override
+    public void setEnableForAllTasks(boolean enable) {
+        int tabs = tabbedPane.getTabCount();
+        for (int i = 0; i < tabs; i++) {
+            tabbedPane.setEnabledAt(i, enable);
+        }
+    }
 
+    @Override
+    public int getSelectedTask() {
+        return tabbedPane.getSelectedIndex();
+    }
+
+    @Override
+    public void setSelectedTask(int taskNum) {
+        if ((0 <= taskNum) && (taskNum < tabbedPane.getTabCount())) {
+            tabbedPane.setEnabledAt(taskNum, true);
+            tabbedPane.setSelectedIndex(taskNum);
+        }
+    }
+
+    @Override
+    public void setWizardViewType(WizardViewType type) {
+        this.wizardViewType = type;
+    }
+
+    @Override
+    public void setDirty(boolean dirty) {
+        this.dirty = dirty;
+    }
+
+    @Override
+    public boolean isDirty() {
+        return dirty;
     }
 
     /*
@@ -2364,30 +2188,7 @@ public class MultinetWizardView extends JDialog implements IMultinetWizardView {
      */
     @Override
     public String getSubnetName() {
-
         return txtFldSubnetName.getText();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.intel.stl.ui.wizards.view.IMultinetWizardView#assignDocumentListeners
-     * (javax.swing.event.DocumentListener[])
-     */
-    @Override
-    public void assignDocumentListeners(DocumentListener... docListeners) {
-
-        for (DocumentListener docListener : docListeners) {
-            txtFldSubnetName.getDocument().addDocumentListener(docListener);
-        }
-    }
-
-    public void markTasksClean() {
-
-        for (IMultinetWizardTask task : tasks) {
-            task.setDirty(false);
-        }
     }
 
     /*

@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.6  2015/11/18 23:55:39  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Override the moveToText() method which was made abstract in AbstractLogView
+ *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/10/06 15:53:29  rjtierne
  *  Archive Log:    PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
  *  Archive Log:    - Added setEsmView() to grey out the main Log Viewer text area and increase the font for the error message
@@ -296,6 +300,7 @@ public class SMLogView extends AbstractLogView {
          */
     }
 
+    @Override
     public void moveToText(int start, int end) {
         txtAreaMain.setCaretPosition(start);
         txtAreaMain.moveCaretPosition(start);

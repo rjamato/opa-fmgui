@@ -35,6 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.15  2015/11/18 23:58:18  rjtierne
+ *  Archive Log:    PR 131021 - Message box adjustment
+ *  Archive Log:    - Removed line to set the font size
+ *  Archive Log:
+ *  Archive Log:    Revision 1.14  2015/11/16 17:40:06  fisherma
+ *  Archive Log:    PR 131021 - Message box adjustment.  Updated size of the text area to be show in the error/message dialogs.  Updated font size to a constant so that it would show up similarly across platforms.  Show newly added text in the visible part of the viewport for text area.
+ *  Archive Log:
  *  Archive Log:    Revision 1.13  2015/08/17 18:53:36  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -102,6 +109,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -120,6 +128,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JViewport;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
 import com.intel.stl.ui.common.UIConstants;
@@ -198,7 +207,7 @@ public class DialogBuilder {
         // MODELESS
         // TOOLKIT_MODAL
 
-        dialog.setPreferredSize(new Dimension(500, 200));
+        dialog.setPreferredSize(new Dimension(500, 300));
         dialog.pack();
         dialog.setLocationRelativeTo(owner);
     }
@@ -404,12 +413,53 @@ public class DialogBuilder {
 
     }
 
+    private int lastCaretPosition = 0;
+
     public void appendText(String str) {
+        int currentCaretPosition = lastCaretPosition;
+
         if (text.getText().isEmpty()) {
             text.append(str);
         } else {
             text.append("\n" + str);
+            // Advance caret position by one character
+            currentCaretPosition += 1;
         }
+
+        // Preserve caret position after appending text - to use on next append
+        lastCaretPosition = text.getText().length();
+
+        // Set caret to the value from last append (now stored in
+        // currentCaretPosition local variable)
+        text.setCaretPosition(currentCaretPosition);
+
+        // DEBUG: remove
+        // text.getCaret().setVisible(true);
+
+        // All of the following code is to position text in the viewable
+        // area of the viewport for this text area:
+        Rectangle viewableArea;
+        try {
+            viewableArea = text.modelToView(text.getCaretPosition());
+            text.scrollRectToVisible(viewableArea);
+
+            // This code moves the newly appended text into the viewport's
+            // viewable window.
+            // If appended text is larger than viewable
+            // area, the first line of appended text will show up at the top
+            // line of the text area.
+            // If appended text is smaller than viewable area, the first line
+            // of appended text will show up somewhere in the viewable
+            // rectangle, with last line of appended text being at the very
+            // bottom of the viewable area.
+            jspane.getViewport().setViewPosition(
+                    new Point(viewableArea.x, viewableArea.y));
+
+        } catch (BadLocationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
     }
 
     public void setTitle(String title) {

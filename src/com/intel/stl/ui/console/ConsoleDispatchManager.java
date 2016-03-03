@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.27  2015/11/11 13:26:29  robertja
+ *  Archive Log:    PR 130278 - Store console tab help pane state on a per-tab basis so that help info is restored when focus returns to a tab.
+ *  Archive Log:
  *  Archive Log:    Revision 1.26  2015/09/08 21:46:27  jijunwan
  *  Archive Log:    PR 130330 - Windows FM GUI - Admin->Console - switching side tabs causes multiple consoles
  *  Archive Log:    - changed code to distinguish number of connected consoles and number of consoles
@@ -228,6 +231,11 @@ public class ConsoleDispatchManager implements IConsoleEventListener {
                 new LoginBean(sd.getCurrentUser(), sd.getCurrentFE().getHost(),
                         String.valueOf(SSH_PORT));
         this.subpageView.setDefaultLoginBean(defaultLoginBean);
+    }
+    
+    @Override
+    public ConsoleTerminalController getConsoleController(Integer index){
+    	return consoleControllers.get(index);
     }
 
     /*

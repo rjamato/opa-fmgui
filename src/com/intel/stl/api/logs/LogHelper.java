@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.8  2015/11/18 23:50:00  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Modified initializationTask() and initializeSsh() to accommodate user-configured login info
+ *  Archive Log:    - Refactored error handling
+ *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/10/06 15:50:35  rjtierne
  *  Archive Log:    PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
  *  Archive Log:    - Changed the behavior of the Log Viewer when logging into an ESM. Instead of restricting login to user name
@@ -88,10 +93,14 @@ import org.slf4j.LoggerFactory;
 
 import com.intel.stl.api.SubnetContext;
 import com.intel.stl.api.management.FMConfHelper;
-import com.intel.stl.api.subnet.HostType;
+import com.intel.stl.api.management.IManagementApi;
+import com.intel.stl.api.subnet.HostInfo;
+import com.intel.stl.api.subnet.SshLoginBean;
 import com.intel.stl.api.subnet.SubnetDescription;
+import com.intel.stl.fecdriver.network.ssh.SshKeyType;
 import com.intel.stl.fecdriver.network.ssh.impl.JSchSession;
 import com.intel.stl.fecdriver.network.ssh.impl.JSchSessionFactory;
+import com.jcraft.jsch.JSchException;
 
 public class LogHelper implements IResponseListener, ILogErrorListener,
         ILogPageListener {
@@ -118,6 +127,8 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
 
     private final FMConfigParser fmConfigParser;
 
+    private final IManagementApi managementApi;
+
     private LogStatusTask logStatusTask;
 
     private LogErrorType errorCode;
@@ -130,27 +141,30 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
 
     private String logFilePath;
 
-    private String userLogFilePath;
-
     private JSchSession jschSession;
 
     private boolean initInProgress;
 
+    private String logHost;
+
+    private LogConfigType configType;
+
     public LogHelper(SubnetContext subnetContext) {
         super();
         this.subnet = subnetContext.getSubnetDescription();
+        managementApi = subnetContext.getManagementApi();
         fmConfigHelper = FMConfHelper.getInstance(subnet);
         fmConfigParser = new FMConfigParser(fmConfigHelper);
         fileInfo = new FileInfoBean(DEFAULT_LOG_FILE, 0, 0, 0);
         this.logCommander = new LogCommander(fileInfo);
         logCommander.setPageMonitorListener(this);
+
     }
 
-    protected void initializationTask(final SubnetDescription subnet,
-            final boolean strictHostKey, final char[] password) {
+    protected synchronized void initializationTask(
+            final LogInitBean logInitBean, final char[] password) {
 
         new Thread(new Runnable() {
-
             @Override
             public void run() {
 
@@ -159,7 +173,8 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
                     errorCode = LogErrorType.LOG_OK;
 
                     // Start the SSH session
-                    errorCode = initializeSsh(subnet, strictHostKey, password);
+                    helper.logHost = logInitBean.getLogHost();
+                    errorCode = initializeSsh(logInitBean, password);
 
                     if (errorCode == LogErrorType.LOG_OK) {
                         // Initialize the User Command Processor
@@ -168,15 +183,20 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
                                         RESPONSE_TIMEOUT, helper.getClass()
                                                 .getSimpleName());
                         userCommandProcessor.setResponseListener(helper);
-                        userCommandProcessor.setErrorListener(helper);
 
                         // Initialize the log file path
-                        errorCode = initLogFilePath(password);
-                        if (errorCode.equals(LogErrorType.ESM_NOT_SUPPORTED)) {
-                            logStateListener.onEsmHost(errorCode, logFilePath);
+                        if (configType.equals(LogConfigType.CUSTOM_CONFIG)) {
+                            helper.logFilePath = logInitBean.getLogFilePath();
+                        } else {
+                            helper.logFilePath =
+                                    initLogFilePath(logInitBean, password);
                         }
+                        fileInfo.setFileName(logFilePath);
+
+                        // Check if the log file exists
+                        checkForFile();
                     } else {
-                        logStateListener.onError(errorCode, subnet.getName());
+                        logStateListener.onError(errorCode, logHost);
                     }
                 } catch (Exception e) {
                     logStateListener.onError(
@@ -188,28 +208,16 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
         }).start();
     }
 
-    protected LogErrorType initLogFilePath(final char[] password) {
-
-        LogErrorType errorCode = LogErrorType.LOG_OK;
-
-        // Retrieve the log file name from FMConfig
+    protected String initLogFilePath(LogInitBean logInitBean,
+            final char[] password) {
         try {
+            // Retrieve the log file name from FMConfig
             logFilePath = fmConfigParser.getLogFilePath(password);
-
-            // No Log Viewer support for ESMs
-            if (subnet.getPrimaryFE().getHostType().equals(HostType.ESM)) {
-                return LogErrorType.ESM_NOT_SUPPORTED;
-            }
 
             // If there is no logfile path in the config
             // file, check if the default file exists
             if (logFilePath == null) {
-                System.out.println("logFilePath=" + logFilePath);
                 logFilePath = DEFAULT_LOG_FILE;
-                System.out.println("...using default:" + DEFAULT_LOG_FILE);
-            } else {
-                // Capture user defined log file path in case it can't be found
-                userLogFilePath = logFilePath;
             }
 
             if (DEBUG_LOG) {
@@ -221,13 +229,12 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
             fileInfo.setFileName(logFilePath);
 
             // Check if the log file exists
-            checkForFile();
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
-        return errorCode;
+        return logFilePath;
     }
 
     protected void startLogStatusTask(long delay, long timeBetweenExecutions) {
@@ -254,8 +261,12 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
         System.out.println();
     }
 
-    public String getLogFileName() {
+    public String getLogFilePath() {
         return fileInfo.getFileName();
+    }
+
+    public String getDefaultLogFilePath() {
+        return DEFAULT_LOG_FILE;
     }
 
     public long getFileSize() {
@@ -273,7 +284,7 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
 
     public void getNumLines() {
         String cmd = getScriptCmd(LogMessageType.NUM_LINES, 0);
-        userCommandProcessor.submitCommand(LogMessageType.NUM_LINES, cmd);
+        userCommandProcessor.executeCommand(LogMessageType.NUM_LINES, cmd);
     }
 
     public long getCurrentLine() {
@@ -286,51 +297,65 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
 
     public void checkForFile() {
         String cmd = getScriptCmd(LogMessageType.CHECK_FOR_FILE, 0);
-        userCommandProcessor.submitCommand(LogMessageType.CHECK_FOR_FILE, cmd);
+        userCommandProcessor.executeCommand(LogMessageType.CHECK_FOR_FILE, cmd);
+    }
+
+    public void checkFileAccess() {
+        String cmd = getScriptCmd(LogMessageType.CHECK_FILE_ACCESS, 0);
+        userCommandProcessor.executeCommand(LogMessageType.CHECK_FILE_ACCESS,
+                cmd);
     }
 
     public synchronized void schedulePreviousPage(long numLinesRequested) {
         String cmd =
                 getScriptCmd(LogMessageType.PREVIOUS_PAGE, numLinesRequested);
-        userCommandProcessor.submitCommand(LogMessageType.PREVIOUS_PAGE, cmd);
+        userCommandProcessor.executeCommand(LogMessageType.PREVIOUS_PAGE, cmd);
     }
 
     public synchronized void scheduleNextPage(long numLinesRequested) {
         String cmd = getScriptCmd(LogMessageType.NEXT_PAGE, numLinesRequested);
-        userCommandProcessor.submitCommand(LogMessageType.NEXT_PAGE, cmd);
+        userCommandProcessor.executeCommand(LogMessageType.NEXT_PAGE, cmd);
     }
 
     public synchronized void scheduleLastLines(long numLinesRequested) {
         String cmd = getScriptCmd(LogMessageType.LAST_LINES, numLinesRequested);
-        userCommandProcessor.submitCommand(LogMessageType.LAST_LINES, cmd);
+        userCommandProcessor.executeCommand(LogMessageType.LAST_LINES, cmd);
     }
 
     public void setLogStateListener(ILogStateListener listener) {
         logStateListener = listener;
     }
 
-    public void setLogCheckInterval(long intervalInMs) {
-
+    public SubnetDescription getSubnetDescription() {
+        return managementApi.getSubnetDescription();
     }
 
-    protected LogErrorType initializeSsh(SubnetDescription subnet,
-            boolean strictHostKey, char[] password) throws Exception {
+    protected LogErrorType initializeSsh(LogInitBean logInitBean,
+            char[] password) {
 
         LogErrorType error = LogErrorType.LOG_OK;
 
-        // Initialize the session and the exec channel
         try {
-            jschSession =
-                    JSchSessionFactory.getSession(subnet, strictHostKey,
-                            password);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        } finally {
-            if ((jschSession == null) || (!jschSession.isConnected())) {
-                error = LogErrorType.SSH_HOST_CONNECT_ERROR;
-            }
-        }
+            // Create an SshLoginBean with the new information and make a
+            // copy of the subnet
+            HostInfo hostInfo = subnet.getCurrentFE();
+            SshLoginBean sshLoginBean =
+                    new SshLoginBean(subnet.getSubnetId(), subnet.getName(),
+                    /* hostInfo.getSshUserName(), */logInitBean.getUserName(),
+                            logInitBean.getLogHost(), Integer.valueOf(hostInfo
+                                    .getPort()), subnet.getCurrentFE()
+                                    .getCertsDescription());
+            SubnetDescription sNet = new SubnetDescription(sshLoginBean);
 
+            // Initialize the session with the copied subnet
+            jschSession =
+                    JSchSessionFactory.getSession(sNet,
+                            logInitBean.isStrictHostKey(), password,
+                            SshKeyType.LOG_KEY.getKey(subnet.getSubnetId()));
+        } catch (JSchException e) {
+            error = LogErrorType.SSH_HOST_CONNECT_ERROR;
+            log.error(e.getMessage());
+        }
         return error;
     }
 
@@ -343,7 +368,9 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
 
         // Check if the factory has a session for this subnet
         // and if it does, verify that it is connected
-        JSchSession session = JSchSessionFactory.getSessionFromMap(subnet);
+        JSchSession session =
+                JSchSessionFactory.getSessionFromMap(SshKeyType.LOG_KEY
+                        .getKey(subnet.getSubnetId()));
 
         if (session != null) {
             connectionStatus = session.isConnected();
@@ -366,12 +393,11 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
         }
     }
 
-    public void startLog(SubnetDescription subnet, boolean strictHostKey,
-            char[] password) {
-
+    public void startLog(LogInitBean logInitBean, char[] password) {
         if (!logRunning) {
             debug("Start Log...");
-            initializationTask(subnet, strictHostKey, password);
+            this.configType = logInitBean.getConfigType();
+            initializationTask(logInitBean, password);
         }
     }
 
@@ -382,26 +408,32 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
      */
     @Override
     public void stopLog() {
-        if (logRunning) {
-            try {
+        try {
+            if (logRunning) {
                 if (userCommandProcessor != null) {
                     try {
-                        userCommandProcessor.shutdown();
+                        userCommandProcessor.stop();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
                 if (logStatusTask != null) {
                     try {
-                        logStatusTask.shutdown();
+                        logStatusTask.stop();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
+                debug("Log Stopped...");
+            }
+        } finally {
+            try {
+                // Shut down the session
+                JSchSessionFactory.closeSession(SshKeyType.LOG_KEY
+                        .getKey(subnet.getSubnetId()));
             } finally {
                 logRunning = false;
             }
-            debug("Log Stopped...");
         }
     }
 
@@ -413,20 +445,33 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
      */
     @Override
     public synchronized void onResponseReceived(LogResponse response) {
-
         switch (response.getMsgType()) {
             case CHECK_FOR_FILE:
                 String fileName = response.getEntries().get(0);
                 if (fileName.contains(logFilePath)) {
                     logStateListener.onResponse(response);
+
+                    // Check if the file is accessible
+                    checkFileAccess();
+                }
+                break;
+
+            case CHECK_FILE_ACCESS:
+                int returnCode = Integer.valueOf(response.getEntries().get(0));
+                boolean fileAccessible = (returnCode == 0);
+                if (fileAccessible) {
+                    logStateListener.onResponse(response);
                     onFinish(errorCode, logFilePath);
+                } else {
+                    onResponseError(LogErrorType.FILE_ACCESS_DENIED,
+                            LogMessageType.CHECK_FILE_ACCESS);
                 }
                 break;
 
             case PREVIOUS_PAGE:
             case NEXT_PAGE:
-            case FILE_SIZE:
             case LAST_LINES:
+            case FILE_SIZE:
                 logStateListener.onResponse(response);
                 break;
 
@@ -466,25 +511,54 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
     public synchronized void onResponseError(LogErrorType errorCode,
             LogMessageType msgType) {
 
-        if (msgType == LogMessageType.CHECK_FOR_FILE) {
+        switch (errorCode) {
+            case LOG_OK:
+                break;
 
-            // If the default log file has already be specified, it must be
-            // inaccessible
-            if (usingDefaultLogFile) {
-                logStateListener.onError(LogErrorType.LOG_FILE_NOT_FOUND,
-                        userLogFilePath, DEFAULT_LOG_FILE);
-                stopLog();
-            } else {
-                // Resend the command requesting the default log file
-                logFilePath = DEFAULT_LOG_FILE;
-                fileInfo = new FileInfoBean(logFilePath, 0, 0, 0);
-                fileInfo.setFileName(logFilePath);
-                usingDefaultLogFile = true;
-                checkForFile();
-            }
-        } else {
-            logStateListener.onError(errorCode, logFilePath);
+            case SSH_HOST_CONNECT_ERROR:
+            case INVALID_LOG_USER:
+            case UNEXPECTED_LOGIN_FAILURE:
+                break;
+
+            case LOG_FILE_NOT_FOUND:
+                // For auto-config try the default log file as a backup plan
+                if (configType == LogConfigType.AUTO_CONFIG) {
+                    if (usingDefaultLogFile) {
+                        logStateListener.onError(errorCode, logFilePath,
+                                DEFAULT_LOG_FILE);
+                    } else {
+                        // Re-send the command requesting the default log
+                        // file
+                        logFilePath = DEFAULT_LOG_FILE;
+                        fileInfo = new FileInfoBean(logFilePath, 0, 0, 0);
+                        fileInfo.setFileName(logFilePath);
+                        usingDefaultLogFile = true;
+                        checkForFile();
+                        return;
+                    }
+                } else {
+                    // For custom-config, just issue an error
+                    logStateListener.onError(errorCode, logFilePath, "N/A");
+                }
+                break;
+
+            case FILE_ACCESS_DENIED:
+            case EMPTY_LOG_FILE:
+                logStateListener.onError(errorCode, logFilePath);
+                break;
+
+            case SYSLOG_ACCESS_ERROR:
+                logStateListener.onError(errorCode, logHost);
+                break;
+
+            case RESPONSE_TIMEOUT:
+                logStateListener.onError(errorCode, logHost);
+                break;
+
+            default:
+                break;
         }
+        stopLog();
     }
 
     /*
@@ -505,17 +579,6 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
     @Override
     public void setLastPage(boolean b) {
         logStateListener.setLastPage(b);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.intel.stl.api.logs.IErrorListener#onSessionDown(String)
-     */
-    @Override
-    public void onSessionDown(String errorMessage) {
-        logStateListener.onSessionDown(errorMessage);
-
     }
 
     /*

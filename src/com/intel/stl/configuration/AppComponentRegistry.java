@@ -34,6 +34,12 @@
  *  Archive Source: $Source$
  * 
  *  Archive Log: $Log$
+ *  Archive Log: Revision 1.52  2015/12/03 19:53:36  fernande
+ *  Archive Log: PR 131863 - Klocwork Issue on AppComponentRegistry. Added finally to close input stream.
+ *  Archive Log:
+ *  Archive Log: Revision 1.51  2015/11/18 21:08:38  fernande
+ *  Archive Log: PR127008 - Allow a user delete DB files during uninstallation. Added code to invoke a script the first time the application is invoked.
+ *  Archive Log:
  *  Archive Log: Revision 1.50  2015/09/02 15:55:49  fernande
  *  Archive Log: PR 130220 - FM GUI "about" window displays unmatched version and build #. Passing the OPA FM version thru the manifest.
  *  Archive Log:
@@ -97,10 +103,12 @@ import static com.intel.stl.configuration.AppSettings.APP_UI_PLUGIN;
 import static com.intel.stl.configuration.AppSettings.APP_VERSION;
 import static com.intel.stl.configuration.AppSettings.DB_PERSISTENCE_PROVIDER_NAME;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -415,6 +423,9 @@ public class AppComponentRegistry {
             if (!appDir.exists()) {
                 appDir.mkdir();
             }
+            if (AppDataUtils.isPostSetupNeeded()) {
+                executePostSetup();
+            }
             settings.setConfigOption(APP_DATA_PATH, folder);
             folder = getDatabaseDataPath();
             File dbDir = new File(folder);
@@ -430,6 +441,50 @@ public class AppComponentRegistry {
             AppConfigurationException ace =
                     new AppConfigurationException(msg, e);
             throw ace;
+        }
+    }
+
+    private void executePostSetup() {
+        String script = AppDataUtils.getPostSetupScript();
+        if (script == null) {
+            return;
+        }
+        log.info("Invoking post setup script {}", script);
+        File scriptFile = new File(script);
+        if (scriptFile.exists()) {
+            ProcessBuilder pb = new ProcessBuilder(script);
+            pb.redirectErrorStream(true);
+            Process proc;
+            InputStream is = null;
+            try {
+                proc = pb.start();
+                is = proc.getInputStream();
+                BufferedReader br =
+                        new BufferedReader(new InputStreamReader(is));
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    log.info("PostSetup: " + line);
+                }
+                proc.waitFor();
+            } catch (IOException e) {
+                log.error(
+                        "IOException while reading output from post setup script",
+                        e);
+            } catch (InterruptedException e) {
+                log.error("Post setup script was interrupted", e);
+            } finally {
+                if (is != null) {
+                    try {
+                        is.close();
+                    } catch (IOException e) {
+                        log.error(
+                                "IOException while closing output from post setup script",
+                                e);
+                    }
+                }
+            }
+        } else {
+            log.error("Post setup script not found.");
         }
 
     }

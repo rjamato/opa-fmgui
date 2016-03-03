@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.5  2015/11/18 23:49:25  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Refactored code to remove blocking command queue, and provide a cancellable task (LogCommandTask) to the service exec.
+ *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/10/06 15:50:12  rjtierne
  *  Archive Log:    PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
  *  Archive Log:    Set processingThreadRunning to false if an exception occurs in getCommandProcessingTask() so the thread
@@ -67,11 +71,11 @@ import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -90,15 +94,9 @@ public class LogCommandProcessor {
 
     private final boolean DEBUG_COMMANDS = false;
 
-    private static int QUEUE_SIZE = 100;
-
     private final ExecutorService service;
 
-    private final BlockingQueue<LogCommand> cmdQueue;
-
-    private final Future<?> future;
-
-    private boolean processingThreadRunning = false;
+    private Future<LogResponse> future;
 
     private final JSchSession jschSession;
 
@@ -108,11 +106,7 @@ public class LogCommandProcessor {
 
     private BufferedReader inputBuffer = null;
 
-    private LogResponse response;
-
     private IResponseListener responseListener;
-
-    private ILogErrorListener errorListener;
 
     private LogMessageType msgType;
 
@@ -122,33 +116,30 @@ public class LogCommandProcessor {
 
     private final LogCommandProcessor cmdProc = this;
 
+    private boolean processingDone = false;
+
+    private boolean shutdown = false;
+
     public LogCommandProcessor(JSchSession jschSession, int timeoutInMs,
             String id) {
         super();
         identifier = id + ":commandProcessingTask";
         service = Executors.newSingleThreadExecutor(new LogThreadFactory(id));
-        cmdQueue = new LinkedBlockingQueue<LogCommand>(QUEUE_SIZE);
         this.jschSession = jschSession;
         this.timeoutInMs = timeoutInMs;
-
-        Runnable task = getCommandProcessingTask();
-        future = service.submit(task);
     }
 
     public void setResponseListener(IResponseListener listener) {
         responseListener = listener;
     }
 
-    public void setErrorListener(ILogErrorListener listener) {
-        errorListener = listener;
-    }
-
-    public void cancelTask() {
-        future.cancel(true);
-    }
-
     public void setTimeoutInMs(long timeoutMs) {
         this.timeoutInMs = timeoutMs;
+    }
+
+    public void stop() {
+        shutdown = true;
+        shutdown();
     }
 
     protected boolean initializeChannel() throws JSchException, IOException {
@@ -175,10 +166,6 @@ public class LogCommandProcessor {
         initialized = !execChannel.isClosed();
 
         return initialized;
-    }
-
-    public LogResponse getResponse() {
-        return response;
     }
 
     protected String getLine() {
@@ -222,57 +209,69 @@ public class LogCommandProcessor {
         return ready;
     }
 
-    public void submitCommand(LogMessageType msgType, String cmd) {
+    public void executeCommand(LogMessageType msgType, String cmd) {
         try {
-            cmdQueue.put(new LogCommand(msgType, cmd));
-        } catch (InterruptedException e) {
+            future =
+                    service.submit(new LogCommandTask(new LogCommand(msgType,
+                            cmd)));
+
+            // Process the result
+            if ((future != null) && !future.isCancelled()) {
+
+                LogResponse response = future.get();
+                if (response.getEntries().size() > 0) {
+
+                    // If the 'ls' command failed when checking for the log
+                    // file, then we must be connected directly to an
+                    // ESM - which should never be done!
+                    if (response
+                            .getEntries()
+                            .get(0)
+                            .equals(STLMessages.STL50014_ESM_COMMAND_NOT_FOUND
+                                    .getDescription())) {
+                        responseListener.onResponseError(
+                                LogErrorType.SYSLOG_ACCESS_ERROR,
+                                response.getMsgType());
+                    } else {
+                        responseListener.onResponseReceived(response);
+                        if (DEBUG_COMMANDS) {
+                            debug("Receive:", response.getEntries().get((0)));
+                        }
+                    }
+                } else {
+                    if (DEBUG_COMMANDS) {
+                        debug("Receive:", "Response Timeout!");
+                    }
+
+                    LogErrorType errorCode;
+                    switch (msgType) {
+                        case CHECK_FOR_FILE:
+                            errorCode = LogErrorType.LOG_FILE_NOT_FOUND;
+                            break;
+
+                        case LAST_LINES:
+                            errorCode = LogErrorType.EMPTY_LOG_FILE;
+                            break;
+
+                        default:
+                            errorCode = LogErrorType.RESPONSE_TIMEOUT;
+                            break;
+                    }
+                    responseListener.onResponseError(errorCode,
+                            response.getMsgType());
+                }
+            }
+        } catch (InterruptedException | ExecutionException e) {
             log.error(e.getCause().getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    protected void waitForResponse() {
-
-        boolean done = false;
-        String entry = new String("");
-        response = new LogResponse(msgType);
-
-        // Process lines until the EOF is encountered or timeout
-        while (!done && inputReady()) {
-            entry = getLine();
-            if (entry != null) {
-                done = entry.equals(LogCommander.RESPONSE_EOM);
-            }
-
-            if (!done) {
-                response.addEntry(entry);
-            }
-
-            if (DEBUG) {
-                debug("Receive:", entry);
-            }
-        }
-
-        // DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
-        if (response.getEntries().size() > 0) {
-            responseListener.onResponseReceived(response);
-            if (DEBUG_COMMANDS) {
-                debug("Receive:", response.getEntries().get((0)));
-            }
-        } else {
-            if (DEBUG_COMMANDS) {
-                debug("Receive:", "Response Timeout!");
-            }
-            responseListener.onResponseError(LogErrorType.RESPONSE_TIMEOUT,
-                    response.getMsgType());
-        }
-    }
-
-    public void shutdown() {
+    protected void shutdown() {
         if (future != null) {
             future.cancel(true);
         }
-
-        processingThreadRunning = false;
 
         service.shutdown(); // Disable new tasks from being submitted
         try {
@@ -304,61 +303,78 @@ public class LogCommandProcessor {
                 + ": " + msgs[0] + " " + msgs[1]);
     }
 
-    protected Runnable getCommandProcessingTask() {
-        Runnable task = new Runnable() {
+    protected class LogCommandTask implements Callable<LogResponse> {
 
-            @Override
-            public void run() {
-                while (processingThreadRunning) {
-                    try {
-                        // Get a command from the queue
-                        LogCommand logMsg = cmdQueue.take();
-                        cmdProc.msgType = logMsg.getMsgType();
+        private final LogCommand logMsg;
+
+        public LogCommandTask(LogCommand logMsg) {
+            this.logMsg = logMsg;
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.util.concurrent.Callable#call()
+         */
+        @Override
+        public LogResponse call() throws Exception {
+
+            // Get a command from the queue
+            cmdProc.msgType = logMsg.getMsgType();
+            LogResponse response = new LogResponse(msgType);
+
+            try {
+                // Process command or exit
+                if (!logMsg.getMsgType().equals(LogMessageType.EXIT)) {
+
+                    // Set up the channel if needed
+                    if ((execChannel == null) || (execChannel.isClosed())) {
+                        initialized = initializeChannel();
+                    }
+
+                    if (DEBUG) {
+                        debug("Sending:", logMsg.getMsgType().toString());
+                    }
+
+                    // Send the command
+                    if (initialized) {
+                        execChannel.setCommand(logMsg.getCommand());
+                        execChannel.connect();
+                        execChannel.getOutputStream().flush();
+
+                        if (DEBUG_COMMANDS) {
+                            debug("Sending:", logMsg.getCommand());
+                        }
+                    }
+
+                    processingDone = false;
+                    String entry = new String("");
+
+                    // Process lines until the EOF is encountered or timeout
+                    while (!shutdown && !Thread.currentThread().isInterrupted()
+                            && (!processingDone && inputReady())) {
+
+                        entry = getLine();
+                        if (entry != null) {
+                            processingDone =
+                                    entry.equals(LogCommander.RESPONSE_EOM);
+                        }
+
+                        if (!processingDone) {
+                            response.addEntry(entry);
+                        }
 
                         if (DEBUG) {
-                            debug("Sending:", logMsg.getMsgType().toString());
+                            debug("Receive:", entry);
                         }
-
-                        // Set up the channel if needed
-                        if ((execChannel == null) || (execChannel.isClosed())) {
-                            initialized = initializeChannel();
-                        }
-
-                        // Process command or exit
-                        if (!logMsg.getMsgType().equals(LogMessageType.EXIT)) {
-
-                            // Send the command
-                            if (initialized) {
-                                execChannel.setCommand(logMsg.getCommand());
-                                execChannel.connect();
-                                execChannel.getOutputStream().flush();
-
-                                if (DEBUG_COMMANDS) {
-                                    debug("Sending:", logMsg.getCommand());
-                                }
-                            }
-
-                            // Get the response
-                            waitForResponse();
-                        } else {
-                            // Exit the thread
-                            processingThreadRunning = false;
-                        }
-                    } catch (InterruptedException e) {
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        log.error(e.getMessage());
-                        errorListener
-                                .onSessionDown(STLMessages.STL61019_SSH_CONNECTION_FAILURE
-                                        .getDescription());
-                        errorListener.stopLog();
-                        processingThreadRunning = false;
                     }
                 }
+            } catch (JSchException e) {
+                log.error(e.getMessage());
+                shutdown();
             }
-        };
 
-        processingThreadRunning = true;
-        return task;
-    }
+            return response;
+        }
+    } // class LogCommandTask
 }

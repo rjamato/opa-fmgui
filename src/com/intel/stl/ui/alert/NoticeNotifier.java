@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.3  2015/10/29 12:11:41  robertja
+ *  Archive Log:    PR 131014 MailNotifier is now updated if user changes events or recipients in wizard after start-up.
+ *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/08/17 18:53:35  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -68,9 +71,11 @@ public abstract class NoticeNotifier implements
      */
     private final List<INotifyRule> rules = new ArrayList<INotifyRule>();
 
-    /**
-     * Description:
+
+	/**
+     * Description:  Constructor for generic notifier.
      * 
+     * @param context
      * @param rules
      */
     public NoticeNotifier(Context context, List<INotifyRule> rules) {
@@ -98,6 +103,9 @@ public abstract class NoticeNotifier implements
         }
     }
 
+    public synchronized List<INotifyRule> getRules() {
+		return rules;
+	}
     /*
      * (non-Javadoc)
      * 

@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.23  2015/11/09 20:54:03  fernande
+ *  Archive Log:    PR130852 - The 1st subnet in the Subnet Wizard displays "Abandon Changes" message when no changes are made. Fixed bug where setting the key store value would not dirty the wizard.
+ *  Archive Log:
  *  Archive Log:    Revision 1.22  2015/10/06 15:53:49  rjtierne
  *  Archive Log:    PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
  *  Archive Log:    - Fixed Typo
@@ -170,8 +173,6 @@ public class HostInfoPanel extends JPanel {
     private final int LABEL_WIDTH = 32;
 
     private boolean currentMaster;
-
-    private boolean dirty;
 
     private JPanel hostPanel;
 
@@ -354,7 +355,6 @@ public class HostInfoPanel extends JPanel {
             chkboxSecureConnect.addItemListener(new ItemListener() {
                 @Override
                 public void itemStateChanged(ItemEvent e) {
-                    dirty = true;
                     hostInfoListener.setDirty();
                     boolean isSecureConnect = chkboxSecureConnect.isSelected();
                     enableCerts(isSecureConnect);
@@ -558,19 +558,6 @@ public class HostInfoPanel extends JPanel {
         return txtFldTrustStoreFile.getText();
     }
 
-    protected void setDirty() {
-        dirty = true;
-    }
-
-    public boolean isDirty() {
-        return dirty;
-    }
-
-    public void setDirty(boolean dirty) {
-        this.dirty = dirty;
-        hostInfoListener.setDirty(dirty);
-    }
-
     public boolean isHostNamePopulated() {
         return (txtFldHostName.getText().length() > 0);
     }
@@ -727,6 +714,7 @@ public class HostInfoPanel extends JPanel {
                     String newFile = chooseFile(textField.getText());
                     if (newFile != null) {
                         textField.setText(newFile);
+                        hostInfoListener.setDirty();
                     }
                 }
             });

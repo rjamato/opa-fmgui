@@ -35,6 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.11  2015/11/02 20:08:50  jijunwan
+ *  Archive Log:    PR 131377 - Port information when selecting between HFI nodes doesn't get updated under Topology tab
+ *  Archive Log:    - improved node comparison to compare the whole path and the root need to be the same instance
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/10/23 19:13:37  jijunwan
+ *  Archive Log:    PR 129357 - Be able to hide inactive ports
+ *  Archive Log:    - revert back to the old version without visible node support
+ *  Archive Log:    - added method filter to create a new tree based on given filter
+ *  Archive Log:
  *  Archive Log:    Revision 1.9  2015/09/30 13:26:45  fisherma
  *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
  *  Archive Log:
@@ -149,8 +158,6 @@ public class FVResourceNode implements TreeNode {
      */
     private Vector<FVResourceNode> mChildren = new Vector<FVResourceNode>();
 
-    private Vector<FVResourceNode> visibleChildren;
-
     /*
      * The parent node
      */
@@ -183,29 +190,6 @@ public class FVResourceNode implements TreeNode {
      */
     public int getId() {
         return id;
-    }
-
-    protected boolean setChildrenVisibility(INodeVisbilityIndicator indicator) {
-        synchronized (mChildren) {
-            int oldSize = getVisibleChildren().size();
-            visibleChildren = new Vector<FVResourceNode>();
-            for (FVResourceNode child : mChildren) {
-                child.setChildrenVisibility(indicator);
-                if (indicator.isVisible(child)) {
-                    visibleChildren.add(child);
-                }
-            }
-            return visibleChildren.size() != oldSize;
-        }
-    }
-
-    public Vector<FVResourceNode> getVisibleChildren() {
-        synchronized (mChildren) {
-            if (visibleChildren == null) {
-                visibleChildren = mChildren;
-            }
-            return visibleChildren;
-        }
     }
 
     /**
@@ -251,10 +235,6 @@ public class FVResourceNode implements TreeNode {
      */
     @Override
     public FVResourceNode getChildAt(int pChildIndex) {
-        return getVisibleChildren().elementAt(pChildIndex);
-    }
-
-    public FVResourceNode getModelChildAt(int pChildIndex) {
         return mChildren.elementAt(pChildIndex);
     }
 
@@ -265,10 +245,6 @@ public class FVResourceNode implements TreeNode {
      */
     @Override
     public int getChildCount() {
-        return getVisibleChildren().size();
-    }
-
-    public int getModelChildCount() {
         return mChildren.size();
     }
 
@@ -297,16 +273,7 @@ public class FVResourceNode implements TreeNode {
      */
     @Override
     public int getIndex(TreeNode pNode) {
-        return getVisibleChildren().indexOf(pNode);
-    }
-
-    public int getModelIndex(TreeNode pNode) {
         return mChildren.indexOf(pNode);
-    }
-
-    public int getViewIndex(int modelIndex) {
-        FVResourceNode node = mChildren.get(modelIndex);
-        return getIndex(node);
     }
 
     /*
@@ -356,10 +323,6 @@ public class FVResourceNode implements TreeNode {
      */
     @Override
     public Enumeration<FVResourceNode> children() {
-        return getVisibleChildren().elements();
-    }
-
-    public Enumeration<FVResourceNode> modelChildren() {
         return mChildren.elements();
     }
 
@@ -421,11 +384,22 @@ public class FVResourceNode implements TreeNode {
         for (FVResourceNode child : mChildren) {
             res.addChild(child.copy());
         }
-        if (visibleChildren != null) {
-            res.visibleChildren = new Vector<FVResourceNode>();
-            for (FVResourceNode vc : visibleChildren) {
-                int index = mChildren.indexOf(vc);
-                res.visibleChildren.add(res.mChildren.get(index));
+        return res;
+    }
+
+    public FVResourceNode filter(INodeVisbilityIndicator indicator) {
+        FVResourceNode res = null;
+        if (isNode()) {
+            res = new FVResourceNode(mTitle, mType, id, guid);
+        } else {
+            res = new FVResourceNode(mTitle, mType, id);
+        }
+        res.mParent = mParent;
+        res.mChildren = new Vector<FVResourceNode>();
+        for (int i = 0; i < mChildren.size(); i++) {
+            FVResourceNode child = mChildren.get(i);
+            if (indicator.isVisible(child)) {
+                res.addChild(child.filter(indicator));
             }
         }
         return res;
@@ -433,7 +407,7 @@ public class FVResourceNode implements TreeNode {
 
     public void dump(PrintStream out, String prefix) {
         out.println(prefix + mTitle + " " + mType);
-        for (FVResourceNode child : getVisibleChildren()) {
+        for (FVResourceNode child : mChildren) {
             child.dump(out, prefix + "  ");
         }
     }
@@ -480,6 +454,23 @@ public class FVResourceNode implements TreeNode {
             return false;
         }
         return true;
+    }
+
+    /**
+     * 
+     * <i>Description:</i>
+     * 
+     * @param node
+     * @return
+     */
+    public boolean hasSamePath(FVResourceNode anotherNode) {
+        if (anotherNode == null) {
+            return false;
+        }
+
+        TreePath path = getPath();
+        TreePath anotherPath = anotherNode.getPath();
+        return path.equals(anotherPath);
     }
 
 } // class FVResourceNode

@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.57  2015/10/15 21:16:04  jijunwan
+ *  Archive Log:    PR 131044 - Switch/HFI status can go beyond 100%
+ *  Archive Log:    - changed to use larger number of nodes
+ *  Archive Log:
  *  Archive Log:    Revision 1.56  2015/09/20 23:41:18  jijunwan
  *  Archive Log:    PR 130523 - Performance Event window reports negative when nodes are rebooted
  *  Archive Log:    - changed to use base line data
@@ -654,15 +658,22 @@ public class PSSubpageController implements IPerfSubpageController,
                 return;
             }
 
+            EnumMap<NodeType, Integer> currenDist = dgStats.getNodeTypesDist();
             if (type == NodeType.HFI) {
-                total = summary.getBaseTotalHFIs();
+                total =
+                        Math.max(summary.getBaseTotalHFIs(),
+                                currenDist.get(NodeType.HFI));
                 severityMap = summary.getHfiStates();
             } else if (type == NodeType.SWITCH) {
-                total = summary.getBaseTotalSWs();
+                total =
+                        Math.max(summary.getBaseTotalSWs(),
+                                currenDist.get(NodeType.SWITCH));
                 severityMap = summary.getSwitchStates();
             } else if (selectedTreeNode != null
                     && selectedTreeNode.getType() == TreeNodeType.ALL) {
-                total = summary.getBaseTotalNodes();
+                total =
+                        Math.max(summary.getBaseTotalNodes(),
+                                dgStats.getNumNodes());
                 severityMap = summary.getStates(null);
             } else if (nodes != null && !nodes.isEmpty()) {
                 total = nodes.size();

@@ -35,6 +35,18 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.5  2016/01/06 21:35:23  jijunwan
+ *  Archive Log:    PR 132307 - Multiple Help Windows and exception on closing them
+ *  Archive Log:    - changed to create JDialog as frame case
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/10/20 16:28:39  jypak
+ *  Archive Log:    PR 130913 - Java Help Window missing icon.
+ *  Archive Log:    Null check first on window parameter.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.3  2015/10/14 23:26:32  jypak
+ *  Archive Log:    PR 130913 - Java Help Window missing icon.
+ *  Archive Log:    Use a correct JDialog constructor in HelpMainWindow.
+ *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/08/17 18:53:38  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers

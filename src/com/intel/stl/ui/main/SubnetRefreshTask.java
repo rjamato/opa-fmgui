@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.8  2015/12/17 21:51:11  jijunwan
+ *  Archive Log:    PR 132124 - Newly created VF not displayed after reboot of SM
+ *  Archive Log:    - improved the arch to do cache reset
+ *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/09/26 06:27:35  jijunwan
  *  Archive Log:    130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
  *  Archive Log:    - changed to do a full refresh that includes DB data update
@@ -104,7 +108,7 @@ public class SubnetRefreshTask extends AbstractTask<FabricModel, Void, String> {
     public Void processInBackground(Context context) throws Exception {
         log.info("Refresh subnet '" + model.getCurrentSubnet() + "'");
         // clear all caches, and re-init DB data
-        context.getSubnetApi().reset();
+        context.reset();
 
         builder.setDirty();
         for (int i = 0; i < pages.size(); i++) {

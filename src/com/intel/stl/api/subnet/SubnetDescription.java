@@ -34,6 +34,10 @@
  *  Archive Source: $Source$
  * 
  *  Archive Log: $Log$
+ *  Archive Log: Revision 1.32  2015/11/18 23:51:19  rjtierne
+ *  Archive Log: PR 130965 - ESM support on Log Viewer
+ *  Archive Log: - Added copy constructor
+ *  Archive Log:
  *  Archive Log: Revision 1.31  2015/08/17 18:48:38  jijunwan
  *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log: - change backend files' headers
@@ -121,6 +125,15 @@ public class SubnetDescription implements Serializable {
         this.name = name;
         HostInfo hostInfo = new HostInfo(host, port);
         getFEList().add(hostInfo);
+    }
+
+    // Copy Constructor for the SubnetDescription class. Copies only the
+    // data necessary to establish an Ssh session
+    public SubnetDescription(SshLoginBean loginBean) {
+        this(loginBean.getSubnetName(), loginBean.getHost(), loginBean
+                .getPort());
+        subnetId = loginBean.getId();
+        getCurrentFE().setSshUserName(loginBean.getSshUserName());
     }
 
     public long getSubnetId() {

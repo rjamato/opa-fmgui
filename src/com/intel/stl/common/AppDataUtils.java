@@ -34,6 +34,9 @@
  *  Archive Source: $Source$
  * 
  *  Archive Log: $Log$
+ *  Archive Log: Revision 1.19  2015/11/18 21:08:22  fernande
+ *  Archive Log: PR127008 - Allow a user delete DB files during uninstallation. Added code to invoke a script the first time the application is invoked.
+ *  Archive Log:
  *  Archive Log: Revision 1.18  2015/08/17 18:49:06  jijunwan
  *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log: - change backend files' headers
@@ -75,6 +78,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.Writer;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
@@ -128,6 +132,8 @@ public class AppDataUtils {
 
     private static final String LOGS_FOLDER_NAME = "logs";
 
+    private static final String UTIL_FOLDER_NAME = "util";
+
     private static final String APPLICATION_SETTINGS_FILE = "settings.xml";
 
     private static final String DEFAULT_USEROPTIONS_FILE =
@@ -154,14 +160,13 @@ public class AppDataUtils {
             String osmaj =
                     sysfunctions.getSystemProperty("os.version").split("\\.")[0];
             int osver = Integer.parseInt(osmaj);
-            if (osver >= 6) { // vista or later
+            if (osver >= 5) {
+                // %APPDATA% locations
+                // Vista or later: C:\Users\<username>\AppData\Roaming
+                // XP or 2k3: C:\Documents and Settings\<username>\Application
+                // Data
                 appDataPath =
                         sysfunctions.getEnvironmentVariable(APPDATA_STR)
-                                + File.separatorChar + INTEL_NAME;
-            } else if (osver == 5) { // XP or 2k3
-                appDataPath =
-                        sysfunctions.getEnvironmentVariable("ALLUSERSPROFILE")
-                                + File.separatorChar + "AppData"
                                 + File.separatorChar + INTEL_NAME;
             } else {
                 // too old
@@ -510,4 +515,67 @@ public class AppDataUtils {
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.transform(new DOMSource(xml), new StreamResult(out));
     }
+
+    public static final String getPostSetupScript() {
+        String fmguiJarPath = getAppInstallPath();
+        fmguiJarPath =
+                fmguiJarPath + File.separatorChar + UTIL_FOLDER_NAME
+                        + File.separatorChar;
+        String postSetupScript = null;
+        String osName = sysfunctions.getSystemProperty("os.name").toLowerCase();
+        if (osName.indexOf("windows") != -1) {
+            postSetupScript =
+                    fmguiJarPath + File.separatorChar + "postsetup.bat";
+        } else if (osName.indexOf("mac") != -1) {
+            // No support for Mac OS X yet
+        } else {
+            postSetupScript =
+                    fmguiJarPath + File.separatorChar + "postsetup.sh";
+        }
+        return postSetupScript;
+    }
+
+    public static final boolean isPostSetupNeeded() {
+        boolean needed = true;
+        String osName = sysfunctions.getSystemProperty("os.name").toLowerCase();
+        String cleanScript;
+        if (osName.indexOf("windows") != -1) {
+            cleanScript = "fmguiclear.bat";
+        } else if (osName.indexOf("mac") != -1) {
+            return false;
+        } else {
+            cleanScript = "fmguiclear.sh";
+        }
+        String dataPath = getApplicationDataPath();
+        File copiedFile = new File(dataPath + File.separatorChar + cleanScript);
+        if (copiedFile.exists()) {
+            String fmguiJarPath = getAppInstallPath();
+            File origFile =
+                    new File(fmguiJarPath + File.separatorChar
+                            + UTIL_FOLDER_NAME + File.separatorChar
+                            + cleanScript);
+            if (origFile.exists()) {
+                if (copiedFile.lastModified() == origFile.lastModified()) {
+                    needed = false;
+                }
+            }
+        }
+        return needed;
+    }
+
+    private static String getAppInstallPath() {
+        String fmguiJarPath = "";
+        try {
+            fmguiJarPath =
+                    sysfunctions.getClass().getProtectionDomain()
+                            .getCodeSource().getLocation().toURI().getPath();
+            if (fmguiJarPath.endsWith(".jar")) {
+                File jarPath = new File(fmguiJarPath);
+                fmguiJarPath = jarPath.getParent();
+            }
+        } catch (URISyntaxException e) {
+        }
+        return fmguiJarPath;
+    }
+
 }

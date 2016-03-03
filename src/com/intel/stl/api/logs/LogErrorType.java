@@ -34,6 +34,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.6  2015/11/18 23:49:49  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Changed ESM_NOT_SUPPORTED to SYSLOG_ACCESS_ERROR and added FILE_ACCESS_DENIED and EMPTY_LOG_FILE
+ *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/10/06 15:50:25  rjtierne
  *  Archive Log:    PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
  *  Archive Log:    - Changed INVALID_LOG_USER to ESM_NOT_SUPPORTED
@@ -74,8 +78,10 @@ public enum LogErrorType {
     RESPONSE_TIMEOUT((byte) 2),
     SSH_HOST_CONNECT_ERROR((byte) 3),
     INVALID_LOG_USER((byte) 4),
-    ESM_NOT_SUPPORTED((byte) 5),
-    UNEXPECTED_LOGIN_FAILURE((byte) 6);
+    SYSLOG_ACCESS_ERROR((byte) 5),
+    UNEXPECTED_LOGIN_FAILURE((byte) 6),
+    FILE_ACCESS_DENIED((byte) 7),
+    EMPTY_LOG_FILE((byte) 8);
 
     private static final Map<Byte, LogErrorType> logErrorMap =
             new HashMap<Byte, LogErrorType>() {

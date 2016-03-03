@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.10  2015/11/11 13:26:31  robertja
+ *  Archive Log:    PR 130278 - Store console tab help pane state on a per-tab basis so that help info is restored when focus returns to a tab.
+ *  Archive Log:
  *  Archive Log:    Revision 1.9  2015/08/17 18:54:12  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -176,6 +179,16 @@ public class HelpController implements IHelp {
     @Override
     public List<String> getTopicIdList() {
         return topicIdList;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.common.IHelp#resetView()
+     */
+    @Override
+    public void resetView() {
+        helpView.resetView();
     }
 
     /*

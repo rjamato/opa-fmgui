@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.48  2015/12/17 21:51:07  jijunwan
+ *  Archive Log:    PR 132124 - Newly created VF not displayed after reboot of SM
+ *  Archive Log:    - improved the arch to do cache reset
+ *  Archive Log:
  *  Archive Log:    Revision 1.47  2015/10/06 15:49:51  rjtierne
  *  Archive Log:    PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
  *  Archive Log:    - Changed finally clause in cleanup() to call the cleanup() in ManagementApi to shutdown the
@@ -583,6 +587,24 @@ public class SubnetContextImpl implements SubnetContext, ISMEventListener {
     @Override
     public boolean isDeleted() {
         return deleted;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.api.SubnetContext#reset()
+     */
+    @Override
+    public void reset() {
+        // clear extra cached data in subnetApi
+        subnetApi.reset();
+        // clear extra cached data in perfApi
+        perfApi.reset();
+
+        // clear all caches
+        cacheMgr.reset();
+        // re-init DB data
+        cacheMgr.startTopologyUpdateTask();
     }
 
     @Override

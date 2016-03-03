@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.5  2015/11/09 20:36:15  fernande
+ *  Archive Log:    PR130852 - The 1st subnet in the Subnet Wizard displays "Abandon Changes" message when no changes are made. Added special listener for dirty state. Changes are not being commited to the value
+ *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/09/25 13:57:48  rjtierne
  *  Archive Log:    PR 130011 - Enhance SM Log Viewer to include Standard and Advanced requirements
  *  Archive Log:    - Fixed typo
@@ -147,6 +150,7 @@ public class SafeTextField extends ExFormattedTextField {
                 this.maxLength = maxLength;
             }
             setValidCharacters(VALID_CHARS);
+            setCommitsOnValidEdit(true);
         }
 
         /**

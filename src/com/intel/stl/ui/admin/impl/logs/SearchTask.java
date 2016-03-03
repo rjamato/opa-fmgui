@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.2  2015/11/18 23:54:22  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Restored the call to move the caret position of the JTextArea to the first search position found
+ *  Archive Log:
  *  Archive Log:    Revision 1.1  2015/09/25 13:54:50  rjtierne
  *  Archive Log:    PR 130011 - Enhance SM Log Viewer to include Standard and Advanced requirements
  *  Archive Log:    Initial Version
@@ -145,6 +149,12 @@ public class SearchTask extends SwingWorker<Void, Void> {
 
             view.highlightText(searchKeys, model.getSearchResults(),
                     searchState);
+
+            if (!model.getSearchResults().isEmpty()) {
+                view.moveToText(model.getSearchResults().get(0)
+                        .getStartOffset(), model.getSearchResults().get(0)
+                        .getEndOffset());
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

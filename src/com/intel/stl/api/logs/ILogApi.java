@@ -35,6 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.4  2015/11/18 23:48:35  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Passing LogInitBean to startLog() since the host can now be configured by the user
+ *  Archive Log:    - Added getLogFilePath() and getDefaultLogPath() for display purposes
+ *  Archive Log:    - Added getSubnetDescription() to get access to the subnet
+ *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/09/29 15:29:56  rjtierne
  *  Archive Log:    - Added method stopLog() for terminating the log process when the login cancel button is clicked
  *  Archive Log:
@@ -75,18 +81,21 @@ public interface ILogApi {
 
     public void setLogStateListener(ILogStateListener listener);
 
-    public void startLog(SubnetDescription subnet, boolean strictHostKey,
-            char[] password);
+    public void startLog(LogInitBean logInitBean, char[] password);
 
     public void stopLog();
 
     public void cleanup();
 
-    public String getLogFileName();
+    public String getLogFilePath();
+
+    public String getDefaultLogFilePath();
 
     public long getFileSize();
 
     public long getCurrentLine();
 
     public long getTotalLines();
+
+    public SubnetDescription getSubnetDescription();
 }

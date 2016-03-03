@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.3  2015/10/29 12:11:41  robertja
+ *  Archive Log:    PR 131014 MailNotifier is now updated if user changes events or recipients in wizard after start-up.
+ *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/08/17 18:53:35  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -57,6 +60,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.intel.stl.api.configuration.EventRule;
+import com.intel.stl.api.configuration.EventRuleAction;
 import com.intel.stl.api.notice.EventDescription;
 import com.intel.stl.ui.common.UILabels;
 import com.intel.stl.ui.main.Context;
@@ -68,7 +73,7 @@ public class MailNotifier extends NoticeNotifier {
 
     private final List<String> recipients = new ArrayList<String>();
 
-    private final String subnetName;
+	private final String subnetName;
 
     /**
      * Description:
@@ -81,7 +86,7 @@ public class MailNotifier extends NoticeNotifier {
             List<String> recipients) {
         super(context, rules);
         log.debug("MailNotifier: constructor called.");
-        this.subnetName = context.getSubnetDescription().getName();
+        this.subnetName = context.getSubnetDescription().getName();       
         setRecipients(recipients);
     }
 
@@ -89,7 +94,35 @@ public class MailNotifier extends NoticeNotifier {
         if (recipients != null) {
             this.recipients.clear();
             this.recipients.addAll(recipients);
-        }
+        } 
+    }
+    
+    /**
+   	 * @return the recipients
+   	 */
+   	public synchronized List<String> getRecipients() {
+   		return recipients;
+   	}
+    
+    public synchronized void setEventRules(List<EventRule> eventRules){
+    	List<INotifyRule> notifyRules = new ArrayList<INotifyRule>();
+	    if (eventRules != null) {
+		    // We process the list
+		    // of event rules looking for entries that have a SEND_EMAIL
+		    // action.
+		    for (EventRule eventRule : eventRules) {
+		        List<EventRuleAction> actions = eventRule.getEventActions();
+		        for (EventRuleAction action : actions) {
+		            if (action.equals(EventRuleAction.SEND_EMAIL)) {
+		                // We create a MailNotifyRule corresponding to the
+		                // event rule/action.
+		                notifyRules.add(new MailNotifyRule(eventRule));
+		                break;
+		            }
+		        }
+		    } 
+		    setRules(notifyRules);
+	    }
     }
 
     /*

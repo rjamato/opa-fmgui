@@ -35,6 +35,21 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.32  2015/12/09 16:12:36  jijunwan
+ *  Archive Log:    PR 131944 - If "# Worst Nodes" is <10 or >100, there is a Entry Validation warning for the Refresh Rate
+ *  Archive Log:
+ *  Archive Log:    - improved ConfigTaskStatus to hold errors
+ *  Archive Log:    - changed  ConfigureSubnetTask to fill in errors into ConfigTaskStatus
+ *  Archive Log:
+ *  Archive Log:    Revision 1.31  2015/11/09 20:42:17  fernande
+ *  Archive Log:    PR130231 - Cannot delete subnet from Wizard if subnet name is "Unknown Subnet". Some refactoring to decouple tasks from main wizard controller
+ *  Archive Log:
+ *  Archive Log:    Revision 1.30  2015/10/29 13:52:43  robertja
+ *  Archive Log:    PR 131014 Clean up debug.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.29  2015/10/29 12:11:42  robertja
+ *  Archive Log:    PR 131014 MailNotifier is now updated if user changes events or recipients in wizard after start-up.
+ *  Archive Log:
  *  Archive Log:    Revision 1.28  2015/08/17 18:54:10  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -163,6 +178,9 @@
  ******************************************************************************/
 package com.intel.stl.ui.wizards.impl;
 
+import static com.intel.stl.ui.wizards.view.WizardViewType.WELCOME;
+import static com.intel.stl.ui.wizards.view.WizardViewType.WIZARD;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -172,6 +190,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
 
+import com.intel.stl.api.Utils;
 import com.intel.stl.api.configuration.ConfigurationException;
 import com.intel.stl.api.configuration.EventRule;
 import com.intel.stl.api.configuration.UserNotFoundException;
@@ -180,9 +199,12 @@ import com.intel.stl.api.performance.PMConfigBean;
 import com.intel.stl.api.subnet.SubnetConnectionException;
 import com.intel.stl.api.subnet.SubnetDataNotFoundException;
 import com.intel.stl.api.subnet.SubnetDescription;
+import com.intel.stl.ui.alert.MailNotifier;
 import com.intel.stl.ui.common.STLConstants;
+import com.intel.stl.ui.common.UIConstants;
 import com.intel.stl.ui.common.UILabels;
 import com.intel.stl.ui.common.Util;
+import com.intel.stl.ui.main.Context;
 import com.intel.stl.ui.main.HelpAction;
 import com.intel.stl.ui.main.IFabricController;
 import com.intel.stl.ui.main.ISubnetManager;
@@ -253,7 +275,7 @@ public class MultinetWizardController implements IMultinetWizardListener,
      * @param view
      *            view for the setup wizard
      */
-    private MultinetWizardController(MultinetWizardView view,
+    protected MultinetWizardController(MultinetWizardView view,
             MultinetWizardModel wizardModel, ISubnetManager subnetMgr) {
 
         this.view = view;
@@ -264,10 +286,11 @@ public class MultinetWizardController implements IMultinetWizardListener,
 
         tasks = getTasks(subnetMgr);
         installTasks(tasks);
+        this.view.setTasks(tasks);
         firstTask = tasks.get(0);
         lastTask = tasks.get(tasks.size() - 1);
 
-        HelpAction helpAction = HelpAction.getInstance();
+        HelpAction helpAction = getHelpAction();
         helpAction.getHelpBroker().enableHelpOnButton(view.getHelpButton(),
                 helpAction.getSetupWizard(), helpAction.getHelpSet());
     }
@@ -276,9 +299,8 @@ public class MultinetWizardController implements IMultinetWizardListener,
             ISubnetManager subnetMgr) {
 
         if (instance == null) {
+            MultinetWizardView wizardView = new MultinetWizardView(owner);
             MultinetWizardModel wizardModel = new MultinetWizardModel();
-            MultinetWizardView wizardView =
-                    new MultinetWizardView(owner, wizardModel);
             instance =
                     new MultinetWizardController(wizardView, wizardModel,
                             subnetMgr);
@@ -296,11 +318,9 @@ public class MultinetWizardController implements IMultinetWizardListener,
     protected List<IMultinetWizardTask> getTasks(ISubnetManager subnetMgr) {
 
         List<IMultinetWizardTask> tasks = new ArrayList<IMultinetWizardTask>();
-        List<IModelChangeListener<IWizardModel>> modelListeners =
-                new ArrayList<IModelChangeListener<IWizardModel>>();
 
         // Add this object as a listener to the top model
-        modelListeners.add(this);
+        wizardModel.addModelListener(this, WizardType.MULTINET);
 
         // Subnet Wizard
         SubnetModel subnetModel = new SubnetModel();
@@ -309,8 +329,8 @@ public class MultinetWizardController implements IMultinetWizardListener,
                 new SubnetWizardController(subnetView, subnetModel, subnetMgr);
         subnetView.setWizardListener(subnetController);
         wizardModel.setSubnetModel(subnetModel);
-        modelListeners.add(subnetController);
         tasks.add(subnetController);
+        wizardModel.addModelListener(subnetController, WizardType.SUBNET);
 
         // Event Wizard
         EventRulesTableModel eventRulesTableModel = new EventRulesTableModel();
@@ -320,8 +340,8 @@ public class MultinetWizardController implements IMultinetWizardListener,
         eventController = new EventWizardController(eventView, eventModel);
         eventView.setWizardListener(eventController);
         wizardModel.setEventsModel(eventModel);
-        modelListeners.add(eventController);
         tasks.add(eventController);
+        wizardModel.addModelListener(eventController, WizardType.EVENT);
 
         // User Preferences
         PreferencesModel preferencesModel = new PreferencesModel();
@@ -332,15 +352,15 @@ public class MultinetWizardController implements IMultinetWizardListener,
                         preferencesModel);
         preferencesView.setWizardListener(preferencesController);
         wizardModel.setPreferencesModel(preferencesModel);
-        modelListeners.add(preferencesController);
         tasks.add(preferencesController);
-
-        // Register all the sub-wizard controllers with the top model
-        for (IModelChangeListener<IWizardModel> listener : modelListeners) {
-            wizardModel.addModelListener(listener);
-        }
+        wizardModel.addModelListener(preferencesController,
+                WizardType.PREFERENCES);
 
         return tasks;
+    }
+
+    protected HelpAction getHelpAction() {
+        return HelpAction.getInstance();
     }
 
     protected IWizardTask getTaskByName(String name) {
@@ -358,13 +378,9 @@ public class MultinetWizardController implements IMultinetWizardListener,
         return currentTask;
     }
 
-    protected void installTasks(List<IMultinetWizardTask> tasks) {
+    private void installTasks(List<IMultinetWizardTask> tasks) {
         for (IMultinetWizardTask task : tasks) {
             task.setWizardController(this);
-        }
-
-        if (subnetMgr.getSubnets().size() > 0) {
-            view.setTabs(tasks, false, false);
         }
     }
 
@@ -470,6 +486,8 @@ public class MultinetWizardController implements IMultinetWizardListener,
      */
     @Override
     public void onFinish() {
+        String subnetName = view.getSubnetName();
+        wizardModel.getSubnetModel().getSubnet().setName(subnetName);
         configTask = new ConfigureSubnetTask();
         configTask.execute();
     }
@@ -584,7 +602,7 @@ public class MultinetWizardController implements IMultinetWizardListener,
 
     }
 
-    protected boolean updateDatabase() throws Exception {
+    private boolean updateDatabase() throws Exception {
 
         boolean result = false;
 
@@ -593,7 +611,7 @@ public class MultinetWizardController implements IMultinetWizardListener,
 
         if (success) {
             // Get the current user settings from the subnet manager
-            SubnetDescription subnetDescription = view.getSelectedSubnet();
+            SubnetDescription subnetDescription = subnet;
             String currentSubnetName = null;
             if (subnetDescription != null) {
                 currentSubnetName = subnetDescription.getName();
@@ -705,20 +723,14 @@ public class MultinetWizardController implements IMultinetWizardListener,
     @Override
     public void showView(SubnetDescription subnet, String userName,
             IFabricController callingController) {
-
         this.subnet = subnet;
-        if ((subnet.getName() == null) && (subnetMgr.getSubnets().size() > 0)) {
+        List<SubnetDescription> subnets = subnetMgr.getSubnets();
+        if ((subnet.getSubnetId() == 0) && (subnets.size() > 0)) {
             subnet = subnetMgr.getSubnets().get(0);
         }
 
         this.userName = userName;
         IFabricView mainFrame = callingController.getView();
-
-        List<SubnetDescription> subnets = subnetMgr.getSubnets();
-        if (subnets.size() > 0) {
-            updateModels(subnet);
-            view.initButtonMap(subnetMgr.getSubnets(), subnet);
-        }
 
         try {
             this.userSettings =
@@ -728,10 +740,23 @@ public class MultinetWizardController implements IMultinetWizardListener,
             e.printStackTrace();
         }
 
+        if (subnets.size() > 0) {
+            view.setWizardViewType(WIZARD);
+            updateModels(subnet);
+        } else {
+            view.setWizardViewType(WELCOME);
+        }
+
+        view.setSubnets(subnets);
+
+        if (subnet.getSubnetId() != 0) {
+            view.setSelectedSubnet(subnet);
+            wizardModel.getSubnetModel().setSubnet(subnet);
+        }
+
         // By default select first step
         for (IWizardTask task : tasks) {
-            currentTask = task;
-            selectStep(task.getName());
+            task.init();
         }
         currentTask = tasks.get(0);
         view.enablePrevious(false);
@@ -827,10 +852,10 @@ public class MultinetWizardController implements IMultinetWizardListener,
      */
     @Override
     public void onReset() {
-
         for (IWizardTask task : tasks) {
             task.onReset();
         }
+        view.setDirty(false);
     }
 
     /*
@@ -840,7 +865,51 @@ public class MultinetWizardController implements IMultinetWizardListener,
      */
     @Override
     public void onNewSubnet() {
+        // Add a new subnet, display new empty tabs and subnet button
+        // This subnet will be updated when the subnet controller updates
+        // the model with a subnet from the subnetMgr
+        this.subnet =
+                new SubnetDescription(
+                        STLConstants.K3018_UNKNOWN_SUBNET.getValue(),
+                        STLConstants.K3018_UNKNOWN_SUBNET.getValue(),
+                        SubnetModel.DEFAULT_PORT_NUM);
+        view.addSubnet(subnet);
+        wizardModel.getSubnetModel().setSubnet(subnet);
+        wizardModel.notifyModelChange(WizardType.SUBNET);
+        for (IMultinetWizardTask task : tasks) {
+            task.clear();
+            task.promoteModel(wizardModel);
+        }
 
+        // Update all models
+        wizardModel.notifyModelChange();
+
+        view.setSelectedSubnet(subnet);
+    }
+
+    @Override
+    public void onSelectSubnet(SubnetDescription subnet) {
+        this.subnet = subnet;
+        updateModels(subnet);
+        for (IMultinetWizardTask task : tasks) {
+            task.setDirty(false);
+        }
+        // This changes the Subnet Name field, which dirties the view
+        view.setSelectedSubnet(subnet);
+    }
+
+    @Override
+    public boolean haveUnsavedChanges() {
+        if (view.isDirty()) {
+            return true;
+        }
+        // Check if any of the wizards have been edited
+        for (IWizardTask task : tasks) {
+            if (task.isDirty()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /*
@@ -863,13 +932,18 @@ public class MultinetWizardController implements IMultinetWizardListener,
      */
     @Override
     public void deleteSubnet(SubnetDescription subnet) {
-        try {
-            subnetMgr.removeSubnet(subnet);
-        } catch (SubnetDataNotFoundException e) {
-            view.showErrorMessage(
-                    STLConstants.K0329_PORT_SUBNET_MANAGER.getValue() + " "
-                            + STLConstants.K0030_ERROR.getValue(),
-                    e.getMessage());
+        if (subnet.getSubnetId() != 0) {
+            try {
+                subnetMgr.removeSubnet(subnet);
+            } catch (SubnetDataNotFoundException e) {
+                view.showErrorMessage(
+                        STLConstants.K0329_PORT_SUBNET_MANAGER.getValue() + " "
+                                + STLConstants.K0030_ERROR.getValue(),
+                        e.getMessage());
+            }
+        }
+        for (IMultinetWizardTask task : tasks) {
+            task.setDirty(false);
         }
     }
 
@@ -887,31 +961,18 @@ public class MultinetWizardController implements IMultinetWizardListener,
     /*
      * (non-Javadoc)
      * 
-     * @see com.intel.stl.ui.wizards.impl.IMultinetWizardListener#getTasks()
-     */
-    @Override
-    public List<IMultinetWizardTask> getTasks() {
-
-        return tasks;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see
      * com.intel.stl.ui.wizards.model.IModelChangeListener#onModelChange(com
      * .intel.stl.ui.wizards.model.IWizardModel)
      */
     @Override
     public void onModelChange(IWizardModel m) {
-
         MultinetWizardModel model = (MultinetWizardModel) m;
 
-        // Update the navigation panel
-        view.updateNavPanel();
+        SubnetDescription subnet = model.getSubnetModel().getSubnet();
 
-        // Update the subnetMap in the view
-        view.updateSubnetMap(model.getSubnetModel().getSubnet());
+        // Update the subnet in the view
+        view.setSelectedSubnet(subnet);
     }
 
     /*
@@ -1074,31 +1135,18 @@ public class MultinetWizardController implements IMultinetWizardListener,
                     subnetMgr.saveSubnet(wizardModel.getSubnetModel()
                             .getSubnet());
 
-            // Update the subnet map with the saved subnet containing the ID
-            view.updateMaps(savedSubnet);
-
             // Update the Subnet Model with the saved subnet (containing the
             // ID)
             wizardModel.getSubnetModel().setSubnet(savedSubnet);
-            wizardModel.notifyModelChange(WizardType.SUBNET);
+            this.subnet = savedSubnet;
+            view.resetSubnet(savedSubnet);
             result = true;
-
         } catch (SubnetDataNotFoundException e) {
             view.showErrorMessage(STLConstants.K2004_CONNECTION.getValue()
                     + " " + STLConstants.K0030_ERROR.getValue(), e.getMessage());
         }
 
         return result;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.intel.stl.ui.wizards.impl.IMultinetWizardListener#getNewSubnet()
-     */
-    @Override
-    public SubnetDescription getNewSubnet() {
-        return subnetController.getNewSubnet();
     }
 
     /*
@@ -1144,7 +1192,7 @@ public class MultinetWizardController implements IMultinetWizardListener,
      */
     @Override
     public SubnetDescription getCurrentSubnet() {
-        return view.getSelectedSubnet();
+        return subnet;
     }
 
     /*
@@ -1172,13 +1220,7 @@ public class MultinetWizardController implements IMultinetWizardListener,
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.intel.stl.ui.wizards.impl.IMultinetWizardListener#updateModels()
-     */
-    @Override
-    public void updateModels(SubnetDescription subnet) {
+    private void updateModels(SubnetDescription subnet) {
 
         // Set the Subnet model
         wizardModel.getSubnetModel().setSubnet(subnet);
@@ -1208,14 +1250,9 @@ public class MultinetWizardController implements IMultinetWizardListener,
      */
     @Override
     public void clearTasks() {
-
         for (IMultinetWizardTask task : tasks) {
             task.clear();
-            task.promoteModel(wizardModel);
         }
-
-        // Update all models
-        wizardModel.notifyModelChange();
     }
 
     /*
@@ -1235,37 +1272,12 @@ public class MultinetWizardController implements IMultinetWizardListener,
      * (non-Javadoc)
      * 
      * @see
-     * com.intel.stl.ui.wizards.impl.IMultinetWizardListener#setCurrentSubnet
-     * (com.intel.stl.api.subnet.SubnetDescription)
-     */
-    @Override
-    public void setCurrentSubnet(SubnetDescription subnet) {
-
-        this.subnet = subnet;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
      * com.intel.stl.ui.wizards.impl.IMultinetWizardListener#getSubnetView()
      */
     @Override
     public SubnetWizardView getSubnetView() {
 
         return subnetView;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.intel.stl.ui.wizards.impl.IMultinetWizardListener#clearSubnetFactories
-     * ()
-     */
-    @Override
-    public void clearSubnetFactories(SubnetDescription subnet) {
-        subnetMgr.clearSubnetFactories(subnet);
     }
 
     /*
@@ -1305,26 +1317,34 @@ public class MultinetWizardController implements IMultinetWizardListener,
             boolean isConnectable = isHostConnectable();
             ConfigTaskStatus connectable =
                     new ConfigTaskStatus(ConfigTaskType.CHECK_HOST,
-                            isConnectable);
+                            isConnectable, null);
             publish(connectable);
 
             // If host is reachable validate and publish
             view.setProgress(ConfigTaskType.VALIDATE_ENTRY);
 
             int numPass = 0;
+            List<WizardValidationException> errors =
+                    new ArrayList<WizardValidationException>();
             boolean status = false;
             for (IWizardTask task : tasks) {
                 task.setConnectable(isConnectable);
-                boolean pass = task.validateUserEntry();
-                if (pass) {
-                    numPass++;
+                try {
+                    boolean pass = task.validateUserEntry();
+                    if (pass) {
+                        numPass++;
+                    }
+                } catch (WizardValidationException e) {
+                    e.printStackTrace();
+                    errors.add(e);
                 }
             }
             status = (numPass == tasks.size()) ? true : false;
 
             currentTask.promoteModel(wizardModel);
             ConfigTaskStatus valid =
-                    new ConfigTaskStatus(ConfigTaskType.VALIDATE_ENTRY, status);
+                    new ConfigTaskStatus(ConfigTaskType.VALIDATE_ENTRY, status,
+                            errors);
             publish(valid);
 
             try {
@@ -1332,11 +1352,11 @@ public class MultinetWizardController implements IMultinetWizardListener,
                 view.setProgress(ConfigTaskType.UPDATE_DATABASE);
                 ConfigTaskStatus updated =
                         new ConfigTaskStatus(ConfigTaskType.UPDATE_DATABASE,
-                                updateDatabase());
+                                updateDatabase(), null);
                 publish(updated);
             } catch (Exception e) {
                 publish(new ConfigTaskStatus(ConfigTaskType.UPDATE_DATABASE,
-                        false));
+                        false, null));
             }
 
             return null;
@@ -1361,16 +1381,40 @@ public class MultinetWizardController implements IMultinetWizardListener,
                 get();
             } catch (InterruptedException e) {
             } catch (ExecutionException e) {
-                e.printStackTrace();
             }
 
-            view.markTasksClean();
+            // We must update the event rules and recipients list in the local
+            // copy in the MailNotifier.
+            // The update of these items in the database takes place in the
+            // config task below.
+            SubnetDescription subnet = getCurrentSubnet();
+            Context context = subnetMgr.getContext(subnet);
+            if (context != null) {
+                MailNotifier mailNotifier =
+                        (MailNotifier) context.getEmailNotifier();
+
+                EventRulesTableModel eventModel =
+                        wizardModel.getEventsModel().getEventsRulesModel();
+                List<EventRule> rulesList = eventModel.getEventRules();
+                mailNotifier.setEventRules(rulesList);
+
+                String recipients =
+                        wizardModel.getPreferencesModel().getMailRecipients();
+                List<String> recipientsList =
+                        Utils.concatenatedStringToList(recipients,
+                                UIConstants.MAIL_LIST_DELIMITER);
+                mailNotifier.setRecipients(recipientsList);
+            }
+
+            for (IMultinetWizardTask task : tasks) {
+                task.setDirty(false);
+            }
+            view.setDirty(false);
             view.enableNavPanel(true);
             view.enableSubnetModifiers(true);
 
             // Enable the Ok button on the welcome panel
             view.setWelcomeOkEnabled(true);
-
         }
     } // class ConfigureSubnetTask
 

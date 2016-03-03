@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.52  2015/11/02 20:08:51  jijunwan
+ *  Archive Log:    PR 131377 - Port information when selecting between HFI nodes doesn't get updated under Topology tab
+ *  Archive Log:    - improved node comparison to compare the whole path and the root need to be the same instance
+ *  Archive Log:
  *  Archive Log:    Revision 1.51  2015/08/17 18:53:40  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -288,7 +292,7 @@ public class PerformanceTreeController extends
         view.setNodeName(node);
         setRunning(true);
 
-        if (lastNode != null && lastNode.equals(node)
+        if (lastNode != null && lastNode.hasSamePath(node)
                 && lastNode.getRoot() == node.getRoot()) {
             // refresh the subpage
             currentSubpage.showNode(node, new FinishObserver() {

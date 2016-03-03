@@ -35,6 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.14  2015/10/26 13:44:15  fernande
+ *  Archive Log:    PR130979 - Error statement is closed when FE node is rebooted. Changed setContext to clear trees whenever the context is set (usually on failover and on refresh)
+ *  Archive Log:
+ *  Archive Log:    Revision 1.13  2015/10/23 19:07:57  jijunwan
+ *  Archive Log:    PR 129357 - Be able to hide inactive ports
+ *  Archive Log:    - revert back to the old version without visible node support
+ *  Archive Log:
  *  Archive Log:    Revision 1.12  2015/09/30 13:26:45  fisherma
  *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
  *  Archive Log:
@@ -209,7 +216,6 @@ import static com.intel.stl.ui.common.PageWeight.MEDIUM;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
-import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -250,9 +256,6 @@ public class FVTreeManager implements IContextAware {
 
     private final EnumMap<TreeTypeEnum, TreeManagementModel> mgrModels;
 
-    protected InactivePortVizIndicator vizIndicator =
-            new InactivePortVizIndicator();
-
     /**
      * 
      * Description: Constructor for the FVTreeBuilder class
@@ -274,15 +277,12 @@ public class FVTreeManager implements IContextAware {
     @Override
     public synchronized void setContext(Context pContext,
             IProgressObserver observer) {
-        if (subnet == null || !pContext.getSubnetDescription().equals(subnet)) {
-            mLog.info("Clear trees because subnet changed from " + subnet
-                    + " to " + pContext.getSubnetDescription());
-            subnet = pContext.getSubnetDescription();
-            mSubnetApi = pContext.getSubnetApi();
-            mPerformanceApi = pContext.getPerformanceApi();
-            reset();
-        }
-        vizIndicator.setContext(pContext);
+        mLog.info("Clear trees because context being set for "
+                + pContext.getSubnetDescription());
+        subnet = pContext.getSubnetDescription();
+        mSubnetApi = pContext.getSubnetApi();
+        mPerformanceApi = pContext.getPerformanceApi();
+        reset();
     }
 
     @Override
@@ -330,9 +330,6 @@ public class FVTreeManager implements IContextAware {
                 break;
         } // switch
 
-        if (node != null) {
-            setVisibility(node, null);
-        }
         mLog.info("Build tree " + pTreeType + " in "
                 + (System.currentTimeMillis() - t) + " ms");
         return node;
@@ -510,7 +507,6 @@ public class FVTreeManager implements IContextAware {
                     new DeviceTypesTreeSynchronizer(mSubnetApi);
             treeUpdater.updateTree(model.getTree(), model.getMonitors(),
                     observer);
-            updateVisibility(model);
             model.setDirty(false);
         }
 
@@ -531,8 +527,6 @@ public class FVTreeManager implements IContextAware {
             FVResourceNode tree = model.getTree();
             List<ITreeMonitor> monitors = model.getMonitors();
             treeUpdater.updateNode(lid, tree, monitors);
-            // TODO: do it at parent rather than root to improve performance
-            setVisibility(tree, model.getMonitors());
         }
     }
 
@@ -591,7 +585,6 @@ public class FVTreeManager implements IContextAware {
                             subnetTree);
             treeUpdater.updateTree(model.getTree(), model.getMonitors(),
                     subObservers[1]);
-            updateVisibility(model);
             subObservers[1].onFinish();
             model.setDirty(false);
         }
@@ -613,8 +606,6 @@ public class FVTreeManager implements IContextAware {
             FVResourceNode tree = model.getTree();
             List<ITreeMonitor> monitors = model.getMonitors();
             treeUpdater.updateNode(lid, tree, monitors);
-            // TODO: do it at parent rather than root to improve performance
-            setVisibility(tree, model.getMonitors());
         }
     }
 
@@ -674,7 +665,6 @@ public class FVTreeManager implements IContextAware {
                             subnetTree);
             treeUpdater.updateTree(model.getTree(), model.getMonitors(),
                     subObservers[1]);
-            updateVisibility(model);
             subObservers[1].onFinish();
             model.setDirty(false);
         }
@@ -693,30 +683,6 @@ public class FVTreeManager implements IContextAware {
             VirtualFabricsTreeUpdater treeUpdater =
                     new VirtualFabricsTreeUpdater(mSubnetApi, mPerformanceApi);
             treeUpdater.updateNode(lid, model.getTree(), model.getMonitors());
-            // TODO: do it at parent rather than root to improve performance
-            setVisibility(model.getTree(), model.getMonitors());
-        }
-    }
-
-    protected void updateVisibility(TreeManagementModel model) {
-        FVResourceNode root = model.getTree();
-        setVisibility(root, model.getMonitors());
-    }
-
-    private void setVisibility(FVResourceNode node, List<ITreeMonitor> monitors) {
-        Vector<FVResourceNode> children = node.getChildren();
-        if (children == null || children.isEmpty()) {
-            return;
-        }
-
-        for (FVResourceNode child : children) {
-            setVisibility(child, monitors);
-        }
-        boolean hasChange = node.setChildrenVisibility(vizIndicator);
-        if (monitors != null && hasChange) {
-            for (ITreeMonitor monitor : monitors) {
-                monitor.fireTreeStructureChanged(this, node.getPath());
-            }
         }
     }
 

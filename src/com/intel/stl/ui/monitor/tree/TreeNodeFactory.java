@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.8  2015/10/23 19:11:19  jijunwan
+ *  Archive Log:    PR 129357 - Be able to hide inactive ports
+ *  Archive Log:    - fixed typo in code
+ *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/08/17 18:54:19  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -169,9 +173,9 @@ public class TreeNodeFactory {
         Integer o1 = nameIndices.get(name1);
         Integer o2 = nameIndices.get(name2);
         if (o1 == null) {
-            return o1 == null ? 0 : -1;
+            return o2 == null ? 0 : -1;
         } else if (o2 == null) {
-            return -1;
+            return 1;
         }
 
         return o1 > o2 ? 1 : (o1 < o2 ? -1 : 0);

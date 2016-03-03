@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.4  2015/10/21 15:06:55  jijunwan
+ *  Archive Log:    PR 131077 - Virtual Fabrics list does not reflect enabled status per item in "list tile" of admin window
+ *  Archive Log:    - Extended VF to use its own renderer for item panel
+ *  Archive Log:    - Extended VF to update item panel when there is a change on enabled check box
+ *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/08/17 18:53:54  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -55,6 +60,8 @@
 
 package com.intel.stl.ui.admin.impl.virtualfabrics;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -63,6 +70,7 @@ import javax.swing.ImageIcon;
 
 import com.intel.stl.api.management.virtualfabrics.VirtualFabric;
 import com.intel.stl.ui.admin.ChangeState;
+import com.intel.stl.ui.admin.InvalidEditException;
 import com.intel.stl.ui.admin.Item;
 import com.intel.stl.ui.admin.impl.AbstractEditorController;
 import com.intel.stl.ui.admin.impl.ConfPageController;
@@ -86,10 +94,23 @@ public class VirtualFabricsPageController extends
      * @param icon
      * @param view
      */
-    public VirtualFabricsPageController(String name, String description,
+    public VirtualFabricsPageController(
+            String name,
+            String description,
             ImageIcon icon,
-            AbstractConfView<VirtualFabric, VirtualFabricsEditorPanel> view) {
+            final AbstractConfView<VirtualFabric, VirtualFabricsEditorPanel> view) {
         super(name, description, icon, view);
+        view.getEditorPanel().setEnabledActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    view.getEditorPanel().updateItem(currentItem);
+                    view.updateItems();
+                } catch (InvalidEditException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override

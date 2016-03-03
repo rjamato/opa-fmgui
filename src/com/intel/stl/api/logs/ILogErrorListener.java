@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.3  2015/11/18 23:48:45  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Removed duplicate method onSessionDown()
+ *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/08/17 18:48:54  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - change backend files' headers
@@ -54,6 +58,4 @@ package com.intel.stl.api.logs;
 public interface ILogErrorListener {
 
     public void stopLog();
-
-    public void onSessionDown(String errorMessage);
 }

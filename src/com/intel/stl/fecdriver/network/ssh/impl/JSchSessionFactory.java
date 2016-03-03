@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.4  2015/11/18 23:52:06  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Now using SshKeyType for the key into sessionMap for an identifier that can distinguish between LogViewer, Management, and other sessions.
+ *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/10/06 15:51:27  rjtierne
  *  Archive Log:    PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
  *  Archive Log:    - Added closeSession() to close the session associated with a subnet and remove it from the map
@@ -65,6 +69,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.intel.stl.api.subnet.SubnetDescription;
+import com.intel.stl.common.STLMessages;
+import com.jcraft.jsch.JSchException;
 
 public class JSchSessionFactory {
 
@@ -72,53 +78,74 @@ public class JSchSessionFactory {
     private final static Logger log = LoggerFactory
             .getLogger(JSchSessionFactory.class);
 
-    private final static Map<SubnetDescription, JSchSession> sessionMap =
-            new HashMap<SubnetDescription, JSchSession>();
+    private final static Map<String, JSchSession> sessionMap =
+            new HashMap<String, JSchSession>();
 
     public synchronized static JSchSession getSession(SubnetDescription subnet,
-            boolean strictHostKey, char[] password) throws Exception {
+            boolean strictHostKey, char[] password, String sshKey)
+            throws JSchException {
 
         // Check if there is a session in the map
-        JSchSession jschSession = sessionMap.get(subnet);
+        JSchSession jschSession = sessionMap.get(sshKey);
 
         // If there is but it's disconnected, remove it from the map
         if ((jschSession != null) && (!jschSession.isConnected())) {
-            sessionMap.remove(subnet);
+            closeSession(sshKey);
+            sessionMap.remove(sshKey);
             jschSession = null;
         }
 
         // If there is no session in the map, attempt to create one and put
         // it in the map if it connects
         if (jschSession == null) {
-            jschSession = createSession(subnet, strictHostKey, password);
+            jschSession =
+                    createSession(subnet, strictHostKey, password, sshKey);
         }
 
         return jschSession;
     }
 
-    public static JSchSession getSessionFromMap(SubnetDescription subnet) {
-        return sessionMap.get(subnet);
+    public static JSchSession getSessionFromMap(String sshKey) {
+        return sessionMap.get(sshKey);
     }
 
     protected static JSchSession createSession(SubnetDescription subnet,
-            boolean strictHostKey, char[] password) throws Exception {
+            boolean strictHostKey, char[] password, String sshKey)
+            throws JSchException {
 
         JSchSession jschSession = null;
 
-        jschSession = new JSchSession(subnet, strictHostKey, password);
+        try {
+            jschSession =
+                    new JSchSession(subnet, strictHostKey, password, sshKey);
 
-        if ((jschSession != null) && jschSession.isConnected()) {
-            sessionMap.put(subnet, jschSession);
+            if ((jschSession != null) && jschSession.isConnected()) {
+                sessionMap.put(sshKey, jschSession);
+            } else {
+                throw new JSchException(
+                        STLMessages.STL50015_SESSION_CONNECTION_FAILURE
+                                .getDescription());
+            }
+        } catch (JSchException e) {
+            if (jschSession != null) {
+                jschSession.shutdown();
+            }
+
+            throw e;
         }
 
         return jschSession;
     }
 
-    public static void closeSession(SubnetDescription subnet) {
-        JSchSession jschSession = JSchSessionFactory.getSessionFromMap(subnet);
+    public static void closeSession(String sshKey) {
+        JSchSession jschSession = sessionMap.get(sshKey);
+
         if (jschSession != null) {
-            jschSession.shutdown();
-            sessionMap.remove(subnet);
+            try {
+                jschSession.shutdown();
+            } finally {
+                sessionMap.remove(sshKey);
+            }
         }
     }
 

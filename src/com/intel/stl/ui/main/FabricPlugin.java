@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.40  2015/11/19 00:41:30  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Set HelpAction.DYNAMIC_SIZE to true so the Help window is resized when FMGUI runs.
+ *  Archive Log:
  *  Archive Log:    Revision 1.39  2015/09/08 18:34:16  jijunwan
  *  Archive Log:    PR 130277 - FM GUI Locked up due to [AWT-EventQueue-0] ERROR - Unsupported MTUSize 0x0d java.lang.IllegalArgumentException: Unsupported MTUSize 0x0d
  *  Archive Log:    - moved isDev to FMGuiPlugin so both backend and frontend can access it
@@ -219,6 +223,8 @@ public class FabricPlugin extends FMGuiPlugin {
             Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
             System.setProperty("sun.awt.exception.handler",
                     ExceptionHandler.class.getName());
+
+            HelpAction.DYNAMIC_SIZE = true;
 
         } catch (Exception e) {
             errors.add(e);

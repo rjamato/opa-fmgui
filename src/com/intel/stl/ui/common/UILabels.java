@@ -34,6 +34,17 @@
  *  Archive Source: $Source$
  * 
  *  Archive Log: $Log$
+ *  Archive Log: Revision 1.75  2015/12/03 14:56:28  jypak
+ *  Archive Log: PR 131817 - FM GUI, the status Column to the right requires a header/title.
+ *  Archive Log:
+ *  Archive Log: Revision 1.74  2015/11/18 23:56:28  rjtierne
+ *  Archive Log: PR 130965 - ESM support on Log Viewer
+ *  Archive Log: - Added constant STL50215, and STL50217-STL50219 for supporting ESM Log Viewer
+ *  Archive Log:
+ *  Archive Log: Revision 1.73  2015/10/19 22:30:33  jijunwan
+ *  Archive Log: PR 131091 - On an unsuccessful Failover, the Admin | Applications doesn't show the login window
+ *  Archive Log: - added resources
+ *  Archive Log:
  *  Archive Log: Revision 1.72  2015/10/09 17:48:13  fernande
  *  Archive Log: PR130753 - XML parse errors when new VF is created from FM GUI. Added check during validation of opaconfig.xml to make sure the "All" application is not added if a PKey is especified.
  *  Archive Log:
@@ -147,6 +158,7 @@ public enum UILabels implements IMessage {
     STL10005_DATABASE_ENGINE_NOTSUPPORTED(10005),
     STL10006_ERROR_STARTING_DATABASE_ENGINE(10006),
     STL10007_APPLICATION_CONFIGURATION_EXCEPTION(10007),
+    STL10008_NODES_DISTR_SEVERITY(10008),
 
     STL10100_ERRORS_INIT_APP(10100),
     STL10101_ONE_ERROR_INIT_APP(10101),
@@ -164,6 +176,7 @@ public enum UILabels implements IMessage {
     STL10113_CONNECTION_LOST(10113),
     STL10114_USER_CANCELLED(10114),
     STL10115_MAX_PINS(10115),
+    STL10116_NOT_INIT(10116),
 
     STL10200_TOPN_BANDWIDTH(10200),
     STL10201_TOPN_CONGESTION(10201),
@@ -358,8 +371,11 @@ public enum UILabels implements IMessage {
     STL50212_RESPONSE_TIMEOUT(50212),
     STL50213_LINES_PER_PAGE_ERROR(50213),
     STL50214_INVALID_LOG_USER(50214),
-    STL50215_ESM_NOT_SUPPORTED(50215),
+    STL50215_SYSLOG_ACCESS_ERROR(50215),
     STL50216_UNEXPECTED_LOGIN_FAILURE(50216),
+    STL50217_FILE_ACCESS_DENIED(50217),
+    STL50218_EMPTY_LOG_FILE(50218),
+    STL50219_ESM_SYSLOG_NOTE(50219),
 
     // Event messages
     STL60001_TOPO_CHANGE(60001),

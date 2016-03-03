@@ -34,6 +34,13 @@
  *  Archive Source: $Source$
  * 
  *  Archive Log: $Log$
+ *  Archive Log: Revision 1.26  2015/12/16 22:33:06  jijunwan
+ *  Archive Log: PR 132110 - Klocwork issues
+ *  Archive Log: - updated to be consistent with STL2 code
+ *  Archive Log:
+ *  Archive Log: Revision 1.25  2015/12/16 21:44:27  jijunwan
+ *  Archive Log: PR 132110 - Klocwork issues
+ *  Archive Log:
  *  Archive Log: Revision 1.24  2015/08/17 18:49:34  jijunwan
  *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log: - change backend files' headers
@@ -342,10 +349,23 @@ public class GroupDAOImpl extends BaseDAO implements GroupDAO {
             if (dbGroupInfo == null) {
                 em.persist(groupInfoRec);
                 keys.append(separator);
-                keys.append(groupInfoRec.getId().getGroupID().getSubnetGroup());
-                keys.append('-');
-                keys.append(groupInfoRec.getGroupInfo().getTimestamp());
-                separator = ',';
+                GroupInfoId groupInfoId = groupInfoRec.getId();
+                if (groupInfoId != null) {
+                    GroupConfigId groupConfigId = groupInfoId.getGroupID();
+                    if (groupConfigId != null) {
+                        String subnetGroup = groupConfigId.getSubnetGroup();
+                        keys.append(subnetGroup);
+                        keys.append('-');
+                        keys.append(groupInfoRec.getGroupInfo().getTimestamp());
+                        separator = ',';
+                    } else {
+                        throw new RuntimeException(
+                                "groupConfigId is null in saveGroupInfos.");
+                    }
+                } else {
+                    throw new RuntimeException(
+                            "groupInfoId is null in saveGroupInfos.");
+                }
             }
         }
 

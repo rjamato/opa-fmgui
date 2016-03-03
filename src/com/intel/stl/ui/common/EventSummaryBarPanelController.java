@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.10  2015/12/03 14:56:28  jypak
+ *  Archive Log:    PR 131817 - FM GUI, the status Column to the right requires a header/title.
+ *  Archive Log:
  *  Archive Log:    Revision 1.9  2015/08/17 18:54:12  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -76,10 +79,13 @@
 
 package com.intel.stl.ui.common;
 
+import static com.intel.stl.api.configuration.UserSettings.PROPERTY_TIMING_WINDOW;
 import static com.intel.stl.ui.common.PageWeight.LOW;
 
 import java.util.EnumMap;
+import java.util.Properties;
 
+import com.intel.stl.api.configuration.UserSettings;
 import com.intel.stl.api.notice.NoticeSeverity;
 import com.intel.stl.ui.common.view.EventSummaryBarPanel;
 import com.intel.stl.ui.main.Context;
@@ -108,6 +114,8 @@ public class EventSummaryBarPanelController implements IContextAware,
     private ICallback<StateSummary> stateSummaryCallback;
 
     private Task<StateSummary> stateSummaryTask;
+    
+    private String timingWindow;
 
     public EventSummaryBarPanelController(
             EventSummaryBarPanel eventSummaryBarPanel) {
@@ -129,6 +137,15 @@ public class EventSummaryBarPanelController implements IContextAware,
         clear();
 
         this.context = context;
+        UserSettings userSettings = this.context.getUserSettings();
+        if(userSettings != null){
+        	Properties userPreference = userSettings.getUserPreference();
+        	if(userPreference != null){
+        		this.timingWindow = userPreference.getProperty(PROPERTY_TIMING_WINDOW);
+        		view.setTimingWindow(this.timingWindow);
+        	}
+        }
+        
         this.context.getEvtCal().addListener(this);
 
         TaskScheduler scheduler = this.context.getTaskScheduler();
@@ -168,6 +185,18 @@ public class EventSummaryBarPanelController implements IContextAware,
                 view.updateEventSeverity(states);
             }
         });
+              
+        UserSettings userSettings = this.context.getUserSettings();
+        if(userSettings != null){
+        	Properties userPreference = userSettings.getUserPreference();
+        	if(userPreference != null){
+        		String timingWindow = userPreference.getProperty(PROPERTY_TIMING_WINDOW);
+        		if(!this.timingWindow.equals(timingWindow)){
+                	this.timingWindow = timingWindow;
+                	view.setTimingWindow(this.timingWindow);
+                };
+        	}
+        }  
     }
 
     @Override

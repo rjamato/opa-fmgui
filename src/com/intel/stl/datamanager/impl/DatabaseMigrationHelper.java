@@ -35,6 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.6  2015/12/16 14:26:03  jijunwan
+ *  Archive Log:    PR 132071 - Error on initial CLI launch of FM GUI in RHEL 7.1
+ *  Archive Log:    - fixed Klocwork issue
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/12/15 20:50:21  jijunwan
+ *  Archive Log:    PR 132071 - Error on initial CLI launch of FM GUI in RHEL 7.1
+ *  Archive Log:    - added code to check table exist to avoid querying a unexisted table.
+ *  Archive Log:    - removed warning on FE_CONNECTION related notices because they are expected
+ *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/08/18 21:04:41  fernande
  *  Archive Log:    PR 128703 - Fail over doesn't work on A0 Fabric. Fixed schema update because FE list is not copied over to new database
  *  Archive Log:
@@ -57,14 +66,21 @@
 
 package com.intel.stl.datamanager.impl;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
+import javax.persistence.Table;
 import javax.persistence.TypedQuery;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.jdbc.ReturningWork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,13 +100,52 @@ public class DatabaseMigrationHelper {
     private static final String INSERT_USERRECORD =
             "INSERT INTO USERS (subnetId, userName, lastUpdate, userDescription, userOptionXml) VALUES(?, ?, ?, ?, ?)";
 
+    public static boolean checkTable(EntityManager em, final Class<?> tableClass)
+            throws HibernateException {
+        Table table = tableClass.getAnnotation(Table.class);
+        final String tableName = table.name();
+        Boolean res =
+                em.unwrap(Session.class).doReturningWork(
+                        new ReturningWork<Boolean>() {
+                            @Override
+                            public Boolean execute(Connection conn)
+                                    throws SQLException {
+                                ResultSet rs =
+                                        conn.getMetaData().getTables(null,
+                                                null, tableName, null);
+                                boolean result = false;
+                                try {
+                                    result = rs.next();
+                                } catch (SQLException e) {
+                                    log.error(
+                                            "Could not get next result from result set. '"
+                                                    + StringUtils
+                                                            .getErrorMessage(e),
+                                            e);
+                                } finally {
+                                    rs.close();
+                                }
+                                return result;
+                            }
+                        });
+        return res;
+    }
+
     public static List<SubnetRecord> getSubnetRecords(EntityManager em) {
+        if (!checkTable(em, SubnetRecord.class)) {
+            return null;
+        }
+
         TypedQuery<SubnetRecord> query =
                 em.createNamedQuery("Subnet.All", SubnetRecord.class);
         return query.getResultList();
     }
 
     public static List<UserRecord> getUserRecords(EntityManager em) {
+        if (!checkTable(em, UserRecord.class)) {
+            return null;
+        }
+
         TypedQuery<UserRecord> query =
                 em.createNamedQuery("User.All", UserRecord.class);
         return query.getResultList();

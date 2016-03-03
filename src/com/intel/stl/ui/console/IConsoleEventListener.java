@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.12  2015/11/11 13:26:29  robertja
+ *  Archive Log:    PR 130278 - Store console tab help pane state on a per-tab basis so that help info is restored when focus returns to a tab.
+ *  Archive Log:
  *  Archive Log:    Revision 1.11  2015/09/08 21:46:27  jijunwan
  *  Archive Log:    PR 130330 - Windows FM GUI - Admin->Console - switching side tabs causes multiple consoles
  *  Archive Log:    - changed code to distinguish number of connected consoles and number of consoles
@@ -115,6 +118,8 @@ public interface IConsoleEventListener {
     public void setTabListener(ITabListener tabListener);
 
     public void removeConsole(int id);
+    
+    public ConsoleTerminalController getConsoleController (Integer index);
 
     /**
      * 

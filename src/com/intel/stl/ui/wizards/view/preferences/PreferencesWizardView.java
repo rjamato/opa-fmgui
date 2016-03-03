@@ -35,6 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.23  2015/12/09 16:06:07  jijunwan
+ *  Archive Log:    PR 131944 - If "# Worst Nodes" is <10 or >100, there is a Entry Validation warning for the Refresh Rate
+ *  Archive Log:
+ *  Archive Log:    - added value range to "# Worst Nodes" text field
+ *  Archive Log:
+ *  Archive Log:    Revision 1.22  2015/11/09 20:51:57  fernande
+ *  Archive Log:    PR130852 - The 1st subnet in the Subnet Wizard displays "Abandon Changes" message when no changes are made. Added special listener for dirty state
+ *  Archive Log:
  *  Archive Log:    Revision 1.21  2015/09/14 19:04:34  jijunwan
  *  Archive Log:    PR 130229 - The text component of all editable combo boxes should provide validation of the input
  *  Archive Log:    - added exception check just in case
@@ -151,7 +159,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -165,6 +172,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.intel.stl.api.subnet.SubnetDescription;
+import com.intel.stl.ui.common.DocumentDirtyListener;
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UIConstants;
 import com.intel.stl.ui.common.UIImages;
@@ -201,9 +209,9 @@ public class PreferencesWizardView extends AbstractTaskView implements
 
     private JComboBox<String> cboxRefreshRateUnits;
 
-    private JFormattedTextField txtFldTimingWindow;
+    private SafeNumberField<Integer> txtFldTimingWindow;
 
-    private JFormattedTextField txtFldNumWorstNodes;
+    private SafeNumberField<Integer> txtFldNumWorstNodes;
 
     private DocumentListener isDirtyListener;
 
@@ -361,8 +369,11 @@ public class PreferencesWizardView extends AbstractTaskView implements
                         STLConstants.K0012_SECONDS.getValue(), Font.BOLD);
 
         txtFldNumWorstNodes =
-                ComponentFactory.createNumericTextField(isDirtyListener,
-                        setDirtyListener);
+                new SafeNumberField<Integer>(new DecimalFormat("###"),
+                        PreferencesInputValidator.getInstance()
+                                .getMinNumWorstNode(), true,
+                        PreferencesInputValidator.getInstance()
+                                .getMaxNumWorstNode(), true);
         JLabel lblNumWorstNodes =
                 ComponentFactory.getH5Label(
                         STLConstants.K3009_NUM_WORST_NODES.getValue(),
@@ -505,40 +516,21 @@ public class PreferencesWizardView extends AbstractTaskView implements
     protected void createDocumentListener() {
 
         if (isDirtyListener == null) {
-            isDirtyListener = new DocumentListener() {
+            isDirtyListener = new DocumentDirtyListener() {
 
                 @Override
-                public void insertUpdate(DocumentEvent e) {
+                public void setDirty(DocumentEvent e) {
                     dirty = true;
                 }
 
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    dirty = true;
-                }
-
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    dirty = true;
-                }
             };
         }
 
         if (setDirtyListener == null) {
-            setDirtyListener = new DocumentListener() {
+            setDirtyListener = new DocumentDirtyListener() {
 
                 @Override
-                public void insertUpdate(DocumentEvent e) {
-                    doOnEdit(e);
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    doOnEdit(e);
-                }
-
-                @Override
-                public void changedUpdate(DocumentEvent e) {
+                public void setDirty(DocumentEvent e) {
                     doOnEdit(e);
                 }
             };
@@ -576,7 +568,7 @@ public class PreferencesWizardView extends AbstractTaskView implements
         } else {
             multinetWizardViewListener.enableNext(false);
             multinetWizardViewListener.enableApply(false);
-            multinetWizardViewListener.enableReset(false);
+            multinetWizardViewListener.enableReset(true);
         }
     }
 

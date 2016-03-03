@@ -35,6 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.7  2015/10/26 20:19:08  jijunwan
+ *  Archive Log:    PR 131169 - Unable to delete Device Groups created within the opafm.xml file
+ *  Archive Log:    - introduced ChangeManager to maintain changes
+ *  Archive Log:    - changed changes from set to list because when the changes depend on each other, the order does matter
+ *  Archive Log:    - changed xxxManagement to use ChangeManager
+ *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/08/17 18:49:56  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - change backend files' headers
@@ -101,6 +107,7 @@ import org.w3c.dom.NodeList;
 
 import com.intel.stl.api.IMessage;
 import com.intel.stl.api.StringUtils;
+import com.intel.stl.api.management.ChangeManager;
 import com.intel.stl.api.management.DuplicateNameException;
 import com.intel.stl.api.management.FMConfHelper;
 import com.intel.stl.api.management.ReferenceConflictException;
@@ -133,7 +140,7 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
 
     private final FMConfHelper confHelp;
 
-    private final Set<String> changes = new HashSet<String>();
+    private final ChangeManager changeMgr = new ChangeManager();
 
     /**
      * Description:
@@ -238,7 +245,7 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
             // TODO loop check
             addDeviceGroup(confFile, confFile, group);
             log.info("Added application " + group);
-            changes.add(group.getName());
+            changeMgr.addChange(group.getName());
         } catch (Exception e) {
             throw createDeviceGroupException(STLMessages.STL63012_ADD_DG_ERR,
                     e, group.getName(), confHelp.getHost(),
@@ -289,7 +296,7 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
             referenceCheck(null, name);
             removeDeviceGroup(confFile, confFile, name);
             log.info("Removed application '" + name + "'");
-            changes.add(name);
+            changeMgr.addChange(name);
         } catch (Exception e) {
             throw createDeviceGroupException(
                     STLMessages.STL63013_REMOVE_DG_ERR, e, name,
@@ -338,8 +345,8 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
             // TODO loop check
             updateDeviceGroup(confFile, confFile, oldName, group, false);
             log.info("Updated Device Group " + group);
-            changes.add(oldName);
-            changes.add(group.getName());
+            changeMgr.addChange(oldName);
+            changeMgr.addChange(group.getName());
         } catch (Exception e) {
             throw createDeviceGroupException(
                     STLMessages.STL63014_UPDATE_DG_ERR, e, group.getName(),
@@ -363,8 +370,8 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
             // TODO loop check
             updateDeviceGroup(confFile, confFile, oldName, group, true);
             log.info("Added or updated Device Group " + group);
-            changes.add(oldName);
-            changes.add(group.getName());
+            changeMgr.addChange(oldName);
+            changeMgr.addChange(group.getName());
         } catch (Exception e) {
             throw createDeviceGroupException(
                     STLMessages.STL63015_ADDUPDATE_DG_ERR, e, group.getName(),
@@ -453,18 +460,8 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
         return new DeviceGroupException(msg, error, args);
     }
 
-    /**
-     * 
-     * <i>Description:</i>
-     * 
-     * @return the names of the device group changed
-     */
-    public Set<String> getChanges() {
-        return changes;
-    }
-
-    public void resetChanges() {
-        changes.clear();
+    public boolean hasChanges() {
+        return !changeMgr.getChanges().isEmpty();
     }
 
     public void applyChangesTo(DeviceGroupManagement target)
@@ -474,7 +471,7 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
         for (DeviceGroup group : groups) {
             map.put(group.getName(), group);
         }
-        for (String change : changes) {
+        for (String change : changeMgr.getChanges()) {
             DeviceGroup cur = map.get(change);
             if (cur == null) {
                 target.removeDeviceGroup(change);

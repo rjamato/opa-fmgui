@@ -35,6 +35,22 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.15  2015/11/19 00:47:35  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Set DYNAMIC_SIZE to false by default so unit tests don't try to access swing components
+ *  Archive Log:
+ *  Archive Log:    Revision 1.14  2015/11/19 00:32:48  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Added DYNAMIC_SIZE constant to prevent unit tests from accessing swing components
+ *  Archive Log:
+ *  Archive Log:    Revision 1.13  2015/11/18 23:57:03  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Increased the size of the Help window
+ *  Archive Log:
+ *  Archive Log:    Revision 1.12  2015/10/14 23:26:32  jypak
+ *  Archive Log:    PR 130913 - Java Help Window missing icon.
+ *  Archive Log:    Use a correct JDialog constructor in HelpMainWindow.
+ *  Archive Log:
  *  Archive Log:    Revision 1.11  2015/08/18 15:50:33  jypak
  *  Archive Log:    PR 129070 - Incorrect Help content.
  *  Archive Log:    All help pages are provided for alpha final.
@@ -85,23 +101,23 @@
 
 package com.intel.stl.ui.main;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.net.URL;
 
-import javax.help.CSH;
 import javax.help.HelpBroker;
 import javax.help.HelpSet;
 import javax.help.HelpSetException;
-import javax.swing.AbstractAction;
-import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 
-public class HelpAction extends AbstractAction {
+public class HelpAction {
+
+    public static boolean DYNAMIC_SIZE = false;
 
     /**
      * 
      */
+    @SuppressWarnings("unused")
     private static final long serialVersionUID = -1868097381130706771L;
 
     // Help ID strings
@@ -288,6 +304,9 @@ public class HelpAction extends AbstractAction {
     private final String ADMIN_CONSOLE_TERMINAL =
             "GUID-48853F77-50C1-4650-9205-104455B51088";
 
+    private final String ADMIN_LOG_VIEWER =
+            "GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D";
+
     // Java Help system navigator type enum.
     private final JavaHelpNavType view;
 
@@ -297,8 +316,6 @@ public class HelpAction extends AbstractAction {
     private OnlineHelpBroker helpBroker;
 
     private HelpSet helpSet;
-
-    private ActionListener displayListener;
 
     private static HelpAction instance = null;
 
@@ -314,15 +331,6 @@ public class HelpAction extends AbstractAction {
         initHelpSystem();
     }
 
-    @Override
-    public void actionPerformed(ActionEvent event) {
-        // If not 1st time, other ID will be displayed. Set to default ID
-        // anyway.
-        helpBroker.setCurrentView(view.toString());
-        CSH.setHelpIDString((JMenuItem) event.getSource(), DEFAULT);
-        displayListener.actionPerformed(event);
-    }
-
     private void initHelpSystem() {
         if (helpBroker != null && helpSet != null) {
             return;
@@ -333,10 +341,18 @@ public class HelpAction extends AbstractAction {
             helpSet.setKeyData(HelpSet.implRegistry, HelpSet.helpBrokerClass,
                     OnlineHelpBroker.class.getName());
             helpBroker = (OnlineHelpBroker) helpSet.createHelpBroker();
+            helpBroker.setCurrentView(view.toString());
 
+            if (DYNAMIC_SIZE) {
+                int width =
+                        (int) (Toolkit.getDefaultToolkit().getScreenSize()
+                                .getWidth() * .4f);
+                int height =
+                        (int) (Toolkit.getDefaultToolkit().getScreenSize()
+                                .getHeight() * .8f);
+                helpBroker.setSize(new Dimension(width, height));
+            }
         }
-
-        displayListener = new CSH.DisplayHelpFromSource(helpBroker);
     }
 
     protected HelpSet initHelpSet() {
@@ -353,8 +369,8 @@ public class HelpAction extends AbstractAction {
         return helpSet;
     }
 
-    public void enableHelpKey(JFrame frame) {
-        helpBroker.enableHelpKey(frame.getRootPane(), DEFAULT, helpSet);
+    public void enableHelpMenu(JMenuItem menu) {
+        helpBroker.enableHelpOnButton(menu, DEFAULT, helpSet);
     }
 
     public HelpBroker getHelpBroker() {
@@ -808,4 +824,7 @@ public class HelpAction extends AbstractAction {
         return ADMIN_CONSOLE_TERMINAL;
     }
 
+    public String getAdminLogViewer() {
+        return ADMIN_LOG_VIEWER;
+    }
 }

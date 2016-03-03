@@ -34,6 +34,13 @@
  *  Archive Source: $Source$
  * 
  *  Archive Log: $Log$
+ *  Archive Log: Revision 1.25  2015/11/18 23:58:08  rjtierne
+ *  Archive Log: PR 131021 - Message box adjustment
+ *  Archive Log: - Removed DIALOG_TEXT_FONT_SIZE
+ *  Archive Log:
+ *  Archive Log: Revision 1.24  2015/11/16 17:40:03  fisherma
+ *  Archive Log: PR 131021 - Message box adjustment.  Updated size of the text area to be show in the error/message dialogs.  Updated font size to a constant so that it would show up similarly across platforms.  Show newly added text in the visible part of the viewport for text area.
+ *  Archive Log:
  *  Archive Log: Revision 1.23  2015/10/06 15:53:50  rjtierne
  *  Archive Log: PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
  *  Archive Log: - Fixed Typo

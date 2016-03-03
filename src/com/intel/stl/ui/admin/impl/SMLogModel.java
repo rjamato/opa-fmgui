@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.4  2015/11/18 23:52:24  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Added login credentials and logFilePath
+ *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/09/25 13:53:59  rjtierne
  *  Archive Log:    PR 130011 - Enhance SM Log Viewer to include Standard and Advanced requirements
  *  Archive Log:    - Added new attributes to support:
@@ -64,10 +68,11 @@ import java.util.List;
 
 import com.intel.stl.api.logs.LogResponse;
 import com.intel.stl.ui.admin.impl.logs.SearchPositionBean;
+import com.intel.stl.ui.console.LoginBean;
 
 public class SMLogModel {
 
-    private String fileName;
+    private String logFilePath;
 
     private long numLines;
 
@@ -96,12 +101,14 @@ public class SMLogModel {
     private final List<SearchPositionBean> searchResults =
             new ArrayList<SearchPositionBean>();
 
-    public String getFileName() {
-        return fileName;
+    private LoginBean credentials;
+
+    public String getLogFilePath() {
+        return logFilePath;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setLogFilePath(String logFilePath) {
+        this.logFilePath = logFilePath;
     }
 
     public long getNumLines() {
@@ -219,5 +226,13 @@ public class SMLogModel {
         selectedSearchKey = key;
         selectionStart = start;
         selectionEnd = end;
+    }
+
+    public void setCredentials(LoginBean credentials) {
+        this.credentials = credentials;
+    }
+
+    public LoginBean getCredentials() {
+        return credentials;
     }
 }

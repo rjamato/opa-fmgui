@@ -35,6 +35,18 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.32  2015/12/10 17:22:03  jijunwan
+ *  Archive Log:    PR 132014 - Tree update doesn't work properly for DeviceGroup and VirtualFabric
+ *  Archive Log:    - fixed typo in code
+ *  Archive Log:
+ *  Archive Log:    Revision 1.31  2015/12/03 17:15:51  jijunwan
+ *  Archive Log:    PR 131865 - Klocwork Issue on TreeController
+ *  Archive Log:    - fixed null pointer issues
+ *  Archive Log:
+ *  Archive Log:    Revision 1.30  2015/10/23 19:20:07  jijunwan
+ *  Archive Log:    PR 129357 - Be able to hide inactive ports
+ *  Archive Log:    - improved to apply filter after we created or updated  a tree
+ *  Archive Log:
  *  Archive Log:    Revision 1.29  2015/08/17 18:53:40  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -172,6 +184,7 @@ import com.intel.stl.ui.main.UndoableSelection;
 import com.intel.stl.ui.monitor.tree.FVResourceNode;
 import com.intel.stl.ui.monitor.tree.FVTreeManager;
 import com.intel.stl.ui.monitor.tree.FVTreeModel;
+import com.intel.stl.ui.monitor.tree.InactivePortVizIndicator;
 import com.intel.stl.ui.monitor.view.TreeViewInterface;
 
 /**
@@ -216,6 +229,9 @@ public abstract class TreeController<E extends TreeViewInterface> implements
 
     private TreeSelection currentSelection;
 
+    private final InactivePortVizIndicator treeIndicator =
+            new InactivePortVizIndicator();
+
     public TreeController(E pTreeView, MBassador<IAppEvent> eventBus,
             FVTreeManager treeBuilder) {
         view = pTreeView;
@@ -243,6 +259,7 @@ public abstract class TreeController<E extends TreeViewInterface> implements
     @Override
     public void setContext(Context context, IProgressObserver observer) {
         mContext = context;
+        treeIndicator.setContext(context);
         isSystemUpdate = true;
         buildTrees(observer);
         view.clear();
@@ -323,6 +340,7 @@ public abstract class TreeController<E extends TreeViewInterface> implements
             return;
         }
         FVTreeModel treeModel = new FVTreeModel(tree);
+        treeModel.filter(treeIndicator);
         view.setTreeModel(type, treeModel);
         treeModels.put(type, treeModel);
         mTreeBuilder.addMonitor(type, treeModel);
@@ -330,25 +348,37 @@ public abstract class TreeController<E extends TreeViewInterface> implements
 
     public void updateTrees(IProgressObserver observer) {
         IProgressObserver[] subObservers = observer.createSubObservers(4);
-        mTreeBuilder
-                .updateTree(TreeTypeEnum.DEVICE_TYPES_TREE, subObservers[0]);
-        subObservers[0].onFinish();
-        mTreeBuilder.updateTree(TreeTypeEnum.DEVICE_GROUPS_TREE,
-                subObservers[1]);
-        subObservers[1].onFinish();
-        mTreeBuilder.updateTree(TreeTypeEnum.VIRTUAL_FABRICS_TREE,
-                subObservers[2]);
-        subObservers[2].onFinish();
+        updateTree(TreeTypeEnum.DEVICE_TYPES_TREE, subObservers[0]);
+        updateTree(TreeTypeEnum.DEVICE_GROUPS_TREE, subObservers[1]);
+        updateTree(TreeTypeEnum.VIRTUAL_FABRICS_TREE, subObservers[2]);
         // mTreeBuilder.updateTree(TreeTypeEnum.TOP_10_CONGESTED_TREE,
         // subObservers[3]);
         subObservers[3].onFinish();
     }
 
+    protected void updateTree(TreeTypeEnum type, IProgressObserver observer) {
+        FVTreeModel treeModel = treeModels.get(type);
+        if (treeModel != null) {
+            mTreeBuilder.updateTree(type, observer);
+            treeModel.filter(treeIndicator);
+            view.setTreeModel(type, treeModel);
+        }
+    }
+
     public void updateTreeNode(int lid) {
-        mTreeBuilder.updateTreeNode(lid, TreeTypeEnum.DEVICE_TYPES_TREE);
-        mTreeBuilder.updateTreeNode(lid, TreeTypeEnum.DEVICE_GROUPS_TREE);
-        mTreeBuilder.updateTreeNode(lid, TreeTypeEnum.VIRTUAL_FABRICS_TREE);
-        // mTreeBuilder.updateTreeNode(lid, TreeTypeEnum.TOP_10_CONGESTED_TREE);
+        updateTreeNode(lid, TreeTypeEnum.DEVICE_TYPES_TREE);
+        updateTreeNode(lid, TreeTypeEnum.DEVICE_GROUPS_TREE);
+        updateTreeNode(lid, TreeTypeEnum.VIRTUAL_FABRICS_TREE);
+        // updateTreeNode(lid, TreeTypeEnum.TOP_10_CONGESTED_TREE);
+    }
+
+    protected void updateTreeNode(int lid, TreeTypeEnum type) {
+        FVTreeModel treeModel = treeModels.get(type);
+        if (treeModel != null) {
+            mTreeBuilder.updateTreeNode(lid, type);
+            treeModel.filter(treeIndicator);
+            view.setTreeModel(type, treeModel);
+        }
     }
 
     @Override
