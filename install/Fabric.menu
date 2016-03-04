@@ -5,10 +5,7 @@
         <Name>Fabric</Name>
         <Directory>Fabric.directory</Directory>
         <Include>
-            <Filename>fmgui.desktop</Filename>
-            <And>
-                <Category>Fabric</Category>
-            </And>
+            <Category>Fabric</Category>
         </Include>
     </Menu>
 </Menu>

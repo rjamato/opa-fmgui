@@ -3,7 +3,6 @@
 	<property name="target" value="target"/>
     <property name="resources" value="resources"/>
 	<property name="lib" value="lib"/>
-        <property name="help" value="help"/>
     <property name="fmgui.app.jar" value="fmgui.jar"/>
     <property environment="env"/>
 	<path id="source.compile.path">
@@ -44,21 +43,6 @@
                 <include name="**/*"/>
             </fileset>
         </copy>
-
-        <manifestclasspath property="lib.dependencies" jarfile="${fmgui.app.jar}">
-                    <classpath>
-                        <fileset dir="${lib}">
-                            <include name="**/*.jar"/>
-                        </fileset>
-                <fileset dir="${help}">
-                    <include name="**/*.jar"/>
-                </fileset>
-                    </classpath>
-        </manifestclasspath>
-        <manifest file="${target}/classes/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Class-Path" value=". ${lib.dependencies}"/>
-        </manifest>
-
         <jar jarfile="${target}/${fmgui.app.jar}" basedir="${target}/classes" manifest="${target}/classes/META-INF/MANIFEST.MF" />
 		<copy file="${target}/${fmgui.app.jar}" todir="." overwrite="true" />
 	</target>

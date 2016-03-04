@@ -6,4 +6,4 @@ Exec=/usr/local/bin/fmgui
 Icon=fmgui
 Terminal=false
 Type=Application
-Categories=Java;Network;Monitor;
+Categories=Application;Fabric;System;
