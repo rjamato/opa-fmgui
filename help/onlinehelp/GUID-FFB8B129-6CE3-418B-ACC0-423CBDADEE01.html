@@ -1,0 +1,159 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="concept">
+<meta name="DC.Title" content="Other Counters">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-FFB8B129-6CE3-418B-ACC0-423CBDADEE01">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>Other Counters</title>
+</head>
+<body id="GUID-FFB8B129-6CE3-418B-ACC0-423CBDADEE01"><a name="GUID-FFB8B129-6CE3-418B-ACC0-423CBDADEE01"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">Other Counters</h1>
+ 
+  <div class="body conbody"> 
+    <p class="p">This section displays the data shown in the following table. 
+    </p>
+ 
+    
+<div class="tablenoborder"><a name="GUID-FFB8B129-6CE3-418B-ACC0-423CBDADEE01__GUID-1FE769BC-EF15-4076-8AA6-93690AE51225"><!-- --></a><table cellpadding="4" cellspacing="0" summary="" id="GUID-FFB8B129-6CE3-418B-ACC0-423CBDADEE01__GUID-1FE769BC-EF15-4076-8AA6-93690AE51225" class="table" frame="border" border="1" rules="all"><caption xmlns:xs="http://www.w3.org/2001/XMLSchema"><span class="tablecap">Other Counters</span></caption> 
+      <thead class="thead" align="left"> 
+        <tr class="row"> 
+          <th class="entry" valign="top" width="40.322580645161295%" id="d11777e28"><strong class="ph b">Data Displayed</strong> 
+          </th>
+ 
+          <th class="entry" valign="top" width="59.67741935483871%" id="d11777e33"><strong class="ph b">Description</strong> 
+          </th>
+ 
+        </tr>
+</thead>
+ 
+      <tbody class="tbody"> 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="40.322580645161295%" headers="d11777e28 ">LocalLinkIntegrityErrors 
+          </td>
+ 
+          <td class="entry" valign="top" width="59.67741935483871%" headers="d11777e33 "> 
+            <span class="ph">This counter indicates the number of retries initiated by the
+              link transfer layer. It may be indicative of low signal quality, or may be due
+              to long or low quality cables. 
+            </span> 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="40.322580645161295%" headers="d11777e28 ">FMConfigErrors 
+          </td>
+ 
+          <td class="entry" valign="top" width="59.67741935483871%" headers="d11777e33 "> This counter indicates inconsistencies of low
+            level SMA configuration on both sides of the link. It is indicative of the
+            possible misconfiguration of a port, either by the SM, or (more likely) by user
+            intervention (by using a tool such as 
+            <samp class="ph codeph">opaportconfig</samp>). 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="40.322580645161295%" headers="d11777e28 ">ExcessiveBufferOverruns 
+          </td>
+ 
+          <td class="entry" valign="top" width="59.67741935483871%" headers="d11777e33 "> This counter, associated with credit
+            management, indicates an input buffer overrun. It may indicate possible
+            misconfiguration of a port, either by the SM or (more likely) by user
+            intervention (e.g. using a tool such as 
+            <samp class="ph codeph">opaportconfig</samp>). 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="40.322580645161295%" headers="d11777e28 "> SwPortCongestion 
+          </td>
+ 
+          <td class="entry" valign="top" width="59.67741935483871%" headers="d11777e33 "> This switch-only counter indicates the number
+            of packets that were discarded as unable to transmit due to flow control
+            issues. 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="40.322580645161295%" headers="d11777e28 ">MarkFECN 
+          </td>
+ 
+          <td class="entry" valign="top" width="59.67741935483871%" headers="d11777e33 "> This counter indicates the total number of
+            packets that were marked FECN by the transmitter due to congestion. 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="40.322580645161295%" headers="d11777e28 ">LinkErrorRecovery 
+          </td>
+ 
+          <td class="entry" valign="top" width="59.67741935483871%" headers="d11777e33 "> This counter indicates the number of times the
+            link has successfully completed the link error recovery process. If LQI is
+            fluctuating toward low values AND this counter is increasing, it may be
+            indicative of a bad link. Indication of a more severe signal quality problem. 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="40.322580645161295%" headers="d11777e28 ">LinkDowned 
+          </td>
+ 
+          <td class="entry" valign="top" width="59.67741935483871%" headers="d11777e33 "> This counter indicates the total number of
+            times the port has failed the link error recovery process and downed the link.
+            A large number of occurrences of these events can cause disruptions to fabric
+            traffic. 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="40.322580645161295%" headers="d11777e28 ">UncorrectableErrors 
+          </td>
+ 
+          <td class="entry" valign="top" width="59.67741935483871%" headers="d11777e33 "> This counter indicates the number of
+            unrecoverable internal device errors. It is indicative of a severe hardware
+            defect or data corruption on the wire. 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="40.322580645161295%" headers="d11777e28 ">LinkQualityIndicator 
+          </td>
+ 
+          <td class="entry" valign="top" width="59.67741935483871%" headers="d11777e33 "> This is a status indicator, similar to the
+            signal strength bar display on a mobile phone, that enumerates link quality as
+            a range of 0-5, with 5 being very good. Values in the lower part of the range
+            may indicate hardware problems such as port, cable, etc. that surface as signal
+            integrity issues, leading to performance and other problems. 
+          </td>
+ 
+        </tr>
+ 
+      </tbody>
+ 
+    </table>
+</div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: February 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

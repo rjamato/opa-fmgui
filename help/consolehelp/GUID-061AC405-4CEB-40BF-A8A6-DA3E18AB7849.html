@@ -1,0 +1,257 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opashowallports">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opashowallports</title>
+</head>
+<body class="man8" id="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849"><a name="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opashowallports</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849__GUID-E4DBBE4B-B637-4EA8-9173-7108EED9D7D2"><a name="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849__GUID-E4DBBE4B-B637-4EA8-9173-7108EED9D7D2"><!-- --></a> 
+      <p class="p"><strong class="ph b">(Switch and Host)</strong> Displays basic port state and statistics for
+        all host nodes, chassis, or externally-managed switches. 
+      </p>
+ 
+      <div class="note note" id="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849__GUID-02595045-82E5-43D1-B57F-A41801393C47"><a name="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849__GUID-02595045-82E5-43D1-B57F-A41801393C47"><!-- --></a><span class="notetitle">Note:</span>  
+        <p class="p"><samp class="ph codeph">opareport</samp> and 
+          <samp class="ph codeph">opareports</samp> are more powerful 
+          <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric Suite FastFabric</span> commands. For general fabric analysis, use 
+          <samp class="ph codeph">opareport</samp> or 
+          <samp class="ph codeph">opareports</samp> with options such as 
+          <samp class="ph codeph">-o errors</samp> and 
+          <samp class="ph codeph">-o slowlinks</samp> to perform an efficient analysis of
+          link speeds and errors. 
+        </p>
+ 
+      </div>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849__GUID-D2D4714B-B456-4D44-B04E-41A601118E80"><a name="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849__GUID-D2D4714B-B456-4D44-B04E-41A601118E80"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opashowallports [-C] [-f <var class="keyword varname">hostfile</var>] [-F <var class="keyword varname">chassisfile</var>] [-h '<var class="keyword varname">hosts</var>']
+[-H '<var class="keyword varname">chassis</var>'] [-S]</pre>
+ 
+      <p class="p">or 
+      </p>
+ 
+      <pre class="pre codeblock">opashowallports --help</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849__XX1146888"><a name="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849__XX1146888"><!-- --></a><h2 class="sectiontitle">Options </h2> 
+      <a name="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849__GUID-54E57040-A8F7-4A36-9C71-B53EB76081B9"><!-- --></a><dl class="dl parml" id="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849__GUID-54E57040-A8F7-4A36-9C71-B53EB76081B9"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Produces full help text. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-C</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Performs operation against chassis. Default = host. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-f 
+              <var class="keyword varname">hostfile</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">File with list of hosts in cluster. Default is 
+            <span class="ph filepath">/etc/sysconfig/opa/hosts</span> file. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-F 
+              <var class="keyword varname">chassisfile</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">File with list of chassis in cluster. Default is 
+            <span class="ph filepath">/etc/sysconfig/opa/chassis</span> file. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-h 
+              <var class="keyword varname">hosts</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of hosts for which to show ports. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-H 
+              <var class="keyword varname">chassis</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of chassis for which to show ports. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-S</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Securely prompts for password for admin on chassis. 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849__GUID-F91E2A39-FB55-49C5-B26C-21478BF8CCB4"><a name="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849__GUID-F91E2A39-FB55-49C5-B26C-21478BF8CCB4"><!-- --></a><h2 class="sectiontitle">Environment Variables</h2> 
+      <p class="p">The following environment variables are also used by this command: 
+      </p>
+ 
+      <a name="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849__GUID-776FE95B-0D12-4B5C-BB4D-7A8D394CD19A"><!-- --></a><dl class="dl parml" id="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849__GUID-776FE95B-0D12-4B5C-BB4D-7A8D394CD19A"> 
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">HOSTS</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of hosts, used if 
+              <samp class="ph codeph">-h</samp> option not supplied. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">CHASSIS</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of chassis, used if 
+              <samp class="ph codeph">-C</samp> is used and 
+              <samp class="ph codeph">-H</samp> and 
+              <samp class="ph codeph">-F</samp> options not supplied. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">HOSTS_FILE</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File containing list of hosts, used in absence of 
+              <samp class="ph codeph">-f</samp> and 
+              <samp class="ph codeph">-h</samp>. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">CHASSIS_FILE 
+            </span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File containing list of chassis, used in absence of 
+              <samp class="ph codeph">-F</samp> and 
+              <samp class="ph codeph">-H</samp>. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_CHASSIS_LOGIN_METHOD</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">How to log into chassis. Can be Telnet or SSH. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_CHASSIS_ADMIN_PASSWORD</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Password for admin on all chassis. Used in absence of 
+              <samp class="ph codeph">-S</samp> option. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849__XX1146890"><a name="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849__XX1146890"><!-- --></a><h2 class="sectiontitle">Example </h2> 
+      <pre class="pre codeblock">opashowallports
+opashowallports -h 'elrond arwen'
+HOSTS='elrond arwen' opashowallports
+opashowallports -C
+opashowallports -H 'chassis1 chassis2'
+CHASSIS='chassis1 chasssi2' opashowallports</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849__SECTION_29AA9CEF20604365A91E6D5FFF43B183"><a name="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849__SECTION_29AA9CEF20604365A91E6D5FFF43B183"><!-- --></a><h2 class="sectiontitle">Notes</h2> 
+      <p class="p">When performing 
+        <samp class="ph codeph">opashowallports</samp> against hosts, internally SSH is used.
+        The command 
+        <samp class="ph codeph">opashowallports</samp> requires that password-less SSH be set
+        up between the host running the 
+        <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric Suite FastFabric</span> Toolset and the hosts 
+        <samp class="ph codeph">opashowallports</samp> is operating against. The 
+        <samp class="ph codeph">opasetupssh</samp> 
+        <span class="ph">FastFabric</span> tool can aid in setting up
+        password-less SSH. 
+      </p>
+ 
+      <p class="p">When performing operations against chassis, Intel recommends that you
+        set up SSH keys (see 
+        <a class="xref" href="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561.html#GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561">opasetupssh</a>).
+        If SSH keys are not set up, Intel recommends that you use the 
+        <samp class="ph codeph">-S</samp> option, to avoid keeping the password in
+        configuration files. 
+      </p>
+ 
+      <p class="p">When performing 
+        <samp class="ph codeph">opashowallports</samp> against externally-managed switches, a
+        node with 
+        <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric Suite FastFabric</span> Toolset installed is required. Typically, this is
+        the node from which 
+        <samp class="ph codeph">opashowallports</samp> is being run. 
+      </p>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

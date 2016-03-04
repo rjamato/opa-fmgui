@@ -1,0 +1,69 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opaextractstat">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-7379CB19-27DD-4C8E-91E8-427EA8A14B67">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opaextractstat</title>
+</head>
+<body class="man8" id="GUID-7379CB19-27DD-4C8E-91E8-427EA8A14B67"><a name="GUID-7379CB19-27DD-4C8E-91E8-427EA8A14B67"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opaextractstat</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-7379CB19-27DD-4C8E-91E8-427EA8A14B67__GUID-A9A61186-0861-44D1-90D6-1725131BF326"><a name="GUID-7379CB19-27DD-4C8E-91E8-427EA8A14B67__GUID-A9A61186-0861-44D1-90D6-1725131BF326"><!-- --></a> 
+      <p class="p">Performs an error analysis of a fabric and provides augmented
+        information from a 
+        <samp class="ph codeph">topology_input</samp> file. The report provides cable
+        information as well as symbol error counts. 
+      </p>
+ 
+      <p class="p"><samp class="ph codeph">opaextractstat</samp> generates a detailed 
+        <samp class="ph codeph">opareport</samp> errors report that also has a topology input
+        file (see 
+        <a class="xref" href="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C.html#GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C">opareport</a>
+        for more information about topology files). The report is piped to 
+        <samp class="ph codeph">opaxmlextract</samp> which extracts values for Link, Cable
+        and Port. (The port element names are context-sensitive.) Note that 
+        <samp class="ph codeph">opaxmlextract</samp> generates two extraction records for
+        each link (one for each port on the link); therefore, 
+        <samp class="ph codeph">opaextractstat</samp> merges the two records into a single
+        record and removes redundant link and cable information. 
+      </p>
+ 
+      <p class="p"><samp class="ph codeph">opaextractstat</samp> contains a 
+        <samp class="ph codeph">while read</samp> loop that reads the CSV line-by-line, uses 
+        <samp class="ph codeph">cut</samp> to remove redundant information, and outputs the
+        data on a common line. 
+      </p>
+ 
+      </div>
+ 
+    <div class="section refsyn" id="GUID-7379CB19-27DD-4C8E-91E8-427EA8A14B67__GUID-32F04DAF-B7FF-4F2A-881B-7C9418BBCFEB"><a name="GUID-7379CB19-27DD-4C8E-91E8-427EA8A14B67__GUID-32F04DAF-B7FF-4F2A-881B-7C9418BBCFEB"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <p class="p">The portion of the script that calls 
+        <samp class="ph codeph">opareport</samp> and 
+        <samp class="ph codeph">opaxmlextract</samp> follows: 
+      </p>
+ 
+      <pre class="pre codeblock">opareport -x -d 10 -s -o errors -T $@ | opaxmlextract -d \; 
+-e Rate -e MTU -e LinkDetails -e CableLength -e CableLabel 
+-e CableDetails -e Port.NodeDesc -e Port.PortNum -e SymbolErrors.Value</pre>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

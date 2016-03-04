@@ -1,0 +1,169 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opagetvf">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-C669A8F2-D7CB-48E7-9066-033AE165D295">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opagetvf</title>
+</head>
+<body class="man1" id="GUID-C669A8F2-D7CB-48E7-9066-033AE165D295"><a name="GUID-C669A8F2-D7CB-48E7-9066-033AE165D295"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opagetvf</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-C669A8F2-D7CB-48E7-9066-033AE165D295__GUID-734D5E3B-E349-41ED-AFB8-50DBA8547E26"><a name="GUID-C669A8F2-D7CB-48E7-9066-033AE165D295__GUID-734D5E3B-E349-41ED-AFB8-50DBA8547E26"><!-- --></a> 
+      <p class="p">Used for scripting application use of vFabrics, such as for mpirun
+        parameters. You can query by VF Name, VF Index, Service ID, MGID, PKey, or SL.
+        Fetches the Virtual Fabric info in a delimited format. Returns exactly one
+        matching VF. When multiple VFs match the query, it prefers non-default VFs in
+        which the calling server is a full member. If multiple choices remain, it
+        returns the one with the lowest VF Index. Uses the same algorithm as the
+        Distributed SA Plug-in (DSAP). 
+      </p>
+ 
+      <p class="p">The tool can be used with additional scripts to help set PKey, SL,
+        MTU, and Rate when running MPI jobs. Internally, this tool is based on the 
+        <samp class="ph codeph">opasaquery -o vfinfocsv</samp> command. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn man1" id="GUID-C669A8F2-D7CB-48E7-9066-033AE165D295__GUID-880B8316-7219-4243-9638-6AFAB32F4D94"><a name="GUID-C669A8F2-D7CB-48E7-9066-033AE165D295__GUID-880B8316-7219-4243-9638-6AFAB32F4D94"><!-- --></a><h2 class="sectiontitle">Syntax </h2> 
+      <pre class="pre codeblock">opagetvf [-h <var class="keyword varname">hfi</var>] [-p <var class="keyword varname">port</var>] [-e] 
+[-d <var class="keyword varname">vfname</var>|-S <var class="keyword varname">serviceId</var>|-m <var class="keyword varname">mcgid</var>|-i <var class="keyword varname">vfIndex</var>|
+-k <var class="keyword varname">pkey</var>|-L <var class="keyword varname">sl</var>]</pre>
+ 
+      <div class="p">or 
+        <pre class="pre codeblock">opagetvf --help</pre>
+ 
+      </div>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-C669A8F2-D7CB-48E7-9066-033AE165D295__XX1172003"><a name="GUID-C669A8F2-D7CB-48E7-9066-033AE165D295__XX1172003"><!-- --></a><h2 class="sectiontitle">Options </h2> 
+      <a name="GUID-C669A8F2-D7CB-48E7-9066-033AE165D295__GUID-7A19E8B3-DCE3-43F3-AF82-204DAEC4E626"><!-- --></a><dl class="dl parml" id="GUID-C669A8F2-D7CB-48E7-9066-033AE165D295__GUID-7A19E8B3-DCE3-43F3-AF82-204DAEC4E626"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Produces full help text. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-h 
+              <var class="keyword varname">hfi</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">HFI to send by. Default is first HFI. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-p 
+              <var class="keyword varname">port</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Port to send by, default is first active port. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-e</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Output MTU and rate as enum values. 0 = unspecified. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-d 
+              <var class="keyword varname">vfname</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries by VirtualFabric Name. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-S 
+              <var class="keyword varname">serviceId</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries by Application ServiceId. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-m 
+              <var class="keyword varname">gid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries by Application Multicast GID. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-i 
+              <var class="keyword varname">vfindex</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries by VirtualFabric Index. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-k 
+              <var class="keyword varname">pkey</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries by VirtualFabric PKey. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-L 
+              <var class="keyword varname">SL</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries by VirtualFabric SL. 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-C669A8F2-D7CB-48E7-9066-033AE165D295__XX1172296"><a name="GUID-C669A8F2-D7CB-48E7-9066-033AE165D295__XX1172296"><!-- --></a><h2 class="sectiontitle">Examples </h2> 
+      <pre class="pre codeblock">opagetvf -d 'Compute'
+opagetvf -h 2 -p 2 -d 'Compute'</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-C669A8F2-D7CB-48E7-9066-033AE165D295__XX1172329"><a name="GUID-C669A8F2-D7CB-48E7-9066-033AE165D295__XX1172329"><!-- --></a><h2 class="sectiontitle">Sample Outputs </h2> 
+      <p class="p">The output is of the form: 
+        <samp class="ph codeph">name:index:pkey:sl:mtu:rate</samp> as shown in the following
+        example. 
+      </p>
+ 
+      <pre class="pre codeblock"># opagetvf -d Default
+Default:0:0xffff:0:unlimited:unlimited</pre>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

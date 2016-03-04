@@ -1,0 +1,88 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opaextractlink">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opaextractlink</title>
+</head>
+<body class="man8" id="GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377"><a name="GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opaextractlink</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377__GUID-4E9D099E-47C4-4855-9C42-88D4159EDA63"><a name="GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377__GUID-4E9D099E-47C4-4855-9C42-88D4159EDA63"><!-- --></a> 
+      <p class="p">Produces a CSV file listing all or some of the links in the fabric. 
+        <span class="ph filepath">opaextractlink.sh</span> is a front end to the 
+        <samp class="ph codeph">opareport</samp> tool. The output from this tool can be
+        imported into a spreadsheet or parsed by other scripts. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377__GUID-6FE346ED-A0D7-4755-9F06-FB721C52B4FD"><a name="GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377__GUID-6FE346ED-A0D7-4755-9F06-FB721C52B4FD"><!-- --></a><h2 class="sectiontitle">Syntax </h2> 
+      <pre class="pre codeblock">opaextractlink [--help] [opareport <var class="keyword varname">options</var>]</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377__XX1204190"><a name="GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377__XX1204190"><!-- --></a><h2 class="sectiontitle">Options </h2> 
+      <a name="GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377__GUID-DE8355DB-F73F-4703-980D-4A0ECE9857BD"><!-- --></a><dl class="dl parml" id="GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377__GUID-DE8355DB-F73F-4703-980D-4A0ECE9857BD"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Produces full help text. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">opareport 
+              <var class="keyword varname">options</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Options are passed to 
+              <samp class="ph codeph">opareport</samp>. 
+              </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377__XX1204192"><a name="GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377__XX1204192"><!-- --></a><h2 class="sectiontitle">Examples </h2> 
+      <pre class="pre codeblock"># List all the links in the fabric:
+opaextractlink.sh
+
+# List all the links to a switch named "OmniPth00117501ffffffff":
+opaextractlink.sh -F "node:OmniPth00117501ffffffff"
+
+# List all the links to end-nodes:
+opaextractlink.sh -F "nodetype:FI"
+
+# List all the links on the 2nd HFI's fabric of a multi-plane fabric:
+opaextractlink.sh -h 2</pre>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

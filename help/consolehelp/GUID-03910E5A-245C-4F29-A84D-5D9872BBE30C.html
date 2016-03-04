@@ -1,0 +1,1709 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opareport">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opareport</title>
+</head>
+<body class="man8" id="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C"><a name="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opareport</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__GUID-DCBBE52A-6936-4A30-B7F8-1B01B71D8BB0"><a name="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__GUID-DCBBE52A-6936-4A30-B7F8-1B01B71D8BB0"><!-- --></a> 
+      <p class="p"><strong class="ph b">(All)</strong> Provides powerful fabric analysis and reporting
+        capabilities. Must be run on a host connected to the 
+        <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric</span> with the 
+        <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric Suite FastFabric</span> Toolset installed. 
+      </p>
+ 
+      </div>
+ 
+    <div class="section refsyn" id="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__GUID-BFE96BA4-2250-4A4D-BF95-C650809D48B2"><a name="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__GUID-BFE96BA4-2250-4A4D-BF95-C650809D48B2"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opareport [-v][-q] [-h <var class="keyword varname">hfi</var>] [-p <var class="keyword varname">port</var>]
+[-o <var class="keyword varname">report</var>] [-d <var class="keyword varname">detail</var>] [-P|-H] [-N] [-x]
+[-X <var class="keyword varname">snapshot_input</var>] [-T <var class="keyword varname">topology_input</var>] [-s] [-r] [-V] 
+[-i&nbsp;<var class="keyword varname">seconds</var>] [-C] [-a] [-m] [-K mkey] [-M] [-A] [-c <var class="keyword varname">file</var>] [-L] 
+[-F <var class="keyword varname">point</var>] [-S <var class="keyword varname">point</var>] [-D <var class="keyword varname">point</var>] [-Q]</pre>
+ 
+      <p class="p">or 
+      </p>
+ 
+      <pre class="pre codeblock">opareport --help</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__XX1146971"><a name="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__XX1146971"><!-- --></a><h2 class="title sectiontitle">Options</h2> 
+       
+      <a name="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__GUID-DD3B2B8F-03A9-42CA-BF2B-CD32AA1567A8"><!-- --></a><dl class="dl parml" id="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__GUID-DD3B2B8F-03A9-42CA-BF2B-CD32AA1567A8"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Produces full help text. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-v/--verbose</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Returns verbose output. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-q/--quiet</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Disables progress reports. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-h 
+              <var class="keyword varname">hfi</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><span class="ph">HFI</span>, numbered 1..n. Using 0
+              specifies that the 
+              <samp class="ph codeph">-p 
+                <var class="keyword varname">port</var></samp> port is a system-wide port
+              number. Default is 0. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-p 
+              <var class="keyword varname">port</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Port, numbered 1..n. If 
+              <samp class="ph codeph">-h 
+                <var class="keyword varname">hfi</var></samp> is 0 then 
+              <samp class="ph codeph"><var class="keyword varname">port</var></samp> is a system-wide port
+              number. Default is 1. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-o/--output 
+              <var class="keyword varname">report</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Report type for output. Refer to 
+              <a class="xref" href="#GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__XX1146981">Report Types</a>
+              for details. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-d/--detail 
+              <var class="keyword varname">detail</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Level of detail 
+              <samp class="ph codeph">0-n</samp> for output. Default is 2. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-P/--persist</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Includes data persistent across reboots. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-H/--hard</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Includes permanent hardware data. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-N/--noname</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Omits node and IOC names. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-x/--xml</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Produces output in XML. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-X/--infile 
+              <var class="keyword varname">snapshot_input</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Generates a report using the data in the 
+              <span class="ph filepath">snapshot_input</span> file. 
+              <span class="ph filepath">snapshot_input</span> must have been generated
+              during a previous 
+              <samp class="ph codeph">-o 
+                <var class="keyword varname">snapshot</var></samp> run. When used, the 
+              <samp class="ph codeph">-s</samp>, 
+              <samp class="ph codeph">-i</samp>, 
+              <samp class="ph codeph">-C</samp>, and 
+              <samp class="ph codeph">-a</samp> options are ignored. Not permitted with 
+              <samp class="ph codeph">-o 
+                <var class="keyword varname">route</var></samp> and 
+              <samp class="ph codeph">-F 
+                <var class="keyword varname">route</var></samp>. 
+              <samp class="ph codeph">'-'</samp> may be used as the 
+              <samp class="ph codeph">snapshot_input</samp> to specify 
+              <samp class="ph codeph">stdin</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-T/--topology 
+              <var class="keyword varname">topology_input</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Uses 
+              <span class="ph filepath">topology_input</span> file to augment and verify
+              fabric information. When used, various reports can be augmented with
+              information not available electronically (such as cable labels and lengths). 
+              <samp class="ph codeph">'-'</samp> may be used to specify 
+              <samp class="ph codeph">stdin</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-s/--stats</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Gets performance statistics for all ports. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-i/--interval 
+              <var class="keyword varname">seconds</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Obtains performance statistics over interval 
+              <samp class="ph codeph"><var class="keyword varname">seconds</var></samp>, clears all
+              statistics, waits interval 
+              <samp class="ph codeph"><var class="keyword varname">seconds</var></samp>, then generates
+              report. Implies 
+              <samp class="ph codeph">-s</samp> option. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-C/--clear</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Clears performance statistics for all ports. Only statistics
+              with error thresholds are cleared. A clear occurs after generating the report. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-a/--clearall</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Clears all performance statistics for all ports. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-m/--smadirect</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Accesses fabric information directly from SMA. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-K/--mkey 
+              <var class="keyword varname">mkey</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">SMA M_Key for direct SMA query. Default is 0. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-M/--pmadirect</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Accesses performance statistics using direct PMA. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-A/--allports</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Gets PortInfo for down switch ports. Uses direct SMA to get this
+              data. If used with 
+              <samp class="ph codeph">-M</samp>, also gets PMA stats for down-switch ports. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-c/--config 
+              <var class="keyword varname">file</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Error thresholds configuration file. Default is 
+              <span class="ph filepath">/etc/sysconfig/opa/opamon.conf</span> file. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-L/--limit</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Limits operation to exact specified focus with 
+              <samp class="ph codeph">-F</samp> for port error counters check (<samp class="ph codeph">-o 
+                <var class="keyword varname">errors</var></samp>) and port counters clear
+              (<samp class="ph codeph">-C</samp> or 
+              <samp class="ph codeph">-i</samp>). Normally, the neighbor of each selected
+              port is also checked/cleared. Does not affect other reports. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-F/--focus 
+              <var class="keyword varname">point</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Focus area for report. Used for all reports except 
+              <samp class="ph codeph">route</samp> to limit scope of report. Refer to 
+              <a class="xref" href="#GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__XX1117438">Point Syntax</a>
+              for details. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-S/--src 
+              <var class="keyword varname">point</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Source for trace route, default is local port. Refer to 
+              <a class="xref" href="#GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__XX1117438">Point Syntax</a>
+              for details. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-D/--dest 
+              <var class="keyword varname">point</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Destination for trace route. Refer to 
+              <a class="xref" href="#GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__XX1117438">Point Syntax</a>
+              for details. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-Q/--quietfocus</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Excludes focus description from report. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+       
+      <a name="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__GUID-2EB7B7F0-D46A-4D80-9D71-4727CE830A35"><!-- --></a><dl class="dl parml" id="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__GUID-2EB7B7F0-D46A-4D80-9D71-4727CE830A35"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -h 0</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">First active port in system (default). 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -h 0 -p 0</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">First active port in system. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -h 
+              <var class="keyword varname">x</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">First active port on HFI 
+              <var class="keyword varname">x</var>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"> 
+            <samp class="ph codeph">-h 
+              <var class="keyword varname">x</var> -p 0</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">First active port on HFI 
+              <var class="keyword varname">x</var>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"> 
+            <samp class="ph codeph">-h 0 -p 
+              <var class="keyword varname">y</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Port 
+              <var class="keyword varname">y&nbsp; 
+              </var> within system (no matter which ports are active). 
+            </p>
+ 
+            </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"> 
+            <samp class="ph codeph">-h 
+              <var class="keyword varname">x</var> -p 
+              <var class="keyword varname">y</var> 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">HFI 
+              <var class="keyword varname">x</var>, port 
+              <var class="keyword varname">y</var>. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+       
+      <a name="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__GUID-8A77718E-D0EE-4C17-A742-BE03476DD35D"><!-- --></a><dl class="dl parml" id="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__GUID-8A77718E-D0EE-4C17-A742-BE03476DD35D"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-r/--routes</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Gets routing tables for all switches. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-V/--vltables</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Gets QOS VL-related tables for all ports. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__XX1146981"><a name="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__XX1146981"><!-- --></a><h2 class="title sectiontitle">Report Types</h2> 
+       
+      <a name="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__GUID-260406B4-A622-4693-BFCF-E4FF0C854834"><!-- --></a><dl class="dl parml" id="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__GUID-260406B4-A622-4693-BFCF-E4FF0C854834"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">comps</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Summary of all systems and SMs in fabric. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">brcomps</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Brief summary of all systems and SMs in fabric. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">nodes</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Summary of all node types and SMs in fabric. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">brnodes</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Brief summary of all node types and SMs in fabric. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">ious</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Summary of all IO units in the fabric. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">lids</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Summary of all LIDs in the fabric. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">links</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Summary of all links. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">extlinks</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Summary of links external to systems. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">slowlinks</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Summary of links running slower than expected. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">slowconfiglinks</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Summary of links configured to run slower than supported,
+              includes 
+              <samp class="ph codeph">slowlinks</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">slowconnlinks</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Summary of links connected with mismatched speed potential,
+              includes 
+              <samp class="ph codeph">slowconfiglinks</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">misconfiglinks</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Summary of links configured to run slower than supported. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">misconnlinks</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Summary of links connected with mismatched speed potential. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">errors</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Summary of links whose errors exceed counts in the configuration
+              file. 
+            </p>
+ 
+            </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">otherports</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Summary of ports not connected to the fabric. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">linear</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Summary of linear forwarding data base (FDB) for each switch. 
+            </p>
+ 
+            </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">mcast</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Summary of multicast FDB for each switch in the fabric. 
+            </p>
+ 
+            </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">portusage</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Summary of ports referenced in linear FDB for each switch,
+              broken down by NodeType of DLID. 
+            </p>
+ 
+            </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">pathusage</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Summary of number of FI to FI paths routed through each switch
+              port. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">treepathusage</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Analysis of number of FI to FI paths routed through each switch
+              port for a FAT tree. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"> 
+            <samp class="ph codeph">portgroups</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Summary of adaptive routing port groups for each switch. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">quarantinednodes</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Summary of quarantined nodes. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">validateroutes</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Validates all routes in the fabric. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"> 
+            <samp class="ph codeph">validatepgs</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Validates all port groups in the fabric. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">validatecreditloops</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Validates topology configuration of the fabric to identify any
+              existing credit loops. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">vfinfo</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Summary of virtual fabric (vFabric) information. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">vfmember</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Summary of vFabric membership information. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">verifyfis</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Compares fabric (or snapshot) FIs to supplied topology and
+              identifies differences and omissions. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">verifysws</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Compares fabric (or snapshot) switches to supplied topology and
+              identifies differences and omissions. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">verifynodes</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Returns 
+              <samp class="ph codeph">verifyfis</samp> and 
+              <samp class="ph codeph">verifysws</samp> reports. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">verifysms</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Compares fabric (or snapshot) SMs to supplied topology and
+              identifies differences and omissions. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">verifylinks</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Compares fabric (or snapshot) links to supplied topology and
+              identifies differences and omissions. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">verifyextlinks</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Compares fabric (or snapshot) links to supplied topology and
+              identifies differences and omissions. Limits analysis to links external to
+              systems. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">verifyall</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Returns 
+              <samp class="ph codeph">verifyfis</samp>, 
+              <samp class="ph codeph">verifysws</samp>, 
+              <samp class="ph codeph">verifysms</samp>, and 
+              <samp class="ph codeph">verifylinks</samp> reports. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">all</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Returns 
+              <samp class="ph codeph">comps</samp>, 
+              <samp class="ph codeph">nodes</samp>, 
+              <samp class="ph codeph">ious</samp>, 
+              <samp class="ph codeph">links</samp>, 
+              <samp class="ph codeph">extlinks</samp>, 
+              <samp class="ph codeph">slowconnlinks</samp>, and 
+              <samp class="ph codeph">errors</samp> reports. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">route</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Traces route between 
+              <samp class="ph codeph">-S</samp> and 
+              <samp class="ph codeph">-D</samp> points. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">bfrctrl</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Reports Buffer Control Tables for all ports. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">snapshot</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Outputs snapshot of the fabric state for later use as 
+              <samp class="ph codeph"><var class="keyword varname">snapshot_input</var></samp>. This implies 
+              <samp class="ph codeph">-x</samp>. May not be combined with other reports. When
+              selected, 
+              <samp class="ph codeph">-F</samp>, 
+              <samp class="ph codeph">-P</samp>, 
+              <samp class="ph codeph">-H</samp>, and 
+              <samp class="ph codeph">-N</samp> options are ignored. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">topology</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> Outputs the topology of the fabric for later use as 
+            <samp class="ph codeph"><var class="keyword varname">topology_input</var></samp>. This implies 
+            <samp class="ph codeph">-x</samp>. May not be combined with other reports. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">none</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">No report, useful to clear statistics. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__XX1117438"><a name="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__XX1117438"><!-- --></a><h2 class="title sectiontitle">Point Syntax</h2> 
+       
+      <a name="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__GUID-8BDFA93E-2D04-46C2-82EB-082F5FF8E184"><!-- --></a><dl class="dl parml" id="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__GUID-8BDFA93E-2D04-46C2-82EB-082F5FF8E184"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">gid:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is numeric port GID of
+              form: 
+              <samp class="ph codeph">subnet:guid</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">lid:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is numeric LID. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">lid:<var class="keyword varname">value</var>:node</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is numeric LID,
+              selects entire 
+              <samp class="ph codeph">node</samp> with given LID. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">lid:<var class="keyword varname">value</var>:port:<var class="keyword varname">value2</var></samp>
+            
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is numeric LID of
+              node, 
+              <samp class="ph codeph"><var class="keyword varname">value2</var></samp> is port number. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">portguid:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is numeric port GUID. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">nodeguid:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is numeric node GUID. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">nodeguid:<var class="keyword varname">value1</var>:<var class="keyword varname">port</var>:
+              
+              <var class="keyword varname">value2</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value1</var></samp> is numeric node GUID,
+              
+              <samp class="ph codeph"><var class="keyword varname">value2</var></samp> is port number. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">iocguid:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is numeric IOC GUID. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">iocguid:<var class="keyword varname">value1</var>:port:<var class="keyword varname">value2</var></samp>
+            
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value1</var></samp> is numeric IOC GUID, 
+              <samp class="ph codeph"><var class="keyword varname">value2</var></samp> is port number. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">systemguid:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is numeric system
+              image GUID. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">systemguid:<var class="keyword varname">value1</var>:port:<var class="keyword varname">value2</var></samp>
+            
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value1</var></samp> is the numeric system
+              image GUID, 
+              <samp class="ph codeph"><var class="keyword varname">value2</var></samp> is port number. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">ioc:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is IOC Profile ID
+              String (IOC Name). 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">ioc:<var class="keyword varname">value1</var>:port:<var class="keyword varname">value2</var></samp>
+            
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value1</var></samp> is IOC Profile ID
+              String (IOC Name), 
+              <samp class="ph codeph"><var class="keyword varname">value2</var></samp> is port number. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">iocpat:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is global pattern for
+              IOC Profile ID String (IOC Name). 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">iocpat:<var class="keyword varname">value1</var>:port:<var class="keyword varname">value2</var></samp>
+            
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value1</var></samp> is global pattern for
+              IOC Profile ID String (IOC Name), 
+              <samp class="ph codeph"><var class="keyword varname">value2</var></samp> is port number. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">ioctype:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is IOC type (VNIC or
+              SRP). 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">ioctype:<var class="keyword varname">value1</var>:port:<var class="keyword varname">value2</var></samp>
+            
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value1</var></samp> is IOC type (VNIC or
+              SRP), 
+              <samp class="ph codeph"><var class="keyword varname">value2</var></samp> is port number. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">node:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is node description
+              (node name). 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">node:<var class="keyword varname">value1</var>:port:<var class="keyword varname">value2</var></samp>
+            
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value1</var></samp> is node description
+              (node name), 
+              <samp class="ph codeph"><var class="keyword varname">value2</var></samp> is port number. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">nodepat:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">&gt;value</var></samp> is global pattern
+              for node description (node name). 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">nodepat:<var class="keyword varname">value1</var>:port:<var class="keyword varname">value2</var></samp>
+            
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value1</var></samp> is the global pattern
+              for the node description (node name), 
+              <samp class="ph codeph"><var class="keyword varname">value2</var></samp> is port number. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">nodedetpat:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is global pattern for
+              node details. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">nodedetpat:<var class="keyword varname">value1</var>:port:<var class="keyword varname">value2</var></samp>
+            
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value1</var></samp> is the global pattern
+              for the node details, 
+              <samp class="ph codeph"><var class="keyword varname">value2</var></samp> is port number. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">nodetype:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is node type (SW, FI,
+              or RT). 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">nodetype:<var class="keyword varname">value1</var>:port:<var class="keyword varname">value2</var></samp>
+            
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value1</var></samp> is node type (SW, FI,
+              or RT), 
+              <samp class="ph codeph"><var class="keyword varname">value2</var></samp> is port number. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">rate:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is string for rate
+              (25g, 50g, 75g, 100g), omits switch mgmt port 0. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">portstate:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is a string for state
+              (init, armed, active). 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">portphysstate:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is a string for PHYs
+              state (polling, disabled, training, linkup, recovery, offline, test) 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">mtucap:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is MTU size (2048,
+              4096, 8192, 10240), omits switch mgmt port 0. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">labelpat:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is global pattern for
+              cable label. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">lengthpat:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is global pattern for
+              cable length. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">cabledetpat:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is global pattern for
+              cable details. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">cabinflenpat:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is global pattern for
+              cable info length. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">cabinfvendnamepat:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is global pattern for
+              cable info vendor name. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">cabinfvendpnpat:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is global pattern for
+              cable info vendor part number. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">cabinfvendrevpat:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is global pattern for
+              cable info vendor revision. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">cabinfvendsnpat:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is global pattern for
+              cable info vendor serial number. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">linkdetpat:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is global pattern for
+              link details. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">portdetpat:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is global pattern for
+              port details. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">sm</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Master subnet manager (SM). 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">smdetpat:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph"><var class="keyword varname">value</var></samp> is global pattern for
+              SM details. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">route:<var class="keyword varname">point1</var>:<var class="keyword varname">point2</var></samp>
+            
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">All ports along the routes between the two given points. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">linkqual:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Ports with a link quality equal to 
+              <samp class="ph codeph"><var class="keyword varname">value</var></samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">linkqualLE:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Ports with a link quality less than or equal to 
+              <samp class="ph codeph"><var class="keyword varname">value</var></samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">linkqualGE:<var class="keyword varname">value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Ports with a link quality greater than or equal to 
+              <samp class="ph codeph"><var class="keyword varname">value</var></samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__XX1146998"><a name="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__XX1146998"><!-- --></a><h2 class="sectiontitle">Examples </h2> 
+      <p class="p"><samp class="ph codeph">opareport</samp> can generate hundreds of different reports.
+        Commonly generated reports include the following: 
+      </p>
+ 
+       
+      <pre class="pre codeblock">   opareport -o comps -d 3
+   opareport -o errors -o slowlinks
+   opareport -o nodes -F portguid:0x00117500a000447b
+   opareport -o nodes -F nodeguid:0x001175009800447b:port:1
+   opareport -o nodes -F nodeguid:0x001175009800447b
+   opareport -o nodes -F 'node:duster hfi1_0'
+   opareport -o nodes -F 'node:duster hfi1_0:port:1'
+   opareport -o nodes -F 'nodepat:d*'
+   opareport -o nodes -F 'nodepat:d*:port:1'
+   opareport -o nodes -F 'nodedetpat:compute*'
+   opareport -o nodes -F 'nodedetpat:compute*:port:1'
+   opareport -o nodes -F nodetype:FI
+   opareport -o nodes -F nodetype:FI:port:1
+   opareport -o nodes -F lid:1
+   opareport -o nodes -F lid:1:node
+   opareport -o nodes -F lid:1:port:2
+   opareport -o nodes -F gid:0xfe80000000000000:0x00117500a000447b
+   opareport -o nodes -F systemguid:0x001175009800447b
+   opareport -o nodes -F systemguid:0x001175009800447b:port:1
+   opareport -o nodes -F iocguid:0x00117501300001e0
+   opareport -o nodes -F iocguid:0x00117501300001e0:port:2
+   opareport -o nodes -F 'ioc:Chassis 0x001175005000010C, Slot 2, IOC 1'
+   opareport -o nodes -F 'ioc:Chassis 0x001175005000010C, Slot 2, IOC 1:port:2'
+   opareport -o nodes -F 'iocpat:*Slot 2*'
+   opareport -o nodes -F 'iocpat:*Slot 2*:port:2'
+   opareport -o nodes -F ioctype:VNIC
+   opareport -o nodes -F ioctype:VNIC:port:2
+   opareport -o extlinks -F rate:5g
+   opareport -o extlinks -F portstate:armed
+   opareport -o extlinks -F portphysstate:linkup
+   opareport -o extlinks -F 'labelpat:S1345*'
+   opareport -o extlinks -F 'lengthpat:11m'
+   opareport -o extlinks -F 'cabledetpat:*gore*'
+   opareport -o extlinks -F 'linkdetpat:*core ISL*'
+   opareport -o extlinks -F 'portdetpat:*mgmt*'
+   opareport -o links -F mtucap:2048
+   opareport -o nodes -F sm
+   opareport -o nodes -F 'smdetpat:primary*'
+   opareport -o nodes -F 'route:node:duster hfi1_0:node:cuda hfi1_0'
+   opareport -o nodes -F 'route:node:duster hfi1_0:port:1:node:cuda hfi1_0:port:2'
+   opareport -s -o snapshot &gt; file
+   opareport -o topology &gt; topology.xml
+   opareport -o errors -X file</pre>
+ 
+      </div>
+ 
+    <div class="section" id="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__GUID-EFF3251F-9371-4E0B-A4BF-DA116667CFF4"><a name="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C__GUID-EFF3251F-9371-4E0B-A4BF-DA116667CFF4"><!-- --></a><h2 class="title sectiontitle">Other Information</h2> 
+       
+      <p class="p"><samp class="ph codeph">opareport</samp> also supports operation with the 
+        <span class="ph">Fabric Manager</span> Performance Manager
+        (PM)/Performance Manager Agent (PMA). When 
+        <samp class="ph codeph">opareport</samp> detects the presence of a PMA, it
+        automatically issues any required PortCounter queries and clears to the PMA to
+        access the PMs running totals. If a PMA is not detected, then 
+        <samp class="ph codeph">opareport</samp> directly accesses the PMAs on all the nodes.
+        The 
+        <samp class="ph codeph">-M</samp> option can force access to the PMA even if a PMA is
+        present. 
+      </p>
+ 
+      <p class="p"><samp class="ph codeph">opareport</samp> takes advantage of these interfaces to
+        obtain extensive information about the fabric from the subnet manager and the
+        end nodes. Using this information, 
+        <samp class="ph codeph">opareport</samp> is able to cross-reference it and produce
+        analysis greatly beyond what any single subnet manager request could provide.
+        As such, it exceeds the capabilities previously available in tools such as 
+        <samp class="ph codeph">opasaquery</samp> and 
+        <samp class="ph codeph">opafabricinfo</samp>. 
+      </p>
+ 
+      <p class="p"><samp class="ph codeph">opareport</samp> obtains and displays 64-bit data movement
+        counters from the 
+        <span class="ph">Fabric Manager</span> PM/PA or directly from
+        the fabric using the 
+        <samp class="ph codeph">-M</samp> option. Snapshots generated by this version of 
+        <samp class="ph codeph">opareport</samp>, in conjunction with the 
+        <samp class="ph codeph">-s</samp> option, may report value out of range errors when
+        used as input to older versions of 
+        <samp class="ph codeph">opareport</samp>. However, the thresholds specified in 
+        <samp class="ph codeph">opamon.conf</samp> and other input configuration files
+        continue to only support 32-bit values for data movement counter thresholds. 
+      </p>
+ 
+      <p class="p"><samp class="ph codeph">opareport</samp> internally cross-references all this
+        information so its output can be in user-friendly form. Reports include GUIDs,
+        LIDs, and names for components. Obviously, these reports are easiest to read if
+        the end user has taken the time to provide unique names for all the components
+        in the fabric (node names and IOC names). All Intel components support this
+        capability. For hosts, the node names are automatically assigned based on the
+        network host name of the server. For switches and line cards, the names can be
+        assigned using the element managers for each component. 
+      </p>
+ 
+      <p class="p">Each run of 
+        <samp class="ph codeph">opareport</samp> obtains up-to-date information from the
+        fabric. At the start of the run 
+        <samp class="ph codeph">opareport</samp> takes a few seconds to obtain all the fabric
+        data, then it is output to 
+        <samp class="ph codeph">stdout</samp>. The reports are sorted by GUIDs and other
+        permanent information so they can be rerun in the future and produce output in
+        the same order even if components have been rebooted. This is useful for
+        comparison using simple tools like 
+        <samp class="ph codeph">diff</samp>. 
+        <samp class="ph codeph">opareport</samp> permits multiple reports to be requested for
+        a single run (for example, one of each report type). 
+      </p>
+ 
+      <p class="p">By default, 
+        <samp class="ph codeph">opareport</samp> uses the first active port on the local
+        system. However, if the Management Node is connected to more than one fabric
+        (for example, a subnet), the 
+        <span class="ph">Intel<sup>®</sup> Omni-Path Host
+          Fabric Interface</span> (HFI) and port may be specified to select the fabric to
+        analyze. 
+      </p>
+ 
+    </div>
+ 
+    </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

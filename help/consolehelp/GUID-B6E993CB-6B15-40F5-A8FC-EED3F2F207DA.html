@@ -1,0 +1,1666 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opasaquery">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opasaquery</title>
+</head>
+<body class="man1" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA"><a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opasaquery</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-819872FF-06C0-42E2-9679-10236FB51053"><a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-819872FF-06C0-42E2-9679-10236FB51053"><!-- --></a> 
+      <p class="p"><strong class="ph b">(All)</strong> Performs various queries of the subnet manager/subnet
+        agent and provides detailed fabric information. 
+      </p>
+ 
+      <p class="p"><samp class="ph codeph">opareport</samp> and 
+        <samp class="ph codeph">opareports</samp> can provide a more powerful tool, however,
+        in some cases 
+        <samp class="ph codeph">opasaquery</samp> is preferred, especially when dealing with
+        virtual fabrics, service records, and multicast. 
+      </p>
+ 
+      <p class="p">The command 
+        <samp class="ph codeph">opasaquery</samp> is installed on all hosts as part of the 
+        <span class="ph">Intel<sup>®</sup> Omni-Path Fabric Host
+          Software</span>, but it is also included in 
+        <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric Suite FastFabric</span> Toolset. 
+      </p>
+ 
+      <p class="p">By default, 
+        <samp class="ph codeph">opasaquery</samp> uses the first active port on the local
+        system. However, if the Fabric Management Node is connected to more than one
+        fabric (for example, a subnet), the 
+        <span class="ph">Intel<sup>®</sup> Omni-Path Host
+          Fabric Interface</span> (HFI) and port may be specified to select the fabric
+        whose SA is to be queried. 
+      </p>
+ 
+      </div>
+ 
+    <div class="section refsyn" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-5F507222-D9C6-45DB-8753-337D43578073"><a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-5F507222-D9C6-45DB-8753-337D43578073"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opasaquery [-v [-v] [-v]] [-I] [-h <var class="keyword varname">hfi</var>] [-p <var class="keyword varname">port</var>] [-o <var class="keyword varname">type</var>] [-l <var class="keyword varname">lid</var>] [-t <var class="keyword varname">type</var>] 
+[-s <var class="keyword varname">guid</var>] [-n <var class="keyword varname">guid</var>] [-g <var class="keyword varname">guid</var>] [-k <var class="keyword varname">pkey</var>] [-i <var class="keyword varname">vfIndex</var>] [-S <var class="keyword varname">serviceId</var>] 
+[-L <var class="keyword varname">sl</var>] [-u <var class="keyword varname">gid</var>] [-m <var class="keyword varname">gid</var>] [-d <var class="keyword varname">name</var>] [-P '<var class="keyword varname">guid guid</var>'] [-G '<var class="keyword varname">gid gid</var>'] 
+[-a '<var class="keyword varname">sguid</var>...;<var class="keyword varname">dguid</var>...'] [-A&nbsp;'<var class="keyword varname">sgid</var>...;<var class="keyword varname">dgid</var>...']</pre>
+ 
+      <p class="p">or 
+      </p>
+ 
+      <pre class="pre codeblock">opasaquery --help</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__XX1147546"><a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__XX1147546"><!-- --></a><h2 class="title sectiontitle">Options</h2> 
+       
+      <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-DF9E426B-97EB-428B-A9E3-41265AFF9D8D"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-DF9E426B-97EB-428B-A9E3-41265AFF9D8D"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Produces full help text. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-v/--verbose</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Returns verbose output. A second invocation activates 
+              <samp class="ph codeph">openib</samp> debugging, a third invocation activates 
+              <samp class="ph codeph">libibumad</samp> debugging. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-I/--IB</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Issues query in legacy InfiniBand* format. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-h/--hfi 
+              <var class="keyword varname">hfi</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"> 
+              <span class="ph">HFI</span>, numbered 1..n. Using 0
+              specifies that the 
+              <samp class="ph codeph">-p 
+                <var class="keyword varname">port</var></samp> port is a system-wide port
+              number. Default is 0. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-p/--port 
+              <var class="keyword varname">port</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Port, numbered 1..n. If 
+              <samp class="ph codeph">-h 
+                <var class="keyword varname">hfi</var></samp> is 0, then 
+              <samp class="ph codeph"><var class="keyword varname">port</var></samp> is a system-wide port
+              number. Default is 1. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-o/--output 
+              <var class="keyword varname">type</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Output type for query (default is 
+              <samp class="ph codeph">node</samp>). See 
+              <a class="xref" href="#GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__XX1147568">Output
+                Types</a> for details. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-l/--lid 
+              <var class="keyword varname">lid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Query a specific LID. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-t/--type 
+              <var class="keyword varname">node_type</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Query by node type. See 
+              <a class="xref" href="#GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__XX1147560">Node
+                Types</a> for details. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-s/--sysguid 
+              <var class="keyword varname">system_image_guid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Query by system image GUID. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-n/--nodeguid 
+              <var class="keyword varname">node_guid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Query by node GUID. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-g/--portguid 
+              <var class="keyword varname">port_guid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Query by port GUID. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-k/--pkey 
+              <var class="keyword varname">pkey</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Query a specific PKey. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-i/--vfindex 
+              <var class="keyword varname">vfIndex</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Query a specific vfindex. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-S/--serviceId 
+              <var class="keyword varname">serviceId</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Query a specific service ID. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-L/--SL 
+              <var class="keyword varname">SL</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Query by service level. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-u/--portgid 
+              <var class="keyword varname">port_gid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Query by port GID. See 
+              <a class="xref" href="#GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__XX1168333">GIDs</a>
+              for details. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-m/--mcgid 
+              <var class="keyword varname">multicast_gid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Query by multicast GID. See 
+              <a class="xref" href="#GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__XX1168333">GIDs</a>
+              for details. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-d/--desc 
+              <var class="keyword varname">node_description</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Query by node name/description. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-P/--guidpair 
+              <var class="keyword varname">guid guid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Query by a pair of port GUIDs. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-G/--gidpair 
+              <var class="keyword varname">gid gid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Query by a pair of GIDs. See 
+              <a class="xref" href="#GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__XX1168333">GIDs</a>
+              for details. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-a/--guidlist 
+              <var class="keyword varname">sguid ...;dguid ...</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Query by a list of port GUIDs. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-A/--gidlist 
+              <var class="keyword varname">sgid ...;dgid ...</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Query by a list of GIDs. See 
+              <a class="xref" href="#GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__XX1168333">GIDs</a>
+              for details. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+       
+      <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-2EB7B7F0-D46A-4D80-9D71-4727CE830A35"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-2EB7B7F0-D46A-4D80-9D71-4727CE830A35"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -h 0</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">First active port in system (default). 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -h 0 -p 0</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">First active port in system. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -h 
+              <var class="keyword varname">x</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">First active port on HFI 
+              <var class="keyword varname">x</var>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"> 
+            <samp class="ph codeph">-h 
+              <var class="keyword varname">x</var> -p 0</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">First active port on HFI 
+              <var class="keyword varname">x</var>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"> 
+            <samp class="ph codeph">-h 0 -p 
+              <var class="keyword varname">y</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Port 
+              <var class="keyword varname">y&nbsp;</var> within system (no matter which ports are
+              active). 
+            </p>
+ 
+            </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"> 
+            <samp class="ph codeph">-h 
+              <var class="keyword varname">x</var> -p 
+              <var class="keyword varname">y</var> 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">HFI 
+              <var class="keyword varname">x</var>, port 
+              <var class="keyword varname">y</var>. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__XX1147560"><a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__XX1147560"><!-- --></a><h2 class="sectiontitle">Node Types</h2> 
+      <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-6487FCBB-5756-40BD-9A23-988C1CCA5F50"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-6487FCBB-5756-40BD-9A23-988C1CCA5F50"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">fi</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Fabric Interface 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">sw</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Switch 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__XX1168333"><a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__XX1168333"><!-- --></a><h2 class="sectiontitle">GIDs</h2> 
+      <p class="p">Specify a 64-bit subnet and 64-bit interface ID in the form: 
+        <samp class="ph codeph"><var class="keyword varname">subnet</var>:<var class="keyword varname">interface</var></samp>
+        
+      </p>
+ 
+      <p class="p">For example: 
+      </p>
+ 
+      <pre class="pre codeblock">0xfe80000000000000:0x00117500a0000380</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__XX1147568"><a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__XX1147568"><!-- --></a><h2 class="sectiontitle">Output Types</h2> 
+      <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-D1D470AB-73E8-4F34-9045-87CD27DDC873"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-D1D470AB-73E8-4F34-9045-87CD27DDC873"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> classportinfo</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><samp class="ph codeph">classportinfo</samp> of the SA. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">systemguid</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of system image GUIDs. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">nodeguid</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of node GUIDs. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">portguid</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of port GUIDs. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">lid</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of LIDs. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">desc</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of node descriptions/names. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">path</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of path records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">node</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of node records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">portinfo</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of port info records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">sminfo</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of SM info records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">swinfo</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of switch info records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">link</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of link records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">scsc</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of SC to SC mapping table records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"> 
+            <samp class="ph codeph">slsc</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of SL to SC mapping table records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">scsl</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of SC to SL mapping table records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"> 
+            <samp class="ph codeph">scvlt</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of SC to VLt table records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">scvlnt</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of SC to VLnt table records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">vlarb</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of VL arbitration table records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">pkey</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of PKey table records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">service</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of service records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">mcmember</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of multicast member records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">inform</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of inform info records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">linfdb</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of switch linear forwarding database (FDB) records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">ranfdb</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of switch random FDB records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">mcfdb</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of switch multicast FDB records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">trace</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of trace records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">vfinfo</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of vFabrics. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">vfinfocsv</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of vFabrics in CSV format. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">vfinfocsv2</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of vFabrics in CSV format with enums. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">quarantine</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of quarantined nodes. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">conginfo</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of Congestion Info Records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">swcongset</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of Switch Congestion Settings. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">hficongset</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of HFI Congestion Settings. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">hficongcon</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of HFI Congestion Control Settings. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">bfrctrl</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of buffer control tables. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">cableinfo</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of Cable Info records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">portgroup</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of AR Port Group records. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">portgroupfdb</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of AR Port Group FWD records. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+      <p class="p">The 
+        <samp class="ph codeph">vfinfocsv</samp> and 
+        <samp class="ph codeph">vfinfocsv2</samp> output formats are designed to make it
+        easier to script vfinfo queries. One line is output per vFabric of the form: 
+      </p>
+ 
+      <pre class="pre codeblock">name:index:pkey:sl:mtu:rate</pre>
+ 
+      <p class="p">The only difference between these two formats is how the MTU and rate
+        are output. 
+        <samp class="ph codeph">vfinfocsv</samp> outputs MTU and rate in human/text format,
+        such as 2048 and 40g. 
+        <samp class="ph codeph">vfinfocsv2</samp> outputs MTU and rate as the IBTA
+        enumerations defined for the SMA protocol, such as 4 and 7. The 
+        <samp class="ph codeph">opagetvf</samp> command can be a useful tool which is based
+        on this capability of 
+        <samp class="ph codeph">opasaquery</samp>. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-A60AEC05-71B6-472B-8AC2-DF6DE799D620"><a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-A60AEC05-71B6-472B-8AC2-DF6DE799D620"><!-- --></a><h2 class="sectiontitle">Example </h2> 
+      <pre class="pre codeblock">opasaquery -o desc -t fi
+# get list of node description records for HFIs
+
+opasaquery -o portinfo -l 2
+# get list of port info records for lid 2
+
+opasaquery -o pkey
+# get list of PKey table records
+
+opasaquery -o vlarb
+# get list of VL arbitration records
+
+opasaquery -o swinfo
+# get list of switch info records
+
+opasaquery -o slsc
+# get list of SL to SC mapping table records
+
+opasaquery -o scsl
+# get list of SC to SL mapping table records</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-CF644EDD-A0A2-41D2-87D0-04DAED375D94"><a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-CF644EDD-A0A2-41D2-87D0-04DAED375D94"><!-- --></a><h2 class="sectiontitle">Input Options vs. Output Permitted</h2> 
+      <p class="p">The following list shows the input (assorted query by options) and
+        outputs (<samp class="ph codeph">-o</samp>) that are permitted. 
+      </p>
+ 
+      <div class="note note" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-AC9C1ADE-A3E5-4C8C-B9C1-091FE7B3D95D"><a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-AC9C1ADE-A3E5-4C8C-B9C1-091FE7B3D95D"><!-- --></a><span class="notetitle">Note:</span>  
+        <p class="p">In this release, the combinations displayed in 
+          <strong class="ph b">bold</strong> are currently not available. This includes the path-given
+          input of node description, node type, system image GUID, node GUID, and port
+          GUID list. 
+        </p>
+ 
+         
+      </div>
+ 
+      <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-D73BC72D-AA48-41A6-A15A-AFA6277DBCB2"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-D73BC72D-AA48-41A6-A15A-AFA6277DBCB2"> 
+         
+          <dt class="dt pt dlterm">None 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-03B79E65-0109-49ED-A0DC-D5328AA65214"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-03B79E65-0109-49ED-A0DC-D5328AA65214"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output permitted 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p"><samp class="ph codeph">systemguid, nodeguid, portguid, lid, desc, path,
+                      node, portinfo, sminfo, swinfo, link, slvl, vlarb, pkey, guids, service,
+                      mcmember, inform, linfdb, ranfdb, mcfdb, vfinfo, vfinfocsv, vfinfocsv2,
+                      vswinfo</samp> 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output not permitted 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p"><samp class="ph codeph">trace</samp> 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-t 
+              <var class="keyword varname">node_type</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p"> 
+              <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-C4279CAE-4415-412D-A263-9455B8C8EEDA"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-C4279CAE-4415-412D-A263-9455B8C8EEDA"> 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">systemguid, nodeguid, portguid, lid, link, desc,
+                        
+                        <strong class="ph b">path</strong>, node</samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output not permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">portinfo, sminfo, swinfo, slvl, vlarb, pkey,
+                        guids, service, mcmember, inform, linfdb, ranfdb, mcfdb, trace, vfinfo,
+                        vfinfocsv, vfinfocsv2, vswinfo</samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+              </dl>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-l 
+              <var class="keyword varname">lid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p"> 
+              <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-4C52B5AC-283E-46CA-B91D-D04B3ABB2575"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-4C52B5AC-283E-46CA-B91D-D04B3ABB2575"> 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">systemguid, nodeguid, portguid, lid, desc, path,
+                        node, portinfo, swinfo, slvl, vlarb, pkey, guids, service, mcmember, 
+                        <strong class="ph b">linfdb, ranfdb, mcfdb</strong>, vswinfo</samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output not permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">sminfo, link, inform, trace, vfinfo, vfinfocsv,
+                        vfinfocsv2</samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+              </dl>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-k 
+              <var class="keyword varname">pkey</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p"> 
+              <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-4C59E972-73BC-4E13-A4A5-2C092428EAF4"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-4C59E972-73BC-4E13-A4A5-2C092428EAF4"> 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">mcmember, path, vfinfo, vfinfocsv,
+                        vfinfocsv2</samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output not permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">systemimageguid, nodeguid, portguid, lid, desc,
+                        node, portinfo, sminfo, swinfo, link, slvl, vlarb, pkey, guids, service,
+                        mcmember, inform, linfdb, ranfdb, mcfdb, vswinfo</samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+              </dl>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-i 
+              <em class="ph i">vfindex</em> 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p"> 
+              <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-BDB2585B-1D74-46B3-A0D0-278520839B8E"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-BDB2585B-1D74-46B3-A0D0-278520839B8E"> 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">vfinfo, vfinfocsv, vfinfocsv2 
+                      </samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output not permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">systemimageguid, nodeguid, portguid, lid, desc,
+                        node, portinfo, sminfo, swinfo, link, slvl, vlarb, pkey, guids, service,
+                        mcmember, inform, linfdb, ranfdb, mcfdb, vswinfo 
+                      </samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+              </dl>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-s 
+              <var class="keyword varname">system_image_guid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p"> 
+              <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-3C478948-977E-4370-88DF-89BBB2BFAA78"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-3C478948-977E-4370-88DF-89BBB2BFAA78"> 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">systemguid, nodeguid, portguid, lid, desc, 
+                        <strong class="ph b">path</strong>, node</samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output not permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">portinfo, sminfo, swinfo, link, slvl, vlarb,
+                        pkey, guids, service, mcmember, inform, linfdb, ranfdb, mcfdb, trace, vfinfo,
+                        vfinfocsv, vfinfocsv2, vswinfo</samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+              </dl>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-n 
+              <var class="keyword varname">node_guid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p"> 
+              <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-1299A4E6-EE48-487F-B863-228C35A66024"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-1299A4E6-EE48-487F-B863-228C35A66024"> 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">systemguid, nodeguid, portguid, lid, desc, 
+                        <strong class="ph b">path</strong>, node</samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output not permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">portinfo, sminfo, swinfo, link, slvl, vlarb,
+                        pkey, guids, service, mcmember, inform, linfdb, ranfdb, mcfdb, trace, vfinfo,
+                        vfinfocsv, vfinfocsv2, vswinfo</samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+              </dl>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-g 
+              <var class="keyword varname">port_guid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p"> 
+              <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-562538F0-D55B-44A3-AFC8-2E83A6935C5C"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-562538F0-D55B-44A3-AFC8-2E83A6935C5C"> 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">systemguid, nodeguid, portguid, lid, desc, path,
+                        node, service, mcmember, inform, trace</samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output not permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">portinfo, sminfo, swinfo, link, slvl, vlarb,
+                        pkey, guids, linfdb, ranfdb, mcfdb, vfinfo, vfinfocsv, vfinfocsv2,
+                        vswinfo</samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+              </dl>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-u 
+              <var class="keyword varname">port_gid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p"> 
+              <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-F0EE4619-0026-40B3-9227-DA59791C4351"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-F0EE4619-0026-40B3-9227-DA59791C4351"> 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">path, service, mcmember, inform, trace</samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output not permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">systemguid, nodeguid, portguid, lid, desc, node,
+                        portinfo, sminfo, swinfo, link, slvl, vlarb, pkey, guids, linfdb, ranfdb,
+                        mcfdb, vfinfo, vfinfocsv, vfinfocsv2, vswinfo</samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+              </dl>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-m 
+              <var class="keyword varname">multicast_gid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p"> 
+              <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-4B1E1C4A-47F4-464E-B5C2-E95C94B32A7F"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-4B1E1C4A-47F4-464E-B5C2-E95C94B32A7F"> 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o 
+                    </samp>output permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">mcmember, vfinfo, vfinfocsv, vfinfocsv2</samp>
+                      
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o 
+                    </samp>output not permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">systemguid, nodeguid, portguid, lid, desc, path,
+                        node, portinfo, sminfo, swinfo, link, slvl, vlarb, pkey, guids, service,
+                        inform, linfdb, ranfdb, mcfdb, trace, vswinfo</samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+              </dl>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-d 
+              <var class="keyword varname">name</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p"> 
+              <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-46C4B677-BE50-4A48-91E1-8DCDD2085669"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-46C4B677-BE50-4A48-91E1-8DCDD2085669"> 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">systemguid, nodeguid, portguid, lid, desc, path,
+                        node</samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output not permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">trace</samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+              </dl>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-P 
+              <var class="keyword varname">port_guid_pair</var> 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p"> 
+              <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-EFE509AE-5527-4C02-B0F8-75BF6114E1AC"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-EFE509AE-5527-4C02-B0F8-75BF6114E1AC"> 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">path, trace</samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output not permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">systemguid, nodeguid, portguid, lid, desc, node,
+                        portinfo, sminfo, swinfo, link, slvl, vlarb, pkey, guids, service, mcmember,
+                        inform, linfdb, ranfdb, mcfdb, vswinfo</samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+              </dl>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-S 
+              <var class="keyword varname">serviceId</var> 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p"> 
+              <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-86C47AA1-0F4F-4067-AF68-EC12E8285657"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-86C47AA1-0F4F-4067-AF68-EC12E8285657"> 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">path, vfinfo, vfinfocsv, vfinfocsv2 
+                      </samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output not permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">systemimageguid, nodeguid, portguid, lid, desc,
+                        node, portinfo, sminfo, swinfo, link, slvl, vlarb, pkey, guids, service,
+                        mcmember, inform, linfdb, ranfdb, mcfdb, vswinfo 
+                      </samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+              </dl>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-L 
+              <var class="keyword varname">SL</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p"> 
+              <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-73D84581-37F8-4DBA-B334-7DF7B618AE29"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-73D84581-37F8-4DBA-B334-7DF7B618AE29"> 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">path, vfinfo, vfinfocsv, vfinfocsv2 
+                      </samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output not permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">systemimageguid, nodeguid, portguid, lid, desc,
+                        node, portinfo, sminfo, swinfo, link, slvl, vlarb, pkey, guids, service,
+                        mcmember, inform, linfdb, ranfdb, mcfdb, vswinfo 
+                      </samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+              </dl>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-G 
+              <var class="keyword varname">gid_pair</var> 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p"> 
+              <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-0877A4AF-8F4D-42D8-9FC1-EFEB55CF8BDB"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-0877A4AF-8F4D-42D8-9FC1-EFEB55CF8BDB"> 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">path, trace 
+                      </samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output not permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">systemguid, nodeguid, portguid, lid, desc, node,
+                        portinfo, sminfo, swinfo, link, slvl, vlarb, pkey, guids, service, mcmember,
+                        inform, linfdb, ranfdb, mcfdb, vswinfo 
+                      </samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+              </dl>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-a 
+              <var class="keyword varname">port_guid_list</var> 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p"> 
+              <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-D659EB51-1544-4816-A808-8EDE90993312"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-D659EB51-1544-4816-A808-8EDE90993312"> 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph"><strong class="ph b">path</strong> 
+                      </samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output not permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">systemguid, nodeguid, portguid, lid, desc, node,
+                        portinfo, sminfo, swinfo, link, slvl, vlarb, pkey, guids, service, mcmember,
+                        inform, linfdb, ranfdb, mcfdb, trace, vswinfo 
+                      </samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+              </dl>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-A 
+              <var class="keyword varname">gid_list</var> 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p"> 
+              <a name="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-87C43178-3578-4564-BD2E-3655C3429F8B"><!-- --></a><dl class="dl parml" id="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA__GUID-87C43178-3578-4564-BD2E-3655C3429F8B"> 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph"><strong class="ph b">path</strong></samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp> output not permitted 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"><samp class="ph codeph">systemguid, nodeguid, portguid, lid, desc, node,
+                        portinfo, sminfo, swinfo, link, slvl, vlarb, pkey, guids, service, mcmember,
+                        inform, linfdb, ranfdb, mcfdb, trace, vswinfo 
+                      </samp> 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+              </dl>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

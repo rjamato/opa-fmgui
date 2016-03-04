@@ -1,0 +1,59 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opaextractstat2">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-8A51E60C-3E58-415E-8FC4-A73F1629851A">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opaextractstat2</title>
+</head>
+<body class="man8" id="GUID-8A51E60C-3E58-415E-8FC4-A73F1629851A"><a name="GUID-8A51E60C-3E58-415E-8FC4-A73F1629851A"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opaextractstat2</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-8A51E60C-3E58-415E-8FC4-A73F1629851A__GUID-F629949A-630D-4982-8B1A-CACACFE6AEB5"><a name="GUID-8A51E60C-3E58-415E-8FC4-A73F1629851A__GUID-F629949A-630D-4982-8B1A-CACACFE6AEB5"><!-- --></a> 
+      <p class="p">Performs an error analysis of a fabric and provides augmented
+        information from a 
+        <samp class="ph codeph">topology_input</samp> file. The report is similar to 
+        <samp class="ph codeph">opaextractstat</samp>, with the addition of extracting all
+        error counters. Error counter names are context-sensitive. 
+      </p>
+ 
+      </div>
+ 
+    <div class="section refsyn" id="GUID-8A51E60C-3E58-415E-8FC4-A73F1629851A__GUID-32F04DAF-B7FF-4F2A-881B-7C9418BBCFEB"><a name="GUID-8A51E60C-3E58-415E-8FC4-A73F1629851A__GUID-32F04DAF-B7FF-4F2A-881B-7C9418BBCFEB"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <p class="p man8">The portion of the script that calls
+        
+        <samp class="ph codeph">opareport</samp> and 
+        <samp class="ph codeph">opaxmlextract</samp> follows: 
+      </p>
+ 
+      <pre class="pre codeblock">opareport -x -d 10 -s -o errors -T $@ | opaxmlextract -d \; 
+-e Rate -e MTU -e Internal -e LinkDetails -e CableLength -e CableLabel
+-e CableDetails -e Port.NodeGUID -e Port.PortGUID -e Port.PortNum 
+-e Port.PortType -e Port.NodeDesc -e Port.PortDetails 
+-e PortXmitData.Value -e PortXmitPkts.Value -e PortRcvData.Value 
+-e PortRcvPkts.Value -e SymbolErrors.Value -e LinkErrorRecovery.Value 
+-e LinkDowned.Value -e PortRcvErrors.Value 
+-e PortRcvRemotePhysicalErrors.Value -e PortRcvSwitchRelayErrors.Value 
+-e PortXmitConstraintErrors.Value -e PortRcvConstraintErrors.Value 
+-e LocalLinkIntegrityErrors.Value -e ExcessiveBufferOverrunErrors.Value</pre>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

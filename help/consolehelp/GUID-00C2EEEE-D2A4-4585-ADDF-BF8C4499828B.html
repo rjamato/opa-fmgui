@@ -1,0 +1,276 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opaxlattopology_cust">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opaxlattopology_cust</title>
+</head>
+<body class="man8" id="GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B"><a name="GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opaxlattopology_cust</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B__GUID-79DFD20F-93A2-4D78-AE87-4DDA8B85A9E8"><a name="GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B__GUID-79DFD20F-93A2-4D78-AE87-4DDA8B85A9E8"><!-- --></a> 
+      <p class="p">Customizable script for documenting cluster topology. Provides an
+        alternative to the standard script (see 
+        <a class="xref" href="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564.html#GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564">opaxlattopology</a>).
+        Edit the sample 
+        <span class="ph filepath">topology_cust.xlsx</span> to represent each external link
+        in a cluster, then modify 
+        <samp class="ph codeph">opaxlattopology_cust</samp> to translate the alternate CSV
+        form to the standard CSV form used by 
+        <samp class="ph codeph">opaxlattopology</samp>. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B__GUID-08B31F3A-8321-43CC-ABD5-E25611E37017"><a name="GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B__GUID-08B31F3A-8321-43CC-ABD5-E25611E37017"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opaxlattopology_cust -t <var class="keyword varname">topology_prime</var> [-s <var class="keyword varname">topology_second</var>] -T <var class="keyword varname">topology_out</var> 
+[-v <var class="keyword varname">level</var>] [-i <var class="keyword varname">level</var>] [-c <var class="keyword varname">char</var>] [-K] [-?]</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B__GUID-6ABF0D10-96EA-48F5-9EAC-44C2BE594533"><a name="GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B__GUID-6ABF0D10-96EA-48F5-9EAC-44C2BE594533"><!-- --></a><h2 class="sectiontitle">Options</h2> 
+      <a name="GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B__GUID-56E3639F-B96E-4DB0-A0F1-21CFD0ECD071"><!-- --></a><dl class="dl parml" id="GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B__GUID-56E3639F-B96E-4DB0-A0F1-21CFD0ECD071"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-t 
+              <var class="keyword varname">topology_prime</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Primary topology CSV input file. Specifies the primary CSV input
+              file and must be present. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-s 
+              <var class="keyword varname">topology_second</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Secondary topology CSV input file. Specifies a secondary CSV
+              input file. Appended to the primary for processing. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-T 
+              <var class="keyword varname">topology_out</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Topology CSV output file. Specifies the CSV output file name and
+              must be specified. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-v 
+              <var class="keyword varname">level</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Verbose level. Range = 0 - 8, default = 2. 
+            </p>
+ 
+            <a name="GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B__GUID-6B95A4BE-A48E-471B-9EB0-66EFC619C89D"><!-- --></a><dl class="dl parml" id="GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B__GUID-6B95A4BE-A48E-471B-9EB0-66EFC619C89D"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">No output. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">1</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Progress output. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">2</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Reserved. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">4</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Time stamps. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">8</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Reserved. 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-i 
+              <var class="keyword varname">level</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Screen output indent level. Range = 0 - 15, default = 0. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-c 
+              <var class="keyword varname">char</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Concatenation character, used for Cable Label values. A space is
+              used by default, but another character, such as underscore, can be specified. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-K</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Does not clean temporary files. Prevents temporary files from
+              being removed. Temporary files contain CSV data used during processing.
+              Temporary files are not needed after the standard-format CSV file is created,
+              but they can be retained for subsequent inspection or processing. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-?</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Prints this output. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B__GUID-2F33DBEE-54EE-4CA7-956E-F16031C84F8D"><a name="GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B__GUID-2F33DBEE-54EE-4CA7-956E-F16031C84F8D"><!-- --></a><h2 class="sectiontitle">Description</h2> 
+      <p class="p">Each link contains source, destination, and cable fields with one link
+        per row of the spreadsheet. Link fields must not contain commas. Source and
+        Destination fields are each a concatenation of name and port information in the
+        following forms. Names not of the form 
+        <samp class="ph codeph">ib</samp> or 
+        <samp class="ph codeph">C</samp> are assumed to be host names. 
+      </p>
+ 
+      <a name="GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B__GUID-10A7BB1E-4BD7-4459-8DB9-64407AF6F21B"><!-- --></a><dl class="dl parml" id="GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B__GUID-10A7BB1E-4BD7-4459-8DB9-64407AF6F21B"> 
+         
+          <dt class="dt pt dlterm"><strong class="ph b">Node Type</strong> 
+          </dt>
+ 
+          <dd class="dd pd"><strong class="ph b">Source/Destination</strong> 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">Host</samp> 
+          </dt>
+ 
+          <dd class="dd pd">host<var class="keyword varname">N</var> where N is a host number. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">Edge Switch</samp> 
+          </dt>
+ 
+          <dd class="dd pd">ib<var class="keyword varname">N</var>p<var class="keyword varname">N</var> where N is a
+            switch/port number. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">Core Leaf</samp> 
+          </dt>
+ 
+          <dd class="dd pd">C<var class="keyword varname">n</var>L<var class="keyword varname">nnn</var>p<var class="keyword varname">N</var>
+            where N/n is a host/switch/port number. 
+          </dd>
+ 
+         
+      </dl>
+ 
+      <p class="p">Cable values, CableLength, and CableDetails are optional and have no
+        special syntax. If present, they are placed in the standard-format CSV file
+        exactly as they appear. CableLabel is created automatically by 
+        <samp class="ph codeph">opaxlattopology_cust</samp> as the concatenation of Source
+        and Destination (see 
+        <samp class="ph codeph">-c</samp> option). 
+      </p>
+ 
+      <p class="p">Rack Group and Rack are not supported in 
+        <span class="ph filepath">topology_cust.xlsx</span>. Therefore, 
+        <samp class="ph codeph">opaxlattopology_cust</samp> leaves these fields empty in the
+        standard-format CSV file. 
+      </p>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

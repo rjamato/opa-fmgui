@@ -1,0 +1,247 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opadisableports">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-4E926BC3-215C-48A7-86DA-15E6447A129B">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opadisableports</title>
+</head>
+<body class="man8" id="GUID-4E926BC3-215C-48A7-86DA-15E6447A129B"><a name="GUID-4E926BC3-215C-48A7-86DA-15E6447A129B"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opadisableports</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-4E926BC3-215C-48A7-86DA-15E6447A129B__GUID-3D61F8A5-5983-4490-8B3B-23427B0C48D2"><a name="GUID-4E926BC3-215C-48A7-86DA-15E6447A129B__GUID-3D61F8A5-5983-4490-8B3B-23427B0C48D2"><!-- --></a> 
+      <p class="p"><strong class="ph b">(Linux)</strong> Accepts a CSV file listing links to disable. For each
+        HFI-SW link, the switch side of the link is disabled. For each SW-SW link, the
+        side of the link with the lower LID (typically, the side closest to the SM) is
+        disabled. This approach generally permits a future 
+        <samp class="ph codeph">opaenableports</samp> operation to re-enable the port once
+        the issue is corrected or ready to be retested. When using the 
+        <samp class="ph codeph">-R</samp> option, this tool does not look at the routes, it
+        disables the switch ports with the lower value LID. The list of disabled ports
+        is tracked in 
+        <span class="ph filepath">/etc/sysconfig/opa/disabled*.csv</span>. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-4E926BC3-215C-48A7-86DA-15E6447A129B__GUID-30987D0D-52FA-4E65-88BB-AD97751BB2AE"><a name="GUID-4E926BC3-215C-48A7-86DA-15E6447A129B__GUID-30987D0D-52FA-4E65-88BB-AD97751BB2AE"><!-- --></a><h2 class="sectiontitle">Syntax </h2> 
+      <pre class="pre codeblock">opadisableports [-R] [-t <var class="keyword varname">portsfile</var>] [-p <var class="keyword varname">ports</var>] 
+[<var class="keyword varname">reason</var>] &lt;&nbsp;disable.csv</pre>
+ 
+      <p class="p">or 
+      </p>
+ 
+      <pre class="pre codeblock">opadisableports --help</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-4E926BC3-215C-48A7-86DA-15E6447A129B__GUID-9F8382D0-7526-4193-86F1-F374895D06DD"><a name="GUID-4E926BC3-215C-48A7-86DA-15E6447A129B__GUID-9F8382D0-7526-4193-86F1-F374895D06DD"><!-- --></a><h2 class="sectiontitle">Options </h2> 
+      <a name="GUID-4E926BC3-215C-48A7-86DA-15E6447A129B__GUID-0F6AEF4E-389F-4789-844F-95985E1D4C5E"><!-- --></a><dl class="dl parml" id="GUID-4E926BC3-215C-48A7-86DA-15E6447A129B__GUID-0F6AEF4E-389F-4789-844F-95985E1D4C5E"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Produces full help text. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-R</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Does not attempt to get routes for computation of distance.
+              Instead, disables switch port with lower LID assuming that it is closer to this
+              node. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-t 
+              <var class="keyword varname">portsfile</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File with list of local HFI ports used to access fabric(s) for
+              operation. Default is 
+              <span class="ph filepath">/etc/sysconfig/opa/ports</span>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-p 
+              <var class="keyword varname">ports</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"> List of local HFI ports used to access fabric(s) for analysis.
+              Default is first active port. The first HFI in the system is 1. The first port
+              on an HFI is 1. 
+            </p>
+ 
+            <p class="p">Uses the format 
+              <samp class="ph codeph">hfi:port</samp>, for example: 
+            </p>
+ 
+            <a name="GUID-4E926BC3-215C-48A7-86DA-15E6447A129B__GUID-F5F77568-1477-4AD5-997D-C237DEFEA59A"><!-- --></a><dl class="dl parml" id="GUID-4E926BC3-215C-48A7-86DA-15E6447A129B__GUID-F5F77568-1477-4AD5-997D-C237DEFEA59A"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0:0</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">First active port in system. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0:y</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Port 
+                    <samp class="ph codeph"><var class="keyword varname">y</var></samp> within system. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">x:0</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">First active port on HFI 
+                    <samp class="ph codeph"><var class="keyword varname">x</var></samp>. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">x:y</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">HFI 
+                    <samp class="ph codeph"><var class="keyword varname">x</var></samp>, port 
+                    <samp class="ph codeph"><var class="keyword varname">y</var></samp>. 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"><var class="keyword varname">reason</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Optional text describing why ports are being disabled. If used,
+              text is saved at the end of any new lines in the disabled file. For ports
+              already in the disabled file, this is ignored. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">disable.csv</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"> File listing the links to disable. The list is of the form: 
+              <samp class="ph codeph">NodeGUID; PortNum; NodeType; NodeDesc; NodeGUID; PortNum;
+                NodeType; NodeDesc; Reason 
+              </samp> 
+            </p>
+ 
+            <p class="p">For each listed link, the switch port with the lower LID (closer
+              to the SM) is disabled. The 
+              <samp class="ph codeph"><var class="keyword varname">reason</var></samp> field is optional. The
+              
+              <samp class="ph codeph"><var class="keyword varname">reason</var></samp> field and any
+              additional fields provided are saved in the disabled file. An input file such
+              as this can be generated by using 
+              <samp class="ph codeph">opaextractbadlinks</samp> or 
+              <samp class="ph codeph">opaextractsellinks</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-4E926BC3-215C-48A7-86DA-15E6447A129B__XX1186124"><a name="GUID-4E926BC3-215C-48A7-86DA-15E6447A129B__XX1186124"><!-- --></a><h2 class="sectiontitle">Environment </h2> 
+      <p class="p">The following environment variables are also used by this command: 
+      </p>
+ 
+      <a name="GUID-4E926BC3-215C-48A7-86DA-15E6447A129B__GUID-684F5723-9C8A-4E23-B873-D687B937BA08"><!-- --></a><dl class="dl parml" id="GUID-4E926BC3-215C-48A7-86DA-15E6447A129B__GUID-684F5723-9C8A-4E23-B873-D687B937BA08"> 
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">PORTS</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of ports, used in absence of 
+              <samp class="ph codeph">-t</samp> and 
+              <samp class="ph codeph">-p</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">PORTS_FILE</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File containing list of ports, used in absence of 
+              <samp class="ph codeph">-t</samp> and 
+              <samp class="ph codeph">-p</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-4E926BC3-215C-48A7-86DA-15E6447A129B__XX1177649"><a name="GUID-4E926BC3-215C-48A7-86DA-15E6447A129B__XX1177649"><!-- --></a><h2 class="sectiontitle">Examples </h2> 
+      <pre class="pre codeblock">opadisableports 'bad cable' &lt; disable.csv
+opadisableports -p '1:1 2:1' 'dead servers' &lt; disable.csv</pre>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

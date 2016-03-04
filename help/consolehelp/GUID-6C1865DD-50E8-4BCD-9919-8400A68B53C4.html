@@ -1,0 +1,1010 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opachassisadmin">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opachassisadmin</title>
+</head>
+<body class="man8" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4"><a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opachassisadmin</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-FFA420F9-1AE5-48DC-9825-1E0840EAB842"><a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-FFA420F9-1AE5-48DC-9825-1E0840EAB842"><!-- --></a> 
+      <p class="p"> 
+        <strong class="ph b">(Switch)</strong> Performs a number of multi-step chassis initialization
+        and verification operations, including initial chassis setup, firmware
+        upgrades, chassis reboot, and others. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-C98685D1-DF0C-4A3A-B880-DCB4BD0EABC7"><a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-C98685D1-DF0C-4A3A-B880-DCB4BD0EABC7"><!-- --></a><h2 class="sectiontitle">Syntax </h2> 
+      <pre class="pre codeblock">opachassisadmin [-c] [-F <var class="keyword varname">chassisfile</var>] [-H '<var class="keyword varname">chassis</var>'] 
+[-P <var class="keyword varname">packages</var>] [-a <var class="keyword varname">action</var>] [-I <var class="keyword varname">fm_bootstate</var>] 
+[-S] [-d <var class="keyword varname">upload_dir</var>] [-s <var class="keyword varname">securityfiles</var>] <var class="keyword varname">operation</var> ...</pre>
+ 
+      <p class="p">or 
+      </p>
+ 
+      <pre class="pre codeblock">opachassisadmin --help</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__SECTION_7D6C47377F60465F81D2914A535DEEA0"><a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__SECTION_7D6C47377F60465F81D2914A535DEEA0"><!-- --></a><h2 class="sectiontitle">Options </h2> 
+      <a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-299707A0-7F18-49A1-9AC7-83AA73627D1C"><!-- --></a><dl class="dl parml" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-299707A0-7F18-49A1-9AC7-83AA73627D1C"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> --help</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Produces full help text. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -c</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Clobbers result files from any previous run before starting this
+              run. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -F 
+              <var class="keyword varname">chassisfile</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File with chassis in cluster. The default is 
+              <span class="ph filepath">/etc/sysconfig/opa/chassis</span>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -H 
+              <var class="keyword varname">chassis</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of chassis to execute the operation against. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -P 
+              <var class="keyword varname">packages</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Filenames and directories of firmware images to install. For
+              directories specified, all 
+              <span class="ph filepath">.pkg</span> files in directory tree are used. 
+              <samp class="ph codeph">shell</samp> wild cards may also be used within quotes,
+              or for 
+              <samp class="ph codeph">fmconfig</samp>, filename of FM config file to use, or
+              for 
+              <samp class="ph codeph">fmgetconfig</samp>, filename to upload to (default 
+              <span class="ph filepath">opafm.xml</span>). 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -a 
+              <var class="keyword varname">action</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p">Action for supplied file. The default is push. 
+              <a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-AB80656C-1CCA-4BCD-8C34-B2D7448EA3DA"><!-- --></a><dl class="dl parml" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-AB80656C-1CCA-4BCD-8C34-B2D7448EA3DA"> 
+                 
+                  <dt class="dt pt dlterm">For chassis upgrade: 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-6DB6CE23-AE19-439C-9A2B-A5057C7F8EA9"><!-- --></a><dl class="dl parml" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-6DB6CE23-AE19-439C-9A2B-A5057C7F8EA9"> 
+                       
+                        <dt class="dt pt dlterm"><samp class="ph codeph"> push</samp> 
+                        </dt>
+ 
+                        <dd class="dd pd"> 
+                          <p class="p">Ensures firmware is in primary or alternate. 
+                          </p>
+ 
+                        </dd>
+ 
+                       
+                       
+                        <dt class="dt pt dlterm"><samp class="ph codeph"> select</samp> 
+                        </dt>
+ 
+                        <dd class="dd pd"> 
+                          <p class="p">Ensures firmware is in primary. 
+                          </p>
+ 
+                        </dd>
+ 
+                       
+                       
+                        <dt class="dt pt dlterm"><samp class="ph codeph"> run</samp> 
+                        </dt>
+ 
+                        <dd class="dd pd"> 
+                          <p class="p">Ensures firmware is in primary and running. 
+                          </p>
+ 
+                        </dd>
+ 
+                       
+                    </dl>
+ 
+                  </dd>
+ 
+                 
+              </dl>
+ 
+            </div>
+ 
+            <a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-2A02B528-0F71-4069-AF95-3579D88F07F7"><!-- --></a><dl class="dl parml" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-2A02B528-0F71-4069-AF95-3579D88F07F7"> 
+               
+                <dt class="dt pt dlterm">For chassis 
+                  <samp class="ph codeph">fmconfig</samp>: 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-31AA3668-E3E6-4515-BD95-4624415D0C79"><!-- --></a><dl class="dl parml" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-31AA3668-E3E6-4515-BD95-4624415D0C79"> 
+                     
+                      <dt class="dt pt dlterm"><samp class="ph codeph">push</samp> 
+                      </dt>
+ 
+                      <dd class="dd pd"> 
+                        <p class="p">Ensures the configuration file is in chassis. 
+                        </p>
+ 
+                      </dd>
+ 
+                     
+                     
+                      <dt class="dt pt dlterm"> 
+                        <samp class="ph codeph">run</samp> 
+                      </dt>
+ 
+                      <dd class="dd pd"> 
+                        <p class="p">After push, restarts FM on master, stops on
+                          secondary. 
+                        </p>
+ 
+                      </dd>
+ 
+                     
+                     
+                      <dt class="dt pt dlterm"> 
+                        <samp class="ph codeph">runall</samp> 
+                      </dt>
+ 
+                      <dd class="dd pd"> 
+                        <p class="p">After push, restarts FM on all management modules. 
+                        </p>
+ 
+                      </dd>
+ 
+                     
+                  </dl>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+            <a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-3EC3D291-B824-4CF7-B7BE-7108B81A656E"><!-- --></a><dl class="dl parml" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-3EC3D291-B824-4CF7-B7BE-7108B81A656E"> 
+               
+                <dt class="dt pt dlterm">For chassis 
+                  <samp class="ph codeph">fmcontrol</samp>: 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-8AFB238A-2626-430A-81F5-69BC2A586100"><!-- --></a><dl class="dl parml" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-8AFB238A-2626-430A-81F5-69BC2A586100"> 
+                     
+                      <dt class="dt pt dlterm"><samp class="ph codeph">stop</samp> 
+                      </dt>
+ 
+                      <dd class="dd pd"> 
+                        <p class="p">Stops FM on all management modules. 
+                        </p>
+ 
+                      </dd>
+ 
+                     
+                     
+                      <dt class="dt pt dlterm"><samp class="ph codeph">run</samp> 
+                      </dt>
+ 
+                      <dd class="dd pd"> 
+                        <p class="p">Ensures FM running on master, stopped on secondary. 
+                        </p>
+ 
+                      </dd>
+ 
+                     
+                     
+                      <dt class="dt pt dlterm"><samp class="ph codeph">runall</samp> 
+                      </dt>
+ 
+                      <dd class="dd pd"> 
+                        <p class="p">Ensures FM running on all management modules. 
+                        </p>
+ 
+                      </dd>
+ 
+                     
+                     
+                      <dt class="dt pt dlterm"><samp class="ph codeph">restart</samp> 
+                      </dt>
+ 
+                      <dd class="dd pd"> 
+                        <p class="p">Restarts FM on master, stops on secondary. 
+                        </p>
+ 
+                      </dd>
+ 
+                     
+                     
+                      <dt class="dt pt dlterm"><samp class="ph codeph">restartall</samp> 
+                      </dt>
+ 
+                      <dd class="dd pd"> 
+                        <p class="p">Restarts FM on all MM. 
+                        </p>
+ 
+                      </dd>
+ 
+                     
+                  </dl>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+            <a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-2C4B1632-F624-4207-AAA4-5E26D3FF79AB"><!-- --></a><dl class="dl parml" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-2C4B1632-F624-4207-AAA4-5E26D3FF79AB"> 
+               
+                <dt class="dt pt dlterm">For chassis 
+                  <samp class="ph codeph">fmsecurityfiles</samp>: 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-19BEBD7C-563E-4376-A31C-34C53E2E1364"><!-- --></a><dl class="dl parml" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-19BEBD7C-563E-4376-A31C-34C53E2E1364"> 
+                     
+                      <dt class="dt pt dlterm"><samp class="ph codeph">push</samp> 
+                      </dt>
+ 
+                      <dd class="dd pd"> 
+                        <p class="p">Ensures FM security files are in chassis. 
+                        </p>
+ 
+                      </dd>
+ 
+                     
+                  </dl>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -I 
+              <var class="keyword varname">fm_bootstate</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p"><samp class="ph codeph">fmconfig</samp> and 
+              <samp class="ph codeph">fmcontrol</samp> install options. 
+              <a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-A42E8581-3AB2-4428-9447-D201D96427A4"><!-- --></a><dl class="dl parml" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-A42E8581-3AB2-4428-9447-D201D96427A4"> 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">disable</samp> 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p">Disables FM start at chassis boot. 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">enable</samp> 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p">Enables FM start on master at chassis boot. 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">enableall</samp> 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p">Enables FM start on all MM at chassis boot. 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+              </dl>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -d 
+              <var class="keyword varname">upload_dir</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Directory to upload FM configuration files to; default is 
+              <span class="ph filepath">uploads</span>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -S</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Securely prompts for password for user on chassis. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -s 
+              <var class="keyword varname">securityFiles</var></samp>
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Security files to install. Default is 
+              <span class="ph filepath">*.pem</span>. For Chassis 
+              <samp class="ph codeph"><var class="keyword varname">fmsecurityfiles</var></samp>,
+              filenames/directories of security files to install. For directories specified,
+              all security files in directory tree are used. Shell wildcards may also be used
+              within quotes. 
+            </p>
+ 
+            <p class="p">For Chassis 
+              <samp class="ph codeph"><var class="keyword varname">fmgetsecurityfiles</var></samp>, filename
+              to upload to. Default is 
+              <span class="ph filepath">*.pem</span> 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"><var class="keyword varname">operation</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p">Operation to perform. Can be one or more of: 
+              <a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-9DD8E990-4712-4027-9822-423ED93FFD2E"><!-- --></a><dl class="dl parml" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-9DD8E990-4712-4027-9822-423ED93FFD2E"> 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">reboot</samp> 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p">Reboots chassis, ensures they go down and come back. 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">configure</samp> 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p">Runs wizard to perform chassis configuration. 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">upgrade</samp> 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p">Upgrades install of all chassis. 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">getconfig</samp> 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p">Gets basic configuration of chassis. 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">fmconfig</samp> 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p">FM configuration operation on all chassis. 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">fmgetconfig</samp> 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p">Fetches FM configuration from all chassis. 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">fmcontrol</samp> 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p">Controls FM on all chassis. 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">fmsecurityfiles</samp> 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"> FM security files operation on all chassis. 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"> 
+                    <samp class="ph codeph">fmgetsecurityfiles</samp> 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"> Fetches FM security files from all chassis. 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+              </dl>
+ 
+            </div>
+ 
+          </dd>
+ 
+          <dd class="dd pd"> 
+            <p class="p">For more information on the operations that can be performed,
+              see 
+              <a class="xref" href="#GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-3048A135-A5EB-4695-8B56-2D215294EB00">opachassisadmin
+                operation Details</a>. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__SECTION_413F2DB8291D4601984EEDE32BF1DA03"><a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__SECTION_413F2DB8291D4601984EEDE32BF1DA03"><!-- --></a><h2 class="sectiontitle">Example </h2> 
+      <pre class="pre codeblock">opachassisadmin -c reboot
+opachassisadmin -P /root/ChassisFw4.2.0.0.1 upgrade
+opachassisadmin -H 'chassis1 chassis2' reboot
+CHASSIS='chassis1 chassis2' opachassis_admin reboot
+opachassisadmin -a run -P '*.pkg' upgrade		</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__SECTION_56E553164575411D936EBC5C60B6FC0D"><a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__SECTION_56E553164575411D936EBC5C60B6FC0D"><!-- --></a><h2 class="sectiontitle">Environment Variables </h2> 
+      <p class="p">The following environment variables are also used by this command: 
+      </p>
+ 
+      <a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-D130BB07-28FC-4CDC-B387-18D137D63CCD"><!-- --></a><dl class="dl parml" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-D130BB07-28FC-4CDC-B387-18D137D63CCD"> 
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">CHASSIS</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of chassis, used if 
+              <samp class="ph codeph">-H</samp> and 
+              <samp class="ph codeph">-F</samp> option not supplied. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">CHASSIS_FILE</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File containing list of chassis, used in absence of 
+              <samp class="ph codeph">-F</samp> and 
+              <samp class="ph codeph">-H</samp>. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_MAX_PARALLEL</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Maximum concurrent operations. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_SERIALIZE_OUTPUT</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Serializes output of parallel operations (yes or no). 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">UPLOADS_DIR</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Directory to upload to, used in absence of 
+              <samp class="ph codeph">-d</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-3048A135-A5EB-4695-8B56-2D215294EB00"><a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-3048A135-A5EB-4695-8B56-2D215294EB00"><!-- --></a><h2 class="title sectiontitle">opachassisadmin Operation Details</h2> 
+       
+      <p class="p"><strong class="ph b">(Switch)</strong> All chassis operations log into the chassis as chassis
+        user admin. Intel recommends using the 
+        <samp class="ph codeph">-S</samp> option to securely prompt for a password, in which
+        case the same password is used for all chassis. Alternately, the password may
+        be put in the environment or the 
+        <span class="ph filepath">opafastfabric.conf</span> file using 
+        <span class="keyword parmname">FF_CHASSIS_ADMIN_PASSWORD</span>. 
+      </p>
+ 
+      <p class="p">All versions of 
+        <span class="ph">Intel<sup>®</sup> Omni-Path Switch
+          100 Series</span> firmware permit SSH keys to be configured within the chassis
+        for secure password-less login. In this case, there is no need to configure a 
+        <span class="keyword parmname">FF_CHASSIS_ADMIN_PASSWORD</span> and 
+        <span class="keyword parmname">FF_CHASSIS_LOGIN_METHOD</span> can be SSH. Refer to the 
+        <span class="ph"><em class="ph i">Intel<sup>®</sup> Omni-Path
+            Fabric Switches Command Line Interface Reference Guide</em></span> for more
+        information. 
+      </p>
+ 
+      <a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-5119B1BB-A7E9-4A4C-BEF0-21B8FE1239A0"><!-- --></a><dl class="dl parml" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-5119B1BB-A7E9-4A4C-BEF0-21B8FE1239A0"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">upgrade</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Upgrades the firmware on each chassis or slot specified. The 
+              <samp class="ph codeph">-P</samp> option selects a directory containing 
+              <span class="ph filepath">.pkg</span> files or provides an explicit list of 
+              <span class="ph filepath">.pkg</span> files for the chassis and/or slots. The
+              
+              <samp class="ph codeph">-a</samp> option selects the desired minimal state for
+              the new firmware. For each chassis and/or slot selected for upgrade, the 
+              <span class="ph filepath">.pkg</span> file applicable to that slot is
+              selected and used. If more than one 
+              <span class="ph filepath">.pkg</span> file is specified of a given card type,
+              the operation is undefined. 
+            </p>
+ 
+            <p class="p">The upgrade is intelligent and does not upgrade chassis that
+              already have the desired firmware in the desired state (as specified by 
+              <samp class="ph codeph">-a</samp>). 
+            </p>
+ 
+            <p class="p">When the 
+              <samp class="ph codeph">-a</samp> option specifies run, chassis that are not
+              already running the desired firmware are rebooted. By selecting the proper 
+              <span class="keyword parmname">FF_MAX_PARALLEL</span> value, a rolling upgrade or
+              a parallel upgrade may be accomplished. In most cases, a parallel upgrade is
+              recommended for expediency. 
+            </p>
+ 
+            <p class="p">For more information about chassis firmware, refer to the 
+              <span class="ph"><em class="ph i">Intel<sup>®</sup> Omni-Path Fabric
+            Switches GUI User Guide</em></span> and 
+              <span class="ph"><em class="ph i">Intel<sup>®</sup> Omni-Path
+            Fabric Externally-Managed Switches Release Notes</em></span>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">configure</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Runs the chassis setup wizard, which asks a series of questions.
+              Once the wizard has finished prompting for configuration information, all the
+              selected chassis are configured through the CLI interface according to the
+              responses. The following options may be configured for all chassis: 
+            </p>
+ 
+            <a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__UL_08E46EEF28C8406A9E54B79036F93CAC"><!-- --></a><ul class="ul" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__UL_08E46EEF28C8406A9E54B79036F93CAC"> 
+              <li class="li" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__LI_D2291083785D4638936980EB6BE6CED5"><a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__LI_D2291083785D4638936980EB6BE6CED5"><!-- --></a> 
+                <p class="p">syslog server IP address, TCP/UDP port number, syslog
+                  facility code, and the chassis LogMode. 
+                </p>
+ 
+              </li>
+ 
+              <li class="li" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__LI_58DA833723974DBDAB0181FEE65DDE53"><a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__LI_58DA833723974DBDAB0181FEE65DDE53"><!-- --></a> 
+                <p class="p">NTP server 
+                </p>
+ 
+              </li>
+ 
+              <li class="li" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__LI_17CD5D5ED6B04E17B18300F2E8664576"><a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__LI_17CD5D5ED6B04E17B18300F2E8664576"><!-- --></a> 
+                <p class="p">local time zone 
+                </p>
+ 
+              </li>
+ 
+              <li class="li" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__LI_4A9358F6F05144D89E460A76E10D098B"><a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__LI_4A9358F6F05144D89E460A76E10D098B"><!-- --></a> 
+                <p class="p">maximum packet MTU 
+                </p>
+ 
+              </li>
+ 
+              <li class="li" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__LI_CC5076EF443D4E74A18342EFF7F37734"><a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__LI_CC5076EF443D4E74A18342EFF7F37734"><!-- --></a> 
+                <p class="p">VL capability 
+                </p>
+ 
+              </li>
+ 
+              <li class="li" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__LI_0D63D09114DB4FC79187E9B17DAA45FC"><a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__LI_0D63D09114DB4FC79187E9B17DAA45FC"><!-- --></a> 
+                <p class="p">VL credit distribution 
+                </p>
+ 
+              </li>
+ 
+              <li class="li" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__LI_953130CB946143829350B8D4EFB06D8D"><a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__LI_953130CB946143829350B8D4EFB06D8D"><!-- --></a> 
+                <p class="p">link width supported 
+                </p>
+ 
+              </li>
+ 
+              <li class="li" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__LI_3732DF08839345EA8633A69B5A64ADFB"><a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__LI_3732DF08839345EA8633A69B5A64ADFB"><!-- --></a> 
+                <p class="p">IB node description 
+                </p>
+ 
+              </li>
+ 
+              <li class="li" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__LI_2A8600220894472FAAE3570909A231DE"><a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__LI_2A8600220894472FAAE3570909A231DE"><!-- --></a> 
+                <p class="p">IB node description format 
+                </p>
+ 
+              </li>
+ 
+              <li class="li" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__LI_CF286F4FBE7A42DD8034284E8D077BC5"><a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__LI_CF286F4FBE7A42DD8034284E8D077BC5"><!-- --></a> 
+                <p class="p">disable chassis auto clear of port counters 
+                </p>
+ 
+                <div class="note note" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-BE660D52-A81C-4BB9-863F-5B12FCD36F00"><a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-BE660D52-A81C-4BB9-863F-5B12FCD36F00"><!-- --></a><span class="notetitle">Note:</span>  
+                  <p class="p">In a fabric where FastFabric tools such as 
+                    <samp class="ph codeph">opatop</samp> work in conjunction with the PM/PA
+                    to monitor port counters, you must disable the chassis port counter auto-clear
+                    feature. 
+                  </p>
+ 
+                </div>
+ 
+              </li>
+ 
+            </ul>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">reboot</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Reboots the given chassis and ensures they go down and come back
+              up by pinging them during the reboot process. 
+            </p>
+ 
+            <p class="p">By selecting the proper 
+              <span class="keyword parmname">FF_MAX_PARALLEL</span> value, a rolling reboot or a
+              parallel reboot may be accomplished. In most cases, a parallel upgrade is
+              recommended for expediency. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">getconfig</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Retrieves basic information from a chassis such as syslog, NTP
+              configuration, timezone info, MTU Capability, VL Capability, VL Credit
+              Distribution, Link Width, and node description. 
+            </p>
+ 
+            </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">fmconfig</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Updates the Fabric Manager configuration file on each chassis
+              specified. The 
+              <samp class="ph codeph">-P</samp> option selects a file to transfer to the
+              chassis. The 
+              <samp class="ph codeph">-a</samp> option selects the desired minimal state for
+              the new configuration and controls whether the FM is started/restarted after
+              the file is updated. The 
+              <samp class="ph codeph">-I</samp> option can be used to configure the FM start
+              at boot for the selected chassis. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">fmgetconfig</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Uploads the FM configuration file from all selected chassis. The
+              file is uploaded to the selected uploads directory. The 
+              <samp class="ph codeph">-P</samp> option specifies the desired destination
+              filename within the uploads directory. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">fmcontrol</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Allows the FM to be controlled on each chassis specified. The 
+              <samp class="ph codeph">-a</samp> option selects the desired state for the FM. 
+            </p>
+ 
+            <p class="p">The 
+              <samp class="ph codeph">-I</samp> option configures the FM start at boot for
+              the selected chassis. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> fmsecurityfiles</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Updates the FM security files on each chassis specified. The 
+              <samp class="ph codeph">-s</samp> option selects file(s) to transfer to the
+              chassis. The 
+              <samp class="ph codeph">-a</samp> option selects the desired minimal state for
+              the new security files. In this release, 
+              <samp class="ph codeph">push</samp> is the only supported action. 
+            </p>
+ 
+            </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> fmgetsecurityfiles</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Uploads the FM security files from all selected chassis. The
+              files are uploaded to the selected uploads directory. The 
+              <samp class="ph codeph">-s</samp> option specifies the desired destination
+              filename within the uploads directory. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-ADB35B1C-9EED-42B8-A8A7-E9704DCE55D2"><a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-ADB35B1C-9EED-42B8-A8A7-E9704DCE55D2"><!-- --></a><h2 class="sectiontitle">Logging</h2> 
+      <p class="p"><samp class="ph codeph">opachassisadmin</samp> provides detailed logging of its
+        results. During each run, the following files are produced: 
+      </p>
+ 
+      <a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-DED99EC4-B56C-4A18-8BBF-527721298313"><!-- --></a><dl class="dl parml" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-DED99EC4-B56C-4A18-8BBF-527721298313"> 
+         
+          <dt class="dt pt dlterm"><span class="ph filepath">test.res</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Appended with summary results of run. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="ph filepath"> test.log</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Appended with detailed results of run. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="ph filepath">save_tmp/</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Contains a directory per failed test with detailed logs. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="ph filepath"> test_tmp*/</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Intermediate result files while test is running. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+      <p class="p">The 
+        <samp class="ph codeph">-c</samp> option removes all log files. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-82C8627C-994D-4FEB-9A1C-41C015347494"><a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-82C8627C-994D-4FEB-9A1C-41C015347494"><!-- --></a><h2 class="sectiontitle">ssh Keys</h2> 
+      <p class="p">When performing operations against chassis, Intel recommends setting
+        up SSH keys. If SSH keys are not set up, all chassis must be configured with
+        the same admin password. In this case, Intel recommends using the 
+        <samp class="ph codeph">-S</samp> option. The 
+        <samp class="ph codeph">-S</samp> option avoids the need to keep the password in
+        configuration files. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-88AE31EF-4BF5-4F3E-BFC1-759BC01B5C07"><a name="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-88AE31EF-4BF5-4F3E-BFC1-759BC01B5C07"><!-- --></a><h2 class="sectiontitle">Results</h2> 
+      <p class="p">Results from 
+        <samp class="ph codeph">opachassisadmin</samp> are grouped into 
+        <em class="ph i">test suites</em>, 
+        <em class="ph i">test cases</em>, and 
+        <em class="ph i">test items</em>. A given run of 
+        <samp class="ph codeph">opachassisadmin</samp> represents a single test suite. Within
+        a test suite, multiple test cases occur; typically one test case per chassis
+        being operated on. Some of the more complex operations may have multiple test
+        items per test case. Each test item represents a major step in the overall test
+        case. 
+      </p>
+ 
+      <p class="p">Each 
+        <samp class="ph codeph">opachassisadmin</samp> run appends to 
+        <span class="ph filepath">test.res</span> and 
+        <span class="ph filepath">test.log</span>, and creates temporary files in 
+        <span class="ph filepath">test_tmp$PID</span> in the current directory. The 
+        <span class="ph filepath">test.res</span> file provides an overall summary of
+        operations performed and their results. The same information is also displayed
+        while 
+        <samp class="ph codeph">opachassisadmin</samp> is executing. 
+        <span class="ph filepath">test.log</span> contains detailed information about what
+        was performed, including the specific commands executed and the resulting
+        output. The 
+        <span class="ph filepath">test_tmp</span> directories contain temporary files that
+        reflect tests in progress (or killed). The logs for any failures are logged in
+        the 
+        <span class="ph filepath">save_temp</span> directory with a directory per failed
+        test case. If the same test case fails more than once, 
+        <span class="ph filepath">save_temp</span> retains the information from the first
+        failure. Subsequent runs of 
+        <samp class="ph codeph">opachassisadmin</samp> are appended to 
+        <span class="ph filepath">test.log</span>. Intel recommends reviewing failures and
+        using the 
+        <samp class="ph codeph">-c</samp> option to remove old logs before subsequent runs of
+        
+        <samp class="ph codeph">opachassisadmin</samp>. 
+      </p>
+ 
+      <p class="p"><samp class="ph codeph">opachassisadmin</samp> implicitly performs its operations in
+        parallel. However, as for the other tools, 
+        <span class="keyword parmname">FF_MAX_PARALLEL</span> can be exported to change the
+        degree of parallelism. Twenty (20) parallel operations is the default. 
+      </p>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

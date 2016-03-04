@@ -1,0 +1,83 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opaextractbadlinks">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-868FA6CE-3790-43E3-A048-B7CF79A19569">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opaextractbadlinks</title>
+</head>
+<body class="man8" id="GUID-868FA6CE-3790-43E3-A048-B7CF79A19569"><a name="GUID-868FA6CE-3790-43E3-A048-B7CF79A19569"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opaextractbadlinks</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-868FA6CE-3790-43E3-A048-B7CF79A19569__GUID-6548E307-2A53-46D8-8AA9-028AAF798B1D"><a name="GUID-868FA6CE-3790-43E3-A048-B7CF79A19569__GUID-6548E307-2A53-46D8-8AA9-028AAF798B1D"><!-- --></a> 
+      <p class="p"> Produces a CSV file listing all or some of the links that exceed 
+        <samp class="ph codeph">opareport -o</samp> error thresholds. 
+        <span class="ph filepath">opaextractbadlinks.sh</span> is a front end to the 
+        <samp class="ph codeph">opareport</samp> tool. The output from this tool can be
+        imported into a spreadsheet or parsed by other scripts. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-868FA6CE-3790-43E3-A048-B7CF79A19569__GUID-6FE346ED-A0D7-4755-9F06-FB721C52B4FD"><a name="GUID-868FA6CE-3790-43E3-A048-B7CF79A19569__GUID-6FE346ED-A0D7-4755-9F06-FB721C52B4FD"><!-- --></a><h2 class="sectiontitle">Syntax </h2> 
+      <pre class="pre codeblock">opaextractbadlinks [--help] [opareport <var class="keyword varname">options</var>]</pre>
+ 
+      <p class="p">or 
+      </p>
+ 
+      <pre class="pre codeblock">opaextractbadlinks --help</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-868FA6CE-3790-43E3-A048-B7CF79A19569__XX1204190"><a name="GUID-868FA6CE-3790-43E3-A048-B7CF79A19569__XX1204190"><!-- --></a><h2 class="sectiontitle">Options </h2> 
+      <a name="GUID-868FA6CE-3790-43E3-A048-B7CF79A19569__GUID-DE8355DB-F73F-4703-980D-4A0ECE9857BD"><!-- --></a><dl class="dl parml" id="GUID-868FA6CE-3790-43E3-A048-B7CF79A19569__GUID-DE8355DB-F73F-4703-980D-4A0ECE9857BD"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">opareport 
+              <var class="keyword varname">options</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Options are passed to 
+              <samp class="ph codeph">opareport</samp>. 
+              </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-868FA6CE-3790-43E3-A048-B7CF79A19569__XX1204192"><a name="GUID-868FA6CE-3790-43E3-A048-B7CF79A19569__XX1204192"><!-- --></a><h2 class="sectiontitle">Examples </h2> 
+      <pre class="pre codeblock"># List all the bad links in the fabric:
+opaextractbadlinks.sh
+
+# List all the bad links to a switch named "OmniPth00117501ffffffff":
+opaextractbadlinks.sh -F "node:OmniPth00117501ffffffff"
+
+# List all the bad links to end-nodes:
+opaextractbadlinks.sh -F "nodetype:FI"
+
+# List all the bad links on the 2nd HFI's fabric of a multi-plane fabric:
+opaextractbadlinks.sh -h 2</pre>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

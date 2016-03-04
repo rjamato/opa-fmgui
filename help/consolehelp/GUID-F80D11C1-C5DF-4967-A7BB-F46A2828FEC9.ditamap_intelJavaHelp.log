@@ -1,0 +1,993 @@
+
+init:
+
+dita2intelJavaHelp.init:
+     [copy] Copying 4 files to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out
+
+start-process:
+
+init-logger:
+
+init-URIResolver:
+
+use-init:
+
+check-arg:
+    [mkdir] Created dir: D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp
+     [echo] *****************************************************************
+     [echo] * basedir = C:\InfoShare\App\Utilities\DITA-OT\InfoShare_Intel
+     [echo] * dita.dir = C:\InfoShare\App\Utilities\DITA-OT\InfoShare_Intel
+     [echo] * input = D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset/GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.ditamap
+     [echo] * inputdir = D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset
+     [echo] * transtype = intelJavaHelp
+     [echo] * tempdir = D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset/temp
+     [echo] * outputdir = D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out
+     [echo] * extname = ${dita.ext}
+     [echo] * clean.temp = yes
+     [echo] * DITA-OT version = 1.7.5
+     [echo] * XML parser = Xerces
+     [echo] * XSLT processor = Saxon
+     [echo] * collator = ICU
+     [echo] *****************************************************************
+     [echo] #Ant properties
+     [echo] #Fri Jan 22 06:47:23 PST 2016
+     [echo] args.copycss=yes
+     [echo] args.css=intelltr.css
+     [echo] args.css.file=intelltr.css
+     [echo] args.css.file.temp=intelltr.css
+     [echo] args.css.present=true
+     [echo] args.css.real=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\inteljavahelp\\resource\\intelltr.css
+     [echo] args.cssroot=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\inteljavahelp\\resource
+     [echo] args.draft=no
+     [echo] args.figurelink.style=TITLE
+     [echo] args.grammar.cache=yes
+     [echo] args.hdr=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\inteljavahelp\\resource\\custom-hdr.xml
+     [echo] args.input=D\:\\Data\\InfoShare\\Data\\PublishingService\\Data\\DataExports\\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\\4\\en-US\\workset/GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.ditamap
+     [echo] args.logdir=D\:\\Data\\InfoShare\\Data\\PublishingService\\Data\\DataExports\\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\\4\\en-US\\out
+     [echo] args.message.file=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\resource\\messages.xml
+     [echo] args.rellinks=nofamily
+     [echo] args.tablelink.style=TITLE
+     [echo] args.xhtml.classattr=yes
+     [echo] args.xhtml.toc=toc
+     [echo] args.xhtml.toc.xsl=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\inteljavahelp\\xsl\\map2htmtocImpl_custom.xsl
+     [echo] args.xml.systemid.set=yes
+     [echo] args.xsl=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\inteljavahelp\\xsl\\dita2htmlImpl_custom.xsl
+     [echo] dita.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel
+     [echo] dita.empty=
+     [echo] dita.input.dirname=D\:\\Data\\InfoShare\\Data\\PublishingService\\Data\\DataExports\\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\\4\\en-US\\workset
+     [echo] dita.input.filename=GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.ditamap
+     [echo] dita.map.filename.root=GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9
+     [echo] dita.plugin.com.reallysi.xmldomain.html.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.xmldomain.html
+     [echo] dita.plugin.com.sophos.tocjs.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\com.sophos.tocjs
+     [echo] dita.plugin.intelA4PDF.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\intela4pdf
+     [echo] dita.plugin.intelBasePDF.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\intelBasePDF
+     [echo] dita.plugin.intelChangeBarsPDF.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\intelChangeBarsPDF
+     [echo] dita.plugin.intelDatabookPDF.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\intelDatabookPDF
+     [echo] dita.plugin.intelDesignCenterXhtml.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\inteldesigncenterxhtml
+     [echo] dita.plugin.intelDeveloperZoneXhtml.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\inteldeveloperzonexhtml
+     [echo] dita.plugin.intelEclipseHelp.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\inteleclipsehelp
+     [echo] dita.plugin.intelFlaggingPDF.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\intelFlaggingPdf
+     [echo] dita.plugin.intelHSDBugTrackPDF.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\intelHSDBugTrackPDF
+     [echo] dita.plugin.intelIntelligentSystemsLogoPDF.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\intelIntelligentSystemsLogoPDF
+     [echo] dita.plugin.intelJavaHelp.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\inteljavahelp
+     [echo] dita.plugin.intelPresoPDF.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\intelPresoPDF
+     [echo] dita.plugin.intelQAChecker.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\intelqachecker
+     [echo] dita.plugin.intelSDLtoMDCXML.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\intelsdltomdcxml
+     [echo] dita.plugin.intelTopicGUIDs.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\inteltopicguids
+     [echo] dita.plugin.intelXhtml.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\intelXhtml
+     [echo] dita.plugin.net.sourceforge.d4p.graphviz.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.graphviz
+     [echo] dita.plugin.net.sourceforge.d4p.subjectscheme2navmap.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.subjectscheme2navmap
+     [echo] dita.plugin.net.sourceforge.dita4publishers.common.html.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.common.html
+     [echo] dita.plugin.net.sourceforge.dita4publishers.common.mapdriven.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.common.mapdriven
+     [echo] dita.plugin.net.sourceforge.dita4publishers.common.xslfo.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.common.xslfo
+     [echo] dita.plugin.net.sourceforge.dita4publishers.common.xslt.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.common.xslt
+     [echo] dita.plugin.net.sourceforge.dita4publishers.doctypes.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.doctypes
+     [echo] dita.plugin.net.sourceforge.dita4publishers.enumeration-d.fo.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.enumeration-d.fo
+     [echo] dita.plugin.net.sourceforge.dita4publishers.enumeration-d.html.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.enumeration-d.html
+     [echo] dita.plugin.net.sourceforge.dita4publishers.epub.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.epub
+     [echo] dita.plugin.net.sourceforge.dita4publishers.epub3.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.epub3
+     [echo] dita.plugin.net.sourceforge.dita4publishers.formatting-d.fo.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.formatting-d.fo
+     [echo] dita.plugin.net.sourceforge.dita4publishers.formatting-d.html.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.formatting-d.html
+     [echo] dita.plugin.net.sourceforge.dita4publishers.html2.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.html2
+     [echo] dita.plugin.net.sourceforge.dita4publishers.html5.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.html5
+     [echo] dita.plugin.net.sourceforge.dita4publishers.kindle.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.kindle
+     [echo] dita.plugin.net.sourceforge.dita4publishers.math-d.html.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.math-d.html
+     [echo] dita.plugin.net.sourceforge.dita4publishers.math.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.math
+     [echo] dita.plugin.net.sourceforge.dita4publishers.media-d.html.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.media-d.html
+     [echo] dita.plugin.net.sourceforge.dita4publishers.pubContent-d.fo.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.pubContent-d.fo
+     [echo] dita.plugin.net.sourceforge.dita4publishers.pubmap.html.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.pubmap.html
+     [echo] dita.plugin.net.sourceforge.dita4publishers.rss.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.rss
+     [echo] dita.plugin.net.sourceforge.dita4publishers.ruby-d.fo.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.ruby.fo
+     [echo] dita.plugin.net.sourceforge.dita4publishers.ruby.html.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.ruby.html
+     [echo] dita.plugin.net.sourceforge.dita4publishers.sample.epub_override.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.sample.epub_override
+     [echo] dita.plugin.net.sourceforge.dita4publishers.shakespear.doctypes.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.shakespear.doctypes
+     [echo] dita.plugin.net.sourceforge.dita4publishers.shakespear.html.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.shakespear.html
+     [echo] dita.plugin.net.sourceforge.dita4publishers.variables-d.html.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.variables-d.html
+     [echo] dita.plugin.net.sourceforge.dita4publishers.variables-d.pdf.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.variables-d.pdf
+     [echo] dita.plugin.net.sourceforge.dita4publishers.word2dita.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.word2dita
+     [echo] dita.plugin.net.sourceforge.dita4publishers.xmldomain.doctypes.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.xmldomain.doctypes
+     [echo] dita.plugin.net.sourceforge.dita4publishers.xmldomain.fo.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\net.sourceforge.dita4publishers.xmldomain.fo
+     [echo] dita.plugin.org.dita.base.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel
+     [echo] dita.plugin.org.dita.docbook.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\org.dita.docbook
+     [echo] dita.plugin.org.dita.eclipsecontent.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\org.dita.eclipsecontent
+     [echo] dita.plugin.org.dita.eclipsehelp.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel
+     [echo] dita.plugin.org.dita.htmlhelp.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel
+     [echo] dita.plugin.org.dita.javahelp.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel
+     [echo] dita.plugin.org.dita.legacypdf.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\legacypdf
+     [echo] dita.plugin.org.dita.odt.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel
+     [echo] dita.plugin.org.dita.pdf.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\org.dita.pdf
+     [echo] dita.plugin.org.dita.pdf2.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\org.dita.pdf2
+     [echo] dita.plugin.org.dita.specialization.dita11.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\org.dita.specialization.dita11
+     [echo] dita.plugin.org.dita.specialization.dita132.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\org.dita.specialization.dita132
+     [echo] dita.plugin.org.dita.specialization.eclipsemap.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\org.dita.specialization.eclipsemap
+     [echo] dita.plugin.org.dita.specialization.h2d.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\h2d
+     [echo] dita.plugin.org.dita.troff.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\org.dita.troff
+     [echo] dita.plugin.org.dita.wordrtf.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\plugins\\org.dita.wordrtf
+     [echo] dita.plugin.org.dita.xhtml.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel
+     [echo] dita.preprocess.reloadstylesheet=false
+     [echo] dita.resource.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\resource
+     [echo] dita.script.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel\\xsl
+     [echo] dita.temp.dir=D\:\\Data\\InfoShare\\Data\\PublishingService\\Data\\DataExports\\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\\4\\en-US\\workset/temp
+     [echo] dita.topic.filename.root=GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.ditamap
+     [echo] dita2wordToDita.buildfile.dir=C\:\\InfoShare\\App\\Utilities\\DITA-OT\\InfoShare_Intel
+     [echo] *****************************************************************
+
+output-css-warn-message:
+
+output-msg:
+
+build-init:
+
+gen-list:
+ [gen-list] GenMapAndTopicListModule.execute(): Starting...
+ [gen-list] Using Xerces grammar pool for DTD and schema caching.
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.ditamap
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-28CB9083-3617-4079-8E3A-260D1264D5FF.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-7233FEEC-0DAE-48A7-98F4-B5BF67473177.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-658121D4-0092-4CBC-87C7-22E2E7EEB7F1.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-E89E6CB2-FD46-445F-88AD-FE4B309BE62B.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-F36528CA-A55C-476F-953D-CD28F4B73924.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-82DCD5EF-8998-4DB4-8DF2-A2D259A44A61.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-E780E09D-CBCB-4AFA-8BAC-AA0EA0142FF5.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-50AADE23-2E06-4177-AFDE-520CE997B1C1.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-1916B0BF-D1E0-4F40-9469-601DB2470ADE.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-32B3A8C9-F920-49B8-8F50-098A8A11FBA4.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-EF438364-0580-4213-A9E7-7494BE56912C.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-E94EC577-C968-4F96-9ED7-0FCA599842B0.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-4E926BC3-215C-48A7-86DA-15E6447A129B.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-8A51E60C-3E58-415E-8FC4-A73F1629851A.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-52538002-3A36-4195-B69E-3648C71CBC07.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-045748AD-145A-426F-AE52-CCB172DF771D.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-477C6295-03BC-42C6-A232-A3DCBB06DC27.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-B6772D9D-224B-4EC4-88E6-60B7800318E1.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-0424E994-67E4-40DA-B7B2-E2793872DFB3.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-C6470230-49D2-432F-8E44-3046D4FA94BD.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-F6252046-EF49-4CFA-B677-D2EFB73A43A7.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-7379CB19-27DD-4C8E-91E8-427EA8A14B67.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-1043329E-FFDA-4F7F-9840-7B5AFB54E5FB.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-B147419A-30B6-4415-A82C-208A47E2E84D.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-82EA2EE5-65FA-4066-9464-EA48FE5A4826.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-1664B512-90C1-4ED0-A21F-CEEB62D5C2AB.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-C669A8F2-D7CB-48E7-9066-033AE165D295.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-868FA6CE-3790-43E3-A048-B7CF79A19569.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-94C93BF1-A33F-4B19-B426-4C43FF91343B.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-C059690C-08E0-42EC-B311-9023DC08F562.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-EF4FB354-A139-4ADA-9BD5-D6F92CA15D2D.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-0DBD3FAB-D135-4AB4-A5B1-970D15FF8255.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-3DAD6DC1-7393-4B70-9605-2CAC1AF85686.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-669DBEB9-71F9-4330-B0E8-B25B34558012.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-371854DD-397B-4D47-8A1B-C5730EF33BFB.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-FAA506C2-9B81-4017-99E4-A6E435800072.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-5DDF2A89-BDEC-4489-AA82-1E2F90D9CF2B.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-CB5FA49F-6F79-463C-A3C6-D0CCACFC1324.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-DD384F8F-1D6C-43FE-94BB-A6429AB1D551.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-DA4E890E-6E54-4E11-8EBE-E541B21633BC.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-50B37E61-E7EF-400E-9DE1-C28B4DE6B4E8.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-1843E9F7-8FCE-4A4E-891E-0D99CD005F9C.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-15B1D4A3-8ECC-4EC6-BC8E-45FA66BA965B.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-9D8ABC37-1AC2-4503-A89D-02EF78565D02.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-E698CA72-971A-44A9-A815-557F74EEDD42.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-1925EC96-8D1E-4874-BFC3-A4C291911474.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-F0BEA71A-0815-4672-BF7C-7FCE855C342C.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-68D9779D-C250-4834-9776-72118EC25571.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-A2410287-7C2C-49FE-95C8-F60723366B89.xml
+ [gen-list] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA.xml
+ [gen-list] Serializing job specification
+ [gen-list] GenMapAndTopicListModule.execute(): Execution time: 1.763 seconds
+
+debug-filter:
+   [filter] DebugAndFilterModule.execute(): Starting...
+   [filter] Using Xerces grammar pool for DTD and schema caching.
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-DD384F8F-1D6C-43FE-94BB-A6429AB1D551.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-E89E6CB2-FD46-445F-88AD-FE4B309BE62B.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-1043329E-FFDA-4F7F-9840-7B5AFB54E5FB.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-A2410287-7C2C-49FE-95C8-F60723366B89.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-B147419A-30B6-4415-A82C-208A47E2E84D.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-7379CB19-27DD-4C8E-91E8-427EA8A14B67.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.ditamap
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-658121D4-0092-4CBC-87C7-22E2E7EEB7F1.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-1925EC96-8D1E-4874-BFC3-A4C291911474.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-94C93BF1-A33F-4B19-B426-4C43FF91343B.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-50AADE23-2E06-4177-AFDE-520CE997B1C1.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-52538002-3A36-4195-B69E-3648C71CBC07.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-1664B512-90C1-4ED0-A21F-CEEB62D5C2AB.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-9D8ABC37-1AC2-4503-A89D-02EF78565D02.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-50B37E61-E7EF-400E-9DE1-C28B4DE6B4E8.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-C059690C-08E0-42EC-B311-9023DC08F562.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-E698CA72-971A-44A9-A815-557F74EEDD42.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-F36528CA-A55C-476F-953D-CD28F4B73924.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-4E926BC3-215C-48A7-86DA-15E6447A129B.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-B6772D9D-224B-4EC4-88E6-60B7800318E1.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-5DDF2A89-BDEC-4489-AA82-1E2F90D9CF2B.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-CB5FA49F-6F79-463C-A3C6-D0CCACFC1324.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-E94EC577-C968-4F96-9ED7-0FCA599842B0.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-68D9779D-C250-4834-9776-72118EC25571.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-28CB9083-3617-4079-8E3A-260D1264D5FF.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-371854DD-397B-4D47-8A1B-C5730EF33BFB.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-82EA2EE5-65FA-4066-9464-EA48FE5A4826.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-F0BEA71A-0815-4672-BF7C-7FCE855C342C.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-FAA506C2-9B81-4017-99E4-A6E435800072.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-82DCD5EF-8998-4DB4-8DF2-A2D259A44A61.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-EF4FB354-A139-4ADA-9BD5-D6F92CA15D2D.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-1843E9F7-8FCE-4A4E-891E-0D99CD005F9C.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-DA4E890E-6E54-4E11-8EBE-E541B21633BC.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-669DBEB9-71F9-4330-B0E8-B25B34558012.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-32B3A8C9-F920-49B8-8F50-098A8A11FBA4.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-0DBD3FAB-D135-4AB4-A5B1-970D15FF8255.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-F6252046-EF49-4CFA-B677-D2EFB73A43A7.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-15B1D4A3-8ECC-4EC6-BC8E-45FA66BA965B.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-EF438364-0580-4213-A9E7-7494BE56912C.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-8A51E60C-3E58-415E-8FC4-A73F1629851A.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-C669A8F2-D7CB-48E7-9066-033AE165D295.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-3DAD6DC1-7393-4B70-9605-2CAC1AF85686.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-477C6295-03BC-42C6-A232-A3DCBB06DC27.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-045748AD-145A-426F-AE52-CCB172DF771D.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-E780E09D-CBCB-4AFA-8BAC-AA0EA0142FF5.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-C6470230-49D2-432F-8E44-3046D4FA94BD.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-7233FEEC-0DAE-48A7-98F4-B5BF67473177.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-0424E994-67E4-40DA-B7B2-E2793872DFB3.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-1916B0BF-D1E0-4F40-9469-601DB2470ADE.xml
+   [filter] Processing D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-868FA6CE-3790-43E3-A048-B7CF79A19569.xml
+   [filter] Execution time: 1.029 seconds
+
+copy-image-check:
+
+copy-image-uplevels:
+
+copy-image-noraml:
+
+copy-image:
+
+copy-html-check:
+
+copy-html:
+
+copy-flag-check:
+
+copy-flag:
+
+copy-subsidiary-check:
+
+copy-subsidiary:
+
+copy-generated-files:
+     [copy] Copying 2 files to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out
+
+copy-files:
+
+conrefpush-check:
+
+conrefpush:
+
+conref-check:
+
+conref:
+
+move-meta-entries-check:
+
+move-meta-entries:
+[move-meta] Reading D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap
+[move-meta] Reading D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.ditamap
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-15B1D4A3-8ECC-4EC6-BC8E-45FA66BA965B.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-7233FEEC-0DAE-48A7-98F4-B5BF67473177.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-9D8ABC37-1AC2-4503-A89D-02EF78565D02.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-C059690C-08E0-42EC-B311-9023DC08F562.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-5DDF2A89-BDEC-4489-AA82-1E2F90D9CF2B.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-1925EC96-8D1E-4874-BFC3-A4C291911474.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-C669A8F2-D7CB-48E7-9066-033AE165D295.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-7379CB19-27DD-4C8E-91E8-427EA8A14B67.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-1664B512-90C1-4ED0-A21F-CEEB62D5C2AB.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-1043329E-FFDA-4F7F-9840-7B5AFB54E5FB.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-E89E6CB2-FD46-445F-88AD-FE4B309BE62B.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-0DBD3FAB-D135-4AB4-A5B1-970D15FF8255.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-82EA2EE5-65FA-4066-9464-EA48FE5A4826.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-8A51E60C-3E58-415E-8FC4-A73F1629851A.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-50B37E61-E7EF-400E-9DE1-C28B4DE6B4E8.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-68D9779D-C250-4834-9776-72118EC25571.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-1916B0BF-D1E0-4F40-9469-601DB2470ADE.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F36528CA-A55C-476F-953D-CD28F4B73924.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-DD384F8F-1D6C-43FE-94BB-A6429AB1D551.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-0424E994-67E4-40DA-B7B2-E2793872DFB3.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-DA4E890E-6E54-4E11-8EBE-E541B21633BC.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-E780E09D-CBCB-4AFA-8BAC-AA0EA0142FF5.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-FAA506C2-9B81-4017-99E4-A6E435800072.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-669DBEB9-71F9-4330-B0E8-B25B34558012.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-52538002-3A36-4195-B69E-3648C71CBC07.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-94C93BF1-A33F-4B19-B426-4C43FF91343B.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-A2410287-7C2C-49FE-95C8-F60723366B89.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-E698CA72-971A-44A9-A815-557F74EEDD42.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-CB5FA49F-6F79-463C-A3C6-D0CCACFC1324.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-50AADE23-2E06-4177-AFDE-520CE997B1C1.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-371854DD-397B-4D47-8A1B-C5730EF33BFB.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-868FA6CE-3790-43E3-A048-B7CF79A19569.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-3DAD6DC1-7393-4B70-9605-2CAC1AF85686.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-EF438364-0580-4213-A9E7-7494BE56912C.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-82DCD5EF-8998-4DB4-8DF2-A2D259A44A61.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-477C6295-03BC-42C6-A232-A3DCBB06DC27.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-E94EC577-C968-4F96-9ED7-0FCA599842B0.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F0BEA71A-0815-4672-BF7C-7FCE855C342C.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F6252046-EF49-4CFA-B677-D2EFB73A43A7.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-C6470230-49D2-432F-8E44-3046D4FA94BD.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-32B3A8C9-F920-49B8-8F50-098A8A11FBA4.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-B147419A-30B6-4415-A82C-208A47E2E84D.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-1843E9F7-8FCE-4A4E-891E-0D99CD005F9C.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-B6772D9D-224B-4EC4-88E6-60B7800318E1.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-4E926BC3-215C-48A7-86DA-15E6447A129B.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-EF4FB354-A139-4ADA-9BD5-D6F92CA15D2D.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-658121D4-0092-4CBC-87C7-22E2E7EEB7F1.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-28CB9083-3617-4079-8E3A-260D1264D5FF.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-045748AD-145A-426F-AE52-CCB172DF771D.xml
+[move-meta] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2.xml
+
+keyref-check:
+
+keyref:
+
+coderef-check:
+
+coderef:
+
+mapref-check:
+
+mapref:
+   [mapref] Transforming into D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp
+   [mapref] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap.ref
+   [mapref] Loading stylesheet C:\InfoShare\App\Utilities\DITA-OT\InfoShare_Intel\xsl\preprocess\mapref.xsl
+   [mapref] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.ditamap to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.ditamap.ref
+     [move] Moving 2 files to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp
+
+mappull-check:
+
+mappull:
+  [mappull] Transforming into D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp
+  [mappull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap.pull
+  [mappull] Loading stylesheet C:\InfoShare\App\Utilities\DITA-OT\InfoShare_Intel\xsl\preprocess\mappull.xsl
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:2;7:412)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:3;7:1311)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:4;7:2214)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:5;7:3113)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:6;7:4013)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:7;7:4914)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:12;21:423)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:13;21:1328)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:20;41:1341)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:23;45:1345)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:24;45:2247)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:25;45:3148)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:26;45:4049)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:27;45:4950)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:28;45:5855)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:29;45:6756)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:30;45:7658)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:35;49:2252)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:37;49:4067)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:39;49:5888)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:41;49:7701)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:44;53:1339)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:45;53:2243)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:46;53:3137)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:48;57:423)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:60;92:423)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:64;104:423)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:65;104:1325)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:67;108:423)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:68;108:1320)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:73;120:423)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:74;120:1323)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:75;120:2222)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:76;120:3123)
+  [mappull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.ditamap to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.ditamap.pull
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:2;7:412)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:3;7:1311)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:4;7:2214)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:5;7:3113)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:6;7:4013)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:7;7:4914)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:12;21:423)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:13;21:1328)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:20;41:1341)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:23;45:1345)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:24;45:2247)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:25;45:3148)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:26;45:4049)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:27;45:4950)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:28;45:5855)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:29;45:6756)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:30;45:7658)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:35;49:2252)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:37;49:4067)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:39;49:5888)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:41;49:7701)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:44;53:1339)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:45;53:2243)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:46;53:3137)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:48;57:423)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:60;92:423)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:64;104:423)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:65;104:1325)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:67;108:423)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:68;108:1320)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:73;120:423)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:74;120:1323)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:75;120:2222)
+  [mappull] [DOTX019W][WARN]: The type attribute on a topicref was set to 'concept', but the topicref references a 'reference' topic. This may cause your links to sort incorrectly in the output. Note that the type attribute cascades in maps, so the value 'concept' may come from an ancestor topicref.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap, Element = topicref:76;120:3123)
+     [move] Moving 2 files to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp
+
+chunk-check:
+
+chunk:
+
+maplink-check:
+
+maplink:
+  [maplink] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.ditamap to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\maplinks.unordered
+  [maplink] Loading stylesheet C:\InfoShare\App\Utilities\DITA-OT\InfoShare_Intel\xsl\preprocess\maplink.xsl
+
+move-links-check:
+
+move-links:
+
+topicpull-check:
+
+topicpull:
+[topicpull] Transforming into D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B.xml.pull
+[topicpull] Loading stylesheet C:\InfoShare\App\Utilities\DITA-OT\InfoShare_Intel\xsl\preprocess\topicpull.xsl
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-0424E994-67E4-40DA-B7B2-E2793872DFB3.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-0424E994-67E4-40DA-B7B2-E2793872DFB3.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-045748AD-145A-426F-AE52-CCB172DF771D.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-045748AD-145A-426F-AE52-CCB172DF771D.xml.pull
+[topicpull] [DOTX030W][WARN]: The type attribute on a xref element was set to concept, but the reference is to a reference topic. This may cause your links to sort incorrectly in the output.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-045748AD-145A-426F-AE52-CCB172DF771D.xml, Element = xref:1;378:460)
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-0DBD3FAB-D135-4AB4-A5B1-970D15FF8255.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-0DBD3FAB-D135-4AB4-A5B1-970D15FF8255.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-1043329E-FFDA-4F7F-9840-7B5AFB54E5FB.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-1043329E-FFDA-4F7F-9840-7B5AFB54E5FB.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-15B1D4A3-8ECC-4EC6-BC8E-45FA66BA965B.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-15B1D4A3-8ECC-4EC6-BC8E-45FA66BA965B.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-1664B512-90C1-4ED0-A21F-CEEB62D5C2AB.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-1664B512-90C1-4ED0-A21F-CEEB62D5C2AB.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-1843E9F7-8FCE-4A4E-891E-0D99CD005F9C.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-1843E9F7-8FCE-4A4E-891E-0D99CD005F9C.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-1916B0BF-D1E0-4F40-9469-601DB2470ADE.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-1916B0BF-D1E0-4F40-9469-601DB2470ADE.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-1925EC96-8D1E-4874-BFC3-A4C291911474.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-1925EC96-8D1E-4874-BFC3-A4C291911474.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-237FE338-AC54-49A3-80E0-8F92BC50144F.ditamap.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-28CB9083-3617-4079-8E3A-260D1264D5FF.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-28CB9083-3617-4079-8E3A-260D1264D5FF.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-32B3A8C9-F920-49B8-8F50-098A8A11FBA4.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-32B3A8C9-F920-49B8-8F50-098A8A11FBA4.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-371854DD-397B-4D47-8A1B-C5730EF33BFB.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-371854DD-397B-4D47-8A1B-C5730EF33BFB.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-3DAD6DC1-7393-4B70-9605-2CAC1AF85686.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-3DAD6DC1-7393-4B70-9605-2CAC1AF85686.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-477C6295-03BC-42C6-A232-A3DCBB06DC27.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-477C6295-03BC-42C6-A232-A3DCBB06DC27.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-4E926BC3-215C-48A7-86DA-15E6447A129B.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-4E926BC3-215C-48A7-86DA-15E6447A129B.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-50AADE23-2E06-4177-AFDE-520CE997B1C1.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-50AADE23-2E06-4177-AFDE-520CE997B1C1.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-50B37E61-E7EF-400E-9DE1-C28B4DE6B4E8.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-50B37E61-E7EF-400E-9DE1-C28B4DE6B4E8.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-52538002-3A36-4195-B69E-3648C71CBC07.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-52538002-3A36-4195-B69E-3648C71CBC07.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-5DDF2A89-BDEC-4489-AA82-1E2F90D9CF2B.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-5DDF2A89-BDEC-4489-AA82-1E2F90D9CF2B.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-658121D4-0092-4CBC-87C7-22E2E7EEB7F1.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-658121D4-0092-4CBC-87C7-22E2E7EEB7F1.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-669DBEB9-71F9-4330-B0E8-B25B34558012.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-669DBEB9-71F9-4330-B0E8-B25B34558012.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-68D9779D-C250-4834-9776-72118EC25571.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-68D9779D-C250-4834-9776-72118EC25571.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-7233FEEC-0DAE-48A7-98F4-B5BF67473177.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-7233FEEC-0DAE-48A7-98F4-B5BF67473177.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-7379CB19-27DD-4C8E-91E8-427EA8A14B67.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-7379CB19-27DD-4C8E-91E8-427EA8A14B67.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-82DCD5EF-8998-4DB4-8DF2-A2D259A44A61.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-82DCD5EF-8998-4DB4-8DF2-A2D259A44A61.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-82EA2EE5-65FA-4066-9464-EA48FE5A4826.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-82EA2EE5-65FA-4066-9464-EA48FE5A4826.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-868FA6CE-3790-43E3-A048-B7CF79A19569.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-868FA6CE-3790-43E3-A048-B7CF79A19569.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-8A51E60C-3E58-415E-8FC4-A73F1629851A.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-8A51E60C-3E58-415E-8FC4-A73F1629851A.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-94C93BF1-A33F-4B19-B426-4C43FF91343B.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-94C93BF1-A33F-4B19-B426-4C43FF91343B.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-9D8ABC37-1AC2-4503-A89D-02EF78565D02.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-9D8ABC37-1AC2-4503-A89D-02EF78565D02.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-A2410287-7C2C-49FE-95C8-F60723366B89.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-A2410287-7C2C-49FE-95C8-F60723366B89.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-B147419A-30B6-4415-A82C-208A47E2E84D.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-B147419A-30B6-4415-A82C-208A47E2E84D.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-B6772D9D-224B-4EC4-88E6-60B7800318E1.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-B6772D9D-224B-4EC4-88E6-60B7800318E1.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-C059690C-08E0-42EC-B311-9023DC08F562.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-C059690C-08E0-42EC-B311-9023DC08F562.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-C6470230-49D2-432F-8E44-3046D4FA94BD.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-C6470230-49D2-432F-8E44-3046D4FA94BD.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-C669A8F2-D7CB-48E7-9066-033AE165D295.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-C669A8F2-D7CB-48E7-9066-033AE165D295.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-CB5FA49F-6F79-463C-A3C6-D0CCACFC1324.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-CB5FA49F-6F79-463C-A3C6-D0CCACFC1324.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-DA4E890E-6E54-4E11-8EBE-E541B21633BC.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-DA4E890E-6E54-4E11-8EBE-E541B21633BC.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-DD384F8F-1D6C-43FE-94BB-A6429AB1D551.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-DD384F8F-1D6C-43FE-94BB-A6429AB1D551.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-E698CA72-971A-44A9-A815-557F74EEDD42.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-E698CA72-971A-44A9-A815-557F74EEDD42.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-E780E09D-CBCB-4AFA-8BAC-AA0EA0142FF5.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-E780E09D-CBCB-4AFA-8BAC-AA0EA0142FF5.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-E89E6CB2-FD46-445F-88AD-FE4B309BE62B.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-E89E6CB2-FD46-445F-88AD-FE4B309BE62B.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-E94EC577-C968-4F96-9ED7-0FCA599842B0.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-E94EC577-C968-4F96-9ED7-0FCA599842B0.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-EF438364-0580-4213-A9E7-7494BE56912C.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-EF438364-0580-4213-A9E7-7494BE56912C.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-EF4FB354-A139-4ADA-9BD5-D6F92CA15D2D.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-EF4FB354-A139-4ADA-9BD5-D6F92CA15D2D.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F0BEA71A-0815-4672-BF7C-7FCE855C342C.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F0BEA71A-0815-4672-BF7C-7FCE855C342C.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F36528CA-A55C-476F-953D-CD28F4B73924.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F36528CA-A55C-476F-953D-CD28F4B73924.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F6252046-EF49-4CFA-B677-D2EFB73A43A7.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F6252046-EF49-4CFA-B677-D2EFB73A43A7.xml.pull
+[topicpull] [DOTX030W][WARN]: The type attribute on a xref element was set to concept, but the reference is to a reference topic. This may cause your links to sort incorrectly in the output.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-F6252046-EF49-4CFA-B677-D2EFB73A43A7.xml, Element = xref:1;120:466)
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.ditamap to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.ditamap.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-FAA506C2-9B81-4017-99E4-A6E435800072.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-FAA506C2-9B81-4017-99E4-A6E435800072.xml.pull
+[topicpull] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561.xml.pull
+     [move] Moving 78 files to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp
+
+flag-module-check:
+
+flag-module:
+
+preprocess:
+
+copy-css:
+     [copy] Copying 2 files to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out
+
+copy-css-user:
+
+dita.xhtml.init:
+
+dita.topics.html:
+
+dita.inner.topics.html:
+     [xslt] Transforming into D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B.html
+     [xslt] Loading stylesheet C:\InfoShare\App\Utilities\DITA-OT\InfoShare_Intel\plugins\inteljavahelp\xsl\dita2htmlImpl_custom.xsl
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C.html
+     [xslt] [DOTX041W][WARN]: Found more than one title element in a section. Using the first one for the section's title.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C.xml, Element = section:2;23:240)
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-0424E994-67E4-40DA-B7B2-E2793872DFB3.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-0424E994-67E4-40DA-B7B2-E2793872DFB3.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-045748AD-145A-426F-AE52-CCB172DF771D.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-045748AD-145A-426F-AE52-CCB172DF771D.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-0DBD3FAB-D135-4AB4-A5B1-970D15FF8255.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-0DBD3FAB-D135-4AB4-A5B1-970D15FF8255.html
+     [xslt] [DOTX041W][WARN]: Found more than one title element in a section. Using the first one for the section's title.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-0DBD3FAB-D135-4AB4-A5B1-970D15FF8255.xml, Element = section:3;54:294)
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-1043329E-FFDA-4F7F-9840-7B5AFB54E5FB.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-1043329E-FFDA-4F7F-9840-7B5AFB54E5FB.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-15B1D4A3-8ECC-4EC6-BC8E-45FA66BA965B.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-15B1D4A3-8ECC-4EC6-BC8E-45FA66BA965B.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-1664B512-90C1-4ED0-A21F-CEEB62D5C2AB.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-1664B512-90C1-4ED0-A21F-CEEB62D5C2AB.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-1843E9F7-8FCE-4A4E-891E-0D99CD005F9C.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-1843E9F7-8FCE-4A4E-891E-0D99CD005F9C.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-1916B0BF-D1E0-4F40-9469-601DB2470ADE.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-1916B0BF-D1E0-4F40-9469-601DB2470ADE.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-1925EC96-8D1E-4874-BFC3-A4C291911474.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-1925EC96-8D1E-4874-BFC3-A4C291911474.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-28CB9083-3617-4079-8E3A-260D1264D5FF.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-28CB9083-3617-4079-8E3A-260D1264D5FF.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-32B3A8C9-F920-49B8-8F50-098A8A11FBA4.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-32B3A8C9-F920-49B8-8F50-098A8A11FBA4.html
+     [xslt] [DOTX041W][WARN]: Found more than one title element in a section. Using the first one for the section's title.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-32B3A8C9-F920-49B8-8F50-098A8A11FBA4.xml, Element = section:2;38:261)
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-371854DD-397B-4D47-8A1B-C5730EF33BFB.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-371854DD-397B-4D47-8A1B-C5730EF33BFB.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-3DAD6DC1-7393-4B70-9605-2CAC1AF85686.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-3DAD6DC1-7393-4B70-9605-2CAC1AF85686.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-477C6295-03BC-42C6-A232-A3DCBB06DC27.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-477C6295-03BC-42C6-A232-A3DCBB06DC27.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-4E926BC3-215C-48A7-86DA-15E6447A129B.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-4E926BC3-215C-48A7-86DA-15E6447A129B.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-50AADE23-2E06-4177-AFDE-520CE997B1C1.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-50AADE23-2E06-4177-AFDE-520CE997B1C1.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-50B37E61-E7EF-400E-9DE1-C28B4DE6B4E8.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-50B37E61-E7EF-400E-9DE1-C28B4DE6B4E8.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-52538002-3A36-4195-B69E-3648C71CBC07.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-52538002-3A36-4195-B69E-3648C71CBC07.html
+     [xslt] [DOTX041W][WARN]: Found more than one title element in a section. Using the first one for the section's title.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-52538002-3A36-4195-B69E-3648C71CBC07.xml, Element = section:2;13:240)
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-5DDF2A89-BDEC-4489-AA82-1E2F90D9CF2B.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-5DDF2A89-BDEC-4489-AA82-1E2F90D9CF2B.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-658121D4-0092-4CBC-87C7-22E2E7EEB7F1.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-658121D4-0092-4CBC-87C7-22E2E7EEB7F1.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-669DBEB9-71F9-4330-B0E8-B25B34558012.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-669DBEB9-71F9-4330-B0E8-B25B34558012.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-68D9779D-C250-4834-9776-72118EC25571.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-68D9779D-C250-4834-9776-72118EC25571.html
+     [xslt] [DOTX041W][WARN]: Found more than one title element in a section. Using the first one for the section's title.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-68D9779D-C250-4834-9776-72118EC25571.xml, Element = section:2;18:292)
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-7233FEEC-0DAE-48A7-98F4-B5BF67473177.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-7233FEEC-0DAE-48A7-98F4-B5BF67473177.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-7379CB19-27DD-4C8E-91E8-427EA8A14B67.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-7379CB19-27DD-4C8E-91E8-427EA8A14B67.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-82DCD5EF-8998-4DB4-8DF2-A2D259A44A61.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-82DCD5EF-8998-4DB4-8DF2-A2D259A44A61.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-82EA2EE5-65FA-4066-9464-EA48FE5A4826.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-82EA2EE5-65FA-4066-9464-EA48FE5A4826.html
+     [xslt] [DOTX041W][WARN]: Found more than one title element in a section. Using the first one for the section's title.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-82EA2EE5-65FA-4066-9464-EA48FE5A4826.xml, Element = section:2;18:260)
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-868FA6CE-3790-43E3-A048-B7CF79A19569.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-868FA6CE-3790-43E3-A048-B7CF79A19569.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-8A51E60C-3E58-415E-8FC4-A73F1629851A.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-8A51E60C-3E58-415E-8FC4-A73F1629851A.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED.html
+     [xslt] [DOTX041W][WARN]: Found more than one title element in a section. Using the first one for the section's title.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED.xml, Element = section:2;16:292)
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-94C93BF1-A33F-4B19-B426-4C43FF91343B.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-94C93BF1-A33F-4B19-B426-4C43FF91343B.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-9D8ABC37-1AC2-4503-A89D-02EF78565D02.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-9D8ABC37-1AC2-4503-A89D-02EF78565D02.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-A2410287-7C2C-49FE-95C8-F60723366B89.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-A2410287-7C2C-49FE-95C8-F60723366B89.html
+     [xslt] [DOTX041W][WARN]: Found more than one title element in a section. Using the first one for the section's title.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-A2410287-7C2C-49FE-95C8-F60723366B89.xml, Element = section:2;11:272)
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B.html
+     [xslt] [DOTX041W][WARN]: Found more than one title element in a section. Using the first one for the section's title.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B.xml, Element = section:2;21:292)
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-B147419A-30B6-4415-A82C-208A47E2E84D.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-B147419A-30B6-4415-A82C-208A47E2E84D.html
+     [xslt] [DOTX041W][WARN]: Found more than one title element in a section. Using the first one for the section's title.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-B147419A-30B6-4415-A82C-208A47E2E84D.xml, Element = section:3;157:262)
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-B6772D9D-224B-4EC4-88E6-60B7800318E1.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-B6772D9D-224B-4EC4-88E6-60B7800318E1.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA.html
+     [xslt] [DOTX041W][WARN]: Found more than one title element in a section. Using the first one for the section's title.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA.xml, Element = section:2;39:240)
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-C059690C-08E0-42EC-B311-9023DC08F562.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-C059690C-08E0-42EC-B311-9023DC08F562.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-C6470230-49D2-432F-8E44-3046D4FA94BD.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-C6470230-49D2-432F-8E44-3046D4FA94BD.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-C669A8F2-D7CB-48E7-9066-033AE165D295.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-C669A8F2-D7CB-48E7-9066-033AE165D295.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-CB5FA49F-6F79-463C-A3C6-D0CCACFC1324.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-CB5FA49F-6F79-463C-A3C6-D0CCACFC1324.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-DA4E890E-6E54-4E11-8EBE-E541B21633BC.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-DA4E890E-6E54-4E11-8EBE-E541B21633BC.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-DD384F8F-1D6C-43FE-94BB-A6429AB1D551.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-DD384F8F-1D6C-43FE-94BB-A6429AB1D551.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-E698CA72-971A-44A9-A815-557F74EEDD42.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-E698CA72-971A-44A9-A815-557F74EEDD42.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-E780E09D-CBCB-4AFA-8BAC-AA0EA0142FF5.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-E780E09D-CBCB-4AFA-8BAC-AA0EA0142FF5.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-E89E6CB2-FD46-445F-88AD-FE4B309BE62B.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-E89E6CB2-FD46-445F-88AD-FE4B309BE62B.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-E94EC577-C968-4F96-9ED7-0FCA599842B0.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-E94EC577-C968-4F96-9ED7-0FCA599842B0.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE.html
+     [xslt] [DOTX041W][WARN]: Found more than one title element in a section. Using the first one for the section's title.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE.xml, Element = section:2;16:292)
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-EF438364-0580-4213-A9E7-7494BE56912C.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-EF438364-0580-4213-A9E7-7494BE56912C.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-EF4FB354-A139-4ADA-9BD5-D6F92CA15D2D.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-EF4FB354-A139-4ADA-9BD5-D6F92CA15D2D.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F0BEA71A-0815-4672-BF7C-7FCE855C342C.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-F0BEA71A-0815-4672-BF7C-7FCE855C342C.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F36528CA-A55C-476F-953D-CD28F4B73924.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-F36528CA-A55C-476F-953D-CD28F4B73924.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F6252046-EF49-4CFA-B677-D2EFB73A43A7.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-F6252046-EF49-4CFA-B677-D2EFB73A43A7.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-FAA506C2-9B81-4017-99E4-A6E435800072.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-FAA506C2-9B81-4017-99E4-A6E435800072.html
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561.xml to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561.html
+     [xslt] [DOTX041W][WARN]: Found more than one title element in a section. Using the first one for the section's title.  The location of this problem was at (File = D:\Data\InfoShare\Data\PublishingService\Data\dataexports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561.xml, Element = section:3;142:294)
+
+checkouterTransform:
+
+dita.outer.topics.html:
+
+dita2intelJavaHelp:
+
+dita.map.javahelp.init:
+
+dita.map.javahelp.toc:
+
+dita.map.javahelp.map:
+
+dita.map.javahelp.set:
+
+dita.map.javahelp.index:
+
+dita.out.map.javahelp.toc:
+     [xslt] Transforming into D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.ditamap to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.xml
+     [xslt] Loading stylesheet C:\InfoShare\App\Utilities\DITA-OT\InfoShare_Intel\xsl\map2javahelptoc.xsl
+
+dita.intel.out.map.javahelp.map:
+     [xslt] Transforming into D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.ditamap to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.jhm
+     [xslt] Loading stylesheet C:\InfoShare\App\Utilities\DITA-OT\InfoShare_Intel\plugins\inteljavahelp\xsl\map2javahelpmap_custom.xsl
+
+dita.intel.out.map.javahelp.set:
+     [xslt] Transforming into D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out
+     [xslt] Processing D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\workset\temp\GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.ditamap to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9_helpset.hs
+     [xslt] Loading stylesheet C:\InfoShare\App\Utilities\DITA-OT\InfoShare_Intel\plugins\inteljavahelp\xsl\map2javahelpset_custom.xsl
+
+dita.out.map.javahelp.index:
+
+dita.intel.map.javahelp:
+
+compile.Java.Help:
+
+correctHelpIDs:
+     [move] Moving 1 file to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out
+
+removeAllHelpIDPrefixes:
+
+removeHelpIDPrefix:
+
+removeHelpIDPrefix:
+
+removeHelpIDPrefix:
+
+removeHelpIDPrefix:
+     [move] Moving 1 file to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out
+
+removeAllHelpIDPrefixes:
+
+removeHelpIDPrefix:
+
+removeHelpIDPrefix:
+
+removeHelpIDPrefix:
+
+removeHelpIDPrefix:
+     [move] Moving 1 file to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out
+
+removeAllHelpIDPrefixes:
+
+removeHelpIDPrefix:
+
+removeHelpIDPrefix:
+
+removeHelpIDPrefix:
+
+removeHelpIDPrefix:
+     [move] Moving 1 file to D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out
+
+removeAllHelpIDPrefixes:
+
+removeHelpIDPrefix:
+
+removeHelpIDPrefix:
+
+removeHelpIDPrefix:
+
+removeHelpIDPrefix:
+
+index:
+     [echo] Making the JavaHelp index for GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9
+   [delete] Deleting directory D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\JavaHelpSearch
+    [mkdir] Created dir: D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\JavaHelpSearch
+     [java]    File: '.\commonltr.css'
+     [java]     URL: './commonltr.css'
+     [java]    File: '.\commonrtl.css'
+     [java]     URL: './commonrtl.css'
+     [java]    File: '.\custom-hdr.xml'
+     [java]     URL: './custom-hdr.xml'
+     [java]    File: '.\dita.list'
+     [java]     URL: './dita.list'
+     [java]    File: '.\dita.xml.properties'
+     [java]     URL: './dita.xml.properties'
+     [java]    File: '.\GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B.html'
+     [java]     URL: './GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B.html'
+     [java]    File: '.\GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C.html'
+     [java]     URL: './GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C.html'
+     [java]    File: '.\GUID-0424E994-67E4-40DA-B7B2-E2793872DFB3.html'
+     [java]     URL: './GUID-0424E994-67E4-40DA-B7B2-E2793872DFB3.html'
+     [java]    File: '.\GUID-045748AD-145A-426F-AE52-CCB172DF771D.html'
+     [java]     URL: './GUID-045748AD-145A-426F-AE52-CCB172DF771D.html'
+     [java]    File: '.\GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849.html'
+     [java]     URL: './GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849.html'
+     [java]    File: '.\GUID-0DBD3FAB-D135-4AB4-A5B1-970D15FF8255.html'
+     [java]     URL: './GUID-0DBD3FAB-D135-4AB4-A5B1-970D15FF8255.html'
+     [java]    File: '.\GUID-1043329E-FFDA-4F7F-9840-7B5AFB54E5FB.html'
+     [java]     URL: './GUID-1043329E-FFDA-4F7F-9840-7B5AFB54E5FB.html'
+     [java]    File: '.\GUID-15B1D4A3-8ECC-4EC6-BC8E-45FA66BA965B.html'
+     [java]     URL: './GUID-15B1D4A3-8ECC-4EC6-BC8E-45FA66BA965B.html'
+     [java]    File: '.\GUID-1664B512-90C1-4ED0-A21F-CEEB62D5C2AB.html'
+     [java]     URL: './GUID-1664B512-90C1-4ED0-A21F-CEEB62D5C2AB.html'
+     [java]    File: '.\GUID-1843E9F7-8FCE-4A4E-891E-0D99CD005F9C.html'
+     [java]     URL: './GUID-1843E9F7-8FCE-4A4E-891E-0D99CD005F9C.html'
+     [java]    File: '.\GUID-1916B0BF-D1E0-4F40-9469-601DB2470ADE.html'
+     [java]     URL: './GUID-1916B0BF-D1E0-4F40-9469-601DB2470ADE.html'
+     [java]    File: '.\GUID-1925EC96-8D1E-4874-BFC3-A4C291911474.html'
+     [java]     URL: './GUID-1925EC96-8D1E-4874-BFC3-A4C291911474.html'
+     [java]    File: '.\GUID-28CB9083-3617-4079-8E3A-260D1264D5FF.html'
+     [java]     URL: './GUID-28CB9083-3617-4079-8E3A-260D1264D5FF.html'
+     [java]    File: '.\GUID-32B3A8C9-F920-49B8-8F50-098A8A11FBA4.html'
+     [java]     URL: './GUID-32B3A8C9-F920-49B8-8F50-098A8A11FBA4.html'
+     [java]    File: '.\GUID-371854DD-397B-4D47-8A1B-C5730EF33BFB.html'
+     [java]     URL: './GUID-371854DD-397B-4D47-8A1B-C5730EF33BFB.html'
+     [java]    File: '.\GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2.html'
+     [java]     URL: './GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2.html'
+     [java]    File: '.\GUID-3DAD6DC1-7393-4B70-9605-2CAC1AF85686.html'
+     [java]     URL: './GUID-3DAD6DC1-7393-4B70-9605-2CAC1AF85686.html'
+     [java]    File: '.\GUID-477C6295-03BC-42C6-A232-A3DCBB06DC27.html'
+     [java]     URL: './GUID-477C6295-03BC-42C6-A232-A3DCBB06DC27.html'
+     [java]    File: '.\GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0.html'
+     [java]     URL: './GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0.html'
+     [java]    File: '.\GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405.html'
+     [java]     URL: './GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405.html'
+     [java]    File: '.\GUID-4E926BC3-215C-48A7-86DA-15E6447A129B.html'
+     [java]     URL: './GUID-4E926BC3-215C-48A7-86DA-15E6447A129B.html'
+     [java]    File: '.\GUID-50AADE23-2E06-4177-AFDE-520CE997B1C1.html'
+     [java]     URL: './GUID-50AADE23-2E06-4177-AFDE-520CE997B1C1.html'
+     [java]    File: '.\GUID-50B37E61-E7EF-400E-9DE1-C28B4DE6B4E8.html'
+     [java]     URL: './GUID-50B37E61-E7EF-400E-9DE1-C28B4DE6B4E8.html'
+     [java]    File: '.\GUID-52538002-3A36-4195-B69E-3648C71CBC07.html'
+     [java]     URL: './GUID-52538002-3A36-4195-B69E-3648C71CBC07.html'
+     [java]    File: '.\GUID-5DDF2A89-BDEC-4489-AA82-1E2F90D9CF2B.html'
+     [java]     URL: './GUID-5DDF2A89-BDEC-4489-AA82-1E2F90D9CF2B.html'
+     [java]    File: '.\GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A.html'
+     [java]     URL: './GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A.html'
+     [java]    File: '.\GUID-658121D4-0092-4CBC-87C7-22E2E7EEB7F1.html'
+     [java]     URL: './GUID-658121D4-0092-4CBC-87C7-22E2E7EEB7F1.html'
+     [java]    File: '.\GUID-669DBEB9-71F9-4330-B0E8-B25B34558012.html'
+     [java]     URL: './GUID-669DBEB9-71F9-4330-B0E8-B25B34558012.html'
+     [java]    File: '.\GUID-68D9779D-C250-4834-9776-72118EC25571.html'
+     [java]     URL: './GUID-68D9779D-C250-4834-9776-72118EC25571.html'
+     [java]    File: '.\GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4.html'
+     [java]     URL: './GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4.html'
+     [java]    File: '.\GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2.html'
+     [java]     URL: './GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2.html'
+     [java]    File: '.\GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B.html'
+     [java]     URL: './GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B.html'
+     [java]    File: '.\GUID-7233FEEC-0DAE-48A7-98F4-B5BF67473177.html'
+     [java]     URL: './GUID-7233FEEC-0DAE-48A7-98F4-B5BF67473177.html'
+     [java]    File: '.\GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E.html'
+     [java]     URL: './GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E.html'
+     [java]    File: '.\GUID-7379CB19-27DD-4C8E-91E8-427EA8A14B67.html'
+     [java]     URL: './GUID-7379CB19-27DD-4C8E-91E8-427EA8A14B67.html'
+     [java]    File: '.\GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2.html'
+     [java]     URL: './GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2.html'
+     [java]    File: '.\GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1.html'
+     [java]     URL: './GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1.html'
+     [java]    File: '.\GUID-82DCD5EF-8998-4DB4-8DF2-A2D259A44A61.html'
+     [java]     URL: './GUID-82DCD5EF-8998-4DB4-8DF2-A2D259A44A61.html'
+     [java]    File: '.\GUID-82EA2EE5-65FA-4066-9464-EA48FE5A4826.html'
+     [java]     URL: './GUID-82EA2EE5-65FA-4066-9464-EA48FE5A4826.html'
+     [java]    File: '.\GUID-868FA6CE-3790-43E3-A048-B7CF79A19569.html'
+     [java]     URL: './GUID-868FA6CE-3790-43E3-A048-B7CF79A19569.html'
+     [java]    File: '.\GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564.html'
+     [java]     URL: './GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564.html'
+     [java]    File: '.\GUID-8A51E60C-3E58-415E-8FC4-A73F1629851A.html'
+     [java]     URL: './GUID-8A51E60C-3E58-415E-8FC4-A73F1629851A.html'
+     [java]    File: '.\GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED.html'
+     [java]     URL: './GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED.html'
+     [java]    File: '.\GUID-94C93BF1-A33F-4B19-B426-4C43FF91343B.html'
+     [java]     URL: './GUID-94C93BF1-A33F-4B19-B426-4C43FF91343B.html'
+     [java]    File: '.\GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B.html'
+     [java]     URL: './GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B.html'
+     [java]    File: '.\GUID-9D8ABC37-1AC2-4503-A89D-02EF78565D02.html'
+     [java]     URL: './GUID-9D8ABC37-1AC2-4503-A89D-02EF78565D02.html'
+     [java]    File: '.\GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377.html'
+     [java]     URL: './GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377.html'
+     [java]    File: '.\GUID-A2410287-7C2C-49FE-95C8-F60723366B89.html'
+     [java]     URL: './GUID-A2410287-7C2C-49FE-95C8-F60723366B89.html'
+     [java]    File: '.\GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88.html'
+     [java]     URL: './GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88.html'
+     [java]    File: '.\GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B.html'
+     [java]     URL: './GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B.html'
+     [java]    File: '.\GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177.html'
+     [java]     URL: './GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177.html'
+     [java]    File: '.\GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8.html'
+     [java]     URL: './GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8.html'
+     [java]    File: '.\GUID-B147419A-30B6-4415-A82C-208A47E2E84D.html'
+     [java]     URL: './GUID-B147419A-30B6-4415-A82C-208A47E2E84D.html'
+     [java]    File: '.\GUID-B6772D9D-224B-4EC4-88E6-60B7800318E1.html'
+     [java]     URL: './GUID-B6772D9D-224B-4EC4-88E6-60B7800318E1.html'
+     [java]    File: '.\GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA.html'
+     [java]     URL: './GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA.html'
+     [java]    File: '.\GUID-C059690C-08E0-42EC-B311-9023DC08F562.html'
+     [java]     URL: './GUID-C059690C-08E0-42EC-B311-9023DC08F562.html'
+     [java]    File: '.\GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D.html'
+     [java]     URL: './GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D.html'
+     [java]    File: '.\GUID-C6470230-49D2-432F-8E44-3046D4FA94BD.html'
+     [java]     URL: './GUID-C6470230-49D2-432F-8E44-3046D4FA94BD.html'
+     [java]    File: '.\GUID-C669A8F2-D7CB-48E7-9066-033AE165D295.html'
+     [java]     URL: './GUID-C669A8F2-D7CB-48E7-9066-033AE165D295.html'
+     [java]    File: '.\GUID-CB5FA49F-6F79-463C-A3C6-D0CCACFC1324.html'
+     [java]     URL: './GUID-CB5FA49F-6F79-463C-A3C6-D0CCACFC1324.html'
+     [java]    File: '.\GUID-DA4E890E-6E54-4E11-8EBE-E541B21633BC.html'
+     [java]     URL: './GUID-DA4E890E-6E54-4E11-8EBE-E541B21633BC.html'
+     [java]    File: '.\GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D.html'
+     [java]     URL: './GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D.html'
+     [java]    File: '.\GUID-DD384F8F-1D6C-43FE-94BB-A6429AB1D551.html'
+     [java]     URL: './GUID-DD384F8F-1D6C-43FE-94BB-A6429AB1D551.html'
+     [java]    File: '.\GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB.html'
+     [java]     URL: './GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB.html'
+     [java]    File: '.\GUID-E698CA72-971A-44A9-A815-557F74EEDD42.html'
+     [java]     URL: './GUID-E698CA72-971A-44A9-A815-557F74EEDD42.html'
+     [java]    File: '.\GUID-E780E09D-CBCB-4AFA-8BAC-AA0EA0142FF5.html'
+     [java]     URL: './GUID-E780E09D-CBCB-4AFA-8BAC-AA0EA0142FF5.html'
+     [java]    File: '.\GUID-E89E6CB2-FD46-445F-88AD-FE4B309BE62B.html'
+     [java]     URL: './GUID-E89E6CB2-FD46-445F-88AD-FE4B309BE62B.html'
+     [java]    File: '.\GUID-E94EC577-C968-4F96-9ED7-0FCA599842B0.html'
+     [java]     URL: './GUID-E94EC577-C968-4F96-9ED7-0FCA599842B0.html'
+     [java]    File: '.\GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE.html'
+     [java]     URL: './GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE.html'
+     [java]    File: '.\GUID-EF438364-0580-4213-A9E7-7494BE56912C.html'
+     [java]     URL: './GUID-EF438364-0580-4213-A9E7-7494BE56912C.html'
+     [java]    File: '.\GUID-EF4FB354-A139-4ADA-9BD5-D6F92CA15D2D.html'
+     [java]     URL: './GUID-EF4FB354-A139-4ADA-9BD5-D6F92CA15D2D.html'
+     [java]    File: '.\GUID-F0BEA71A-0815-4672-BF7C-7FCE855C342C.html'
+     [java]     URL: './GUID-F0BEA71A-0815-4672-BF7C-7FCE855C342C.html'
+     [java]    File: '.\GUID-F36528CA-A55C-476F-953D-CD28F4B73924.html'
+     [java]     URL: './GUID-F36528CA-A55C-476F-953D-CD28F4B73924.html'
+     [java]    File: '.\GUID-F6252046-EF49-4CFA-B677-D2EFB73A43A7.html'
+     [java]     URL: './GUID-F6252046-EF49-4CFA-B677-D2EFB73A43A7.html'
+     [java]    File: '.\GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.ditamap_intelJavaHelp.log'
+     [java]     URL: './GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.ditamap_intelJavaHelp.log'
+     [java]    File: '.\GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.hs'
+     [java]     URL: './GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.hs'
+     [java]    File: '.\GUID-FAA506C2-9B81-4017-99E4-A6E435800072.html'
+     [java]     URL: './GUID-FAA506C2-9B81-4017-99E4-A6E435800072.html'
+     [java]    File: '.\GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561.html'
+     [java]     URL: './GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561.html'
+     [java]    File: '.\index.xml'
+     [java]     URL: './index.xml'
+     [java]    File: '.\intelltr.css'
+     [java]     URL: './intelltr.css'
+     [java]    File: '.\intel_logo.png'
+     [java]     URL: './intel_logo.png'
+     [java]    File: '.\intel_logo_32x32.png'
+     [java]     URL: './intel_logo_32x32.png'
+     [java]    File: '.\map.jhm'
+     [java]     URL: './map.jhm'
+     [java]    File: '.\toc.xml'
+     [java]     URL: './toc.xml'
+     [java]         Parse time: 1.17 s
+      [jar] Building jar: D:\Data\InfoShare\Data\PublishingService\Data\DataExports\GUID-7EC3BC1A-EBEB-4464-B31F-1E1DCA67482C.2073541.20160122064617076\4\en-US\out\GUID-F80D11C1-C5DF-4967-A7BB-F46A2828FEC9.jar

@@ -1,0 +1,382 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opaxmlextract">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opaxmlextract</title>
+</head>
+<body class="man8" id="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A"><a name="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opaxmlextract</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__GUID-6FE08068-CB2E-4842-ACB1-31BAC908E17B"><a name="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__GUID-6FE08068-CB2E-4842-ACB1-31BAC908E17B"><!-- --></a> 
+      <p class="p"><strong class="ph b">(Linux)</strong> Extracts element values from XML input and outputs the
+        data in CSV format. 
+        <samp class="ph codeph">opaxmlextract</samp> is intended to be used with 
+        <samp class="ph codeph">opareport</samp>, to parse and filter its XML output, and to
+        allow the filtered output to be imported into other tools such as spreadsheets
+        and customer-written scripts. 
+        <samp class="ph codeph">opaxmlextract</samp> can also be used with any well-formed
+        XML stream to extract element values into a delimited format. 
+      </p>
+ 
+      <p class="p">Five sample scripts are available as prototypes for customized
+        scripts. They combine various calls to 
+        <samp class="ph codeph">opareport</samp> with a call to 
+        <samp class="ph codeph">opaxmlextract</samp> with commonly used parameters. 
+      </p>
+ 
+      </div>
+ 
+    <div class="section refsyn" id="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__GUID-164FE89B-4210-4902-8805-1D979D438135"><a name="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__GUID-164FE89B-4210-4902-8805-1D979D438135"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opaxmlextract [-v][-H][-d <var class="keyword varname">delimiter</var>][-e <var class="keyword varname">extract_element</var>] 
+[-s <var class="keyword varname">suppress_element</var>][-X <var class="keyword varname">input_file</var>] [-P <var class="keyword varname">param_file</var>]</pre>
+ 
+      <p class="p">or 
+      </p>
+ 
+      <pre class="pre codeblock">opaxmlextract --help</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__XX1133258"><a name="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__XX1133258"><!-- --></a><h2 class="sectiontitle">Options </h2> 
+      <a name="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__GUID-31F81D9E-824C-4E58-8040-A8F29928A320"><!-- --></a><dl class="dl parml" id="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__GUID-31F81D9E-824C-4E58-8040-A8F29928A320"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Produces full help text. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-e/--extract 
+              <var class="keyword varname">extract_element</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Name of the XML element to extract. Elements can be nested in
+              any order, but are output in the order specified. Elements can be specified
+              multiple times, with a different attribute name or attribute value. An optional
+              attribute (or attribute and value) can also be specified with elements: 
+            </p>
+ 
+            <a name="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__UL_D1C208D2B77341968C507EEA0DFFC821"><!-- --></a><ul class="ul" id="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__UL_D1C208D2B77341968C507EEA0DFFC821"> 
+              <li class="li" id="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__XX1173848"><a name="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__XX1173848"><!-- --></a> 
+                <p class="p"><samp class="ph codeph">-e 
+                    <var class="keyword varname">element</var></samp> 
+                </p>
+ 
+              </li>
+ 
+              <li class="li" id="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__LI_AEFE5FD7E1C2405FB5A234CFDCA6AF5B"><a name="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__LI_AEFE5FD7E1C2405FB5A234CFDCA6AF5B"><!-- --></a> 
+                <p class="p"><samp class="ph codeph">-e 
+                    <var class="keyword varname">element:attrName</var></samp> 
+                </p>
+ 
+              </li>
+ 
+              <li class="li" id="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__LI_AE9BBCF1D6884E578C7DBDE9F6C29A77"><a name="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__LI_AE9BBCF1D6884E578C7DBDE9F6C29A77"><!-- --></a> 
+                <p class="p"><samp class="ph codeph">-e 
+                    <var class="keyword varname">element:attrName:attrValue</var></samp> 
+                </p>
+ 
+              </li>
+ 
+            </ul>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-s/--suppress 
+              <var class="keyword varname">suppress_element</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Name of the XML element to suppress. Can be used multiple times
+              (in any order). Supports the same syntax as 
+              <samp class="ph codeph">-e</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-d/--delimit 
+              <var class="keyword varname">delimiter</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"> Uses delimiter (single character or string) as the delimiter
+              between element names and element values. Default is semicolon. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-X/--infile 
+              <var class="keyword varname">input_file</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Parses input XML from 
+              <samp class="ph codeph"><var class="keyword varname">input_file</var></samp> instead of stdin. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-P/--pfile 
+              <var class="keyword varname">param_file</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Uses input command line options (parameters) from 
+              <samp class="ph codeph">param_file</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-H/--noheader</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"> Does not output element name header record. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-v/--verbose</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Produces verbose output. Includes output progress reports during
+              extraction and output prepended wildcard characters on element names in output
+              header record. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__XX1132882"><a name="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__XX1132882"><!-- --></a><h2 class="sectiontitle">Example </h2> 
+       
+      <p class="p">Here is a simple example of 
+        <samp class="ph codeph">opareport</samp> output filtered by 
+        <samp class="ph codeph">opaxmlextract</samp>: 
+      </p>
+ 
+      <pre class="pre codeblock">&gt;opareport -o comps -s -x  |  opaxmlextract -d \; -e NodeDesc -e SystemImageGUID
+-e NumPorts -s Neighbor
+
+NodeDesc;SystemImageGUID;NumPorts
+mindy2 HFI-1;0x0002c9020025a67b;2
+MT25408 ConnectX Mellanox Technologies;0x0002c9030000079b;2
+cuda;0x001175009800413e;2
+duster;0x001175009800447b;2
+stewie HFI-1;0x0011750098007b70;2
+i9k159 Spine 1, Chip B;0x00117500da000159;24
+i9k159 Spine 2, Chip B;0x00117500da000159;24
+i9k159 Spine 1, Chip A;;
+i9k159 Spine 2, Chip A;;</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__SECTION_F2587FD96AD547268369CCC0ED176555"><a name="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__SECTION_F2587FD96AD547268369CCC0ED176555"><!-- --></a><h2 class="sectiontitle">Details </h2> 
+      <p class="p"><samp class="ph codeph">opaxmlextract</samp> is a flexible and powerful tool to
+        process an XML stream. The tool: 
+      </p>
+ 
+      <a name="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__UL_CA797714875C4D7EBA6EF7AB9FB6E4B6"><!-- --></a><ul class="ul" id="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__UL_CA797714875C4D7EBA6EF7AB9FB6E4B6"> 
+        <li class="li" id="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__XX1147464"><a name="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__XX1147464"><!-- --></a> 
+          <p class="p">Requires no specific element names to be present in the XML. 
+          </p>
+ 
+        </li>
+ 
+        <li class="li" id="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__XX1147465"><a name="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__XX1147465"><!-- --></a> 
+          <p class="p">Assumes no hierarchical relationship between elements. 
+          </p>
+ 
+        </li>
+ 
+        <li class="li" id="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__XX1147466"><a name="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__XX1147466"><!-- --></a> 
+          <p class="p">Allows extracted element values to be output in any order. 
+          </p>
+ 
+        </li>
+ 
+        <li class="li" id="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__XX1147467"><a name="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__XX1147467"><!-- --></a> 
+          <p class="p">Allows an element's value to be extracted only in the context of
+            another specified element. 
+          </p>
+ 
+        </li>
+ 
+        <li class="li" id="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__XX1147468"><a name="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__XX1147468"><!-- --></a> 
+          <p class="p">Allows extraction to be suppressed during the scope of specified
+            elements. 
+          </p>
+ 
+        </li>
+ 
+      </ul>
+ 
+      <p class="p"><samp class="ph codeph">opaxmlextract</samp> takes the XML input stream from either
+        stdin or a specified input file. 
+        <samp class="ph codeph">opaxmlextract</samp> does not use or require a connection to
+        a fabric. 
+      </p>
+ 
+      <p class="p"><samp class="ph codeph">opaxmlextract</samp> works from two lists of elements
+        supplied as command line or input parameters. The first is a list of elements
+        whose values are to be extracted, called 
+        <em class="ph i">extraction elements</em>. The second is a list of elements for which
+        extraction is to be suppressed, called 
+        <em class="ph i">suppression elements</em>. When an extraction element is encountered
+        and extraction is not suppressed, the value of the element is extracted for
+        later output in an 
+        <em class="ph i">extraction record</em>. An extraction record contains a value for all
+        extraction elements, including those which have a null value. 
+      </p>
+ 
+      <p class="p">When a suppression element is encountered, then no extraction is
+        performed during the extent of that element, from start through end.
+        Suppression is maintained for elements specified inside the suppression
+        element, including elements which may happen to match extraction elements.
+        Suppression can be used to prevent extraction in sections of XML that are
+        present, but not of current interest. For example, NodeDesc or NodeGUID inside
+        a Neighbor specification of 
+        <samp class="ph codeph">opareport</samp>. 
+      </p>
+ 
+      <p class="p"><samp class="ph codeph">opaxmlextract</samp> attempts to generate extraction records
+        with data values that are valid at the same time. Specifying extraction
+        elements that are valid in the same scope produces a single record for each
+        group of extraction elements. However, mixing extraction elements from
+        different scopes (including different XML levels) may cause 
+        <samp class="ph codeph">opaxmlextract</samp> to produce multiple records. 
+      </p>
+
+      <p class="p"><samp class="ph codeph">opaxmlextract</samp> outputs an extraction record under the
+        following conditions:
+      </p>
+ 
+      <a name="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__UL_85F1A11BB1F5464BAA274120D71E18A4"><!-- --></a><ul class="ul" id="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__UL_85F1A11BB1F5464BAA274120D71E18A4"> 
+        <li class="li" id="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__XX1147473"><a name="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__XX1147473"><!-- --></a> 
+          <p class="p">One or more extraction elements containing a non-null value go out
+            of scope (that is, the element containing the extraction elements is ended) and
+            a record containing the element values has not already been output. 
+          </p>
+ 
+        </li>
+ 
+        <li class="li" id="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__XX1147474"><a name="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__XX1147474"><!-- --></a> 
+          <p class="p">A new and different value is specified for an extraction element
+            and an extraction record containing the previous value has not already been
+            output. 
+          </p>
+ 
+        </li>
+ 
+      </ul>
+ 
+      <p class="p">Element names (extraction or suppression) can be made
+        context-sensitive with an enclosing element name using the syntax 
+        <samp class="ph codeph">element1.element2</samp>. In this case, 
+        <samp class="ph codeph">element2</samp> is extracted (or extraction is suppressed)
+        only when 
+        <samp class="ph codeph">element2</samp> is enclosed by 
+        <samp class="ph codeph">element1</samp>. 
+      </p>
+ 
+      <p class="p">The syntax also allows '<samp class="ph codeph">*</samp>' to be specified as a
+        wildcard. In this case, 
+        <samp class="ph codeph">*.element3</samp> specifies 
+        <samp class="ph codeph">element3</samp> enclosed by any element or sequence of
+        elements (for example, 
+        <samp class="ph codeph">element1.element3</samp> or 
+        <samp class="ph codeph">element1.element2.element3</samp>). Similarly, 
+        <samp class="ph codeph">element1.*.element3</samp> specifies 
+        <samp class="ph codeph">element3</samp> enclosed by 
+        <samp class="ph codeph">element1</samp> with any number of (but at least 1)
+        intermediate elements. 
+      </p>
+ 
+      <p class="p"><samp class="ph codeph">opaxmlextract</samp> prepends any entered element name not
+        containing a '<samp class="ph codeph">*</samp>' (anywhere) with '<samp class="ph codeph">*.</samp>',
+        matching the element regardless of the enclosing elements. 
+      </p>
+ 
+      <div class="note note" id="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__GUID-853AD0E0-CBDE-4182-94A8-4C9BE9C7FDC5"><a name="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A__GUID-853AD0E0-CBDE-4182-94A8-4C9BE9C7FDC5"><!-- --></a><span class="notetitle">Note:</span>  
+        <p class="p">Any element names that include a wildcard should be quoted to the
+          shell attempting to wildcard match against filenames. 
+        </p>
+ 
+      </div>
+ 
+      <p class="p">At the beginning of operation, 
+        <samp class="ph codeph">opaxmlextract</samp>, by default, outputs a delimited 
+        <em class="ph i">header record</em> containing the names of the extraction elements.
+        The order of the names is the same as specified on the command line and is the
+        same order as that of the extraction record. Output of the header record can be
+        disabled with the 
+        <samp class="ph codeph">-H</samp> option. By default, element names are shown as they
+        were entered on the command line. The 
+        <samp class="ph codeph">-v</samp> option causes element names to be output as they
+        are used during extraction, with any prepended wildcard characters. 
+      </p>
+ 
+      <p class="p">Options (parameters) to 
+        <samp class="ph codeph">opaxmlextract</samp> can be specified on the command line,
+        with a parameter file, or using both methods. A parameter file is specified
+        with 
+        <samp class="ph codeph">-P 
+          <var class="keyword varname">param_file</var></samp>. When a parameter file
+        specification is encountered on the command line, option processing on the
+        command line is suspended, the parameter file is read and processed entirely,
+        and then command line processing is resumed. 
+      </p>
+ 
+      <p class="p">Option syntax within a parameter file is the same as on the command
+        line. Multiple parameter file specifications can be made, on the command line
+        or within other parameter files. At each point that a parameter file is
+        specified, current option processing is suspended while the parameter file is
+        processed, then resumed. Options are processed in the order they are
+        encountered on the command line or in parameter files. A parameter file can be
+        up to 8192 bytes in size and may contain up to 512 parameters. 
+      </p>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

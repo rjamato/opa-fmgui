@@ -1,0 +1,317 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opaxlattopology">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opaxlattopology</title>
+</head>
+<body class="man8" id="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564"><a name="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opaxlattopology</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__GUID-D03B7299-033C-447B-90C9-C14994EF75EE"><a name="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__GUID-D03B7299-033C-447B-90C9-C14994EF75EE"><!-- --></a> 
+      <p class="p">Generates a topology XML file of a cluster using 
+        <span class="ph filepath">topology.xlsx</span>, 
+        <span class="ph filepath">linksum_swd06.csv</span>, and 
+        <span class="ph filepath">linksum_swd24.csv</span> as input. The topology file can
+        be used to bring up and verify the cluster. 
+      </p>
+
+      </div>
+ 
+    <div class="section refsyn" id="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__GUID-6DD2ACFD-BCF8-46B0-B4F9-F8F8187B2809"><a name="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__GUID-6DD2ACFD-BCF8-46B0-B4F9-F8F8187B2809"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opaxlattopology [-d <var class="keyword varname">level</var> -v <var class="keyword varname">level</var> -i <var class="keyword varname">level</var> -c <var class="keyword varname">char</var> -K -?] [source [dest]]</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__GUID-DC63CA88-4272-475F-BC21-5C9D293B3893"><a name="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__GUID-DC63CA88-4272-475F-BC21-5C9D293B3893"><!-- --></a><h2 class="sectiontitle">Options</h2> 
+      <a name="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__GUID-52E2ECC0-4D94-43EA-9146-950260D3DAE6"><!-- --></a><dl class="dl parml" id="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__GUID-52E2ECC0-4D94-43EA-9146-950260D3DAE6"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-d 
+              <var class="keyword varname">level</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Output detail level. Default = 0. Levels are additive. 
+            </p>
+ 
+            <p class="p">By default, the top level is always produced. Switch, rack, and
+              rack group topology files can be added to the output by choosing the
+              appropriate level. If the output at the group or rack level is specified, then
+              group or rack names must be provided in the spreadsheet. Detailed output can be
+              specified in any combination. A directory for each topology XML file is created
+              hierarchically, with group directories (if specified) at the highest level,
+              followed by rack and switch directories (if specified). 
+            </p>
+ 
+            <a name="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__GUID-0B4253F9-9C0A-4E62-BF9A-30B8EA8C1C42"><!-- --></a><dl class="dl parml" id="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__GUID-0B4253F9-9C0A-4E62-BF9A-30B8EA8C1C42"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">1</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p"><span class="ph">Intel<sup>®</sup> Omni-Path Edge
+          Switch 100 Series</span> topology files. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">2</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Rack topology files. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">4</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Rack group topology files. 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-v 
+              <var class="keyword varname">level</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Verbose level. Range = 0 - 8. Default = 2. 
+            </p>
+ 
+            <a name="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__GUID-7D56B081-974F-4FFD-AAB0-B6252EA13D18"><!-- --></a><dl class="dl parml" id="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__GUID-7D56B081-974F-4FFD-AAB0-B6252EA13D18"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">No output. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">1</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Progress output. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">2</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Reserved. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">4</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Time stamps. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">8</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Reserved. 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-i 
+              <var class="keyword varname">level</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Output indent level. Range = 0 - 15. Default = 0. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-c 
+              <var class="keyword varname">char</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">NodeDesc concatenation character. Used when creating NodeDesc
+              values (that is, Name to Name-2, Name to HFI-1, and so on). A space is used by
+              default, but another character, such as underscore, can be specified. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-K 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Does not clean temporary files. Prevents temporary files in each
+              topology directory from being removed. Temporary files contain CSV formatted
+              lists of links, HFIs, and switches used to create a topology XML file.
+              Temporary files are not typically needed after a topology file is created,
+              however they are used for creating 
+              <span class="ph filepath">linksum_swd06.csv</span> and 
+              <span class="ph filepath">linksum_swd24.csv</span> files, or can be retained
+              for subsequent inspection or processing. 
+            </p>
+ 
+            <div class="note note" id="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__GUID-A7C47A9A-D5DA-426E-9395-03123C161385"><a name="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__GUID-A7C47A9A-D5DA-426E-9395-03123C161385"><!-- --></a><span class="notetitle">Note:</span>  
+              <p class="p">The 
+                <span class="ph filepath">linksum_swd06.csv</span> and 
+                <span class="ph filepath">linksum_swd24.csv</span> files are provided as
+                stand-alone source files. However, they can be recreated (or modified) from the
+                spreadsheet, if needed, by performing the following steps: 
+              </p>
+ 
+              <a name="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__OL_7AEE7EBF216440F9AA525DFDE4BF2613"><!-- --></a><ol class="ol" id="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__OL_7AEE7EBF216440F9AA525DFDE4BF2613"> 
+                <li class="li" id="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__XX1198050"><a name="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__XX1198050"><!-- --></a> Save each of the following from the 
+                  <span class="ph filepath">topology.xlsx</span> file as individual 
+                  <span class="ph filepath">.csv</span> files: 
+                  <a name="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__UL_CB1BE23954AE479CAF116D0EE4BFDB57"><!-- --></a><ul class="ul" id="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__UL_CB1BE23954AE479CAF116D0EE4BFDB57"> 
+                    <li class="li" id="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__XX1200015"><a name="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__XX1200015"><!-- --></a> Internal SWD06 Links tab as 
+                      <span class="ph filepath">linksum_swd06.csv</span> 
+                    </li>
+ 
+                    <li class="li" id="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__XX1200110"><a name="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__XX1200110"><!-- --></a> Internal SWD24 Links tab as 
+                      <span class="ph filepath">linksum_swd24.csv</span> 
+                    </li>
+ 
+                    <li class="li" id="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__XX1200111"><a name="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__XX1200111"><!-- --></a> Fabric Links tab as 
+                      <span class="ph filepath">topology.csv</span> 
+                    </li>
+ 
+                  </ul>
+ 
+                </li>
+ 
+                <li class="li" id="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__XX1200112"><a name="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__XX1200112"><!-- --></a> For each saved 
+                  <span class="ph filepath">topology.csv</span> file, run the script with
+                  the 
+                  <samp class="ph codeph">-K</samp> option. 
+                </li>
+ 
+                <li class="li" id="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__LI_6D99CB50CA3D4B2F9DB7A9ADB4C86E84"><a name="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__LI_6D99CB50CA3D4B2F9DB7A9ADB4C86E84"><!-- --></a>Upon completion of
+                  the script, save the top level 
+                  <span class="ph filepath">linksum.csv</span> file as 
+                  <span class="ph filepath">linksum_swd06.csv</span> or 
+                  <span class="ph filepath">linksum_swd24.csv</span> as appropriate. 
+                </li>
+ 
+              </ol>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-?</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Prints this output. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__GUID-9CA3F0AF-E18A-456A-8850-AB64046F744B"><a name="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__GUID-9CA3F0AF-E18A-456A-8850-AB64046F744B"><!-- --></a><h2 class="sectiontitle">Description</h2> 
+      <p class="p">The 
+        <samp class="ph codeph">opaxlattopology</samp> script reads the 
+        <span class="ph filepath">topology</span>, 
+        <span class="ph filepath">linksum_swd06</span>, and 
+        <span class="ph filepath">linksum_swd24</span> CSV files. The 
+        <span class="ph filepath">topology.csv</span> file is created from the 
+        <span class="ph filepath">topology.xlsx</span> spreadsheet by saving the Fabric
+        Links tab as a .CSV file to 
+        <span class="ph filepath">topology.csv</span>. Inspect the 
+        <span class="ph filepath">topology.csv</span> file to ensure that each row contains
+        the correct and same number of comma separators. Any extraneous entries in the
+        spreadsheet can cause the CSV output to have extra fields. 
+      </p>
+ 
+      <p class="p">The script outputs one or more topology files starting with 
+        <span class="ph filepath">topology.0:0.xml</span>. Input files must be present in
+        the same directory from which the script operates. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__SECTION_B98F70FE471F4369B29E5C18D5774BC8"><a name="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564__SECTION_B98F70FE471F4369B29E5C18D5774BC8"><!-- --></a><h2 class="sectiontitle">Example </h2> 
+      <pre class="pre codeblock">opaxlattopology 
+# reads default input 'topology.csv' and creates default
+# output 'topology.0:0.xml'
+opaxlattopology  fabric_2.csv
+# reads input 'fabric_2.csv' and creates default output</pre>
+ 
+      <p class="p">See 
+        <span class="ph filepath">topology.xlsx</span> for examples of links between HFI
+        and Edge SW (rows 4-7), HFI and Core SW (rows 8-11), and Edge SW and Core SW
+        (rows 12-15). 
+      </p>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

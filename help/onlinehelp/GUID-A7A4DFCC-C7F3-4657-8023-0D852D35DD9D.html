@@ -1,0 +1,236 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="concept">
+<meta name="DC.Title" content="Log View">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>Log View</title>
+</head>
+<body id="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D"><a name="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">Log View</h1>
+ 
+  <div class="body conbody"> 
+    <p class="p">The SM Log Viewer shows the error log from the remote SM host. At the
+      top of the page controls are provided to change the log text shown. A status
+      line displays the file name, number of lines, number of matched search results,
+      and range of lines in the file being viewed. The 
+      <span class="ph uicontrol">File Name</span> field shows the path of the log file on
+      the remote host. The tooltip to display the entire path is available for file
+      paths that exceed the name filed width. The main text portion of the window
+      displays the lines of text taken from the log file (see Lines/Page below). 
+    </p>
+ 
+    <div class="fig fignone" id="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-D3403598-51DE-4FCF-AA68-2AE90272D662"><a name="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-D3403598-51DE-4FCF-AA68-2AE90272D662"><!-- --></a><span xmlns:xs="http://www.w3.org/2001/XMLSchema" class="figcap"></span> 
+      </div>
+ 
+    <div class="section" id="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-8022EA7A-4F29-4D85-8276-B5CE94ED3992"><a name="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-8022EA7A-4F29-4D85-8276-B5CE94ED3992"><!-- --></a><h2 class="title sectiontitle">Filters</h2> 
+       
+      <p class="p"> Check boxes 
+        <img class="image" src="GUID-ED1D4C31-DD90-4436-AD70-2DC225E77214-low.png" width="17" height="17"> are used to filter lines of text containing 
+        <samp class="ph codeph">SM</samp>, 
+        <samp class="ph codeph">PM</samp>, 
+        <samp class="ph codeph">FE</samp>, 
+        <samp class="ph codeph">WARN</samp>, and 
+        <samp class="ph codeph">ERROR</samp>. When a checkbox is selected, all lines
+        containing the selected filter are displayed and highlighted in a different
+        color; lines that do not contain the filtered text are not displayed. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-3DB78EA7-120B-4C6B-9BB1-07A42CB4F0D7"><a name="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-3DB78EA7-120B-4C6B-9BB1-07A42CB4F0D7"><!-- --></a><h2 class="title sectiontitle"> Refresh</h2> 
+       
+      <p class="p">The Lines/Page control 
+        <img class="image" src="GUID-5AFFC714-06B3-4DF2-85F0-AF41586C5BBF-low.png" width="45" height="23"> allows you to select the number of lines to display on
+        each page as the file is traversed. The 
+        <span class="ph uicontrol">Total Lines</span> field shows the total number of
+        lines in the log file and is updated as lines are added. 
+      </p>
+ 
+      <div class="note note" id="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-562A60EB-D1AE-4DB7-81B4-5DF75EBDC0B3"><a name="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-562A60EB-D1AE-4DB7-81B4-5DF75EBDC0B3"><!-- --></a><span class="notetitle">Note:</span>  After you enter or
+        select a number of lines, click the 
+        <img class="image" src="GUID-F70C721A-A89C-4A72-96C1-C311942E00FB-low.png" width="20" height="20"> to refresh the viewer with the new lines. 
+      </div>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-C835C2DD-5B73-4105-A8DB-B9C83E4616E8"><a name="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-C835C2DD-5B73-4105-A8DB-B9C83E4616E8"><!-- --></a><h2 class="title sectiontitle">Search</h2> 
+       
+      <p class="p">The Search feature 
+        <img class="image" src="GUID-67F298FC-618A-49EB-9657-23678098279B-low.png" width="20" height="19"> is accessible through the actions described below. The 
+        <span class="ph uicontrol"># Matches</span> field below it indicates the number of
+        search results found. 
+      </p>
+ 
+      <a name="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-5ABC9AEC-34BA-4BC5-AE90-467C68E374F5"><!-- --></a><ul class="ul" id="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-5ABC9AEC-34BA-4BC5-AE90-467C68E374F5"> 
+        <li class="li">Search Field 
+          <a name="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-42E74F88-18C6-4D04-88C3-CC00ADD72AEF"><!-- --></a><ul class="ul" id="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-42E74F88-18C6-4D04-88C3-CC00ADD72AEF"> 
+            <li class="li">Click the search field to highlight text. 
+            </li>
+ 
+            <li class="li">Double-clicking on the search field removes highlights from
+              existing text and places a cursor at the end of the text. 
+            </li>
+ 
+            <li class="li"> Enter text to search for and then click 
+              <img class="image" src="GUID-67F298FC-618A-49EB-9657-23678098279B-low.png" width="20" height="19"> to perform search. 
+            </li>
+ 
+            <li class="li"> Click 
+              <img class="image" src="GUID-D1E64F77-D468-451D-85E3-A835E9CCBEB9-low.png" height="12" width="12"> to remove
+              highlights from search results and to clear the search field. 
+            </li>
+ 
+          </ul>
+ 
+        </li>
+ 
+        <li class="li"> Marked Search 
+          <a name="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-154F4F53-6ED6-42B0-AF80-C97311AAE0AB"><!-- --></a><ul class="ul" id="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-154F4F53-6ED6-42B0-AF80-C97311AAE0AB"> 
+            <li class="li">In the main text window, double-click on a word to highlight
+              all instances of the word. 
+            </li>
+ 
+            <li class="li">Selected word also appears in the search field. 
+            </li>
+ 
+            <li class="li"> Click 
+              <img class="image" src="GUID-BA257FA4-9C69-4FFE-9A2A-94D6C162D989-low.png" width="20" height="20"> to remove highlights from search results and to clear
+              the search field. 
+            </li>
+ 
+          </ul>
+ 
+        </li>
+ 
+        <li class="li"> Selected Search 
+          <a name="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-E2F50D60-10DF-4A91-9CCB-FBCB041B3B51"><!-- --></a><ul class="ul" id="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-E2F50D60-10DF-4A91-9CCB-FBCB041B3B51"> 
+            <li class="li"> Copy/Paste 
+              <a name="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-AEC1D333-D90B-4876-ABD6-DFD8380C6B40"><!-- --></a><ol class="ol" id="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-AEC1D333-D90B-4876-ABD6-DFD8380C6B40"> 
+                <li class="li">While holding down the left mouse button, drag the mouse
+                  pointer across a word, phrase, line, or multiple lines to select the desired
+                  search entry. 
+                </li>
+ 
+                <li class="li">Right-click on the text area to display the context menu
+                  and select 
+                  <span class="ph uicontrol">Copy</span>. 
+                </li>
+ 
+                <li class="li">Right-click in the search field to display the context menu
+                  and select 
+                  <span class="ph uicontrol">Paste</span>. 
+                </li>
+ 
+                <li class="li">Click 
+                  <img class="image" src="GUID-67F298FC-618A-49EB-9657-23678098279B-low.png" width="20" height="19"> or press 
+                  <span class="ph uicontrol">ENTER</span> to perform search. 
+                </li>
+ 
+                <li class="li"> Click 
+                  <img class="image" src="GUID-BA257FA4-9C69-4FFE-9A2A-94D6C162D989-low.png" width="20" height="20"> to remove highlights from search results and to clear
+                  the search field. 
+                </li>
+ 
+              </ol>
+ 
+              <div class="note note" id="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-3B272F21-8CD5-43F1-A2A1-D2831AF02A8B"><a name="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-3B272F21-8CD5-43F1-A2A1-D2831AF02A8B"><!-- --></a><span class="notetitle">Note:</span> You can also
+                use 
+                <strong class="ph b">Ctrl+C</strong> to copy to the clipboard, and 
+                <strong class="ph b">Ctrl+V</strong> to paste from the clipboard. 
+              </div>
+ 
+            </li>
+ 
+            <li class="li"> Highlighting 
+              <a name="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-A7F2DAB0-8449-40D5-9BBC-493BB53FE12F"><!-- --></a><ol class="ol" id="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-A7F2DAB0-8449-40D5-9BBC-493BB53FE12F"> 
+                <li class="li"> While holding down the left mouse button, drag the mouse
+                  pointer across a word, phrase, line, or multiple lines to select the desired
+                  search entry. 
+                </li>
+ 
+                <li class="li">Right-click on the text area to display the context menu
+                  and select 
+                  <span class="ph uicontrol">Highlight</span> to highlight all instances
+                  of the selected text. 
+                </li>
+ 
+                <li class="li"> Click 
+                  <img class="image" src="GUID-BA257FA4-9C69-4FFE-9A2A-94D6C162D989-low.png" width="20" height="20"> to remove highlights from search results and to clear
+                  the search field. 
+                </li>
+ 
+              </ol>
+ 
+            </li>
+ 
+          </ul>
+ 
+        </li>
+ 
+      </ul>
+ 
+      <p class="p"> 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-139F2495-6B4B-4E63-B8BA-C977CF4D9044"><a name="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-139F2495-6B4B-4E63-B8BA-C977CF4D9044"><!-- --></a><h2 class="title sectiontitle"> 
+      <strong class="ph b">Paging</strong> </h2> 
+       
+      <p class="p">The Paging control 
+        <img class="image" src="GUID-417A740D-D3DD-42D3-8AA2-EC0CF788547C-low.png" width="91" height="20"> allows you to move backward and forward through the log
+        file in line increments specified in the Lines/Page field. Highlighting of text
+        imposed by the Filter, Highlight, or Search functions remains in effect as the
+        page view changes. The 
+        <span class="ph uicontrol">Line Range</span> field, located below the 
+        <img class="image" src="GUID-417A740D-D3DD-42D3-8AA2-EC0CF788547C-low.png" width="91" height="20"> controls, shows the range of lines currently being
+        viewed. This range remains unchanged if lines are filtered and show a subset of
+        lines designated by Lines/Page or range. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-D47E5A09-7D60-4F0E-8983-500CF2D61C46"><a name="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-D47E5A09-7D60-4F0E-8983-500CF2D61C46"><!-- --></a><h2 class="title sectiontitle">Configuration</h2> 
+       
+      <div class="p">The Configuration control 
+        <img class="image" src="GUID-2D31CE98-F19C-4CD5-8F35-8339434F4661-low.png" width="20" height="18"> allows you to log out of the Log Viewer and redefine the
+        host credentials and log file name. 
+        Two modes are available when logging into the Log Viewer: 
+      <a name="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-A19F5B9D-65EA-4A10-81B4-40C899FAEBDA"><!-- --></a><ul class="ul" id="GUID-A7A4DFCC-C7F3-4657-8023-0D852D35DD9D__GUID-A19F5B9D-65EA-4A10-81B4-40C899FAEBDA"> 
+        <li class="li">Auto Config – Only the user name and password fields are available
+          and it is assumed that the Host, Port, and Log File path information is
+          correct. 
+        </li>
+ 
+        <li class="li">Custom Config – In this mode, all fields are editable and the user
+          must provide the necessary login information. 
+        </li>
+ 
+      </ul>
+ 
+      </div>
+ 
+      <p class="p">With this feature, the log on any host can be viewed regardless of the
+        host to which the subnet window is connected. 
+      </p>
+ 
+      </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: February 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

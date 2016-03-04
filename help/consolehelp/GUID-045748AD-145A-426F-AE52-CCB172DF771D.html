@@ -1,0 +1,541 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opacaptureall">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-045748AD-145A-426F-AE52-CCB172DF771D">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opacaptureall</title>
+</head>
+<body class="man8" id="GUID-045748AD-145A-426F-AE52-CCB172DF771D"><a name="GUID-045748AD-145A-426F-AE52-CCB172DF771D"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opacaptureall</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-045748AD-145A-426F-AE52-CCB172DF771D__GUID-295A8095-FD13-4986-B5F4-D018DDDE6036"><a name="GUID-045748AD-145A-426F-AE52-CCB172DF771D__GUID-295A8095-FD13-4986-B5F4-D018DDDE6036"><!-- --></a> 
+      <p class="p"><strong class="ph b">(Chassis and Host)</strong> Captures supporting information for a
+        problem report from all hosts or 
+        <span class="ph">Intel<sup>®</sup> Omni-Path</span>
+        Chassis and uploads to this system. 
+      </p>
+ 
+      <a name="GUID-045748AD-145A-426F-AE52-CCB172DF771D__UL_25630B975D8540788C52B5F1EC863753"><!-- --></a><ul class="ul" id="GUID-045748AD-145A-426F-AE52-CCB172DF771D__UL_25630B975D8540788C52B5F1EC863753"> 
+        <li class="li" id="GUID-045748AD-145A-426F-AE52-CCB172DF771D__LI_7407AEBA6FB7402CBA1C190AA9F79FA9"><a name="GUID-045748AD-145A-426F-AE52-CCB172DF771D__LI_7407AEBA6FB7402CBA1C190AA9F79FA9"><!-- --></a> 
+          <p class="p"><strong class="ph b">For Hosts</strong> 
+          </p>
+ 
+          <p class="p">When a host 
+            <samp class="ph codeph">opacaptureall</samp> is performed, 
+            <samp class="ph codeph">opacapture</samp> is run to create the specified capture
+            file within 
+            <samp class="ph codeph">~root</samp> on each host (with the 
+            <samp class="ph codeph">.tgz</samp> suffix added as needed). The files are
+            uploaded and unpacked into a matching directory name within 
+            <span class="ph filepath">upload_dir/<var class="keyword varname">hostname</var>/</span> on the
+            local system. The default file name is 
+            <span class="ph filepath">hostcapture</span>. 
+          </p>
+ 
+        </li>
+ 
+        <li class="li" id="GUID-045748AD-145A-426F-AE52-CCB172DF771D__LI_D2CD3D926CDB40EABFB407F460BA8EE1"><a name="GUID-045748AD-145A-426F-AE52-CCB172DF771D__LI_D2CD3D926CDB40EABFB407F460BA8EE1"><!-- --></a> 
+          <p class="p"><strong class="ph b">For Chassis</strong> 
+          </p>
+ 
+          <p class="p">When a chassis 
+            <samp class="ph codeph">opacaptureall</samp> is performed, 
+            <samp class="ph codeph">opacapture</samp> is run on each chassis and its output
+            is saved to 
+            <span class="ph filepath">upload_dir/<var class="keyword varname">chassisname</var>/<var class="keyword varname">file</var></span>
+            on the local system. The default file name is 
+            <span class="ph filepath">chassiscapture</span>. 
+          </p>
+ 
+        </li>
+ 
+      </ul>
+ 
+      <p class="p">For both host and chassis capture, the uploaded captures are combined
+        into a 
+        <span class="ph filepath">.tgz</span> file with the file name specified and the
+        suffix 
+        <span class="ph filepath">.all.tgz</span> added. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-045748AD-145A-426F-AE52-CCB172DF771D__GUID-43F42C29-3864-4C6D-A2CA-A54301A4F9ED"><a name="GUID-045748AD-145A-426F-AE52-CCB172DF771D__GUID-43F42C29-3864-4C6D-A2CA-A54301A4F9ED"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opacaptureall [-C] [-p] [-f <var class="keyword varname">hostfile</var>] [-F <var class="keyword varname">chassisfile</var>] [-h '<var class="keyword varname">hosts</var>'] 
+[-H '<var class="keyword varname">chassis</var>'] [-t <var class="keyword varname">portsfile</var>] [-d <var class="keyword varname">upload_dir</var>] [-S] [-D <var class="keyword varname">detail_level</var>] [<var class="keyword varname">file</var>]</pre>
+ 
+      <p class="p">or 
+      </p>
+ 
+      <pre class="pre codeblock">opacaptureall --help</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-045748AD-145A-426F-AE52-CCB172DF771D__XX1157736"><a name="GUID-045748AD-145A-426F-AE52-CCB172DF771D__XX1157736"><!-- --></a><h2 class="sectiontitle">Options</h2> 
+      <a name="GUID-045748AD-145A-426F-AE52-CCB172DF771D__GUID-A7F91ECD-5DF4-4774-A167-38C4810E4227"><!-- --></a><dl class="dl parml" id="GUID-045748AD-145A-426F-AE52-CCB172DF771D__GUID-A7F91ECD-5DF4-4774-A167-38C4810E4227"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Produces full help text. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-C 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Performs capture against chassis. Default is 
+              <samp class="ph codeph">hosts</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-p</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Performs capture upload in parallel on all host/chassis. For a
+              host capture, this only affects the upload phase. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-f 
+              <var class="keyword varname">hostfile</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File with hosts in cluster. Default is 
+              <span class="ph filepath">/etc/sysconfig/opa/hosts</span> file. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-F 
+              <var class="keyword varname">chassisfile</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File containing a list of chassis in the cluster. Default is 
+              <span class="ph filepath">/etc/sysconfig/opa/chassis</span> file. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-h 
+              <var class="keyword varname">hosts</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of hosts on which to perform a capture. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-H 
+              <var class="keyword varname">chassis</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of chassis on which to perform a capture. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-t 
+              <var class="keyword varname">portsfile</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File with list of local HFI ports used to access fabric(s) for
+              switch access, default is 
+              <span class="ph filepath">/etc/sysconfig/opa/ports</span> file. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-d 
+              <var class="keyword varname">upload_dir</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Directory to upload to, default is 
+              <samp class="ph codeph">uploads</samp>. If not specified, the environment
+              variable 
+              <span class="keyword parmname">UPLOADS_DIR</span> is used. If that is not
+              exported, the default (<samp class="ph codeph">./uploads</samp>) is used. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-S</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Securely prompts for password for administrator on a chassis. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-D 
+              <var class="keyword varname">detail_level</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p">Level of detail of the capture passed to host opacapture. (Only
+              used for host captures; ignored for chassis captures.) 
+              <a name="GUID-045748AD-145A-426F-AE52-CCB172DF771D__GUID-E8079B55-9DBE-4D4E-97CA-468ECE4A0C0F"><!-- --></a><dl class="dl parml" id="GUID-045748AD-145A-426F-AE52-CCB172DF771D__GUID-E8079B55-9DBE-4D4E-97CA-468ECE4A0C0F"> 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">1</samp> 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p">Local. Obtains local information from each host. 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">2</samp> 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p">Fabric. In addition to 
+                      <var class="keyword varname">Local</var>, also obtains basic fabric
+                      information by queries to the SM and fabric error analysis using 
+                      <samp class="ph codeph">opareport</samp>. 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">3</samp> 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p">Fabric+FDB. In addition to 
+                      <var class="keyword varname">Fabric</var>, also obtains the Forwarding
+                      Database (FDB), which includes the switch forwarding tables from the SM. 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">4</samp> 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p">Analysis. In addition to 
+                      <var class="keyword varname">Fabric+FDB</var>, also obtains 
+                      <samp class="ph codeph">opaallanalysis</samp> results. If 
+                      <samp class="ph codeph">opaallanalysis</samp> has not yet been run, it
+                      is run as part of the capture. 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+              </dl>
+ 
+            </div>
+ 
+            <div class="note note" id="GUID-045748AD-145A-426F-AE52-CCB172DF771D__GUID-524FA50C-ABC5-4A06-8B6A-4457535E4849"><a name="GUID-045748AD-145A-426F-AE52-CCB172DF771D__GUID-524FA50C-ABC5-4A06-8B6A-4457535E4849"><!-- --></a><span class="notetitle">Note:</span>  
+              <p class="p">Detail levels 2-4 can be used when fabric operational problems
+                occur. If the problem is node-specific, detail level 1 should be sufficient.
+                Detail levels 2-4 require an operational 
+                <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric Suite Fabric Manager</span>. Typically your support
+                representative requests a given detail level. If a given detail level takes
+                excessively long or fails to be gathered, try a lower detail level. 
+              </p>
+ 
+            </div>
+ 
+            <p class="p">For detail levels 2-4, the additional information is only
+              gathered on the node running the 
+              <samp class="ph codeph">opacaptureall</samp> command. The information is
+              gathered for every fabric specified in the 
+              <span class="ph filepath">/etc/sysconfig/opa/ports</span> file. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"><var class="keyword varname">file</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Name for capture file. The suffix 
+              <span class="ph filepath">.tgz</span> is appended if it is not specified in
+              the name. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-045748AD-145A-426F-AE52-CCB172DF771D__XX1157768"><a name="GUID-045748AD-145A-426F-AE52-CCB172DF771D__XX1157768"><!-- --></a><h2 class="sectiontitle">Examples </h2> 
+      <p class="p"><strong class="ph b">Host Capture Examples</strong> 
+      </p>
+ 
+      <pre class="pre codeblock">opacaptureall</pre>
+ 
+      <p class="p">Creates a 
+        <span class="ph filepath">hostcapture</span> directory in 
+        <span class="ph filepath">upload_dir/<var class="keyword varname">hostname</var>/</span> for each
+        host in 
+        <span class="ph filepath">/etc/sysconfig/opa/hosts</span> file, then creates 
+        <span class="ph filepath">hostcapture.all.tgz</span>. 
+      </p>
+ 
+      <pre class="pre codeblock">opacaptureall mycapture</pre>
+ 
+      <p class="p">Creates a 
+        <span class="ph filepath">mycapture</span> directory in 
+        <span class="ph filepath">upload_dir/<var class="keyword varname">hostname</var>/</span> for each
+        host in 
+        <span class="ph filepath">/etc/sysconfig/opa/hosts</span> file, then creates 
+        <span class="ph filepath">mycapture.all.tgz</span>. 
+      </p>
+ 
+      <pre class="pre codeblock">opacaptureall -h 'arwen elrond' 030127capture</pre>
+ 
+      <p class="p">Gets the list of hosts from 
+        <samp class="ph codeph">arwen elrond</samp> file and creates 
+        <span class="ph filepath">030127capture.tgz</span> file. 
+      </p>
+ 
+      <p class="p"><strong class="ph b">Chassis Capture Examples</strong> 
+      </p>
+ 
+      <pre class="pre codeblock">opacaptureall -C</pre>
+ 
+      <p class="p">Creates a 
+        <span class="ph filepath">chassiscapture</span> file in 
+        <span class="ph filepath">upload_dir/<var class="keyword varname">chassisname</var>/</span> for
+        each chassis in 
+        <span class="ph filepath">/etc/sysconfig/opa/chassis</span> file, then creates 
+        <span class="ph filepath">chassiscapture.all.tgz</span>. 
+      </p>
+ 
+      <pre class="pre codeblock">opacaptureall -C mycapture</pre>
+ 
+      <p class="p">Creates a 
+        <span class="ph filepath">mycapture.tgz</span> file in 
+        <span class="ph filepath">upload_dir/<var class="keyword varname">chassisname</var>/</span> for
+        each chassis in 
+        <span class="ph filepath">/etc/sysconfig/opa/chassis</span> file, then creates 
+        <span class="ph filepath">mycapture.all.tgz</span>. 
+      </p>
+ 
+      <pre class="pre codeblock">opacaptureall -C -H 'chassis1 chassis2' 030127capture</pre>
+ 
+      <p class="p">Captures from 
+        <samp class="ph codeph">chassis1</samp> and 
+        <samp class="ph codeph">chassis2</samp>, and creates 
+        <span class="ph filepath">030127capture.tgz</span> file. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-045748AD-145A-426F-AE52-CCB172DF771D__SECTION_23BB93978AE346C094BCB80D47376ABF"><a name="GUID-045748AD-145A-426F-AE52-CCB172DF771D__SECTION_23BB93978AE346C094BCB80D47376ABF"><!-- --></a><h2 class="title sectiontitle">Environment Variables</h2> 
+       
+      <p class="p">The following environment variables are also used by this command: 
+      </p>
+ 
+      <a name="GUID-045748AD-145A-426F-AE52-CCB172DF771D__GUID-A8EF284D-8C1B-49C8-8BDA-F70F7ACF12B9"><!-- --></a><dl class="dl parml" id="GUID-045748AD-145A-426F-AE52-CCB172DF771D__GUID-A8EF284D-8C1B-49C8-8BDA-F70F7ACF12B9"> 
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">HOSTS</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of hosts, used if 
+              <samp class="ph codeph">-h</samp> option not supplied. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">CHASSIS</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of chassis, used if 
+              <samp class="ph codeph">-C</samp> is used and 
+              <samp class="ph codeph">-h</samp> option is not supplied. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">HOSTS_FILE</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File containing a list of hosts, used in the absence of 
+              <samp class="ph codeph">-f</samp> and 
+              <samp class="ph codeph">-h</samp>. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">CHASSIS_FILE</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File containing a list of chassis, used in the absence of 
+              <samp class="ph codeph">-F</samp> and 
+              <samp class="ph codeph">-H</samp>. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">UPLOADS_DIR</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Directory to upload to, used in the absence of 
+              <samp class="ph codeph">-d</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_MAX_PARALLEL</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">When 
+              <samp class="ph codeph">-p</samp> option is used, maximum concurrent operations
+              are performed. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_CHASSIS_LOGIN_METHOD</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">How to log into chassis. Can be Telnet or SSH. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_CHASSIS_ADMIN_PASSWORD</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Password for administrator on all chassis. Used in absence of 
+              <samp class="ph codeph">-S</samp> option. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-045748AD-145A-426F-AE52-CCB172DF771D__XX1157765"><a name="GUID-045748AD-145A-426F-AE52-CCB172DF771D__XX1157765"><!-- --></a><h2 class="sectiontitle">More Information</h2> 
+      <p class="p">When performing 
+        <samp class="ph codeph">opacaptureall</samp> against hosts, internally SSH is used.
+        The command 
+        <samp class="ph codeph">opacaptureall</samp> requires that password-less SSH be set
+        up between the host running 
+        <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric Suite FastFabric</span> Toolset and the hosts 
+        <samp class="ph codeph">opacaptureall</samp> is operating against. The 
+        <samp class="ph codeph">opasetupssh</samp> command can aid in setting up
+        password-less SSH. 
+      </p>
+ 
+      <p class="p">When performing operations against chassis, set up of SSH keys is
+        recommended (see 
+        <a class="xref" href="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561.html#GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561">opasetupssh</a>).
+        If SSH keys are not set up, all chassis must be configured with the same admin
+        password and use of the 
+        <samp class="ph codeph">-S</samp> option is recommended. The 
+        <samp class="ph codeph">-S</samp> option avoids the need to keep the password in
+        configuration files. 
+      </p>
+ 
+      <div class="note note" id="GUID-045748AD-145A-426F-AE52-CCB172DF771D__GUID-4E24DCD6-7DD4-4818-B270-A57A8B818BED"><a name="GUID-045748AD-145A-426F-AE52-CCB172DF771D__GUID-4E24DCD6-7DD4-4818-B270-A57A8B818BED"><!-- --></a><span class="notetitle">Note:</span>  
+        <p class="p">The resulting host capture files can require significant amounts of
+          space on the 
+          <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric Suite FastFabric</span> Toolset host. Actual size varies, but sizes can be
+          multiple megabytes per host. Intel recommends that you ensure adequate space is
+          available on the 
+          <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric Suite FastFabric</span> Toolset system. In many cases, it may not be
+          necessary to run 
+          <samp class="ph codeph">opacaptureall</samp> against all hosts or chassis; instead,
+          a representative subset may be sufficient. Consult with your support
+          representative for further information. 
+        </p>
+ 
+      </div>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

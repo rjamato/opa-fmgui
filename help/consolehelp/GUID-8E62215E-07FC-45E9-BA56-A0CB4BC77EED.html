@@ -1,0 +1,218 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opaportinfo">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opaportinfo</title>
+</head>
+<body class="man1" id="GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED"><a name="GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opaportinfo</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED__GUID-E782BBEC-2AE7-442C-B22D-C8F4CE06CB10"><a name="GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED__GUID-E782BBEC-2AE7-442C-B22D-C8F4CE06CB10"><!-- --></a> 
+      <p class="p"><strong class="ph b">(Host or Switch)</strong> Displays configuration and state of a
+        specified 
+        <span class="ph">Intel<sup>®</sup> Omni-Path Host
+          Fabric Interface</span> (<span class="ph">HFI</span>) port on the local host
+        or a remote switch. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED__GUID-0CE5CFDA-9FEE-4BCF-BD79-65297D247BB9"><a name="GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED__GUID-0CE5CFDA-9FEE-4BCF-BD79-65297D247BB9"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock"><samp class="ph codeph">opaportinfo [-l <var class="keyword varname">lid</var> [-m <var class="keyword varname">dest_port</var>]] 
+[-h <var class="keyword varname">hfi</var>] [-p <var class="keyword varname">port</var>] [-K <var class="keyword varname">mkey</var>] [-v]</samp></pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED__GUID-8814F459-5AB2-4BD0-B2F4-6A18F460B1EC"><a name="GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED__GUID-8814F459-5AB2-4BD0-B2F4-6A18F460B1EC"><!-- --></a><h2 class="title sectiontitle">Options</h2> 
+      
+      <a name="GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED__GUID-40FCF43B-4077-41AA-A7E0-97E5B32114DC"><!-- --></a><dl class="dl parml" id="GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED__GUID-40FCF43B-4077-41AA-A7E0-97E5B32114DC"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-l 
+              <var class="keyword varname">lid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Destination LID. Default is local port. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-m 
+              <var class="keyword varname">dest_port</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Destination port. Default is port with given LID. Useful to
+              access switch ports. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-h 
+              <var class="keyword varname">hfi</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><span class="ph">HFI</span>, numbered 1..n. Using 0
+              specifies that the 
+              <samp class="ph codeph">-p 
+                <var class="keyword varname">port</var></samp> port is a system-wide port
+              number. Default is 0. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-p 
+              <var class="keyword varname">port</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"> Port, numbered 1..n. If 
+              <samp class="ph codeph">-h 
+                <var class="keyword varname">hfi</var></samp> is 0, then 
+              <samp class="ph codeph"><var class="keyword varname">port</var></samp> is a system-wide port
+              number. Default is 1. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-K 
+              <var class="keyword varname">mkey</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">SM management key to access remote ports. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+       
+      <a name="GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED__GUID-BA678286-2A4E-4330-8920-9936929E7F65"><!-- --></a><dl class="dl parml" id="GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED__GUID-BA678286-2A4E-4330-8920-9936929E7F65"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -h 0</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"> First port in system (default). 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -h 
+              <var class="keyword varname">x</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">First port on 
+              <span class="ph">HFI</span> 
+              <samp class="ph codeph"><var class="keyword varname">x</var></samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -h 0 -p 
+              <var class="keyword varname">y</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Port 
+              <samp class="ph codeph"><var class="keyword varname">y</var></samp> within system. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -h 
+              <var class="keyword varname">x</var> -p 
+              <var class="keyword varname">y</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">HFI 
+              <samp class="ph codeph"><var class="keyword varname">x</var></samp>, port 
+              <samp class="ph codeph"><var class="keyword varname">y</var></samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+       
+      <a name="GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED__GUID-2DF4B1E2-8455-43B7-96F6-2007B7BF2461"><!-- --></a><dl class="dl parml" id="GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED__GUID-2DF4B1E2-8455-43B7-96F6-2007B7BF2461"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-v</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Verbose output. Additional invocations (–v –v ...) turn on
+              debugging, 
+              <samp class="ph codeph">openib</samp> debugging, and 
+              <samp class="ph codeph">libibumad</samp> debugging. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED__GUID-D2222BDD-04FF-48AA-8CCD-B54EB0573459"><a name="GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED__GUID-D2222BDD-04FF-48AA-8CCD-B54EB0573459"><!-- --></a><h2 class="sectiontitle">Examples </h2> 
+      <pre class="pre codeblock">opaportinfo -p 1 
+opaportinfo -p 2 -h 2 -l 5 -m 18</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED__GUID-36191904-5664-4EFE-9858-2F6B1955B025"><a name="GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED__GUID-36191904-5664-4EFE-9858-2F6B1955B025"><!-- --></a><h2 class="sectiontitle">Description</h2> 
+      <p class="p">To access switch ports using this command, the 
+        <samp class="ph codeph">-l</samp> and 
+        <samp class="ph codeph">-m</samp> options must be given. The 
+        <samp class="ph codeph">-l</samp> option specifies the LID of switch port 0 (the
+        logical management port for the switch) and 
+        <samp class="ph codeph">-m</samp> specifies the actual switch port to access. If SMA
+        mkeys are used, the 
+        <samp class="ph codeph">-K</samp> option is also needed. However, the 
+        <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric Suite Fabric Manager</span> does not use SMA mkeys by default, therefore
+        this option may not be required. 
+      </p>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

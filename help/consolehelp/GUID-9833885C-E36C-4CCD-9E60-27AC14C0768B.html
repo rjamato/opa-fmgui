@@ -1,0 +1,270 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opaverifyhosts">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opaverifyhosts</title>
+</head>
+<body class="man8" id="GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B"><a name="GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opaverifyhosts</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B__GUID-8E064225-8A63-4579-AB85-F92B40EBA19D"><a name="GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B__GUID-8E064225-8A63-4579-AB85-F92B40EBA19D"><!-- --></a> 
+      <p class="p">Performs single node verification. The actual verification is
+        performed using the 
+        <span class="ph filepath">FF_HOSTVERIFY_DIR/hostverify.sh</span> file. 
+      </p>
+ 
+      <p class="p">A sample file is provided in 
+        <span class="ph filepath">/opt/opa/samples/hostverify.sh</span>. You can review and
+        edit the sample file to set appropriate configuration and performance
+        expectations and select which tests to run by default. See 
+        <span class="ph filepath">/opt/opa/samples/hostverify.sh</span> for more
+        information. 
+      </p>
+ 
+      <p class="p"><span class="ph filepath">FF_HOSTVERIFY_DIR</span> configures both the location of
+        
+        <span class="ph filepath">hostverify.sh</span> and the destination of the 
+        <span class="ph filepath">hostverify.res</span> output file.
+      </p>
+
+      <p class="p"><span class="ph filepath">FF_HOSTVERIFY_DIR</span> is configured in the 
+        <span class="ph filepath">/etc/sysconfig/opa/opafastfabric.conf</span>
+        configuration file.
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B__GUID-D390F615-BC62-4270-81CC-D4A2583731DE"><a name="GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B__GUID-D390F615-BC62-4270-81CC-D4A2583731DE"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opaverifyhosts [-kc] [-f <var class="keyword varname">hostfile</var>] [-u <var class="keyword varname">upload_file</var>] [-d <var class="keyword varname">upload_dir</var>] 
+[-h <var class="keyword varname">hosts</var>] [-T <var class="keyword varname">timelimit</var>] [<var class="keyword varname">test</var> ...]</pre>
+ 
+      <p class="p">or 
+      </p>
+ 
+      <pre class="pre codeblock">opaverifyhosts --help</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B__GUID-FB818ED8-4F32-4EB3-AEC6-A0106BED1066"><a name="GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B__GUID-FB818ED8-4F32-4EB3-AEC6-A0106BED1066"><!-- --></a><h2 class="sectiontitle">Options</h2> 
+      <a name="GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B__GUID-D984EEEF-0E5E-48E1-B36B-485B7DED0479"><!-- --></a><dl class="dl parml" id="GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B__GUID-D984EEEF-0E5E-48E1-B36B-485B7DED0479"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Produces full help text. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-k</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">At start and end of verification, kills any existing hostverify
+              or xhpl jobs on the hosts. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-c</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Copies 
+              <span class="ph filepath">hostverify.sh</span> to hosts first, useful if you
+              have edited it. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-f 
+              <var class="keyword varname">hostfile</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File with hosts in cluster. Default is 
+              <span class="ph filepath">/etc/sysconfig/opa/hosts.</span> 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-h 
+              <var class="keyword varname">hosts</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of hosts to ping. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-u 
+              <var class="keyword varname">upload_file</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Filename to upload 
+              <span class="ph filepath">hostverify.res</span> to after verification to
+              allow backup and review of the detailed results for each node. The default
+              upload destination file is 
+              <span class="ph filepath">hostverify.res</span>. If 
+              <samp class="ph codeph">-u ''</samp> is specified, no upload occurs. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-d 
+              <var class="keyword varname">upload_dir</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Directory to upload result from each host to. Default is 
+              <span class="ph filepath">uploads</span>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-T 
+              <var class="keyword varname">timelimit</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Time limit in seconds for host to complete tests. Default is 300
+              seconds (5 minutes). 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"><var class="keyword varname">test</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">One or more specific tests to run. (See 
+              <span class="ph filepath">/opt/opa/samples/hostverify.sh</span> for a list of
+              available tests.) This verifies basic node configuration and performance by
+              running 
+              <span class="ph filepath">/root/hostverify.sh</span> on all specified hosts. 
+            </p>
+ 
+            <p class="p">Prior to using the 
+              <samp class="ph codeph"><var class="keyword varname">test</var></samp> option, edit 
+              <span class="ph filepath">/opt/opa/samples/hostverify.sh</span> to set proper
+              expectations for node configuration and performance. Then be sure to use the 
+              <samp class="ph codeph">-c</samp> option on first run for a given node so that 
+              <span class="ph filepath">/opt/opa/samples/hostverify.sh</span> gets copied
+              to each node as 
+              <span class="ph filepath">/root/hostverify.sh</span>. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+      <p class="p">A summary of results is appended to 
+        <span class="ph filepath">FF_RESULT_DIR/verifyhosts.res</span>. A punch list of
+        failures is also appended to 
+        <span class="ph filepath">FF_RESULT_DIR/punchlist.csv</span>. Only failures are
+        shown on stdout. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B__GUID-B9505042-B630-4E4B-82C6-A72974A59EB6"><a name="GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B__GUID-B9505042-B630-4E4B-82C6-A72974A59EB6"><!-- --></a><h2 class="sectiontitle">Examples </h2> 
+      <pre class="pre codeblock">opaverifyhosts -c 
+opaverifyhosts -h 'arwen elrond' 
+HOSTS='arwen elrond' opaverifyhosts</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B__GUID-FCFF13F5-2157-4829-8D66-E96F2BFD2152"><a name="GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B__GUID-FCFF13F5-2157-4829-8D66-E96F2BFD2152"><!-- --></a><h2 class="sectiontitle">Environment</h2> 
+      <a name="GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B__GUID-977874AA-31B1-4055-8E7F-C7E355921A21"><!-- --></a><dl class="dl parml" id="GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B__GUID-977874AA-31B1-4055-8E7F-C7E355921A21"> 
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">HOSTS</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of hosts, used if 
+              <samp class="ph codeph">-h</samp> option not supplied. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">HOSTS_FILE</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File containing list of hosts, used in absence of 
+              <samp class="ph codeph">-f</samp> and 
+              <samp class="ph codeph">-h</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">UPLOADS_DIR</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Directory to upload to, used in absence of 
+              <samp class="ph codeph">-d</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_MAX_PARALLEL</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Maximum concurrent operations. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

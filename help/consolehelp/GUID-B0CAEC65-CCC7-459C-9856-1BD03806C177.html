@@ -1,0 +1,112 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opa_osd_perf">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opa_osd_perf</title>
+</head>
+<body class="man1" id="GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177"><a name="GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opa_osd_perf</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177__GUID-E782BBEC-2AE7-442C-B22D-C8F4CE06CB10"><a name="GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177__GUID-E782BBEC-2AE7-442C-B22D-C8F4CE06CB10"><!-- --></a> 
+      <p class="p">Tests the performance of the distributed SA shared memory database. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177__GUID-0CE5CFDA-9FEE-4BCF-BD79-65297D247BB9"><a name="GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177__GUID-0CE5CFDA-9FEE-4BCF-BD79-65297D247BB9"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opa_osd_perf [<var class="keyword varname">opts</var>] <var class="keyword varname">guidtable</var></pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177__GUID-8814F459-5AB2-4BD0-B2F4-6A18F460B1EC"><a name="GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177__GUID-8814F459-5AB2-4BD0-B2F4-6A18F460B1EC"><!-- --></a><h2 class="sectiontitle">Options</h2> 
+      <a name="GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177__GUID-40FCF43B-4077-41AA-A7E0-97E5B32114DC"><!-- --></a><dl class="dl parml" id="GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177__GUID-40FCF43B-4077-41AA-A7E0-97E5B32114DC"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"><var class="keyword varname">opts</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Options. Values include: 
+            </p>
+ 
+            <a name="GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177__GUID-F417052F-E79C-4A6C-A8BC-4C7AE273ADF2"><!-- --></a><dl class="dl parml" id="GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177__GUID-F417052F-E79C-4A6C-A8BC-4C7AE273ADF2"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">-q 
+                    <var class="keyword varname">queries</var></samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Runs at least 
+                    <samp class="ph codeph"><var class="keyword varname">queries</var></samp> queries. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">-p 
+                    <var class="keyword varname">pkey</var></samp> 
+                </dt>
+ 
+                <dd class="dd pd">Specifies to include 
+                  <samp class="ph codeph"><var class="keyword varname">pkey</var></samp> in the searches. Can
+                  be specified up to 8 times. 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">-S 
+                    <var class="keyword varname">sid</var></samp> 
+                </dt>
+ 
+                <dd class="dd pd">Specifies to include SID in the searches. Can be specified
+                  up to 8 times. Note that providing both SIDs and pkeys may cause problems. 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"><var class="keyword varname">guidtable</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Text file that lists the destination GUIDs and LIDs. For
+              example, from a 
+              <span class="ph filepath">build_table.pl</span> file. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177__GUID-D2222BDD-04FF-48AA-8CCD-B54EB0573459"><a name="GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177__GUID-D2222BDD-04FF-48AA-8CCD-B54EB0573459"><!-- --></a><h2 class="sectiontitle">Example </h2> 
+      <pre class="pre codeblock">opa_osd_perf -q 100000 -p 0x8001  guidtable</pre>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

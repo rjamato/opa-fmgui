@@ -1,0 +1,213 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="concept">
+<meta name="DC.Title" content="Health Trend">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-5F45E9FD-D356-4631-BC5B-8854FD28CC0E">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>Health Trend</title>
+</head>
+<body id="GUID-5F45E9FD-D356-4631-BC5B-8854FD28CC0E"><a name="GUID-5F45E9FD-D356-4631-BC5B-8854FD28CC0E"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">Health Trend</h1>
+ 
+  <div class="body conbody"> 
+    <p class="p"> Health Trend displays the health history of a subnet in an area chart. 
+    </p>
+ 
+    <div class="p"> 
+      <div class="fig fignone" id="GUID-5F45E9FD-D356-4631-BC5B-8854FD28CC0E__GUID-9A5F85E4-30D3-4E97-9A9F-FC9D3641359A"><a name="GUID-5F45E9FD-D356-4631-BC5B-8854FD28CC0E__GUID-9A5F85E4-30D3-4E97-9A9F-FC9D3641359A"><!-- --></a><span xmlns:xs="http://www.w3.org/2001/XMLSchema" class="figcap"></span> 
+        </div>
+ 
+    </div>
+ 
+    <p class="p"> The card shown in the previous figure displays the health history of a
+      subnet in an area chart. On the chart is the current health score which is
+      calculated with the following equation: 
+    </p>
+<br><div class="imageleft"><img class="image imageleft" src="GUID-9D85F2DD-B766-4362-BF38-6DF3616E9B37-low.png" height="48" width="232"></div><br> 
+    <p class="p">where: 
+    </p>
+ 
+    <a name="GUID-5F45E9FD-D356-4631-BC5B-8854FD28CC0E__GUID-6FCF19E5-4C46-40A5-BF87-3474E56FD2F8"><!-- --></a><ul class="ul" id="GUID-5F45E9FD-D356-4631-BC5B-8854FD28CC0E__GUID-6FCF19E5-4C46-40A5-BF87-3474E56FD2F8"> 
+      <li class="li"><em class="ph i"> S<sub class="ph sub">j</sub></em> = the score for attribute 
+        <em class="ph i">j</em> 
+      </li>
+ 
+      <li class="li"><em class="ph i"> W<sub class="ph sub">j</sub></em> = the weight for attribute 
+        <em class="ph i">j</em> 
+      </li>
+ 
+    </ul>
+ 
+    <p class="p"> The score for an attribute can be calculated using the following
+      formula: 
+    </p>
+<br><div class="imageleft"><img class="image imageleft" src="GUID-A8157613-7E92-49A4-BAB5-1F1C62A76201-low.png" height="44" width="109"></div><br> 
+    <p class="p">where: 
+    </p>
+ 
+    <a name="GUID-5F45E9FD-D356-4631-BC5B-8854FD28CC0E__GUID-2975F575-7090-4698-B09F-52A0B01EC36F"><!-- --></a><ul class="ul" id="GUID-5F45E9FD-D356-4631-BC5B-8854FD28CC0E__GUID-2975F575-7090-4698-B09F-52A0B01EC36F"> 
+      <li class="li"><em class="ph i"> V<sub class="ph sub">j</sub></em> = the current value for attribute 
+        <em class="ph i">j</em> 
+      </li>
+ 
+      <li class="li"><em class="ph i"> B<sub class="ph sub">j</sub></em> = the current baseline for attribute 
+        <em class="ph i">j</em> 
+      </li>
+ 
+    </ul>
+ 
+    <p class="p"> Currently, the attributes, their source and their weight in the formula
+      are as follows: 
+    </p>
+ 
+    
+<div class="tablenoborder"><a name="GUID-5F45E9FD-D356-4631-BC5B-8854FD28CC0E__GUID-EE1ADBB3-E634-4155-8BCD-06B8234B132A"><!-- --></a><table cellpadding="4" cellspacing="0" summary="" id="GUID-5F45E9FD-D356-4631-BC5B-8854FD28CC0E__GUID-EE1ADBB3-E634-4155-8BCD-06B8234B132A" class="table" frame="border" border="1" rules="all"><thead class="thead" align="left"> 
+          <tr class="row"> 
+            <th class="entry" valign="top" width="NaN%" id="d3291e96"> 
+              <strong class="ph b">Attribute</strong> 
+            </th>
+ 
+            <th class="entry" valign="top" width="NaN%" id="d3291e102"> 
+              <strong class="ph b">Source</strong> 
+            </th>
+ 
+            <th class="entry" valign="top" width="NaN%" id="d3291e108"> 
+              <strong class="ph b">Weight</strong> 
+            </th>
+ 
+          </tr>
+</thead>
+ 
+        <tbody class="tbody"> 
+          <tr class="row"> 
+            <td class="entry" valign="top" width="NaN%" headers="d3291e96 "> Number of switches 
+            </td>
+ 
+            <td class="entry" valign="top" width="NaN%" headers="d3291e102 "> ImageInfo 
+            </td>
+ 
+            <td class="entry" valign="top" width="NaN%" headers="d3291e108 "> Average number of active ports per switch +
+              1 
+            </td>
+ 
+          </tr>
+ 
+          <tr class="row"> 
+            <td class="entry" valign="top" width="NaN%" headers="d3291e96 "> Number of HFIs 
+            </td>
+ 
+            <td class="entry" valign="top" width="NaN%" headers="d3291e102 "> ImageInfo, FabricInfo 
+            </td>
+ 
+            <td class="entry" valign="top" width="NaN%" headers="d3291e108 "> Average number of active ports per HFI + 1 
+            </td>
+ 
+          </tr>
+ 
+          <tr class="row"> 
+            <td class="entry" valign="top" width="NaN%" headers="d3291e96 "> Number of Inter Switch Links 
+            </td>
+ 
+            <td class="entry" valign="top" width="NaN%" headers="d3291e102 "> FabricInfo 
+            </td>
+ 
+            <td class="entry" valign="top" width="NaN%" headers="d3291e108 ">3 
+            </td>
+ 
+          </tr>
+ 
+          <tr class="row"> 
+            <td class="entry" valign="top" width="NaN%" headers="d3291e96 "> Number of HFI links 
+            </td>
+ 
+            <td class="entry" valign="top" width="NaN%" headers="d3291e102 "> FabricInfo 
+            </td>
+ 
+            <td class="entry" valign="top" width="NaN%" headers="d3291e108 "> 2 
+            </td>
+ 
+          </tr>
+ 
+          <tr class="row"> 
+            <td class="entry" valign="top" width="NaN%" headers="d3291e96 "> Number of Active Ports 
+            </td>
+ 
+            <td class="entry" valign="top" width="NaN%" headers="d3291e102 "> ImageInfo 
+            </td>
+ 
+            <td class="entry" valign="top" width="NaN%" headers="d3291e108 ">1 
+            </td>
+ 
+          </tr>
+ 
+          <tr class="row"> 
+            <td class="entry" valign="top" width="NaN%" headers="d3291e96 "> Number of Non-degraded Inter Switch Links 
+            </td>
+ 
+            <td class="entry" valign="top" width="NaN%" headers="d3291e102 "> FabricInfo 
+            </td>
+ 
+            <td class="entry" valign="top" width="NaN%" headers="d3291e108 ">3 
+            </td>
+ 
+          </tr>
+ 
+          <tr class="row"> 
+            <td class="entry" valign="top" width="NaN%" headers="d3291e96 "> Number of Non-degraded HFI links 
+            </td>
+ 
+            <td class="entry" valign="top" width="NaN%" headers="d3291e102 ">FabricInfo 
+            </td>
+ 
+            <td class="entry" valign="top" width="NaN%" headers="d3291e108 ">2 
+            </td>
+ 
+          </tr>
+ 
+        </tbody>
+ 
+      </table>
+</div>
+ 
+    <p class="p"> Weights represent the relative importance of one attribute against the
+      others. For example, consider the small fabric in the following image: two
+      48-port switches connected by four ISLs and serving eight nodes. In this
+      configuration, a switch down will have 5 times more impact in the health score
+      than a HFI link down (switch weight = 4 node-ports + 4 ISLs + port 0 + 1 = 10
+      against weight HFI link = 2). However, the impact is even greater if you
+      consider that a switch down may also affect other attributes. In this example,
+      the health score goes down to 53% when you bring down one of the switches but
+      only goes down to 93% when you bring down a HFI link. The end result is that
+      even small changes in the fabric configuration are not diluted when the size of
+      the fabric is big: in simulations with a fabric of over 8K nodes, a port being
+      brought down is reflected with the non-perfect score of 99%. 
+    </p>
+ 
+    <div class="fig fignone" id="GUID-5F45E9FD-D356-4631-BC5B-8854FD28CC0E__GUID-89205B58-A3D6-46BA-8827-967DF5DF957A"><a name="GUID-5F45E9FD-D356-4631-BC5B-8854FD28CC0E__GUID-89205B58-A3D6-46BA-8827-967DF5DF957A"><!-- --></a><span xmlns:xs="http://www.w3.org/2001/XMLSchema" class="figcap">Health Score Example</span> 
+      <br><div class="imageleft"><img class="image imageleft" src="GUID-F4FE1797-0AAE-48FD-85B9-480B8BA59356-low.png" height="143" width="137"></div><br> 
+    </div>
+ 
+    <p class="p"> You can see the current values of each attribute and their baselines by
+      hovering the mouse over the score; a tooltip appears to help you determine the
+      source of a non-perfect score. The baseline values for each attribute are taken
+      during initialization of the application and whenever the number of switches or
+      HFIs increases in the fabric. 
+    </p>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: February 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

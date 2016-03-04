@@ -1,0 +1,409 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opacmdall">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-B147419A-30B6-4415-A82C-208A47E2E84D">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opacmdall</title>
+</head>
+<body class="man8" id="GUID-B147419A-30B6-4415-A82C-208A47E2E84D"><a name="GUID-B147419A-30B6-4415-A82C-208A47E2E84D"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opacmdall</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__GUID-FA8F0B65-FE51-4014-AA69-F717841B6974"><a name="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__GUID-FA8F0B65-FE51-4014-AA69-F717841B6974"><!-- --></a> 
+      <p class="p"><strong class="ph b">(Linux and Switch)</strong> Executes a command on all hosts or 
+        <span class="ph">Intel<sup>®</sup> Omni-Path</span>
+        Chassis. This powerful command can be used for configuring servers or chassis,
+        verifying that they are running, starting and stopping host processes, and
+        other tasks. 
+      </p>
+
+      <div class="note note" id="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__GUID-16216171-4016-4256-AC08-BE3B03DF35CD"><a name="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__GUID-16216171-4016-4256-AC08-BE3B03DF35CD"><!-- --></a><span class="notetitle">Note:</span> <samp class="ph codeph">opacmdall</samp> depends on the Linux* convention that
+        utilities return 0 for success and &gt;0 for failure. If 
+        <samp class="ph codeph">opacmdall</samp> is used to execute a non-standard utility
+        like 
+        <samp class="ph codeph">diff</samp> or a program that uses custom exit codes, then 
+        <samp class="ph codeph">opacmdall</samp> may erroneously report "Command execution
+        FAILED" when it encounters a non-zero exit code. However, command output is
+        still returned normally and the error may be safely ignored.</div>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__GUID-7863F0BA-0E88-4F70-B0EA-D9AEFA003F82"><a name="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__GUID-7863F0BA-0E88-4F70-B0EA-D9AEFA003F82"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opacmdall [-Cpq] [-f <var class="keyword varname">hostfile</var>] [-F <var class="keyword varname">chassisfile</var>] 
+[-h <var class="keyword varname">hosts</var>] [-H <var class="keyword varname">chassis</var>] [-u <var class="keyword varname">user</var>] [-S] 
+[-m <var class="keyword varname">marker</var>] [-T <var class="keyword varname">timelimit</var>] [-P] <var class="keyword varname">cmd</var></pre>
+ 
+      <p class="p">or 
+      </p>
+ 
+      <pre class="pre codeblock">opacmdall --help</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__XX1146598"><a name="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__XX1146598"><!-- --></a><h2 class="sectiontitle">Options</h2> 
+      <a name="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__GUID-D88EC574-E841-48FD-BB51-C77B5EC9AF49"><!-- --></a><dl class="dl parml" id="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__GUID-D88EC574-E841-48FD-BB51-C77B5EC9AF49"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Produces full help text. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-C</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Performs command against chassis. Default is hosts. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-p</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Runs command in parallel on all hosts/chassis. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-q</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Quiet mode, do not show command to execute. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-f 
+              <var class="keyword varname">hostfile</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File with hosts in cluster. Default is 
+              <span class="ph filepath">/etc/sysconfig/opa/hosts</span> file. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-F 
+              <var class="keyword varname">chassisfile</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File with chassis in cluster. Default is 
+              <samp class="ph codeph">/etc/sysconfig/opa/chassis</samp> file. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-h 
+              <var class="keyword varname">host</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of hosts to execute command on. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-H 
+              <var class="keyword varname">chassis</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of chassis to execute command on. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-u 
+              <var class="keyword varname">user</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p">The user to perform the command as: 
+            <a name="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__GUID-65720165-D76E-488B-BAA2-54DC1AED6171"><!-- --></a><ul class="ul" id="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__GUID-65720165-D76E-488B-BAA2-54DC1AED6171"> 
+              <li class="li" id="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__LI_0C370D5FAFD04247864CD53D05915705"><a name="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__LI_0C370D5FAFD04247864CD53D05915705"><!-- --></a>For hosts, the
+                default is current user code. 
+              </li>
+ 
+              <li class="li" id="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__LI_0AE2F97939E942608D6E0E4D01642F08"><a name="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__LI_0AE2F97939E942608D6E0E4D01642F08"><!-- --></a>For chassis, the
+                default is 
+                <samp class="ph codeph">admin</samp>. 
+              </li>
+ 
+            </ul>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-S</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Securely prompts for password for user on chassis. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-m 
+              <var class="keyword varname">marker</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Marker for end of chassis command output. If omitted, defaults
+              to chassis command prompt. This may be a regular expression. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-T 
+              <var class="keyword varname">timelimit</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Time limit in seconds when running host commands. Default is -1
+              (infinite). 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-P</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Outputs the hostname/chassis name as prefix to each output line.
+              This can make script processing of output easier. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__XX1146631"><a name="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__XX1146631"><!-- --></a><h2 class="title sectiontitle">Operations on Host</h2> 
+       
+      <pre class="pre codeblock">opacmdall date
+opacmdall 'uname -a'
+opacmdall -h 'elrond arwen' date
+HOSTS='elrond arwen' opacmdall date</pre>
+ 
+       
+      <pre class="pre codeblock">opacmdall -C 'ismPortStats -noprompt'
+opacmdall -C -H 'chassis1 chassis2' ismPortStats -noprompt’
+CHASSIS='chassis1 chassis2' opacmdall ismPortStats -noprompt’</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__SECTION_D1EBE39DB1EF4A66B3612C9191790D79"><a name="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__SECTION_D1EBE39DB1EF4A66B3612C9191790D79"><!-- --></a><h2 class="sectiontitle">Environment Variables</h2> 
+      <p class="p">The following environment variables are also used by this command: 
+      </p>
+ 
+      <a name="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__GUID-F741D01B-CAB6-4B8D-B66E-07487E349A38"><!-- --></a><dl class="dl parml" id="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__GUID-F741D01B-CAB6-4B8D-B66E-07487E349A38"> 
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">HOSTS</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of hosts, used if 
+              <samp class="ph codeph">-h</samp> option not supplied. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">CHASSIS</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of chassis, used if 
+              <samp class="ph codeph">-C</samp> is used and 
+              <samp class="ph codeph">-H</samp> and 
+              <samp class="ph codeph">-F</samp> options not supplied. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">HOSTS_FILE</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File containing list of hosts, used in absence of 
+              <samp class="ph codeph">-f</samp> and 
+              <samp class="ph codeph">-h</samp>. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">CHASSIS_FILE</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File containing list of chassis, used in absence of 
+              <samp class="ph codeph">-F</samp> and 
+              <samp class="ph codeph">-H</samp>. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_MAX_PARALLEL</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">When 
+              <samp class="ph codeph">-p</samp> option is used, maximum concurrent operations
+              are performed. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_SERIALIZE_OUTPUT</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Serialize output of parallel operations (yes or no). 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_CHASSIS_LOGIN_METHOD</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">How to log into chassis. Can be Telnet or SSH. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_CHASSIS_ADMIN_PASSWORD</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Password for admin on all chassis. Used in absence of 
+              <samp class="ph codeph">-S</samp> option. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__SECTION_29AA9CEF20604365A91E6D5FFF43B183"><a name="GUID-B147419A-30B6-4415-A82C-208A47E2E84D__SECTION_29AA9CEF20604365A91E6D5FFF43B183"><!-- --></a><h2 class="sectiontitle">Notes</h2> 
+      <p class="p">All commands performed with 
+        <samp class="ph codeph">opacmdall</samp> must be non-interactive in nature. 
+        <samp class="ph codeph">opacmdall</samp> waits for the command to complete before
+        proceeding. For example, when running host commands such as 
+        <samp class="ph codeph">rm</samp>, the 
+        <samp class="ph codeph">-i</samp> option (interactively prompt before removal) should
+        not be used. (Note that this option is sometimes part of a standard bash alias
+        list.) Similarly, when running chassis commands such as 
+        <samp class="ph codeph">fwUpdateChassis</samp>, the 
+        <samp class="ph codeph">-reboot</samp> option should not be used beccause this option
+        causes an immediate reboot and therefore the command never returns. Also, the
+        chassis command 
+        <samp class="ph codeph">reboot</samp> should not be executed using 
+        <samp class="ph codeph">opacmdall</samp>. Instead, use the 
+        <samp class="ph codeph">opachassisadmin reboot</samp> command to reboot one or more
+        chassis. For further information about individual chassis CLI commands, consult
+        the 
+        <span class="ph"><em class="ph i">Intel<sup>®</sup> Omni-Path
+            Fabric Switches Command Line Interface Reference Guide</em></span>. For further
+        information about Linux operating system commands, consult Linux man pages. 
+      </p>
+ 
+      <p class="p">When performing 
+        <samp class="ph codeph">opacmdall</samp> against hosts, internally SSH is used. The
+        command 
+        <samp class="ph codeph">opacmdall</samp> requires that password-less SSH be set up
+        between the host running the 
+        <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric Suite FastFabric</span> Toolset and the hosts 
+        <samp class="ph codeph">opacmdall</samp> is operating against. The 
+        <samp class="ph codeph">opasetupssh</samp> 
+        <span class="ph">FastFabric</span> tool can aid in setting up
+        password-less SSH. 
+      </p>
+ 
+      <p class="p">When performing 
+        <samp class="ph codeph">opacmdall</samp> against a set of chassis, all chassis must
+        be configured with the same admin password. Alternatively, the 
+        <samp class="ph codeph">opasetupssh</samp> 
+        <span class="ph">FastFabric</span> tool can be used to set up
+        password-less SSH to the chassis. 
+      </p>
+ 
+      <p class="p">When performing operations against chassis, Intel recommends that you
+        set up SSH keys (see 
+        <a class="xref" href="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561.html#GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561">opasetupssh</a>).
+        If SSH keys are not set up, Intel recommends that you use the 
+        <samp class="ph codeph">-S</samp> option, to avoid keeping the password in
+        configuration files. 
+      </p>
+ 
+    </div>
+
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

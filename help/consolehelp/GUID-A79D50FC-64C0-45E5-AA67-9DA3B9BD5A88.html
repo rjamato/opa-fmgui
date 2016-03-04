@@ -1,0 +1,645 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opachassisanalysis">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opachassisanalysis</title>
+</head>
+<body class="man8" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opachassisanalysis</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__GUID-55F35BFC-D6E8-4C4A-A781-1D1BAB4FA44F"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__GUID-55F35BFC-D6E8-4C4A-A781-1D1BAB4FA44F"><!-- --></a> 
+      <p class="p"><strong class="ph b">(Switch)</strong> Performs analysis of the chassis. 
+      </p>
+ 
+      <p class="p">The 
+        <samp class="ph codeph">opachassisanalysis</samp> tool checks the following for the 
+        <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric</span> Chassis: 
+      </p>
+ 
+      <a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_4582E9A540B84331975966EDC2946C08"><!-- --></a><ul class="ul" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_4582E9A540B84331975966EDC2946C08"> 
+        <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_BE0D9C4234064A4FAA91B7C64F693F00"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_BE0D9C4234064A4FAA91B7C64F693F00"><!-- --></a> Chassis configuration (as
+          reported by the chassis commands specified in 
+          <span class="keyword parmname">FF_CHASSIS_CMDS</span> in 
+          <span class="ph filepath">opafastfabric.conf</span>). 
+        </li>
+ 
+        <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_1C909E99683B4442BBAEB42DB837DCD5"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_1C909E99683B4442BBAEB42DB837DCD5"><!-- --></a> Chassis health (as
+          reported by the chassis command specified in 
+          <span class="keyword parmname">FF_CHASSIS_HEALTH</span> in 
+          <span class="ph filepath">opafastfabric.conf</span>). 
+        </li>
+ 
+      </ul>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__GUID-C28B517A-BDEF-48F9-8B8A-15FBB1029265"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__GUID-C28B517A-BDEF-48F9-8B8A-15FBB1029265"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opachassisanalysis [-b|-e] [-s] [-d <var class="keyword varname">dir</var>] 
+[-F <var class="keyword varname">chassisfile</var>] [-H&nbsp;'<var class="keyword varname">chassis</var>']</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__GUID-8BB4AA83-9C27-45AA-8DCD-9F3B15425FB5"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__GUID-8BB4AA83-9C27-45AA-8DCD-9F3B15425FB5"><!-- --></a><h2 class="sectiontitle">Options</h2> 
+      <a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__GUID-CFE11228-FB59-47C7-9D24-9F3859EFD4F4"><!-- --></a><dl class="dl parml" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__GUID-CFE11228-FB59-47C7-9D24-9F3859EFD4F4"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Produces full help text. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-b</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Baseline mode. Default is the compare/check mode. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-e</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> Evaluates health only. Default is the compare/check mode. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-s</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Saves history of failures (errors/differences). 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-d 
+              <var class="keyword varname">dir</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Top-level directory for saving baseline and history of failed
+            checks. Default = 
+            <span class="ph filepath">/var/opt/opa/analysis</span> 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-F 
+              <var class="keyword varname">chassisfile</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">File with the chassis in the cluster. Default = 
+            <span class="ph filepath">/etc/sysconfig/opa/chassis</span> 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-H '<var class="keyword varname">chassis</var>'</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of chassis on which to execute the command. 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__SECTION_B98F70FE471F4369B29E5C18D5774BC8"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__SECTION_B98F70FE471F4369B29E5C18D5774BC8"><!-- --></a><h2 class="sectiontitle">Example </h2> 
+      <pre class="pre codeblock">opachassisanalysis</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__GUID-8EAA159C-C5F0-4ED1-9182-D755CA38C886"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__GUID-8EAA159C-C5F0-4ED1-9182-D755CA38C886"><!-- --></a><h2 class="sectiontitle">Environment Variables</h2> 
+      <p class="p">The following environment variables are also used by this command: 
+      </p>
+ 
+      <a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__GUID-6CF6BEEF-DAB6-421E-B73A-097EE81435A5"><!-- --></a><dl class="dl parml" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__GUID-6CF6BEEF-DAB6-421E-B73A-097EE81435A5"> 
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">CHASSIS 
+            </span> 
+          </dt>
+ 
+          <dd class="dd pd"> List of chassis, used if 
+            <samp class="ph codeph">-F</samp> and 
+            <samp class="ph codeph">-H</samp> options are not supplied. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">CHASSIS_FILE</span> 
+          </dt>
+ 
+          <dd class="dd pd">File containing list of chassis, used if 
+            <samp class="ph codeph">-F</samp> and 
+            <samp class="ph codeph">-H</samp> options are not supplied. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_ANALYSIS_DIR</span> 
+          </dt>
+ 
+          <dd class="dd pd">Top-level directory for baselines and failed health checks. 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__SECTION_1EC529E22FBB4A2496B555482449D867"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__SECTION_1EC529E22FBB4A2496B555482449D867"><!-- --></a><h2 class="sectiontitle">Details</h2>
+      
+      <p class="p">Intel recommends that you set up SSH keys for chassis (see 
+        <a class="xref" href="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561.html#GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561">opasetupssh</a>).
+        If SSH keys are not set up, all chassis must be configured with the same admin
+        password and the password must be kept in the 
+        <span class="ph filepath">/etc/sysconfig/opa/opafastfabric.conf</span>
+        configuration file. 
+      </p>
+ 
+      <p class="p">The default set of 
+        <span class="keyword parmname">FF_CHASSIS_CMDS</span> is: 
+      </p>
+ 
+      <pre class="pre codeblock">showInventory fwVersion showNodeDesc timeZoneConf timeDSTConf 
+snmpCommunityConf snmpTargetAddr showChassisIpAddr showDefaultRoute</pre>
+ 
+      <p class="p">The commands specified in 
+        <span class="keyword parmname">FF_CHASSIS_CMDS</span> must be simple commands with no
+        arguments. The output of these commands are compared to the baseline using 
+        <span class="keyword parmname">FF_DIFF_CMD</span>. Therefore, commands that include
+        dynamically changing values, such as port packet counters, should not be
+        included in this list. 
+      </p>
+ 
+      <p class="p"><span class="keyword parmname">FF_CHASSIS_HEALTH</span> can specify one command (with
+        arguments) to be used to check the chassis health. For chassis with newer
+        firmware, the 
+        <samp class="ph codeph">hwCheck</samp> command is recommended. For chassis with older
+        firmware, a benign command, such as 
+        <samp class="ph codeph">fruInfo</samp>, should be used. The default is 
+        <samp class="ph codeph">hwCheck</samp>. Note that only the exit status of the 
+        <samp class="ph codeph">FF_CHASSIS_HEALTH</samp> command is checked. The output is
+        not captured and compared in a snapshot. However, on failure its output is
+        saved to aid diagnosis. 
+      </p>
+ 
+      <p class="p">The 
+        <samp class="ph codeph">opachassisanalysis</samp> tool performs its analysis against
+        one or more chassis in the fabric. As such, it permits the chassis to be
+        specified using the 
+        <samp class="ph codeph">-H</samp>, 
+        <samp class="ph codeph">-F</samp>, 
+        <samp class="ph codeph">CHASSIS, chassis_file</samp> or 
+        <samp class="ph codeph">opafastfabric.conf</samp>. The handling of these options and
+        settings is comparable to 
+        <samp class="ph codeph">opacmdall -C</samp> and similar 
+        <span class="ph">FastFabric</span> Toolset commands against a
+        chassis. 
+      </p>
+ 
+      <p class="p">All files generated by 
+        <samp class="ph codeph">opafabricanalysis</samp> start with 
+        <samp class="ph codeph">chassis.</samp> in the file name. 
+      </p>
+ 
+      <p class="p">The 
+        <samp class="ph codeph">opachassisanalysis</samp> tool generates files such as the
+        following within 
+        <samp class="ph codeph">FF_ANALYSIS_DIR</samp>. The actual file names reflect the
+        individual chassis commands that have been configured through the 
+        <samp class="ph codeph">FF_CHASSIS_HEALTH</samp> and 
+        <samp class="ph codeph">FF_CHASSIS_CMDS</samp> parameters: 
+      </p>
+ 
+      <a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_76AFCFEA9F2C45C68D2ABDE57C1D991A"><!-- --></a><ul class="ul" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_76AFCFEA9F2C45C68D2ABDE57C1D991A"> 
+        <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_B7846C45B1F9494DBF271903D6E3B4D8"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_B7846C45B1F9494DBF271903D6E3B4D8"><!-- --></a>Health Check 
+          <a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_1AADA276CD41432E98FC8B0B8994DD00"><!-- --></a><ul class="ul" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_1AADA276CD41432E98FC8B0B8994DD00"> 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_5CAD2E420FCC4DFEB9A54E3467C1EE11"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_5CAD2E420FCC4DFEB9A54E3467C1EE11"><!-- --></a><samp class="ph codeph">latest/chassis.hwCheck</samp>
+              
+              <p class="p">Output of 
+                <samp class="ph codeph">hwCheck</samp> command for all selected chassis 
+              </p>
+ 
+            </li>
+ 
+          </ul>
+ 
+        </li>
+ 
+      </ul>
+ 
+      <a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_0899D96C64544705B0A569E8962F340F"><!-- --></a><ul class="ul" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_0899D96C64544705B0A569E8962F340F"> 
+        <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_5E95397968F64EFA9CE989878B39A477"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_5E95397968F64EFA9CE989878B39A477"><!-- --></a>Baseline 
+          <p class="p">During a baseline run, the follwoing files are also created in 
+            <var class="keyword varname">FF_ANALYSIS_DIR</var><samp class="ph codeph">/latest</samp>. 
+          </p>
+ 
+          <a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_F4E045A27F7F428499CA0E339DC628BA"><!-- --></a><ul class="ul" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_F4E045A27F7F428499CA0E339DC628BA"> 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_2CCBDC269458401887E1FF566220ACC5"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_2CCBDC269458401887E1FF566220ACC5"><!-- --></a><samp class="ph codeph">baseline/chassis.fwVersion</samp>
+              
+              <p class="p">Output of 
+                <samp class="ph codeph">fwVersion</samp> command for all selected chassis. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_7909615EC7E44A90BFB04DEC4767F749"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_7909615EC7E44A90BFB04DEC4767F749"><!-- --></a><samp class="ph codeph">baseline/chassis.showChassisIpAddr</samp>
+              
+              <p class="p">Output of the 
+                <samp class="ph codeph">showChassisIpAddr.</samp> command for all selected
+                chassis. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_F396C69FC11F4EE3843D696B07B5AA22"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_F396C69FC11F4EE3843D696B07B5AA22"><!-- --></a><samp class="ph codeph">baseline/chassis.showDefaultRoute</samp>
+              
+              <p class="p">Output of the 
+                <samp class="ph codeph">showDefaultRoute</samp> command for all selected
+                chassis. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_6F298FA2D4744907BD71B0D019DFAF87"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_6F298FA2D4744907BD71B0D019DFAF87"><!-- --></a><samp class="ph codeph">baseline/chassis.showNodeDesc</samp>
+              
+              <p class="p">Output of the 
+                <samp class="ph codeph">showNodeDesc</samp> command for all selected chassis.
+                
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_68EFE552488B476F92D80D43C24F7852"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_68EFE552488B476F92D80D43C24F7852"><!-- --></a><samp class="ph codeph">baseline/chassis.showInventory</samp>
+              
+              <p class="p">Output of the 
+                <samp class="ph codeph">showInventory</samp> command for all selected
+                chassis. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_1F98BE2B7B7F42E5A84AD45CB1626940"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_1F98BE2B7B7F42E5A84AD45CB1626940"><!-- --></a><samp class="ph codeph">baseline/chassis.snmpCommunityConf</samp>
+              
+              <p class="p">Output of the 
+                <samp class="ph codeph">snmpCommunityConf</samp> command for all selected
+                chassis. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_CC750A4C76F14C5A91BB8E07019AAB5F"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_CC750A4C76F14C5A91BB8E07019AAB5F"><!-- --></a><samp class="ph codeph">baseline/chassis.snmpTargetAddr</samp>
+              
+              <p class="p">Output of the 
+                <samp class="ph codeph">snmpTargetAddr</samp> command for all selected
+                chassis. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_B11B6B9F7F3C424DBA8D49FDBE0E4C8D"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_B11B6B9F7F3C424DBA8D49FDBE0E4C8D"><!-- --></a><samp class="ph codeph">baseline/chassis.timeDSTConf</samp>
+              
+              <p class="p">Output of the 
+                <samp class="ph codeph">timeDSTConf</samp> command for all selected chassis. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_F16A235CE02048859A3C8C57F7370CB4"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_F16A235CE02048859A3C8C57F7370CB4"><!-- --></a><samp class="ph codeph">baseline/chassis.timeZoneConf</samp>
+              
+              <p class="p">Output of the 
+                <samp class="ph codeph">timeZoneConf</samp> command for all selected chassis.
+                
+              </p>
+ 
+            </li>
+ 
+          </ul>
+ 
+        </li>
+ 
+      </ul>
+ 
+      <a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_1DAAFE27B0B743C3AA1B42E2596B3C46"><!-- --></a><ul class="ul" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_1DAAFE27B0B743C3AA1B42E2596B3C46"> 
+        <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_B0588FC12D1448A4AAF5FB1929681A14"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_B0588FC12D1448A4AAF5FB1929681A14"><!-- --></a>Full analysis 
+          <p class="p" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_0E33C4C9E13A433280E20A07A3F9E6AF">The following 
+            <samp class="ph codeph">.diff</samp> files are only created if differences are
+            detected. 
+          </p>
+ 
+          <a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_282CEB78F9AE4833AA55F1BF64181D61"><!-- --></a><ul class="ul" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_282CEB78F9AE4833AA55F1BF64181D61"> 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_AACF8BC054DB4E9CB30DCCA4CE9FDCA6"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_AACF8BC054DB4E9CB30DCCA4CE9FDCA6"><!-- --></a><samp class="ph codeph">latest/chassis.hwCheck</samp>
+              
+              <p class="p">Output of the 
+                <samp class="ph codeph">hwCheck</samp> command for all selected chassis. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_DDEEF381CF8F46C6A68C5D6CC4D857E1"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_DDEEF381CF8F46C6A68C5D6CC4D857E1"><!-- --></a><samp class="ph codeph">latest/chassis.fwVersion</samp>
+              
+              <p class="p">Output of the 
+                <samp class="ph codeph">fwVersion</samp> command for all selected chassis. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_DC2D83DC032646C280598C224642486B"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_DC2D83DC032646C280598C224642486B"><!-- --></a><samp class="ph codeph">latest/chassis.fwVersion.diff</samp>
+              
+              <p class="p"><samp class="ph codeph">diff</samp> of the baseline and latest 
+                <samp class="ph codeph">fwVersion</samp>. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_F16A73C4342F42EA8C8C2BED84A2C5C5"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_F16A73C4342F42EA8C8C2BED84A2C5C5"><!-- --></a><samp class="ph codeph">latest/chassis.showChassisIpAddr</samp>
+              
+              <p class="p">Output of the 
+                <samp class="ph codeph">showChassisIpAddr 
+                </samp>command for all selected chassis. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_6F2A47EA56214FE2BE3110DC8693AC02"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_6F2A47EA56214FE2BE3110DC8693AC02"><!-- --></a><samp class="ph codeph">latest/chassis.showChassisIpAddr.diff</samp>
+              
+              <p class="p"> 
+                <samp class="ph codeph">diff</samp> of baseline and latest 
+                <samp class="ph codeph">showChassisIpAddr</samp>. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_FEAF3C7EEBE94C7E8E9250DBA711E1E0"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_FEAF3C7EEBE94C7E8E9250DBA711E1E0"><!-- --></a><samp class="ph codeph">latest/chassis.showDefaultRoute</samp>
+              
+              <p class="p">Output of the 
+                <samp class="ph codeph">showDefaultRoute</samp> command for all selected
+                chassis. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_808E85126A9C48A1B2BF1971C883A7DD"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_808E85126A9C48A1B2BF1971C883A7DD"><!-- --></a><samp class="ph codeph">latest/chassis.showDefaultRoute.diff</samp>
+              
+              <p class="p"><samp class="ph codeph">diff</samp> of the baseline and the latest 
+                <samp class="ph codeph">showDefaultRoute</samp>. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_FC809AA4F2FD466DAA1A23CBD9E88B50"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_FC809AA4F2FD466DAA1A23CBD9E88B50"><!-- --></a><samp class="ph codeph">latest/chassis.showNodeDesc</samp>
+              
+              <p class="p">Output of the 
+                <samp class="ph codeph">showNodeDesc</samp> command for all selected chassis.
+                
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_DC23F9CA2FDE4E71A9D4D8D154BF0503"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_DC23F9CA2FDE4E71A9D4D8D154BF0503"><!-- --></a><samp class="ph codeph">latest/chassis.showNodeDesc.diff</samp>
+              
+              <p class="p"><samp class="ph codeph">diff</samp> of the baseline and latest 
+                <samp class="ph codeph">showNodeDesc</samp>. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_0CA6A04D1EC844FF8857C05207E67AB7"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_0CA6A04D1EC844FF8857C05207E67AB7"><!-- --></a><samp class="ph codeph">latest/chassis.showInventory</samp>
+              
+              <p class="p">Output of the 
+                <samp class="ph codeph">showInventory</samp> command for all selected
+                chassis. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_5E3C2643727A46A98E12891A3DADA65F"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_5E3C2643727A46A98E12891A3DADA65F"><!-- --></a><samp class="ph codeph">latest/chassis.showInventory.diff</samp>
+              
+              <p class="p"><samp class="ph codeph">diff</samp> of the baseline and latest 
+                <samp class="ph codeph">showInventory</samp>. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_B6D2156566DF4A09BD4A4A884CFE0534"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_B6D2156566DF4A09BD4A4A884CFE0534"><!-- --></a><samp class="ph codeph">latest/chassis.snmpCommunityConf</samp>
+              
+              <p class="p">Output of the 
+                <samp class="ph codeph">snmpCommunityConf</samp> command for all selected
+                chassis. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_82DB50AC0A004B0FBB500935622C917F"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_82DB50AC0A004B0FBB500935622C917F"><!-- --></a><samp class="ph codeph">latest/chassis.snmpCommunityConf.diff</samp>
+              
+              <p class="p"><samp class="ph codeph">diff</samp> of the baseline and latest 
+                <samp class="ph codeph">snmpCommunityConf</samp>. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_C9D5CBA390AD434DB5F5653975B55C8C"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_C9D5CBA390AD434DB5F5653975B55C8C"><!-- --></a><samp class="ph codeph">latest/chassis.snmpTargetAddr</samp>
+              
+              <p class="p">Output of the 
+                <samp class="ph codeph">snmpTargetAddr</samp> command for all selected
+                chassis. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_75EDC89449D14CF585447DC2506F17E4"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_75EDC89449D14CF585447DC2506F17E4"><!-- --></a><samp class="ph codeph">latest/chassis.snmpTargetAddr.diff</samp>
+              
+              <p class="p"><samp class="ph codeph">diff</samp> of the baseline and latest 
+                <samp class="ph codeph">snmpTargetAddr</samp>. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_FAFAC377BF4B485980E5DFDD1C2D181E"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_FAFAC377BF4B485980E5DFDD1C2D181E"><!-- --></a><samp class="ph codeph">latest/chassis.timeDSTConf</samp>
+              
+              <p class="p">Output of the 
+                <samp class="ph codeph">timeDSTConf</samp> command for all selected chassis. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_D12DF070D8034413B11B1758DCF8B2E8"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_D12DF070D8034413B11B1758DCF8B2E8"><!-- --></a><samp class="ph codeph">latest/chassis.timeDSTConf.diff</samp>
+              
+              <p class="p"><samp class="ph codeph">diff</samp> of the baseline and latest 
+                <samp class="ph codeph">timeDSTConf</samp>. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_2F3E21D29F2E419C848F57B0983C74D3"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_2F3E21D29F2E419C848F57B0983C74D3"><!-- --></a><samp class="ph codeph">latest/chassis.timeZoneConf</samp>
+              
+              <p class="p">Output of the 
+                <samp class="ph codeph">timeZoneConf</samp> command for all selected chassis.
+                
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_86EE8B105DF44CF98A114A083A08C9D1"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_86EE8B105DF44CF98A114A083A08C9D1"><!-- --></a><samp class="ph codeph">latest/chassis.timeZoneConf.diff</samp>
+              
+              <p class="p"><samp class="ph codeph">diff</samp> of the baseline and latest 
+                <samp class="ph codeph">timeZonfConf</samp>. 
+              </p>
+ 
+            </li>
+ 
+          </ul>
+ 
+          <p class="p" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_6B6722C9ED1E498D8A5749CFDDBE7934">If the 
+            <samp class="ph codeph">-s</samp> option is used and failures are detected, files
+            related to the checks that failed are also copied to a time-stamped directory
+            name under 
+            <samp class="ph codeph">FF_ANALYSIS_DIR</samp>. 
+          </p>
+ 
+        </li>
+ 
+      </ul>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__SECTION_6499F9F16995430EABBE649EEF9539CA"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__SECTION_6499F9F16995430EABBE649EEF9539CA"><!-- --></a><h2 class="sectiontitle">Chassis items checked against the baseline</h2> 
+      <p class="p"> Based upon 
+        <samp class="ph codeph">showInventory</samp>: 
+      </p>
+ 
+      <a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_D42520A8A38547429B5E5A73E44E93A9"><!-- --></a><ul class="ul" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_D42520A8A38547429B5E5A73E44E93A9"> 
+        <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__XX1118707"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__XX1118707"><!-- --></a> Addition/removal of Chassis FRUs 
+          <p class="p">Replacement is only checked for FRUs that 
+            <samp class="ph codeph">showInventory</samp> displays the serial number. 
+          </p>
+ 
+        </li>
+ 
+        <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_347D0E864B5F4E53A5EBACD538C58E2E"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_347D0E864B5F4E53A5EBACD538C58E2E"><!-- --></a> Removal of redundant FRUs
+          (spines, power supply, fan) 
+        </li>
+ 
+      </ul>
+ 
+      <p class="p">Based upon 
+        <samp class="ph codeph">fwVersion</samp>: 
+      </p>
+ 
+      <a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_E3E625B2D9EE4537A79D61A9418EFFE8"><!-- --></a><ul class="ul" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_E3E625B2D9EE4537A79D61A9418EFFE8"> 
+        <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_954419554D894772AA6127075F0829A0"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_954419554D894772AA6127075F0829A0"><!-- --></a>Changes to primary or
+          alternate FW versions installed in cards in chassis. 
+        </li>
+ 
+      </ul>
+ 
+      <p class="p">Based upon 
+        <samp class="ph codeph">showNodeDesc</samp>: 
+      </p>
+ 
+      <a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_4FA0401DEC4A4661B8536E570EBB04F1"><!-- --></a><ul class="ul" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_4FA0401DEC4A4661B8536E570EBB04F1"> 
+        <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_F8168410A05A46C38F946F8E02E33E45"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_F8168410A05A46C38F946F8E02E33E45"><!-- --></a>Changes to configured node
+          description for chassis. Note changes detected here would also be detected in
+          fabric level analysis. 
+        </li>
+ 
+      </ul>
+ 
+      <p class="p">Based upon 
+        <samp class="ph codeph">timeZoneConf</samp> and 
+        <samp class="ph codeph">timeDSTConf</samp>: 
+      </p>
+ 
+      <a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_770553AFDAFF400E909E9E52158AFD1E"><!-- --></a><ul class="ul" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_770553AFDAFF400E909E9E52158AFD1E"> 
+        <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_162139C797474B05AB1A5F555F9AA0C4"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_162139C797474B05AB1A5F555F9AA0C4"><!-- --></a> Changes to the chassis
+          time zone and daylight savings time configuration. 
+        </li>
+ 
+      </ul>
+ 
+      <p class="p">Based upon 
+        <samp class="ph codeph">snmpCommunityConf</samp> and 
+        <samp class="ph codeph">snmpTargetAddr</samp>: 
+      </p>
+ 
+      <a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_ED13D416BF5D48B2AD3B476273A925E8"><!-- --></a><ul class="ul" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_ED13D416BF5D48B2AD3B476273A925E8"> 
+        <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_1EE9F92D10184B9FAFE75D0F72A6B171"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_1EE9F92D10184B9FAFE75D0F72A6B171"><!-- --></a> Changes to SNMP
+          persistent configuration within the chassis. 
+        </li>
+ 
+      </ul>
+ 
+      <p class="p">The following Chassis items are not checked against baseline: 
+      </p>
+ 
+      <a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_6C9AE46764124C2781874A9F35C6F96A"><!-- --></a><ul class="ul" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_6C9AE46764124C2781874A9F35C6F96A"> 
+        <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_E82ECA0C2B7F4D2DA6F1D4A1B46DD372"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__LI_E82ECA0C2B7F4D2DA6F1D4A1B46DD372"><!-- --></a> Changes to the chassis
+          configuration on the management LAN (for example, 
+          <samp class="ph codeph">showChassisIpAddr</samp>, 
+          <samp class="ph codeph">showDefaultRoute</samp>). Such changes typically result in
+          the chassis not responding on the LAN at the expected address that is detected
+          by failures that perform other chassis checks. 
+        </li>
+ 
+      </ul>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__SECTION_8F0D531E4A1D4869BD786A1D0FE86EBE"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__SECTION_8F0D531E4A1D4869BD786A1D0FE86EBE"><!-- --></a><h2 class="sectiontitle">Chassis items also checked during health check</h2> 
+      <p class="p">Based upon 
+        <samp class="ph codeph">hwCheck</samp>: 
+      </p>
+ 
+      <a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_892BC76E271D4487B409D9F14AADDC7C"><!-- --></a><ul class="ul" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_892BC76E271D4487B409D9F14AADDC7C"> 
+        <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__XX1118726"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__XX1118726"><!-- --></a> Overall health of FRUs in chassis: 
+          <a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_951C3A18573C4FCC9DE4A1251FF9CE04"><!-- --></a><ul class="ul" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__UL_951C3A18573C4FCC9DE4A1251FF9CE04"> 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__XX1118727"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__XX1118727"><!-- --></a> Status of Fans in chassis 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__XX1118728"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__XX1118728"><!-- --></a> Status of Power Supplies in chassis 
+            </li>
+ 
+            <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__XX1118729"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__XX1118729"><!-- --></a> Temp/Voltage for each card 
+            </li>
+ 
+          </ul>
+ 
+        </li>
+ 
+        <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__XX1118730"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__XX1118730"><!-- --></a> Presence of adequate power/cooling of FRUs 
+        </li>
+ 
+        <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__XX1118731"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__XX1118731"><!-- --></a> Presence of N+1 power/cooling of FRUs 
+        </li>
+ 
+        <li class="li" id="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__XX1118732"><a name="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88__XX1118732"><!-- --></a> Presence of Redundant AC input 
+        </li>
+ 
+      </ul>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

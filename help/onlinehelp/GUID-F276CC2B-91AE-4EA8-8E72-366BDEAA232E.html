@@ -1,0 +1,156 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="concept">
+<meta name="DC.Title" content="Overview">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-F276CC2B-91AE-4EA8-8E72-366BDEAA232E">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>Overview</title>
+</head>
+<body id="GUID-F276CC2B-91AE-4EA8-8E72-366BDEAA232E"><a name="GUID-F276CC2B-91AE-4EA8-8E72-366BDEAA232E"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">Overview</h1>
+ 
+  <div class="body conbody"> 
+    <p class="p">This troubleshooting guide is intended to provide assistance to system
+      administrators and users to detect and correct system anomalies brought on by
+      hardware failures or incorrect hardware/software configuration. 
+    </p>
+ 
+    <div class="section" id="GUID-F276CC2B-91AE-4EA8-8E72-366BDEAA232E__GUID-D85A8FDB-D598-42F4-A36D-20ED5169725D"><a name="GUID-F276CC2B-91AE-4EA8-8E72-366BDEAA232E__GUID-D85A8FDB-D598-42F4-A36D-20ED5169725D"><!-- --></a><h2 class="title sectiontitle">Assumptions</h2> 
+       
+      <p class="p">It is assumed that the user has some knowledge of High-Performance
+        Computing (HPC) systems and is familiar with the following: 
+      </p>
+ 
+      <a name="GUID-F276CC2B-91AE-4EA8-8E72-366BDEAA232E__GUID-D121B56A-D3D2-4D3F-9DE2-43A039DDE6B0"><!-- --></a><ul class="ul" id="GUID-F276CC2B-91AE-4EA8-8E72-366BDEAA232E__GUID-D121B56A-D3D2-4D3F-9DE2-43A039DDE6B0"> 
+        <li class="li">The 
+          <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric Suite FastFabric</span> Tool Suite 
+        </li>
+ 
+        <li class="li">Navigation of the Linux command line 
+        </li>
+ 
+        <li class="li">Protocols: Secure Shell, Secure Copy, and Secure Ftp 
+        </li>
+ 
+        <li class="li">General administration of a network cluster 
+        </li>
+ 
+      </ul>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-F276CC2B-91AE-4EA8-8E72-366BDEAA232E__GUID-C49BAFC9-2943-44C0-A12B-77DEFD512F9F"><a name="GUID-F276CC2B-91AE-4EA8-8E72-366BDEAA232E__GUID-C49BAFC9-2943-44C0-A12B-77DEFD512F9F"><!-- --></a><h2 class="title sectiontitle">About This Guide</h2> 
+       
+      <p class="p">This guide provides steps that can be taken to prevent or correct
+        errors encountered when using the 
+        <span class="ph">Fabric Manager GUI</span>. It is not meant as
+        an exhaustive troubleshooting guide for fabric-related anomalies but provides
+        direction in correcting improper functioning of the 
+        <span class="ph">Fabric Manager GUI</span>. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-F276CC2B-91AE-4EA8-8E72-366BDEAA232E__GUID-7DB90C1A-0032-4E12-B544-7BD7552AC7D0"><a name="GUID-F276CC2B-91AE-4EA8-8E72-366BDEAA232E__GUID-7DB90C1A-0032-4E12-B544-7BD7552AC7D0"><!-- --></a><h2 class="title sectiontitle">Who Should Use This Guide</h2> 
+       
+      <p class="p">This guide is intended for system administrators responsible for the
+        configuration and maintenance of HPC systems. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-F276CC2B-91AE-4EA8-8E72-366BDEAA232E__GUID-09F25882-F431-4329-84A2-0ED2A0D36B2A"><a name="GUID-F276CC2B-91AE-4EA8-8E72-366BDEAA232E__GUID-09F25882-F431-4329-84A2-0ED2A0D36B2A"><!-- --></a><h2 class="title sectiontitle">Typographical Conventions</h2> 
+       
+      <p class="p">The typographical conventions used throughout the Troubleshooting
+        Guide are shown in the following table. 
+      </p>
+ 
+      
+<div class="tablenoborder"><a name="GUID-F276CC2B-91AE-4EA8-8E72-366BDEAA232E__GUID-405F0651-1A7C-4C5C-A1E4-5D3CCD301215"><!-- --></a><table cellpadding="4" cellspacing="0" summary="" id="GUID-F276CC2B-91AE-4EA8-8E72-366BDEAA232E__GUID-405F0651-1A7C-4C5C-A1E4-5D3CCD301215" class="table" frame="border" border="1" rules="all"><caption xmlns:xs="http://www.w3.org/2001/XMLSchema"><span class="tablecap">Typographical Conventions</span></caption><thead class="thead" align="left"> 
+          <tr class="row"> 
+            <th class="entry" valign="top" width="NaN%" id="d11308e88"> Convention 
+            </th>
+ 
+            <th class="entry" valign="top" width="NaN%" id="d11308e91"> Description 
+            </th>
+ 
+          </tr>
+</thead>
+ 
+        <tbody class="tbody"> 
+          <tr class="row"> 
+            <td class="entry" valign="top" width="NaN%" headers="d11308e88 ">Normal 
+            </td>
+ 
+            <td class="entry" valign="top" width="NaN%" headers="d11308e91 "> Indicates content describing anomalies and
+              how to correct them. 
+            </td>
+ 
+          </tr>
+ 
+          <tr class="row"> 
+            <td class="entry" valign="top" width="NaN%" headers="d11308e88 ">
+              <pre class="pre codeblock">Shaded block</pre>
+
+            </td>
+ 
+            <td class="entry" valign="top" width="NaN%" headers="d11308e91 "> Indicates a command typed at the command
+              line. 
+            </td>
+ 
+          </tr>
+ 
+          <tr class="row"> 
+            <td class="entry" valign="top" width="NaN%" headers="d11308e88 "><span class="ph uicontrol">Bold</span> 
+            </td>
+ 
+            <td class="entry" valign="top" width="NaN%" headers="d11308e91 "> Indicates key 
+              <span class="ph">Fabric Manager GUI</span> components such
+              as menu options. 
+            </td>
+ 
+          </tr>
+ 
+          <tr class="row"> 
+            <td class="entry" valign="top" width="NaN%" headers="d11308e88 ">Square Brackets [ ] 
+            </td>
+ 
+            <td class="entry" valign="top" width="NaN%" headers="d11308e91 "> Optional Items. 
+            </td>
+ 
+          </tr>
+ 
+          <tr class="row"> 
+            <td class="entry" valign="top" width="NaN%" headers="d11308e88 ">Angle Brackets &lt; &gt; 
+            </td>
+ 
+            <td class="entry" valign="top" width="NaN%" headers="d11308e91 "> User-supplied values. 
+            </td>
+ 
+          </tr>
+ 
+        </tbody>
+ 
+      </table>
+</div>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: February 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

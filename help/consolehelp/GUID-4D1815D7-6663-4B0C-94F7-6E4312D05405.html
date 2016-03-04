@@ -1,0 +1,273 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opaxmlgenerate">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opaxmlgenerate</title>
+</head>
+<body class="man8" id="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405"><a name="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opaxmlgenerate</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__GUID-6FE08068-CB2E-4842-ACB1-31BAC908E17B"><a name="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__GUID-6FE08068-CB2E-4842-ACB1-31BAC908E17B"><!-- --></a> 
+      <p class="p"><strong class="ph b">(Linux)</strong> Takes comma-separated-values (CSV) data as input and
+        generates sequences of XML containing user-specified element names and element
+        values within start and end tag specifications. Use this tool to create an XML
+        representation of fabric data from its CSV form. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__GUID-164FE89B-4210-4902-8805-1D979D438135"><a name="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__GUID-164FE89B-4210-4902-8805-1D979D438135"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opaxmlgenerate [-v] [-d <var class="keyword varname">delimiter</var>] [-i <var class="keyword varname">number</var>] [-g <var class="keyword varname">element</var>]
+[-h <var class="keyword varname">element</var>] [-e <var class="keyword varname">element</var>] [-X <var class="keyword varname">input_file</var>] [-P <var class="keyword varname">param_file</var>]</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__XX1133258"><a name="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__XX1133258"><!-- --></a><h2 class="sectiontitle">Options </h2> 
+      <a name="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__GUID-31F81D9E-824C-4E58-8040-A8F29928A320"><!-- --></a><dl class="dl parml" id="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__GUID-31F81D9E-824C-4E58-8040-A8F29928A320"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-g/--generate 
+              <var class="keyword varname">element</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Generates value for 
+              <samp class="ph codeph"><var class="keyword varname">element</var></samp> using value in next
+              field from the input file. Can be used multiple times on the command line.
+              Values are assigned to elements in order. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-h/--header 
+              <var class="keyword varname">element</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Name of the XML element that is the enclosing header start tag. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-e/--end 
+              <var class="keyword varname">element</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Name of the XML element that is the enclosing header end tag. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-d/--delimit 
+              <var class="keyword varname">delimiter</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"> Specifies the delimiter character that separates values in the
+              input file. Default is semicolon. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-i/--indent 
+              <var class="keyword varname">number</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Number of spaces to indent each level of XML output. Default is
+              0. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-X/--infile 
+              <var class="keyword varname">input_file</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File to read delimited input data from. One record per line with
+              fields in each record separated by the specified delimiter. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-P/--pfile 
+              <var class="keyword varname">param_file</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Uses input command line options (parameters) from 
+              <samp class="ph codeph">param_file</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-v/--verbose</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Produces verbose output. Includes output progress reports during
+              extraction. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__XX1133004"><a name="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__XX1133004"><!-- --></a><h2 class="title sectiontitle">Details</h2> 
+       
+      <p class="p"><samp class="ph codeph">opaxmlgenerate</samp> takes the CSV data from an input file.
+        It generates fragments of XML, and in combination with a script, can be used to
+        generate complete XML sequences. 
+        <samp class="ph codeph">opaxmlgenerate</samp> does not use nor require a connection
+        to an 
+        <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric</span>. 
+      </p>
+ 
+      <p class="p"><samp class="ph codeph">opaxmlgenerate</samp> reads CSV element values and applies
+        element (tag) names to those values. The element names are supplied as command
+        line options to the tool and constitute a template that is applied to the
+        input. 
+      </p>
+ 
+      <p class="p">Element names on the command line are of three (3) types,
+        distinguished by their command line option - 
+        <samp class="ph codeph">Generate</samp>, 
+        <samp class="ph codeph">Header</samp>, and 
+        <samp class="ph codeph">Header_End</samp>. The 
+        <samp class="ph codeph">Header</samp> and 
+        <samp class="ph codeph">Header_End</samp> types together constitute 
+        <dfn class="term">enclosing</dfn> element types. Enclosing elements do not contain
+        a value, but serve to separate and organize Generate elements. 
+      </p>
+ 
+      <p class="p">Generate elements, along with a value from the CSV input file, cause
+        XML in the form of 
+        <samp class="ph codeph">&lt;element_name&gt;<var class="keyword varname">value</var>&lt;/element_name&gt;</samp>
+        to be generated. Generate elements are normally the majority of the XML output
+        since they specify elements containing the input values. Header elements cause
+        an XML header start tag of the form: 
+        <samp class="ph codeph">&lt;element_name&gt;</samp> to be generated. Header_End
+        elements cause an XML header end tag of the form 
+        <samp class="ph codeph">&lt;/element_name&gt;</samp> to be generated. Output of
+        enclosing elements is controlled entirely by the placement of those element
+        types on the command line. 
+        <samp class="ph codeph">opaxmlgenerate</samp> does 
+        <strong class="ph b">not</strong> check for matching start and end tags or proper nesting of
+        tags. 
+      </p>
+ 
+      <p class="p">Options (parameters) to 
+        <samp class="ph codeph">opaxmlgenerate</samp> can be specified on the command line,
+        with a parameter file, or both. A parameter file is specified with 
+        <samp class="ph codeph">-P 
+          <var class="keyword varname">param_file</var></samp>. When a parameter file
+        specification is encountered on the command line, option processing on the
+        command line is suspended, the parameter file is read and processed entirely,
+        and then command line processing is resumed. Option syntax within a parameter
+        file is the same as on the command line. Multiple parameter file specifications
+        can be made, on the command line or within other parameter files. At each point
+        that a parameter file is specified, current option processing is suspended
+        while the parameter file is processed, then resumed. Options are processed in
+        the order they are encountered on the command line or in parameter files. A
+        parameter file can be up to 8192 bytes in size and may contain up to 512
+        parameters. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__XX1133011"><a name="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__XX1133011"><!-- --></a><h2 class="title sectiontitle">Using opaxmlgenerate to create topology input files</h2> 
+       
+      <p class="p"><samp class="ph codeph">opaxmlgenerate</samp> can be used to create scripts to
+        translate from user-specific format into the 
+        <samp class="ph codeph">opareport topology_input</samp> file format. 
+        <samp class="ph codeph">opaxmlgenerate</samp> itself works against a CSV style file
+        with one line per record. Given such a file it can produce hierarchical XML
+        output of arbitrary complexity and depth. 
+      </p>
+ 
+      <p class="p">The typical flow for a script which translates from a user-specific
+        format into 
+        <samp class="ph codeph">opareport topology_input</samp> would be: 
+      </p>
+ 
+      <a name="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__UL_BAC4C26A918A4BBF99FFCF22445F83FE"><!-- --></a><ul class="ul" id="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__UL_BAC4C26A918A4BBF99FFCF22445F83FE"> 
+        <li class="li" id="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__XX1133014"><a name="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__XX1133014"><!-- --></a> As needed, reorganize the data into link and node
+          data CSV files, in a sequencing similar to that used by 
+          <samp class="ph codeph">opareport topology_input</samp>. One link record per line
+          in one temporary file, one node record per line in another temporary file and
+          one SM per line in a third temporary file. 
+        </li>
+ 
+        <li class="li" id="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__XX1133015"><a name="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__XX1133015"><!-- --></a> The script must directly output the boilerplate for
+          XML version, etc. 
+        </li>
+ 
+        <li class="li" id="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__XX1133016"><a name="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__XX1133016"><!-- --></a> 
+          <samp class="ph codeph">opaxmlgenerate</samp> can be used to output the Link
+          section of the 
+          <span class="ph filepath">topology_input</span>, using the link record temporary
+          file. 
+        </li>
+ 
+        <li class="li" id="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__XX1133017"><a name="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__XX1133017"><!-- --></a> 
+          <samp class="ph codeph">opaxmlgenerate</samp> can be used to output the Node
+          sections of the 
+          <span class="ph filepath">topology_input</span> using the node record temporary
+          file. If desired, there could be separate node record temporary files for HFIs,
+          Switches, and Routers. 
+        </li>
+ 
+        <li class="li" id="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__XX1133018"><a name="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__XX1133018"><!-- --></a> 
+          <samp class="ph codeph">opaxmlgenerate</samp> can be used to output the SM section
+          of the 
+          <span class="ph filepath">topology_input</span>, if desired. 
+        </li>
+ 
+        <li class="li" id="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__XX1133019"><a name="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405__XX1133019"><!-- --></a> The script must directly output the closing XML
+          tags to complete the 
+          <span class="ph filepath">topology_input</span> file. 
+        </li>
+ 
+      </ul>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>
