@@ -3,3 +3,4 @@ Encoding=UTF-8
 Icon=fmgui
 Name=Fabric
 Comment=Programs for fabric usage and management
+Type=Directory

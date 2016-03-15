@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.9  2015/10/21 15:06:57  jijunwan
+ *  Archive Log:    PR 131077 - Virtual Fabrics list does not reflect enabled status per item in "list tile" of admin window
+ *  Archive Log:    - Extended VF to use its own renderer for item panel
+ *  Archive Log:    - Extended VF to update item panel when there is a change on enabled check box
+ *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/08/17 18:54:01  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -79,6 +84,7 @@ package com.intel.stl.ui.admin.view.virtualfabrics;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -184,6 +190,10 @@ public class VirtualFabricsEditorPanel extends
             basicPanel.add(qosBox);
         }
         return basicPanel;
+    }
+
+    public void setEnabledActionListener(ActionListener listener) {
+        enableBox.addActionListener(listener);
     }
 
     /*

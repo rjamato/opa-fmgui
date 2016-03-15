@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.4  2015/12/09 16:08:42  jijunwan
+ *  Archive Log:    PR 131944 - If "# Worst Nodes" is <10 or >100, there is a Entry Validation warning for the Refresh Rate
+ *  Archive Log:
+ *  Archive Log:    - improved PreferencesValidatorError to use local data rather than shared static data
+ *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/08/17 18:54:52  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -56,6 +61,7 @@ package com.intel.stl.ui.wizards.impl.preferences;
 
 import java.util.HashMap;
 
+import com.intel.stl.api.IMessage;
 import com.intel.stl.ui.common.UILabels;
 
 public enum PreferencesValidatorError {
@@ -93,8 +99,8 @@ public enum PreferencesValidatorError {
             UILabels.STL50079_NUM_WORST_NODES_OUT_OF_RANGE),
     NUM_WORST_NODES_FORMAT_EXCEPTION(16,
             UILabels.STL50080_NUM_WORST_NODES_FORMAT_EXCEPTION),
-
-    OK(17, UILabels.STL50063_OK);
+    UNABLE_TO_VALIDATE(17, UILabels.STL50089_UNABLE_TO_VALIDATE),
+    OK(18, UILabels.STL50063_OK);
 
     private final static HashMap<Integer, PreferencesValidatorError> validateErrorMap =
             new HashMap<Integer, PreferencesValidatorError>();
@@ -112,7 +118,7 @@ public enum PreferencesValidatorError {
 
     public final UILabels label;
 
-    public static Object[] data;
+    public Object[] data;
 
     private PreferencesValidatorError(int id, UILabels label) {
 
@@ -133,17 +139,45 @@ public enum PreferencesValidatorError {
         return value;
     }
 
-    public static String getValue(int id) {
+    /**
+     * @param data
+     *            the data to set
+     */
+    public void setData(Object[] data) {
+        this.data = data;
+    }
 
+    /**
+     * @return the data
+     */
+    public Object[] getData() {
+        return data;
+    }
+
+    public static String getValue(int id) {
         PreferencesValidatorError err = validateErrorMap.get(id);
         String description = null;
         if (err != null) {
-            description = err.getLabel().getDescription(data);
+            description = err.getLabel().getDescription(err.getData());
         }
         return description;
     }
 
-    public static Object[] getData() {
-        return data;
+    public static IMessage getMessage(int id) {
+        PreferencesValidatorError err = validateErrorMap.get(id);
+        if (err != null) {
+            return err.getLabel();
+        } else {
+            return null;
+        }
+    }
+
+    public static Object[] getData(int id) {
+        PreferencesValidatorError err = validateErrorMap.get(id);
+        if (err != null) {
+            return err.getData();
+        } else {
+            return null;
+        }
     }
 }

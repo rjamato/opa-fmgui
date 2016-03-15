@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.8  2015/11/18 23:58:30  rjtierne
+ *  Archive Log:    PR 131589 - FM GUI: Console Error box too small for the error information
+ *  Archive Log:    - Made status text area 2 lines and enabled line wrapping
+ *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/10/01 21:54:59  fernande
  *  Archive Log:    PR130409 - [Dell]: FMGUI Admin Console login fails when switch is configured without username and password. Removed restriction on user and password not empty
  *  Archive Log:
@@ -352,12 +356,14 @@ public class ConsoleLoginView extends JPanel implements IConsoleLogin {
         gc.gridy = 2;
         gc.gridwidth = GridBagConstraints.REMAINDER;
         txtAreaStatus = new JTextArea();
+        txtAreaStatus.setLineWrap(true);
+        txtAreaStatus.setWrapStyleWord(true);
         txtAreaStatus.setOpaque(true);
         txtAreaStatus.setEditable(false);
         txtAreaStatus.setFont(UIConstants.H5_FONT);
         txtAreaStatus.setForeground(UIConstants.INTEL_DARK_GRAY);
         txtAreaStatus.setBackground(UIConstants.INTEL_BACKGROUND_GRAY);
-        txtAreaStatus.setPreferredSize(new Dimension(1, 20));
+        txtAreaStatus.setPreferredSize(new Dimension(1, 40));
         add(txtAreaStatus, gc);
     }
 

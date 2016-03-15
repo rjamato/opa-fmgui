@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.5  2015/10/15 18:19:23  jijunwan
+ *  Archive Log:    PR 130289 - Admin Page icons are not working efficiently
+ *  Archive Log:    - changed to use mouseReleased
+ *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/08/17 18:53:52  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -190,7 +194,7 @@ public class NavigationPanel extends JPanel {
 
             addMouseListener(new MouseAdapter() {
                 @Override
-                public void mouseClicked(MouseEvent arg0) {
+                public void mouseReleased(MouseEvent e) {
                     fireSelection(name);
                 }
             });

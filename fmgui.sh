@@ -22,8 +22,7 @@ DEBUG=0
 JAVA_REQ=`echo 1.7 | sed -e 's;\.;0;g'`
 INSTDIR=`dirname $0`
 JAVA=nojava
-JAR=fmgui.jar
-JAR_PATH=/usr/share/java/fmgui/
+JAR=/usr/share/java/fmgui/fmgui.jar
 
 if [ -n "$OPA_JAVA" ]; then
     # Check what's been provided in environment variable OPA_JAVA
@@ -67,23 +66,15 @@ if [ "$JAVA" == "nojava" ]; then
     echo ""
     read -p 'Press [Enter] key to continue...'
 else
-    if [ -a ./$JAR ]; then
+    if [ -a $JAR ]; then
         # run the JVM and pass the jar name
         if [ $DEBUG -eq 1 ]; then 
-            echo Executing $JAVA -jar ./$JAR
+            echo Executing $JAVA -jar $JAR
         fi
-        exec $JAVA $* -jar ./$JAR
+        exec $JAVA $* -jar $JAR
     else
-	if [ -a $JAR_PATH$JAR ]; then
-	    # run the JVM and pass the jar name
-            if [ $DEBUG -eq 1 ]; then
-            	echo Executing $JAVA -jar $JAR_PATH$JAR
-            fi
-            exec $JAVA $* -jar $JAR_PATH$JAR
-    	else
-            echo "Cannot find the Fabric Manager GUI application jar file $JAR"
-            echo ""
-            read -p 'Press [Enter] key to continue...'
-	fi
+        echo "Cannot find the Fabric Manager GUI application jar file $JAR"
+        echo ""
+        read -p 'Press [Enter] key to continue...'
     fi
 fi

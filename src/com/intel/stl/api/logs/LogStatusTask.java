@@ -35,6 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.3  2015/11/18 23:50:32  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - No longer calling setErrorListener()
+ *  Archive Log:    - Call executeCommand() instead of submitCommand()
+ *  Archive Log:    - In method stop() call fileStatusProcessor.stop()
+ *  Archive Log:    - Removed unused shutdown() method
+ *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/08/17 18:48:54  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - change backend files' headers
@@ -109,7 +116,6 @@ public class LogStatusTask extends TimerTask implements IResponseListener,
 
     public void setErrorListener(ILogErrorListener listener) {
         errorListener = listener;
-        fileStatusProcessor.setErrorListener(errorListener);
     }
 
     /*
@@ -121,12 +127,13 @@ public class LogStatusTask extends TimerTask implements IResponseListener,
     public void run() {
         logCommander.setFileInfo(fileInfo);
         String cmd = logCommander.getCommand(msgType, 0);
-        fileStatusProcessor.submitCommand(msgType, cmd);
+        fileStatusProcessor.executeCommand(msgType, cmd);
     }
 
     protected void stop() {
         timer.purge();
         timer.cancel();
+        fileStatusProcessor.stop();
     }
 
     public void start() {
@@ -140,11 +147,6 @@ public class LogStatusTask extends TimerTask implements IResponseListener,
 
     public LogResponse getResponse() {
         return response;
-    }
-
-    public void shutdown() {
-        fileStatusProcessor.shutdown();
-        stop();
     }
 
     /*
@@ -179,16 +181,5 @@ public class LogStatusTask extends TimerTask implements IResponseListener,
     @Override
     public void stopLog() {
         errorListener.stopLog();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.intel.stl.api.logs.IErrorListener#onSessionDown(java.lang.String)
-     */
-    @Override
-    public void onSessionDown(String errorMessage) {
-        errorListener.onSessionDown(errorMessage);
     }
 }

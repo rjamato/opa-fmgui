@@ -1,0 +1,740 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opapmaquery">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-52538002-3A36-4195-B69E-3648C71CBC07">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opapmaquery</title>
+</head>
+<body class="man1" id="GUID-52538002-3A36-4195-B69E-3648C71CBC07"><a name="GUID-52538002-3A36-4195-B69E-3648C71CBC07"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opapmaquery</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-52538002-3A36-4195-B69E-3648C71CBC07__GUID-B325BD0D-2C17-4224-89B6-C45C20FCE5C7"><a name="GUID-52538002-3A36-4195-B69E-3648C71CBC07__GUID-B325BD0D-2C17-4224-89B6-C45C20FCE5C7"><!-- --></a> 
+      <p class="p"><strong class="ph b">(All)</strong> Performs individual PMA queries against a specific LID.
+        It is very useful in displaying port runtime information. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-52538002-3A36-4195-B69E-3648C71CBC07__GUID-06AD3A51-BABA-496F-B685-E4FDE8EB71AE"><a name="GUID-52538002-3A36-4195-B69E-3648C71CBC07__GUID-06AD3A51-BABA-496F-B685-E4FDE8EB71AE"><!-- --></a><h2 class="sectiontitle">Syntax </h2> 
+      <pre class="pre codeblock">opapmaquery [-v] [-s <var class="keyword varname">sl</var>] [-l <var class="keyword varname">lid</var>] [-h <var class="keyword varname">hfi</var>] [-p <var class="keyword varname">port</var>] [-o <var class="keyword varname">otype</var>]
+[-m <var class="keyword varname">port</var>] [-n <var class="keyword varname">mask</var>] [-e <var class="keyword varname">mask</var>] [-w <var class="keyword varname">mask</var>] </pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-52538002-3A36-4195-B69E-3648C71CBC07__XX1169888"><a name="GUID-52538002-3A36-4195-B69E-3648C71CBC07__XX1169888"><!-- --></a><h2 class="title sectiontitle">Options</h2> 
+       
+      <a name="GUID-52538002-3A36-4195-B69E-3648C71CBC07__GUID-4E808581-4AB8-4E71-948B-4E83889499B9"><!-- --></a><dl class="dl parml" id="GUID-52538002-3A36-4195-B69E-3648C71CBC07__GUID-4E808581-4AB8-4E71-948B-4E83889499B9"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-v</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Verbose output. Can be specified more than once for additional
+              openib debugging and libibumad debugging. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-s 
+              <var class="keyword varname">sl</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Specifies different service level. Default is 0. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-l 
+              <var class="keyword varname">lid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Destination LID. Default is local port. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-h 
+              <var class="keyword varname">hfi</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><span class="ph">HFI</span>, numbered 1..n. Using 0
+              specifies that the 
+              <samp class="ph codeph">-p 
+                <var class="keyword varname">port</var></samp> port is a system-wide port
+              number. Default is 0. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-p 
+              <var class="keyword varname">port</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Port, numbered 1..n. If 
+              <samp class="ph codeph">-h 
+                <var class="keyword varname">hfi</var></samp> is 0, then 
+              <samp class="ph codeph"><var class="keyword varname">port</var></samp> is a system-wide port
+              number. Default is first active port. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-o 
+              <var class="keyword varname">otype</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Output type. Default is 
+              <samp class="ph codeph">getportstatus</samp>. 
+            </p>
+ 
+            <p class="p"> Valid output types are: 
+            </p>
+ 
+            <a name="GUID-52538002-3A36-4195-B69E-3648C71CBC07__GUID-F876B775-BDD3-431B-91FD-869A36C4FFAB"><!-- --></a><dl class="dl parml" id="GUID-52538002-3A36-4195-B69E-3648C71CBC07__GUID-F876B775-BDD3-431B-91FD-869A36C4FFAB"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">classportinfo</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">List of port info records. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">getportstatus</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">List of port status records. 
+                  </p>
+ 
+                  <p class="p"><samp class="ph codeph"> [-m port] [-w vl mask]</samp> 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">clearportstatus</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Clears the port status. 
+                  </p>
+ 
+                  <p class="p"><samp class="ph codeph"> [-n port mask] [-e counter mask] [-w vl
+                      mask]</samp> 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">getdatacounters</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">List of data counters. 
+                  </p>
+ 
+                  <p class="p"> 
+                    <samp class="ph codeph">[-n port mask] [-w vl mask]</samp> 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">geterrorcounters</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">List of error counters. 
+                  </p>
+ 
+                  <p class="p"> 
+                    <samp class="ph codeph">[-n port mask] [-w vl mask]</samp> 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">geterrorinfo</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">List of error info. 
+                  </p>
+ 
+                  <p class="p"> 
+                    <samp class="ph codeph">[-n port mask]</samp> 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">clearerrorinfo</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Clears the error info. 
+                  </p>
+ 
+                  <p class="p"> 
+                    <samp class="ph codeph">[-n port mask] [-e counter mask]</samp> 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+       
+      <a name="GUID-52538002-3A36-4195-B69E-3648C71CBC07__GUID-2EB7B7F0-D46A-4D80-9D71-4727CE830A35"><!-- --></a><dl class="dl parml" id="GUID-52538002-3A36-4195-B69E-3648C71CBC07__GUID-2EB7B7F0-D46A-4D80-9D71-4727CE830A35"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -h 0</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">First active port in system (default). 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -h 0 -p 0</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">First active port in system. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -h 
+              <var class="keyword varname">x</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">First active port on HFI 
+              <var class="keyword varname">x</var>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"> 
+            <samp class="ph codeph">-h 
+              <var class="keyword varname">x</var> -p 0</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">First active port on HFI 
+              <var class="keyword varname">x</var>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"> 
+            <samp class="ph codeph">-h 0 -p 
+              <var class="keyword varname">y</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Port 
+              <var class="keyword varname">y&nbsp; 
+              </var>within system (no matter which ports are active). 
+            </p>
+ 
+            </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"> 
+            <samp class="ph codeph">-h 
+              <var class="keyword varname">x</var> -p 
+              <var class="keyword varname">y</var> 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">HFI 
+              <var class="keyword varname">x</var>, port 
+              <var class="keyword varname">y</var>. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+       
+      <a name="GUID-52538002-3A36-4195-B69E-3648C71CBC07__GUID-3EF7C10A-290A-4B68-A67A-B830EC46E6CA"><!-- --></a><dl class="dl parml" id="GUID-52538002-3A36-4195-B69E-3648C71CBC07__GUID-3EF7C10A-290A-4B68-A67A-B830EC46E6CA"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-m 
+              <var class="keyword varname">port</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Port in destination device to query/clear. Required when using 
+              <samp class="ph codeph">-l</samp> option for all but 
+              <samp class="ph codeph">-o classportinfo</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-n 
+              <var class="keyword varname">mask</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Port mask, in hexadecimal. Bits represent ports 63-0. For
+              example: 
+              <samp class="ph codeph">0x2</samp> for port 1, 
+              <samp class="ph codeph">0x6</samp> for ports 1, 2. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-e 
+              <var class="keyword varname">mask</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Counter/error select mask, in hexadecimal. Bit positions are in
+              the following list. Default is all bits set (<samp class="ph codeph">0xffffffe0</samp>). 
+            </p>
+ 
+            <a name="GUID-52538002-3A36-4195-B69E-3648C71CBC07__GUID-957EB652-5073-47AF-956B-B8C707D35822"><!-- --></a><dl class="dl parml" id="GUID-52538002-3A36-4195-B69E-3648C71CBC07__GUID-957EB652-5073-47AF-956B-B8C707D35822"> 
+               
+                <dt class="dt pt dlterm">0x80000000 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Xmit Data 
+                  </p>
+ 
+                  <p class="p">For Error Info: Rcv Error Info 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"> 0x40000000 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Rcv Data 
+                  </p>
+ 
+                  <p class="p">For Error Info: Excessive Buffer Overrun 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x20000000 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Xmit Pkts 
+                  </p>
+ 
+                  <p class="p">For Error Info: Xmit Const Error Info 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x10000000 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Rcv Pkts 
+                  </p>
+ 
+                  <p class="p">For Error Info: Rcv Const Error Info 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x08000000 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Multicast Xmit Pkts 
+                  </p>
+ 
+                  <p class="p">For Error Info: Rcv Switch Relay Error Info 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x04000000 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Multicast Rcv Pkts 
+                  </p>
+ 
+                  <p class="p">For Error Info: Uncorrectable Error Info 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x02000000 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Xmit Wait 
+                  </p>
+ 
+                  <p class="p">For Error Info: FM Config Error Info 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x01000000 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Congestion Discards 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x00800000 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Rcv FECN 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x00400000 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Rcv BECN 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x00200000 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Xmit Time Cong. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x00100000 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Xmit Time Wasted BW 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x00080000 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Xmit Time Wait Data 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x00040000 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Rcv Bubble 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x00020000 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Mark FECN 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x00010000 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Rcv Constraint Errors 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x00008000 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Rcv Switch Relay 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x00004000 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Xmit Discards 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x00002000 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Xmt Constraint Errors 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x00001000 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Rcv Rmt Phys. Errors 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x00000800 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Local Link Integrity 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x00000400 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Rcv Errors 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x00000200 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Exc. Buffer Overrun 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x00000100 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: FM Config Errors 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x00000080 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Link Error Recovery 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x00000040 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Link Error Downed 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">0x00000020 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">For Counters: Uncorrectable Errors 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-w 
+              <var class="keyword varname">mask</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Virtual Lane Select Mask, in hexadecimal. Bits represent VL
+              number 31-0. For example, 
+              <samp class="ph codeph">0x1</samp> for VL 0, 
+              <samp class="ph codeph">0x3</samp> for VL 0,1. Default is none. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-52538002-3A36-4195-B69E-3648C71CBC07__XX1169907"><a name="GUID-52538002-3A36-4195-B69E-3648C71CBC07__XX1169907"><!-- --></a><h2 class="sectiontitle">Examples </h2> 
+      <pre class="pre codeblock">opapmaquery -o classportinfo
+# get PMA classportinfo 
+opapmaquery -o getportstatus
+# get data and error counts, local port 
+opapmaquery -o getdatacounters -n 0x2
+# get data counts, local port 1 
+opapmaquery -o geterrorcounters -n 0x2
+# get error counts, local port 1 
+opapmaquery -o clearportstatus -n 0x2
+# clear all counters local port 1 
+opapmaquery -o geterrorinfo -n 0x2
+# get error info for local port 1 
+opapmaquery -o clearerrorinfo -n 0x2
+# clear all error info, local port 1</pre>
+ 
+      <p class="p"><strong class="ph b">Additional Examples</strong> 
+      </p>
+ 
+      <p class="p">For device at LID 6, get data counters on ports 1-6, inclusive of VL 0
+        data: 
+      </p>
+ 
+      <pre class="pre codeblock">opapmaquery -o getdatacounters -l 6 -n 0x7e -w 0x1</pre>
+ 
+      <p class="p">For device at LID 6, on port 1, clear only error counters: 
+      </p>
+ 
+      <pre class="pre codeblock">opapmaquery -o clearportstatus -l 6 -n 0x2 -e 0x1ffff</pre>
+ 
+      <p class="p">For device at LID 6, on ports 1, clear uncorrectable error info: 
+      </p>
+ 
+      <pre class="pre codeblock">opapmaquery -o clearerrorinfo -l 6 -n 0x2 -e 0x04000000</pre>
+ 
+    </div>
+ 
+    </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

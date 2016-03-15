@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.13  2015/11/02 23:54:31  jijunwan
+ *  Archive Log:    PR 131396 - Incorrect Connectivity Table for a VF port
+ *  Archive Log:    - changed model to display N/A when a value is not avaiable
+ *  Archive Log:
  *  Archive Log:    Revision 1.12  2015/08/17 18:53:46  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -362,6 +366,9 @@ public class ConnectivityTableModel extends FVTableModel<ConnectivityTableData> 
 
             default:
                 break;
+        }
+        if (value == null) {
+            value = STLConstants.K0383_NA.getValue();
         }
         return value;
     }

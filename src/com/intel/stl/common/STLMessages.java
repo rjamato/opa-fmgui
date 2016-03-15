@@ -34,6 +34,10 @@
  *  Archive Source: $Source$
  * 
  *  Archive Log: $Log$
+ *  Archive Log: Revision 1.51  2015/11/18 23:51:33  rjtierne
+ *  Archive Log: PR 130965 - ESM support on Log Viewer
+ *  Archive Log: - Added STL50014_ESM_COMMAND_NOT_FOUND and STL50015_SESSION_CONNECTION_FAILURE
+ *  Archive Log:
  *  Archive Log: Revision 1.50  2015/09/21 20:46:56  jijunwan
  *  Archive Log: PR 130542 - Confusion error message on fetching conf file
  *  Archive Log: - improved SftpException to include file path information
@@ -246,6 +250,8 @@ public enum STLMessages implements IMessage {
     STL50011_INVALID_XPATH_EXPRESSION(50011),
     STL50012_SOCKET_CLOSE_FAILURE(50012),
     STL50013_ERROR_PARSING_FM_CONFIG(50013),
+    STL50014_ESM_COMMAND_NOT_FOUND(50014),
+    STL50015_SESSION_CONNECTION_FAILURE(50015),
 
     // General messages
     STL60001_FATAL_FAILURE(60001),

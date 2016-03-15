@@ -35,6 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.12  2015/11/18 23:54:48  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Disable host field for configuration tasks
+ *  Archive Log:
+ *  Archive Log:    Revision 1.11  2015/10/19 22:30:09  jijunwan
+ *  Archive Log:    PR 131091 - On an unsuccessful Failover, the Admin | Applications doesn't show the login window
+ *  Archive Log:    - show login panel when not initialized properly with corresponding message
+ *  Archive Log:    - added feature to fully enable/disable a login panel
+ *  Archive Log:
  *  Archive Log:    Revision 1.10  2015/09/28 17:54:14  fisherma
  *  Archive Log:    PR 130425 - added cancel button to the Admin tab login page to allow user to cancel out of hung or slow ssh logins.  Cancel action terminates sftp connection and closes remote ssh session. This fix also addresses PR 130386 and 130390.
  *  Archive Log:
@@ -212,6 +221,10 @@ public abstract class AbstractConfView<T, E extends AbstractEditorPanel<T>>
         return deployPanel;
     }
 
+    public void setLoginEnabled(boolean b) {
+        loginPanel.setEnabled(b);
+    }
+
     public void setHostNameField(String host) {
         loginPanel.setHostNameField(host);
     }
@@ -356,6 +369,7 @@ public abstract class AbstractConfView<T, E extends AbstractEditorPanel<T>>
         CardLayout cl = (CardLayout) (this.getLayout());
         loginPanel.showProgress(false);
         loginPanel.setMessage(null);
+        loginPanel.setHostFieldEnabled(false);
         cl.show(this, LOGIN);
         currentCard = LOGIN;
         repaint();

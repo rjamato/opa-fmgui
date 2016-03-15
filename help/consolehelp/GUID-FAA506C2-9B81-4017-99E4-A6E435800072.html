@@ -1,0 +1,293 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opaconfig">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-FAA506C2-9B81-4017-99E4-A6E435800072">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opaconfig</title>
+</head>
+<body class="man1" id="GUID-FAA506C2-9B81-4017-99E4-A6E435800072"><a name="GUID-FAA506C2-9B81-4017-99E4-A6E435800072"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opaconfig</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-FAA506C2-9B81-4017-99E4-A6E435800072__GUID-8ED9BCB4-CF20-4219-80A7-066D127C813B"><a name="GUID-FAA506C2-9B81-4017-99E4-A6E435800072__GUID-8ED9BCB4-CF20-4219-80A7-066D127C813B"><!-- --></a> 
+      <p class="p"><strong class="ph b">(Switch and Host)</strong> Configures the 
+        <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric Suite FastFabric</span>. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-FAA506C2-9B81-4017-99E4-A6E435800072__GUID-CCC78D05-E475-43B9-BC1E-0C3D2CFAC81B"><a name="GUID-FAA506C2-9B81-4017-99E4-A6E435800072__GUID-CCC78D05-E475-43B9-BC1E-0C3D2CFAC81B"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opaconfig [-r <var class="keyword varname">root</var>] [-v|-vv] [-u|-s|-e <var class="keyword varname">comp</var>] [-E&nbsp;<var class="keyword varname">comp</var>] [-D <var class="keyword varname">comp</var>]
+[--user_queries|--no_user_queries] [--answer <var class="keyword varname">keyword=value</var>]</pre>
+ 
+      <p class="p">or 
+      </p>
+ 
+      <pre class="pre codeblock">opaconfig -C</pre>
+ 
+      <p class="p">or 
+      </p>
+ 
+      <pre class="pre codeblock">opaconfig -V</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-FAA506C2-9B81-4017-99E4-A6E435800072__XX1175825"><a name="GUID-FAA506C2-9B81-4017-99E4-A6E435800072__XX1175825"><!-- --></a><h2 class="sectiontitle">Options</h2> 
+      <a name="GUID-FAA506C2-9B81-4017-99E4-A6E435800072__GUID-A721311E-1061-46D6-8CD5-16F5CC712249"><!-- --></a><dl class="dl parml" id="GUID-FAA506C2-9B81-4017-99E4-A6E435800072__GUID-A721311E-1061-46D6-8CD5-16F5CC712249"> 
+         
+          <dt class="dt pt dlterm">No option 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Starts the 
+              <span class="ph">Intel<sup>®</sup> OP Software</span> TUI. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Produces full help text. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-r 
+              <var class="keyword varname">root</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Specifies alternate root directory; default is 
+              <samp class="ph codeph">/.</samp> 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-v</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Verbose logging. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-vv</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Very verbose debug logging. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-u</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Uninstalls all ULPs and drivers with default options. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-s</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Enables autostart for all installed drivers. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-e 
+              <var class="keyword varname">comp</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Uninstalls the given component with default options. This option
+              can appear more than once on the command line. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-E 
+              <var class="keyword varname">comp</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Enables autostart of a given component. This option can appear
+              with 
+              <samp class="ph codeph">-D</samp> or more than once on the command line. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-D 
+              <var class="keyword varname">comp</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Disables autostart of given component. This option can appear
+              with 
+              <samp class="ph codeph">-E</samp> or more than once on the command line. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-C</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Outputs list of supported components. 
+            </p>
+ 
+            <p class="p">Supported components include: 
+              <samp class="ph codeph">opa_stack ibacm mpi_selector intel_hfi oftools
+                opa_stack_dev fastfa bric delta_ipoib opafm mvapich2 openmpi gasnet openshmem
+                mvapich2_gcc_hfi mvapic h2_pgi_hfi mvapich2_intel_hfi openmpi_gcc_hfi
+                openmpi_pgi_hfi openmpi_intel_hfi delta_mpisrc delta_debug</samp> 
+            </p>
+ 
+            <p class="p">Supported component name aliases include: 
+              <samp class="ph codeph">opa ipoib mpi mpisrc opadev</samp> 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-V</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Outputs version. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--user_queries</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Permits non-root users to query the fabric (default). 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--no_user_queries</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Prohibits non-root users from querying the fabric. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--answer 
+              <var class="keyword varname">keyword=value</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Provides an answer to a question that may occur during the
+              operation. Answers to questions not asked are ignored. Invalid answers result
+              in prompting for interactive installs, or using default options for
+              non-interactive installs. 
+            </p>
+ 
+            <p class="p">Possible questions
+              (<samp class="ph codeph"><var class="keyword varname">keyword=value</var></samp>): 
+            </p>
+ 
+            <a name="GUID-FAA506C2-9B81-4017-99E4-A6E435800072__GUID-3802AFCE-C104-4E63-8F2C-03267EA29F9C"><!-- --></a><dl class="dl parml" id="GUID-FAA506C2-9B81-4017-99E4-A6E435800072__GUID-3802AFCE-C104-4E63-8F2C-03267EA29F9C"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">UserQueries</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <div class="p"> Allow non-root users to access the UMAD interface? 
+                    <div class="note note" id="GUID-FAA506C2-9B81-4017-99E4-A6E435800072__GUID-B7974132-9F77-4B17-8D8F-3BD48FE71927"><a name="GUID-FAA506C2-9B81-4017-99E4-A6E435800072__GUID-B7974132-9F77-4B17-8D8F-3BD48FE71927"><!-- --></a><span class="notetitle">Note:</span>  
+                      <p class="p">Allowing access to UMAD device files may present a
+                        security risk. However, this allows tools such as 
+                        <samp class="ph codeph">opasaquery</samp> and 
+                        <samp class="ph codeph">opaportinfo</samp> to be used by non-root
+                        users. 
+                      </p>
+ 
+                    </div>
+ 
+                  </div>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-FAA506C2-9B81-4017-99E4-A6E435800072__GUID-88B0FF6F-259E-48BA-8248-4716DF630680"><a name="GUID-FAA506C2-9B81-4017-99E4-A6E435800072__GUID-88B0FF6F-259E-48BA-8248-4716DF630680"><!-- --></a><h2 class="sectiontitle">Example </h2> 
+      <pre class="pre codeblock"># opaconfig
+Intel OPA <var class="keyword varname">x.x.x.x.x</var> Software
+
+&nbsp;&nbsp;&nbsp;1) Show Installed Software
+&nbsp;&nbsp;&nbsp;2) Reconfigure OFED IP over IB
+&nbsp;&nbsp;&nbsp;3) Reconfigure Driver Autostart
+&nbsp;&nbsp;&nbsp;4) Generate Supporting Information for Problem Report
+&nbsp;&nbsp;&nbsp;5) FastFabric (Host/Chassis/Switch Setup/Admin)
+&nbsp;&nbsp;&nbsp;6) Uninstall Software
+
+&nbsp;&nbsp;&nbsp;X) Exit</pre>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

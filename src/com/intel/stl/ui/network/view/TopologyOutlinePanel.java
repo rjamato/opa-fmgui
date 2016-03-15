@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.9  2015/12/04 22:16:30  jijunwan
+ *  Archive Log:    PR 126611 - Enlargement of Topology Outline does not plot the UI perfectly
+ *  Archive Log:    - fixed number round issues
+ *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/08/17 18:54:15  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -263,18 +267,18 @@ public class TopologyOutlinePanel extends JPanel {
         if (ratio > 0) {
             switch (fit) {
                 case WIDTH:
-                    dim.height = (int) Math.ceil(dim.getWidth() * ratio);
+                    dim.height = (int) (dim.getWidth() * ratio);
                     if (dim.height > MAX_OUTLINE_HEIGHT) {
                         dim.height = MAX_OUTLINE_HEIGHT;
-                        dim.width = (int) Math.ceil(dim.height / ratio);
+                        dim.width = (int) (dim.height / ratio);
                     }
                     break;
                 case WINDOW:
                     double newHeight = dim.getWidth() * ratio;
                     if (newHeight > dim.height) {
-                        dim.width = (int) Math.ceil(dim.height / ratio);
+                        dim.width = (int) (dim.height / ratio);
                     } else {
-                        dim.height = (int) Math.ceil(newHeight);
+                        dim.height = (int) (newHeight);
                     }
                     break;
             }

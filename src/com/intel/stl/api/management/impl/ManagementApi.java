@@ -35,6 +35,16 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.14  2015/11/18 23:50:54  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Provide SshKeyType.MANAGEMENT_KEY to JSchSessionFactory
+ *  Archive Log:
+ *  Archive Log:    Revision 1.13  2015/10/26 20:19:11  jijunwan
+ *  Archive Log:    PR 131169 - Unable to delete Device Groups created within the opafm.xml file
+ *  Archive Log:    - introduced ChangeManager to maintain changes
+ *  Archive Log:    - changed changes from set to list because when the changes depend on each other, the order does matter
+ *  Archive Log:    - changed xxxManagement to use ChangeManager
+ *  Archive Log:
  *  Archive Log:    Revision 1.12  2015/10/06 15:51:01  rjtierne
  *  Archive Log:    PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
  *  Archive Log:    - Implemented cleanup() to close the JSchSession and remove it from the map in JSchSessionFactory so
@@ -110,6 +120,7 @@ import com.intel.stl.api.management.virtualfabrics.VirtualFabricException;
 import com.intel.stl.api.management.virtualfabrics.impl.VirtualFabricManagement;
 import com.intel.stl.api.subnet.HostInfo;
 import com.intel.stl.api.subnet.SubnetDescription;
+import com.intel.stl.fecdriver.network.ssh.SshKeyType;
 import com.intel.stl.fecdriver.network.ssh.impl.JSchSession;
 import com.intel.stl.fecdriver.network.ssh.impl.JSchSessionFactory;
 
@@ -155,9 +166,8 @@ public class ManagementApi implements IManagementApi {
      */
     @Override
     public boolean hasChanges() {
-        return !appMgt.getChanges().isEmpty()
-                || !groupMgt.getChanges().isEmpty()
-                || !vfMgt.getChanges().isEmpty();
+        return appMgt.hasChanges() || groupMgt.hasChanges()
+                || vfMgt.hasChanges();
     }
 
     /*
@@ -461,7 +471,9 @@ public class ManagementApi implements IManagementApi {
 
         // Check if the factory has a session for this subnet
         // and if it does, verify that it is connected
-        JSchSession session = JSchSessionFactory.getSessionFromMap(subnet);
+        JSchSession session =
+                JSchSessionFactory.getSessionFromMap(SshKeyType.MANAGEMENT_KEY
+                        .getKey(subnet.getSubnetId()));
 
         if (session != null) {
             connectionStatus = session.isConnected();
@@ -498,7 +510,8 @@ public class ManagementApi implements IManagementApi {
     @Override
     public void cleanup() {
         subnet.getCurrentFE().setHostType(null);
-        JSchSessionFactory.closeSession(subnet);
+        JSchSessionFactory.closeSession(SshKeyType.MANAGEMENT_KEY.getKey(subnet
+                .getSubnetId()));
         confHelper.reset();
     }
 }

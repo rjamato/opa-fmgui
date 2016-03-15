@@ -35,6 +35,19 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.9  2015/11/24 15:35:58  rjtierne
+ *  Archive Log:    PR 130965 : ESM Support on Log Viewer
+ *  Archive Log:    - Moved HelpAction references to the view since it uses a view component
+ *  Archive Log:
+ *  Archive Log:    Revision 1.8  2015/11/18 23:54:33  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Now supports user configured login/logout feature
+ *  Archive Log:    - Schedule commands on a SwingWorker to prevent UI lockup
+ *  Archive Log:    - Keep track of last SshUserName used when in auto-config
+ *  Archive Log:    - Install the new help button in the Help Broker
+ *  Archive Log:    - Moved showLoginView() from view
+ *  Archive Log:    - Additional refactoring of commanding by scheduling on SwingWorker
+ *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/10/06 15:51:56  rjtierne
  *  Archive Log:    PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
  *  Archive Log:    - In method startLog(), when hostType is null or ESM, call onEsmHost()
@@ -90,24 +103,26 @@ import org.slf4j.LoggerFactory;
 
 import com.intel.stl.api.logs.ILogApi;
 import com.intel.stl.api.logs.ILogStateListener;
+import com.intel.stl.api.logs.LogConfigType;
 import com.intel.stl.api.logs.LogErrorType;
+import com.intel.stl.api.logs.LogInitBean;
+import com.intel.stl.api.logs.LogMessageType;
 import com.intel.stl.api.logs.LogResponse;
 import com.intel.stl.api.subnet.HostInfo;
-import com.intel.stl.api.subnet.HostType;
 import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.ui.admin.impl.SMLogModel;
 import com.intel.stl.ui.admin.view.ILoginListener;
+import com.intel.stl.ui.admin.view.logs.LogViewType;
 import com.intel.stl.ui.admin.view.logs.SMLogView;
 import com.intel.stl.ui.common.IProgressObserver;
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UIConstants;
-import com.intel.stl.ui.common.UILabels;
 import com.intel.stl.ui.console.LoginBean;
 import com.intel.stl.ui.main.Context;
 import com.intel.stl.ui.model.LogErrorTypeViz;
 
-public class SMLogController implements ILogViewListener, ILogStateListener,
-        ILoginListener, ITextMenuListener {
+public class SMLogController implements ILogController, ILogViewListener,
+        ILogStateListener, ILoginListener, ITextMenuListener {
 
     private final static Logger log = LoggerFactory
             .getLogger(SMLogController.class);
@@ -122,7 +137,9 @@ public class SMLogController implements ILogViewListener, ILogStateListener,
 
     public boolean endOfFile = true;
 
-    public boolean initInProgress = true;
+    public boolean initInProgress;
+
+    public boolean reconfiguring;
 
     private IProgressObserver observer;
 
@@ -134,14 +151,19 @@ public class SMLogController implements ILogViewListener, ILogStateListener,
 
     private FilterTask filterTask;
 
+    private GetLogTask logTask;
+
     private boolean dirty;
 
     private DocumentListener setDirtyListener;
+
+    private String subnetUserName;
 
     public SMLogController(SMLogModel model, SMLogView view) {
         this.model = model;
         this.view = view;
         this.view.setLoginListener(this);
+        this.view.setLogController(this);
         this.view.setLogViewListener(this);
         this.view.setTextMenuListener(this);
     }
@@ -177,20 +199,24 @@ public class SMLogController implements ILogViewListener, ILogStateListener,
         view.setView(name);
     }
 
-    public LoginBean getCredentials() {
-        return view.getCredentials();
+    public void showLoginView() {
+        // When the application is first started, the model is updated with
+        // whatever host information was stored in the SubnetDescription
+        HostInfo hostInfo = getHostInfo();
+        LoginBean credentials =
+                new LoginBean(hostInfo.getSshUserName(), hostInfo.getHost(),
+                        String.valueOf(hostInfo.getSshPortNum()));
+        model.setCredentials(credentials);
+        model.setLogFilePath(logApi.getLogFilePath());
+
+        // Then the Login View is updated with the credentials in the model
+        view.clearLoginData();
+        view.updateLoginView(model);
+        showView(LogViewType.LOGIN.getValue());
     }
 
-    public void startLog() {
-
-        HostType hostType = getHostInfo().getHostType();
-        if ((hostType != null) && (hostType.equals(HostType.ESM))) {
-            onEsmHost(LogErrorType.ESM_NOT_SUPPORTED,
-                    UILabels.STL50215_ESM_NOT_SUPPORTED);
-        } else {
-            logApi.startLog(subnet, false, getCredentials().getPassword());
-            view.setRunningVisible(true);
-        }
+    public LoginBean getCredentials() {
+        return view.getCredentials();
     }
 
     /*
@@ -200,7 +226,10 @@ public class SMLogController implements ILogViewListener, ILogStateListener,
      */
     @Override
     public void onPrevious(long numLines) {
-        logApi.schedulePreviousPage(numLines);
+        checkLogTask();
+        logTask =
+                new GetLogTask(logApi, LogMessageType.PREVIOUS_PAGE, numLines);
+        logTask.execute();
     }
 
     /*
@@ -210,7 +239,29 @@ public class SMLogController implements ILogViewListener, ILogStateListener,
      */
     @Override
     public void onNext(long numLines) {
-        logApi.scheduleNextPage(numLines);
+        checkLogTask();
+        logTask = new GetLogTask(logApi, LogMessageType.NEXT_PAGE, numLines);
+        logTask.execute();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.admin.impl.logs.ILogViewListener#onConfigure()
+     */
+    @Override
+    public void onConfigure() {
+        // Shut down logging
+        logApi.stopLog();
+
+        // Clear any searches
+        onCancelSearch(view.getLastSearchKey());
+        view.resetSearchField();
+        view.resetLogin();
+
+        view.clearLoginData();
+        view.updateLoginView(model);
+        showView(LogViewType.LOGIN.getValue());
     }
 
     /*
@@ -220,7 +271,15 @@ public class SMLogController implements ILogViewListener, ILogStateListener,
      */
     @Override
     public void onLastLines(long numLines) {
-        logApi.scheduleLastLines(numLines);
+        checkLogTask();
+        logTask = new GetLogTask(logApi, LogMessageType.LAST_LINES, numLines);
+        logTask.execute();
+    }
+
+    public void onNumLines() {
+        checkLogTask();
+        logTask = new GetLogTask(logApi, LogMessageType.NUM_LINES, 0);
+        logTask.execute();
     }
 
     /*
@@ -243,6 +302,9 @@ public class SMLogController implements ILogViewListener, ILogStateListener,
                     if (initInProgress) {
                         logApi.scheduleLastLines(view.getNumLinesRequested());
                         initInProgress = false;
+
+                        // Reset the login view
+                        view.resetLogin();
                     }
 
                 } catch (NumberFormatException e) {
@@ -254,8 +316,9 @@ public class SMLogController implements ILogViewListener, ILogStateListener,
             case PREVIOUS_PAGE:
                 model.setLogMsg(response);
                 model.setFilteredDoc(response.getEntries());
-                view.updateView(model);
+                view.updateLogView(model);
                 view.restoreUserActions(firstPage, lastPage);
+                view.setPageRunningVisible(false);
                 break;
 
             case LAST_LINES:
@@ -263,13 +326,14 @@ public class SMLogController implements ILogViewListener, ILogStateListener,
                 model.setFilteredDoc(response.getEntries());
                 view.showProgress(false);
                 view.showLogView();
-                view.updateView(model);
+                view.updateLogView(model);
                 view.restoreUserActions(firstPage, lastPage);
+                view.setRefreshRunningVisible(false);
                 break;
 
             case CHECK_FOR_FILE:
                 String fileName = response.getEntries().get(0);
-                model.setFileName(fileName);
+                model.setLogFilePath(fileName);
                 view.showFileName(fileName);
                 break;
 
@@ -280,8 +344,6 @@ public class SMLogController implements ILogViewListener, ILogStateListener,
             default:
                 break;
         }
-
-        view.setRunningVisible(false);
     }
 
     /*
@@ -293,11 +355,32 @@ public class SMLogController implements ILogViewListener, ILogStateListener,
     public void credentialsReady() {
 
         if (!logApi.isRunning()) {
+            // Get the log config type and log file path
+            LogConfigType configType = view.getConfigType();
+            String logFilePath = view.getLogFilePath();
+
+            // Update the model with the user's login entries
             LoginBean credentials = view.getCredentials();
-            subnet.getCurrentFE().setSshUserName(credentials.getUserName());
-            subnet.getCurrentFE().setSshPortNum(
-                    Integer.valueOf(credentials.getPortNum()));
-            logApi.startLog(subnet, false, view.getCredentials().getPassword());
+            model.setCredentials(credentials);
+            model.setLogFilePath(logFilePath);
+
+            // Save the last user name used for auto-config
+            if (configType == LogConfigType.AUTO_CONFIG) {
+                subnetUserName = view.getCredentials().getUserName();
+            }
+
+            // Update SshUserName in the subnet
+            subnet.getCurrentFE().setSshUserName(
+                    view.getCredentials().getUserName());
+
+            // Create a LogInitBean with all the needed information
+            String logHost = credentials.getHostName();
+            LogInitBean logInitBean =
+                    new LogInitBean(subnet, configType, logHost, logFilePath,
+                            false, view.getCredentials().getUserName());
+
+            initInProgress = true;
+            logApi.startLog(logInitBean, view.getCredentials().getPassword());
         }
     }
 
@@ -312,38 +395,12 @@ public class SMLogController implements ILogViewListener, ILogStateListener,
     public void onError(LogErrorType errorCode, Object... data) {
         int code = errorCode.getId();
         view.showProgress(false);
-        view.setRunningVisible(false);
+        view.setPageRunningVisible(false);
+        view.setRefreshRunningVisible(false);
         view.restoreUserActions(firstPage, lastPage);
         view.clearLoginData();
-
-        if (errorCode.equals(LogErrorType.LOG_FILE_NOT_FOUND)) {
-            view.showErrorDialog(LogErrorTypeViz.values()[code].getLabel()
-                    .getDescription(data));
-        } else {
-            view.showError(LogErrorTypeViz.values()[code].getLabel()
-                    .getDescription(data));
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.intel.stl.api.logs.ILogStateListener#onEsmHost(com.intel.stl.api.
-     * logs.LogErrorType, java.lang.Object[])
-     */
-    @Override
-    public void onEsmHost(LogErrorType errorCode, Object... data) {
-        int code = errorCode.getId();
-        List<String> entries = new ArrayList<String>();
-        entries.add(LogErrorTypeViz.values()[code].getLabel().getDescription(
-                data));
-        view.showLogEntry(entries);
-        view.enableControlPanel(false);
-        view.disableUserActions();
-        view.setRunningVisible(false);
-        view.setEsmView();
-        view.showLogView();
+        view.showError(LogErrorTypeViz.values()[code].getLabel()
+                .getDescription(data));
         logApi.stopLog();
     }
 
@@ -357,7 +414,6 @@ public class SMLogController implements ILogViewListener, ILogStateListener,
         if (initInProgress) {
             logApi.scheduleLastLines(view.getNumLinesRequested());
             view.setNumLineIcon(true);
-            view.clearLoginData();
         }
     }
 
@@ -476,10 +532,11 @@ public class SMLogController implements ILogViewListener, ILogStateListener,
      * @see com.intel.stl.api.logs.ILogStateListener#onSessionDown()
      */
     @Override
+    // This method is not used at this time!
     public void onSessionDown(String errorMessage) {
         view.showError(errorMessage);
         view.showLoginView();
-        initInProgress = true;
+        logApi.stopLog();
     }
 
     /*
@@ -499,6 +556,12 @@ public class SMLogController implements ILogViewListener, ILogStateListener,
     protected synchronized void checkFilter() {
         if (filterTask != null && !filterTask.isDone()) {
             filterTask.cancel(true);
+        }
+    }
+
+    protected synchronized void checkLogTask() {
+        if (logTask != null && !logTask.isDone()) {
+            logTask.cancel(true);
         }
     }
 
@@ -567,51 +630,6 @@ public class SMLogController implements ILogViewListener, ILogStateListener,
         view.resetSearchField();
         view.unHighlightText();
         view.showNumMatches(0);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.intel.stl.ui.admin.impl.logs.ILogViewListener#getDocumentListener()
-     */
-    @Override
-    public DocumentListener getDocumentListener() {
-
-        if (setDirtyListener == null) {
-            setDirtyListener = new DocumentListener() {
-
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    dirty = true;
-                    onDirty();
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    dirty = true;
-                    onCancelSearch(view.getLastSearchKey());
-                }
-
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    dirty = true;
-                    onDirty();
-                }
-            };
-        }
-
-        return setDirtyListener;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.intel.stl.ui.admin.impl.logs.ILogViewListener#isDirty()
-     */
-    @Override
-    public boolean isDirty() {
-        return dirty;
     }
 
     /*
@@ -686,8 +704,92 @@ public class SMLogController implements ILogViewListener, ILogStateListener,
 
     @Override
     public void cancelLogin() {
-
         view.clearLoginData();
+        view.updateLoginView(model);
         logApi.stopLog();
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.admin.impl.logs.ILogController#getDocumentListener()
+     */
+    @Override
+    public DocumentListener getDocumentListener() {
+
+        if (setDirtyListener == null) {
+            setDirtyListener = new DocumentListener() {
+
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    dirty = true;
+                    onDirty();
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    dirty = true;
+                    onCancelSearch(view.getLastSearchKey());
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                    dirty = true;
+                    onDirty();
+                }
+            };
+        }
+
+        return setDirtyListener;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.admin.impl.logs.ILogController#isDirty()
+     */
+    @Override
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    public void setCredentials(LoginBean credentials) {
+        model.setCredentials(credentials);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.admin.impl.logs.ILogViewListener#updateLoginView()
+     */
+    @Override
+    public void updateLoginView() {
+        // model.setLogFilePath(logApi.getLogFilePath());
+        view.updateLoginView(model);
+    }
+
+    public boolean isInitInProgress() {
+        return initInProgress;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.intel.stl.ui.admin.impl.logs.ILogViewListener#restoreAutoConfigView()
+     */
+    @Override
+    public void restoreAutoConfigView() {
+        HostInfo hostInfo = subnet.getCurrentFE();
+        hostInfo.setSshUserName(subnetUserName);
+        LoginBean credentials =
+                new LoginBean(hostInfo.getSshUserName(), hostInfo.getHost(),
+                        String.valueOf(hostInfo.getSshPortNum()));
+        model.setCredentials(credentials);
+        model.setLogFilePath(logApi.getDefaultLogFilePath());
+        view.updateLoginView(model);
+
+    }
+
 }

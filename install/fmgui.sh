@@ -22,7 +22,7 @@ DEBUG=0
 JAVA_REQ=`echo 1.7 | sed -e 's;\.;0;g'`
 INSTDIR=`dirname $0`
 JAVA=nojava
-JAR=/usr/share/java/fmgui/fmgui-10_0_0_0_635.jar
+JAR=/usr/share/java/fmgui/fmgui.jar
 
 if [ -n "$OPA_JAVA" ]; then
     # Check what's been provided in environment variable OPA_JAVA

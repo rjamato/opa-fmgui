@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.40  2015/11/02 23:53:21  jijunwan
+ *  Archive Log:    PR 131396 - Incorrect Connectivity Table for a VF port
+ *  Archive Log:    - improved ConnectivityTableController to support VF port
+ *  Archive Log:
  *  Archive Log:    Revision 1.39  2015/08/17 18:53:41  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -201,6 +205,7 @@ import org.slf4j.LoggerFactory;
 import com.intel.stl.api.Utils;
 import com.intel.stl.api.configuration.LinkQuality;
 import com.intel.stl.api.performance.PortCountersBean;
+import com.intel.stl.api.performance.VFPortCountersBean;
 import com.intel.stl.api.subnet.ISubnetApi;
 import com.intel.stl.api.subnet.LinkRecordBean;
 import com.intel.stl.api.subnet.NodeRecordBean;
@@ -225,6 +230,7 @@ import com.intel.stl.ui.publisher.Task;
 import com.intel.stl.ui.publisher.TaskScheduler;
 import com.intel.stl.ui.publisher.subscriber.PortCounterSubscriber;
 import com.intel.stl.ui.publisher.subscriber.SubscriberType;
+import com.intel.stl.ui.publisher.subscriber.VFPortCounterSubscriber;
 
 public class ConnectivityTableController {
 
@@ -241,17 +247,21 @@ public class ConnectivityTableController {
 
     private TaskScheduler taskScheduler;
 
-    private final Map<Point, PortSchedule> schedules;
+    private final Map<Point, PortSchedule<?>> schedules;
 
     private final SingleTaskManager taskMgr;
 
     private int currentLid;
+
+    private String currentVFName;
 
     private short[] currentPorts;
 
     private LinkedHashMap<GraphEdge, Short> currentPaths;
 
     private PortCounterSubscriber portCounterSubscriber;
+
+    private VFPortCounterSubscriber vfPortCounterSubscriber;
 
     /**
      * Description:
@@ -263,7 +273,7 @@ public class ConnectivityTableController {
         super();
         this.model = model;
         this.view = view;
-        schedules = new HashMap<Point, PortSchedule>();
+        schedules = new HashMap<Point, PortSchedule<?>>();
         taskMgr = new SingleTaskManager();
     }
 
@@ -275,6 +285,9 @@ public class ConnectivityTableController {
         portCounterSubscriber =
                 (PortCounterSubscriber) taskScheduler
                         .getSubscriber(SubscriberType.PORT_COUNTER);
+        vfPortCounterSubscriber =
+                (VFPortCounterSubscriber) taskScheduler
+                        .getSubscriber(SubscriberType.VF_PORT_COUNTER);
 
         clear();
 
@@ -283,10 +296,11 @@ public class ConnectivityTableController {
         }
     }
 
-    public synchronized void showConnectivity(int nodeLid,
+    public synchronized void showConnectivity(int nodeLid, String vfName,
             IProgressObserver observer, short... portList) {
         clearScheduledTasks();
         currentLid = nodeLid;
+        currentVFName = vfName;
         currentPorts = portList;
         refreshConnectivity(observer);
     }
@@ -299,8 +313,8 @@ public class ConnectivityTableController {
                     public List<ConnectivityTableData> call(
                             ICancelIndicator cancelIndicator) throws Exception {
                         List<ConnectivityTableData> data =
-                                createTable(currentLid, cancelIndicator,
-                                        currentPorts);
+                                createTable(currentLid, currentVFName,
+                                        cancelIndicator, currentPorts);
                         return data;
                     }
                 };
@@ -340,13 +354,15 @@ public class ConnectivityTableController {
     }
 
     public synchronized void showPathConnectivity(
-            LinkedHashMap<GraphEdge, Short> portMap, IProgressObserver observer) {
+            LinkedHashMap<GraphEdge, Short> portMap, String vfName,
+            IProgressObserver observer) {
         if (currentPaths != null && currentPaths.equals(portMap)) {
             return;
         }
 
         clearScheduledTasks();
         currentPaths = portMap;
+        currentVFName = vfName;
         refreshPathConnectivity(observer);
     }
 
@@ -358,7 +374,8 @@ public class ConnectivityTableController {
                     public List<ConnectivityTableData> call(
                             ICancelIndicator cancelIndicator) throws Exception {
                         List<ConnectivityTableData> data =
-                                createPathTable(currentPaths, cancelIndicator);
+                                createPathTable(currentPaths, currentVFName,
+                                        cancelIndicator);
                         return data;
                     }
                 };
@@ -408,7 +425,7 @@ public class ConnectivityTableController {
      * @throws SubnetException
      * @throws SubnetDataNotFoundException
      */
-    protected List<ConnectivityTableData> createTable(int lid,
+    protected List<ConnectivityTableData> createTable(int lid, String vfName,
             ICancelIndicator indicator, short... portList)
             throws SubnetException, SubnetDataNotFoundException {
         // TODO: improve performance by querying all ports once!!
@@ -467,8 +484,8 @@ public class ConnectivityTableController {
                         subnetApi.getPortByPortNum(lid, portNum);
                 ConnectivityTableData nodeData =
                         createTableEntry(dataList.size(),
-                                linkBean.getFromLID(), portNum, portBean,
-                                linkBean, nodeBean, false);
+                                linkBean.getFromLID(), vfName, portNum,
+                                portBean, linkBean, nodeBean, false);
                 if (nodeData != null) {
                     // Update the slow link state
                     nodeData.setSlowLinkState(Utils.isSlowPort(portBean
@@ -486,8 +503,8 @@ public class ConnectivityTableController {
                                 portNum);
                 nodeData =
                         createTableEntry(dataList.size(),
-                                linkBean.getFromLID(), portNum, portBean,
-                                linkBean, nbrNodeBean, true);
+                                linkBean.getFromLID(), vfName, portNum,
+                                portBean, linkBean, nbrNodeBean, true);
                 if (nodeData != null) {
                     // Update the slow link state
                     nodeData.setSlowLinkState(Utils.isSlowPort(portBean
@@ -513,8 +530,9 @@ public class ConnectivityTableController {
      * @throws SubnetDataNotFoundException
      */
     protected List<ConnectivityTableData> createPathTable(
-            LinkedHashMap<GraphEdge, Short> portMap, ICancelIndicator indicator)
-            throws SubnetException, SubnetDataNotFoundException {
+            LinkedHashMap<GraphEdge, Short> portMap, String vfName,
+            ICancelIndicator indicator) throws SubnetException,
+            SubnetDataNotFoundException {
         List<ConnectivityTableData> res =
                 new ArrayList<ConnectivityTableData>();
         for (GraphEdge edge : portMap.keySet()) {
@@ -525,7 +543,7 @@ public class ConnectivityTableController {
             int lid = edge.getFromLid();
             short port = portMap.get(edge);
             List<ConnectivityTableData> tableData =
-                    createTable(lid, indicator, port);
+                    createTable(lid, vfName, indicator, port);
             if (tableData != null) {
                 res.addAll(tableData);
             }
@@ -545,9 +563,10 @@ public class ConnectivityTableController {
      * @param nodeBean
      * @return
      */
+    @SuppressWarnings("deprecation")
     private ConnectivityTableData createTableEntry(int index, int lid,
-            short portNum, PortRecordBean portBean, LinkRecordBean linkBean,
-            NodeRecordBean nodeBean, boolean isNeighbor) {
+            String vfName, short portNum, PortRecordBean portBean,
+            LinkRecordBean linkBean, NodeRecordBean nodeBean, boolean isNeighbor) {
         ConnectivityTableData nodeData = null;
         if (nodeBean.getNodeType() == NodeType.HFI) {
             portNum = 1; // we use local port number for display
@@ -594,41 +613,33 @@ public class ConnectivityTableController {
         nodeData.setEnabledLinkSpeed(portProperties.getLinkSpeedEnabled());
         nodeData.setSupportedLinkSpeed(portProperties.getLinkSpeedSupported());
 
-        PortSchedule schedule =
-                schedulePortPerformanceTask(index, nodeData, lid, portNum);
-        PortCountersBean counters =
-                taskScheduler.getPerformanceApi().getPortCounters(lid, portNum);
-
         // Give the cableInfo a value so the icon will appear
         nodeData.setCableInfo("");
 
-        // If port counters bean is null, set the link quality indicator to
-        // unknown and log the error
-        if (counters != null) {
-            nodeData.setLinkQualityData(counters.getLinkQualityIndicator());
+        PortSchedule<?> schedule = null;
+        if (vfName == null) {
+            schedule =
+                    schedulePortPerformanceTask(index, nodeData, lid, portNum);
         } else {
-            nodeData.setLinkQualityData(LinkQuality.UNKNOWN.getValue());
-            log.error(STLConstants.K3047_PORT_BEAN_COUNTERS_NULL.getValue());
+            schedule =
+                    scheduleVFPortPerformanceTask(index, nodeData, lid, vfName,
+                            portNum);
         }
+        schedule.refresh();
 
-        schedule.callback.onDone(counters);
         return nodeData;
     }
 
-    protected PortSchedule schedulePortPerformanceTask(final int index,
-            final ConnectivityTableData dataEntrty, int lid, short portNum) {
+    protected PortSchedule<PortCountersBean> schedulePortPerformanceTask(
+            final int index, final ConnectivityTableData dataEntrty,
+            final int lid, final short portNum) {
         ICallback<PortCountersBean> callback =
                 new CallbackAdapter<PortCountersBean>() {
-                    /*
-                     * (non-Javadoc)
-                     * 
-                     * @see
-                     * com.intel.stl.ui.publisher.CallbackAdapter#onDone(java
-                     * .lang.Object)
-                     */
                     @Override
                     public synchronized void onDone(PortCountersBean pcBean) {
                         if (pcBean == null) {
+                            log.error(STLConstants.K3047_PORT_BEAN_COUNTERS_NULL
+                                    .getValue());
                             return;
                         }
 
@@ -677,11 +688,13 @@ public class ConnectivityTableController {
                                 .getUncorrectableErrors());
                         perfData.setSwPortCongestion(pcBean
                                 .getSwPortCongestion());
-
+                        final byte linkQuality =
+                                pcBean.getLinkQualityIndicator();
                         Util.runInEDT(new Runnable() {
                             @Override
                             public void run() {
                                 dataEntrty.setPerformanceData(perfData);
+                                dataEntrty.setLinkQualityData(linkQuality);
                                 if (model.getRowCount() > 0
                                         && index < model.getRowCount()) {
                                     model.fireTableRowsUpdated(index, index);
@@ -694,19 +707,108 @@ public class ConnectivityTableController {
         Task<PortCountersBean> task =
                 portCounterSubscriber.registerPortCounters(lid, portNum,
                         callback);
+        PortSchedule<PortCountersBean> ps =
+                new PortSchedule<PortCountersBean>(callback, task) {
+                    @Override
+                    public void refresh() {
+                        PortCountersBean counters =
+                                taskScheduler.getPerformanceApi()
+                                        .getPortCounters(lid, portNum);
+                        callback.onDone(counters);
+                    }
+
+                    @Override
+                    public void clear() {
+                        portCounterSubscriber.deregisterPortCounters(task,
+                                callback);
+                    }
+                };
 
         synchronized (schedules) {
-            schedules.put(new Point(lid, portNum), new PortSchedule(callback,
-                    task));
+            schedules.put(new Point(lid, portNum), ps);
         }
-        return new PortSchedule(callback, task);
+        return ps;
+    }
+
+    protected PortSchedule<VFPortCountersBean> scheduleVFPortPerformanceTask(
+            final int index, final ConnectivityTableData dataEntrty,
+            final int lid, final String vfName, final short portNum) {
+        ICallback<VFPortCountersBean> callback =
+                new CallbackAdapter<VFPortCountersBean>() {
+                    @Override
+                    public synchronized void onDone(VFPortCountersBean pcBean) {
+                        if (pcBean == null) {
+                            log.error(STLConstants.K3047_PORT_BEAN_COUNTERS_NULL
+                                    .getValue());
+                            return;
+                        }
+
+                        final PerformanceData perfData = new PerformanceData();
+                        perfData.setTxPackets(pcBean.getPortVFXmitPkts());
+                        perfData.setRxPackets(pcBean.getPortVFRcvPkts());
+                        perfData.setTxDiscards(pcBean.getPortVFXmitDiscards());
+                        perfData.setPortRcvData(pcBean.getPortVFRcvData());
+                        perfData.setPortXmitData(pcBean.getPortVFXmitData());
+
+                        perfData.setPortRcvFECN(pcBean.getPortVFRcvFECN());
+                        perfData.setPortRcvBECN(pcBean.getPortVFRcvBECN());
+                        perfData.setPortRcvBubble(pcBean.getPortVFRcvBubble());
+
+                        perfData.setPortXmitWait(pcBean.getPortVFXmitWait());
+                        perfData.setPortXmitTimeCong(pcBean
+                                .getPortVFXmitTimeCong());
+                        perfData.setPortXmitWastedBW(pcBean
+                                .getPortVFXmitWastedBW());
+                        perfData.setPortXmitWaitData(pcBean
+                                .getPortVFXmitWaitData());
+
+                        Util.runInEDT(new Runnable() {
+                            @Override
+                            public void run() {
+                                dataEntrty.setPerformanceData(perfData);
+                                dataEntrty
+                                        .setLinkQualityData(LinkQuality.UNKNOWN
+                                                .getValue());
+                                if (model.getRowCount() > 0
+                                        && index < model.getRowCount()) {
+                                    model.fireTableRowsUpdated(index, index);
+                                }
+                            }
+                        });
+                    }
+                };
+
+        Task<VFPortCountersBean> task =
+                vfPortCounterSubscriber.registerVFPortCounters(vfName, lid,
+                        portNum, callback);
+        PortSchedule<VFPortCountersBean> ps =
+                new PortSchedule<VFPortCountersBean>(callback, task) {
+                    @Override
+                    public void refresh() {
+                        VFPortCountersBean counters =
+                                taskScheduler
+                                        .getPerformanceApi()
+                                        .getVFPortCounters(vfName, lid, portNum);
+                        callback.onDone(counters);
+                    }
+
+                    @Override
+                    public void clear() {
+                        vfPortCounterSubscriber.deregisterVFPortCounters(task,
+                                callback);
+                    }
+                };
+
+        synchronized (schedules) {
+            schedules.put(new Point(lid, portNum), ps);
+        }
+        return ps;
     }
 
     protected synchronized void clearScheduledTasks() {
         synchronized (schedules) {
-            for (PortSchedule schedule : schedules.values()) {
-                portCounterSubscriber.deregisterPortCounters(schedule.task,
-                        schedule.callback);
+            for (PortSchedule<?> schedule : schedules.values()) {
+                schedule.clear();
             }
             schedules.clear();
         }
@@ -750,10 +852,10 @@ public class ConnectivityTableController {
 
     }
 
-    class PortSchedule {
-        ICallback<PortCountersBean> callback;
+    abstract class PortSchedule<E> {
+        ICallback<E> callback;
 
-        Task<PortCountersBean> task;
+        Task<E> task;
 
         /**
          * Description:
@@ -761,12 +863,14 @@ public class ConnectivityTableController {
          * @param callback
          * @param task
          */
-        public PortSchedule(ICallback<PortCountersBean> callback,
-                Task<PortCountersBean> task) {
+        public PortSchedule(ICallback<E> callback, Task<E> task) {
             super();
             this.callback = callback;
             this.task = task;
         }
 
+        public abstract void refresh();
+
+        public abstract void clear();
     }
 }

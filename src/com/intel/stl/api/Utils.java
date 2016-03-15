@@ -35,6 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.11  2015/12/08 20:54:08  rjtierne
+ *  Archive Log:    PR 131945 - "UnknownHostKey" when trying to unlock console
+ *  Archive Log:    - In method getKnownHosts(), create the .ssh directory if it doesn't
+ *  Archive Log:    exist before attempting to create the known_hosts file.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.10  2015/10/29 12:11:40  robertja
+ *  Archive Log:    PR 131014 MailNotifier is now updated if user changes events or recipients in wizard after start-up.
+ *  Archive Log:
  *  Archive Log:    Revision 1.9  2015/08/17 18:48:51  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - change backend files' headers
@@ -334,6 +342,10 @@ public class Utils {
         }
 
         try {
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+
             if (file.createNewFile()) {
                 return knownHost;
             }
@@ -355,24 +367,28 @@ public class Utils {
     public static String listToConcatenatedString(List<String> stringList,
             String delimiter) {
         StringBuffer sb = new StringBuffer();
-        for (String str : stringList) {
-            if (str.contains(delimiter)) {
-                throw new IllegalArgumentException("Source name '" + str
-                        + "' contains DELIMITER '" + delimiter + "'");
-            }
-
-            if (sb.length() == 0) {
-                sb.append(str);
-            } else {
-                sb.append(delimiter + str);
-            }
+	    if (stringList != null){
+	        for (String str : stringList) {
+	        	if(str != null){
+		            if (str.contains(delimiter)) {
+		                throw new IllegalArgumentException("Source name '" + str
+		                        + "' contains DELIMITER '" + delimiter + "'");
+		            }
+		
+		            if (sb.length() == 0) {
+		                sb.append(str);
+		            } else {
+		                sb.append(delimiter + str);
+		            }
+	        	}
+	        }
         }
         return sb.toString();
     }
 
     public static List<String> concatenatedStringToList(String concatString,
             String delimiter) {
-        if (concatString == null) {
+        if ((concatString == null) || concatString.isEmpty()){
             return new ArrayList<String>();
         } else {
             return Arrays.asList(concatString.split(delimiter));

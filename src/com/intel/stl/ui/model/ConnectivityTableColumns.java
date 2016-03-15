@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.10  2015/11/02 20:26:15  jijunwan
+ *  Archive Log:    PR 131384 - Incorrect label name on port counter panel
+ *  Archive Log:    - renamed constant RX_CUMULATIVE_DATA to RX_CUMULATIVE_DATA_MB, and TX_CUMULATIVE_DATA to TX_CUMULATIVE_DATA_MB
+ *  Archive Log:    - introduced new constants for RvcData and XmitData and applied them on port counters panel
+ *  Archive Log:
  *  Archive Log:    Revision 1.9  2015/08/28 16:34:05  jijunwan
  *  Archive Log:    PR 129821 - connectivity table has no Link Width Down Grade data
  *  Archive Log:    - updated tooltip text
@@ -141,7 +146,7 @@ public enum ConnectivityTableColumns {
     SUPPORTED_LINK_SPEED(STLConstants.K0511_LINK_SPEED_SUPPORTED.getValue(),
             STLConstants.K0511_LINK_SPEED_SUPPORTED.getValue()),
 
-    RX_DATA(STLConstants.K0729_RX_CUMULATIVE_DATA.getValue(),
+    RX_DATA(STLConstants.K0729_RX_CUMULATIVE_DATA_MB.getValue(),
             STLConstants.K3207_RX_CUMULATIVE_DATA_DESCRIPTION.getValue()),
 
     RX_PACKETS(STLConstants.K0728_RX_CUMULATIVE_PACKETS.getValue(),
@@ -172,7 +177,7 @@ public enum ConnectivityTableColumns {
     RX_BUBBLE(STLConstants.K0842_RX_BUBBLE.getValue(),
             STLConstants.K3225_RX_BUBBLE_DESCRIPTION.getValue()),
 
-    TX_DATA(STLConstants.K0735_TX_CUMULATIVE_DATA.getValue(),
+    TX_DATA(STLConstants.K0735_TX_CUMULATIVE_DATA_MB.getValue(),
             STLConstants.K3213_TX_CUMULATIVE_DATA_DESCRIPTION.getValue()),
 
     TX_PACKETS(STLConstants.K0734_TX_CUMULATIVE_PACKETS.getValue(),

@@ -35,6 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.60  2015/11/18 23:56:14  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Added new INVISIBLE_ICON to serve as a placeholder for RUNNING icon when not visible
+ *  Archive Log:
+ *  Archive Log:    Revision 1.59  2015/10/21 15:03:05  jijunwan
+ *  Archive Log:    PR 131077 - Virtual Fabrics list does not reflect enabled status per item in "list tile" of admin window
+ *  Archive Log:    - added new icons for enabled VF
+ *  Archive Log:
  *  Archive Log:    Revision 1.58  2015/08/17 18:54:12  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -273,6 +281,8 @@ public enum UIImages {
     BACK_BLUE_ICON("left-previous_12x12.png"),
     EMPTY_BOX_ICON("emptyBox_16x16.png"),
     CHECK_BOX_ICON("checkBox_16x16.png"),
+    CHECK_BLUE_ICON("check_blue_16x16.png"),
+    CHECK_WHITE_ICON("check_white_16x16.png"),
     FOLDER_ICON("folder_16x16.png"),
     INFORMATION_ICON("information_16x16.png"),
     ZOOM_IN_ICON("zoom_in_16x16.png"),
@@ -342,7 +352,8 @@ public enum UIImages {
     SEARCH("search_16x16.png"),
     EXPAND_DOWN("expandDown_10x10.png"),
     EXPAND_UP("expandUp_10x10.png"),
-    CABLE("cable_16x16.png");
+    CABLE("cable_16x16.png"),
+    INVISIBLE("invisible_16x16.png");
 
     private static final String STL_IMAGES_PATH = "/image/";
 

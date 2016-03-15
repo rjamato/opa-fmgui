@@ -34,6 +34,26 @@
  *  Archive Source: $Source$
  * 
  *  Archive Log: $Log$
+ *  Archive Log: Revision 1.152  2015/12/03 20:12:46  jijunwan
+ *  Archive Log: PR 130614 - Select All / Deselect All buttons
+ *  Archive Log: - Added "select all" and "unselect all" buttons
+ *  Archive Log:
+ *  Archive Log: Revision 1.151  2015/12/03 14:56:28  jypak
+ *  Archive Log: PR 131817 - FM GUI, the status Column to the right requires a header/title.
+ *  Archive Log:
+ *  Archive Log: Revision 1.150  2015/11/24 16:48:50  rjtierne
+ *  Archive Log: PR 131720 - Code cleanup for PRQCode cleanup for PRQ
+ *  Archive Log: - Created new constant K0808 describing the error when multiple selections are made within different device groups; i.e. port selection within both HFIs & Switches
+ *  Archive Log:
+ *  Archive Log: Revision 1.149  2015/11/18 23:55:53  rjtierne
+ *  Archive Log: PR 130965 - ESM support on Log Viewer
+ *  Archive Log: - Added constants K2163-K2170 for supporting ESM Log Viewer
+ *  Archive Log:
+ *  Archive Log: Revision 1.148  2015/11/02 20:26:14  jijunwan
+ *  Archive Log: PR 131384 - Incorrect label name on port counter panel
+ *  Archive Log: - renamed constant RX_CUMULATIVE_DATA to RX_CUMULATIVE_DATA_MB, and TX_CUMULATIVE_DATA to TX_CUMULATIVE_DATA_MB
+ *  Archive Log: - introduced new constants for RvcData and XmitData and applied them on port counters panel
+ *  Archive Log:
  *  Archive Log: Revision 1.147  2015/10/09 17:48:13  fernande
  *  Archive Log: PR130753 - XML parse errors when new VF is created from FM GUI. Added check during validation of opaconfig.xml to make sure the "All" application is not added if a PKey is especified.
  *  Archive Log:
@@ -285,6 +305,8 @@ public enum STLConstants {
     K0125_NUM_EVENTS(125),
     K0126_EVENT_RATE(126),
     K0127_PERCENT_OF_THRESHOLD(127),
+
+    K0128_NODES_DISTR_SEVERITY(128),
 
     K0200_PERFORMANCE(200),
     K0201_PERFORMANCE_DESCRIPTION(201),
@@ -708,13 +730,13 @@ public enum STLConstants {
     K0726_RX_PKTS_RATE(726),
     K0727_RX_DATA_RATE(727),
     K0728_RX_CUMULATIVE_PACKETS(728),
-    K0729_RX_CUMULATIVE_DATA(729),
-    // K0730 is Available
+    K0729_RX_CUMULATIVE_DATA_MB(729),
+    K0730_RX_CUMULATIVE_DATA(730),
     K0731_TX_DISCARDS(731),
-    // K0732 is Available
+    K0732_TX_CUMULATIVE_DATA(732),
     K0733_TX_PKTS_RATE(733),
     K0734_TX_CUMULATIVE_PACKETS(734),
-    K0735_TX_CUMULATIVE_DATA(735),
+    K0735_TX_CUMULATIVE_DATA_MB(735),
     K0736_TX_DATA_RATE(736),
     K0737_FM_CONFIG_ERRRORS(737),
     // Logging Config Panel appender change warning dialog
@@ -789,6 +811,7 @@ public enum STLConstants {
     K0805_TCA_PORTS(805),
     K0806_NODES_FAILED(806),
     K0807_EVENTS(807),
+    K0808_DIFFERENT_PARENTS_ERROR(808),
 
     K0810_ACTIVE_OPTIM_ENA(810),
     K0811_PASSTHRU_ENA(811),
@@ -1185,6 +1208,14 @@ public enum STLConstants {
     K2160_PASTE(2160),
     K2161_HIGHLIGHT(2161),
     K2162_PKEY_CHECK(2162),
+    K2163_LOG_FILE(2163),
+    K2164_AUTO_CONFIG(2164),
+    K2165_CUSTOM_CONFIG(2165),
+    K2166_CONFIGURE_LOG_HOST(2166),
+    K2167_AVAILABLE(2167),
+    K2168_PREVIOUS(2168),
+    K2169_CLEAR_SEARCH(2169),
+    K2170_SHOW_SELECTIONS(2170),
 
     K3000_SELECT_ACTIONS(3000),
     K3001_DEFAULT_USER(3001),
@@ -1289,6 +1320,8 @@ public enum STLConstants {
     K4001_GO_UP(4001),
     K4002_GO_DOWN(4002),
     K4003_UNPIN(4003),
+    K4004_SELECT_ALL(4004),
+    K4005_UNSELECT_ALL(4005),
 
     K5001_EMAIL_MENU_ITEM_TEXT(5001),
     K5002_SMTP_HOST(5002),

@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.7  2015/10/23 19:07:57  jijunwan
+ *  Archive Log:    PR 129357 - Be able to hide inactive ports
+ *  Archive Log:    - revert back to the old version without visible node support
+ *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/09/30 13:26:45  fisherma
  *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
  *  Archive Log:
@@ -107,8 +111,8 @@ public abstract class TreeSynchronizer<E> {
         int oldIndex = 0;
         int newIndex = 0;
         FVResourceNode oldNode =
-                oldIndex >= parent.getModelChildCount() ? null : parent
-                        .getModelChildAt(oldIndex);
+                oldIndex >= parent.getChildCount() ? null : parent
+                        .getChildAt(oldIndex);
         E element = elements[newIndex];
         while (oldNode != null || element != null) {
             int comp =
@@ -118,8 +122,8 @@ public abstract class TreeSynchronizer<E> {
                 updateNode(oldNode, parent, monitors, observer);
                 oldIndex += 1;
                 oldNode =
-                        oldIndex >= parent.getModelChildCount() ? null : parent
-                                .getModelChildAt(oldIndex);
+                        oldIndex >= parent.getChildCount() ? null : parent
+                                .getChildAt(oldIndex);
                 newIndex += 1;
                 element =
                         newIndex >= elements.length ? null : elements[newIndex];
@@ -132,19 +136,18 @@ public abstract class TreeSynchronizer<E> {
             } else {
                 removeNode(oldIndex, oldNode, parent, monitors, observer);
                 oldNode =
-                        oldIndex >= parent.getModelChildCount() ? null : parent
-                                .getModelChildAt(oldIndex);
+                        oldIndex >= parent.getChildCount() ? null : parent
+                                .getChildAt(oldIndex);
             }
         }
 
         if (removeEmptyGroup) {
-            for (int i = 0; i < parent.getModelChildCount(); i++) {
-                FVResourceNode node = parent.getModelChildAt(i);
-                if (node.getModelChildCount() == 0) {
+            for (int i = 0; i < parent.getChildCount(); i++) {
+                FVResourceNode node = parent.getChildAt(i);
+                if (node.getChildCount() == 0) {
                     parent.removeChild(i);
                     if (monitors != null) {
-                        int viewIndex = parent.getViewIndex(i);
-                        fireNodesRemoved(monitors, parent, viewIndex, node);
+                        fireNodesRemoved(monitors, parent, i, node);
                     }
                     i -= 1;
                 }

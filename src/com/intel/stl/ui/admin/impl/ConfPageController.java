@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.29  2015/10/19 22:30:10  jijunwan
+ *  Archive Log:    PR 131091 - On an unsuccessful Failover, the Admin | Applications doesn't show the login window
+ *  Archive Log:    - show login panel when not initialized properly with corresponding message
+ *  Archive Log:    - added feature to fully enable/disable a login panel
+ *  Archive Log:
  *  Archive Log:    Revision 1.28  2015/09/28 17:54:17  fisherma
  *  Archive Log:    PR 130425 - added cancel button to the Admin tab login page to allow user to cancel out of hung or slow ssh logins.  Cancel action terminates sftp connection and closes remote ssh session. This fix also addresses PR 130386 and 130390.
  *  Archive Log:
@@ -952,6 +957,13 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
      */
     @Override
     public void onEnter() {
+        if (mgtApi == null) {
+            view.showLoginCard();
+            view.setMessage(UILabels.STL10116_NOT_INIT.getDescription());
+            view.setLoginEnabled(false);
+            return;
+        }
+
         // onEnter cancel any non-null future. Note: shouldn't be any.
         if (future != null && !future.isDone()) {
             future.cancel(true);
@@ -968,6 +980,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
         } else {
             // display and ask for log in info
             // Set host name and port number
+            view.setLoginEnabled(true);
             view.setHostNameField(mgtApi.getSubnetDescription().getCurrentFE()
                     .getHost());
             view.setUserNameField(mgtApi.getSubnetDescription().getCurrentFE()
@@ -984,6 +997,10 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
      */
     @Override
     public void onExit() {
+        if (mgtApi == null) {
+            return;
+        }
+
         // Save username for ssl login to mgtApi for persistence between tabs
         // If we don't, the user can change user name on one of the tabs, switch
         // to another tab on Admin page and see a different user name being
@@ -1045,7 +1062,9 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
         // Make the login card visible to get password from user to fetch a new
         // copy of config file
         if (changeCheck()) {
-            mgtApi.reset();
+            if (mgtApi != null) {
+                mgtApi.reset();
+            }
             onEnter();
         }
     }
@@ -1075,7 +1094,6 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
                 .setSshUserName(credentials.getUserName());
         loadConfigFile(credentials.getPassword());
     }
-
 
     protected void loadConfigFile(final char[] password) {
         if (future != null && !future.isDone()) {

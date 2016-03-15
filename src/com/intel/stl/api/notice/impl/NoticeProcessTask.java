@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.22  2015/12/15 20:50:19  jijunwan
+ *  Archive Log:    PR 132071 - Error on initial CLI launch of FM GUI in RHEL 7.1
+ *  Archive Log:    - added code to check table exist to avoid querying a unexisted table.
+ *  Archive Log:    - removed warning on FE_CONNECTION related notices because they are expected
+ *  Archive Log:
  *  Archive Log:    Revision 1.21  2015/09/26 06:17:56  jijunwan
  *  Archive Log:    130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
  *  Archive Log:    - added more log info
@@ -275,13 +280,19 @@ public class NoticeProcessTask extends AsyncTask<Future<Boolean>> {
                     links = helper.getLinks(lid);
                     nw.addRelatedNodes(getRelatedNodes(links));
                     break;
+                case FE_CONNECTION_LOST:
+                case FE_CONNECTION_ESTABLISH:
+                    // do nothing
+                    break;
                 default:
                     log.warn("Unsupported notice " + notice);
             }
             if (node == null) {
-                log.error("Node information not found in FM or DB for GUID="
-                        + StringUtils.longHexString(guid) + " or LID=" + lid
-                        + " mentioned in notice: " + notice);
+                if (lid >= 0) {
+                    log.warn("Node information not found in FM or DB for GUID="
+                            + StringUtils.longHexString(guid) + " or LID="
+                            + lid + " mentioned in notice: " + notice);
+                }
                 dbMgr.updateNotice(subnetName, notice.getId(),
                         NoticeStatus.FEERROR);
             }

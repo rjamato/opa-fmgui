@@ -1,0 +1,716 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opafabricanalysis">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opafabricanalysis</title>
+</head>
+<body class="man8" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opafabricanalysis</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__GUID-55F35BFC-D6E8-4C4A-A781-1D1BAB4FA44F"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__GUID-55F35BFC-D6E8-4C4A-A781-1D1BAB4FA44F"><!-- --></a> 
+      <p class="p"><strong class="ph b">(All)</strong> Performs analysis of the fabric. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__GUID-C28B517A-BDEF-48F9-8B8A-15FBB1029265"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__GUID-C28B517A-BDEF-48F9-8B8A-15FBB1029265"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opafabricanalysis [-b|-e] [-s] [-d <var class="keyword varname">dir</var>] 
+[-c <var class="keyword varname">file</var>] [-t <var class="keyword varname">portsfile</var>] [-p <var class="keyword varname">ports</var>] 
+[-T <var class="keyword varname">topology_input</var>]</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__GUID-8BB4AA83-9C27-45AA-8DCD-9F3B15425FB5"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__GUID-8BB4AA83-9C27-45AA-8DCD-9F3B15425FB5"><!-- --></a><h2 class="sectiontitle">Options</h2> 
+      <a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__GUID-CFE11228-FB59-47C7-9D24-9F3859EFD4F4"><!-- --></a><dl class="dl parml" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__GUID-CFE11228-FB59-47C7-9D24-9F3859EFD4F4"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-b</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Baseline mode, default is compare/check mode. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-e</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Evaluate health only, default is compare/check mode. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-s</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Save history of failures (errors/differences). 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -d dir</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Top-level directory for saving baseline and history of failed
+            checks. Default = 
+            <span class="ph filepath">/var/opt/opa/analysis</span> 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -c file</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Error thresholds config file. Default = 
+            <span class="ph filepath">/etc/sysconfig/opa/opamon.conf</span> 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-t portsfile</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> File with list of local HFI ports used to access fabric(s) for
+            analysis. Default = 
+            <span class="ph filepath">/etc/sysconfig/opa/ports</span> 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -p ports</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> List of local HFI ports used to access fabric(s) for analysis.
+            Default is the first active port. Specified as 
+            <samp class="ph codeph">HFI:port</samp> as follows: 
+            <a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__GUID-9AA6F565-33A5-411D-9556-DB914CEEA045"><!-- --></a><dl class="dl parml" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__GUID-9AA6F565-33A5-411D-9556-DB914CEEA045"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0:0</samp> 
+                </dt>
+ 
+                <dd class="dd pd">First active port in system 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0:<var class="keyword varname">y</var></samp> 
+                </dt>
+ 
+                <dd class="dd pd">Port 
+                  <samp class="ph codeph"><var class="keyword varname">y</var></samp> within system 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph"><var class="keyword varname">x</var>:0</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> First active port on HFI 
+                  <samp class="ph codeph"><var class="keyword varname">x</var></samp> 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph"><var class="keyword varname">x</var>:<var class="keyword varname">y</var></samp> 
+                </dt>
+ 
+                <dd class="dd pd">HFI 
+                  <samp class="ph codeph"><var class="keyword varname">x</var></samp>, port 
+                  <samp class="ph codeph"><var class="keyword varname">y</var></samp> 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-T 
+              <var class="keyword varname">topology_input</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> Name of topology input file to use. Any 
+            <samp class="ph codeph">%P</samp> markers in this filename are replaced with the 
+            <samp class="ph codeph">HFI:port</samp> being operated on (such as 
+            <samp class="ph codeph">0:0</samp> or 
+            <samp class="ph codeph">1:2</samp>). Default = 
+            <span class="ph filepath">/etc/sysconfig/opa/topology.%P.xml</span>. If 
+            <samp class="ph codeph">-T NONE</samp> is specified, no topology input file is
+            used. See 
+            <a class="xref" href="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C.html#GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C">opareport</a>
+            for more information. 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__SECTION_B98F70FE471F4369B29E5C18D5774BC8"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__SECTION_B98F70FE471F4369B29E5C18D5774BC8"><!-- --></a><h2 class="sectiontitle">Example </h2> 
+      <pre class="pre codeblock">opafabricanalysis
+opafabricanalysis -p '1:1 2:1'</pre>
+ 
+      <p class="p">The fabric analysis tool checks the following: 
+      </p>
+ 
+      <a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_011C0807237F44A29C0DA61E1D942B42"><!-- --></a><ul class="ul" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_011C0807237F44A29C0DA61E1D942B42"> 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118558"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118558"><!-- --></a> Fabric links (both internal to switch chassis and
+          external cables) 
+        </li>
+ 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118559"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118559"><!-- --></a> Fabric components (nodes, links, SMs, systems, and
+          their SMA configuration) 
+        </li>
+ 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118560"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118560"><!-- --></a> Fabric PMA error counters and link speed mismatches
+          
+        </li>
+ 
+      </ul>
+ 
+      <div class="note note" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__GUID-807B7CF8-3EDF-4777-9DE5-0CE074D3B106"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__GUID-807B7CF8-3EDF-4777-9DE5-0CE074D3B106"><!-- --></a><span class="notetitle">Note:</span> The comparison
+        includes components on the fabric. Therefore, operations such as shutting down
+        a server cause the server to no longer appear on the fabric and are flagged as
+        a fabric change or failure by 
+        <samp class="ph codeph">opafabricanalysis</samp>. 
+      </div>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__GUID-8EAA159C-C5F0-4ED1-9182-D755CA38C886"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__GUID-8EAA159C-C5F0-4ED1-9182-D755CA38C886"><!-- --></a><h2 class="sectiontitle">Environment Variables</h2> 
+      <p class="p">The following environment variables are also used by this command: 
+      </p>
+ 
+      <a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__GUID-6CF6BEEF-DAB6-421E-B73A-097EE81435A5"><!-- --></a><dl class="dl parml" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__GUID-6CF6BEEF-DAB6-421E-B73A-097EE81435A5"> 
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">PORTS</span> 
+          </dt>
+ 
+          <dd class="dd pd"> List of ports, used in absence of 
+            <samp class="ph codeph">-t</samp> and 
+            <samp class="ph codeph">-p</samp>. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">PORTS_FILE</span> 
+          </dt>
+ 
+          <dd class="dd pd">File containing list of ports, used in absence of 
+            <samp class="ph codeph">-t</samp> and 
+            <samp class="ph codeph">-p</samp>. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_TOPOLOGY_FILE</span> 
+          </dt>
+ 
+          <dd class="dd pd">File containing 
+            <samp class="ph codeph">topology_input</samp> (may have 
+            <samp class="ph codeph">%P</samp> marker in filename), used in absence of 
+            <samp class="ph codeph">-T</samp>. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_ANALYSIS_DIR</span> 
+          </dt>
+ 
+          <dd class="dd pd">Top level directory for baselines and failed health checks. 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__SECTION_1EC529E22FBB4A2496B555482449D867"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__SECTION_1EC529E22FBB4A2496B555482449D867"><!-- --></a><h2 class="sectiontitle">Details</h2>
+      
+      <p class="p">For simple fabrics, the 
+        <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric Suite FastFabric</span> Toolset host is connected to a single fabric. By
+        default, the first active port on the 
+        <span class="ph">FastFabric</span> Toolset host is used to analyze
+        the fabric. However, in more complex fabrics, the 
+        <span class="ph">FastFabric</span> Toolset host may be connected
+        to more than one fabric or subnet. In this case, you can specify the ports or
+        HFIs to use with one of the following methods: 
+      </p>
+ 
+      <a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_C0A400E814EB4FDAA1CACB385D8C509B"><!-- --></a><ul class="ul" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_C0A400E814EB4FDAA1CACB385D8C509B"> 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_45D02F7132064EB3A94B7B6E9689CC8D"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_45D02F7132064EB3A94B7B6E9689CC8D"><!-- --></a>On the command line using
+          the 
+          <samp class="ph codeph">-p</samp> option. 
+        </li>
+ 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_3685619C53E44CBFAB2C79F8AF43E7A7"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_3685619C53E44CBFAB2C79F8AF43E7A7"><!-- --></a>In a file specified using
+          the 
+          <samp class="ph codeph">-t</samp> option. 
+        </li>
+ 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_6C661E6935F741C4A365AF6BCB313B3A"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_6C661E6935F741C4A365AF6BCB313B3A"><!-- --></a>Through the environment
+          variables 
+          <span class="keyword parmname">PORTS</span> or 
+          <span class="keyword parmname">PORTS_FILE</span>. 
+        </li>
+ 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_196476A33FEB4E5692D0B0AF0530A5D3"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_196476A33FEB4E5692D0B0AF0530A5D3"><!-- --></a>Using the 
+          <span class="keyword parmname">PORTS_FILE</span> configuration option in 
+          <span class="ph filepath">opafastfabric.conf</span>. 
+        </li>
+ 
+      </ul>
+ 
+      <p class="p">If the specified port does not exist or is empty, the first active
+        port on the local system is used. In more complex configurations, you must
+        specify the exact ports to use for all fabrics to be analyzed. For more
+        information, refer to 
+        .
+        
+      </p>
+ 
+      <p class="p">You can specify the 
+        <span class="ph filepath">topology_input</span> file to be used with one of the
+        following methods: 
+      </p>
+ 
+      <a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_C7D62ED6855A4B2FB9FC6ABF5D6F6468"><!-- --></a><ul class="ul" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_C7D62ED6855A4B2FB9FC6ABF5D6F6468"> 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_740E5E40C39941A397CCE4E6E1A5E595"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_740E5E40C39941A397CCE4E6E1A5E595"><!-- --></a>On the command line using
+          the 
+          <samp class="ph codeph">-T</samp> option. 
+        </li>
+ 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_F9C853AD0CA142FE9A2C1A444232778F"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_F9C853AD0CA142FE9A2C1A444232778F"><!-- --></a>In a file specified
+          through the environment variable 
+          <span class="keyword parmname">FF_TOPOLOGY_FILE</span>. 
+        </li>
+ 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_44B6C3AE361E46C184FD68214C6499DA"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_44B6C3AE361E46C184FD68214C6499DA"><!-- --></a>Using the 
+          <samp class="ph codeph">ff_topology_file</samp> configuration option in 
+          <span class="ph filepath">opafastfabric.conf</span>. 
+        </li>
+ 
+      </ul>
+ 
+      <p class="p"> If the specified file does not exist, no 
+        <span class="ph filepath">topology_input</span> file is used. Alternately the
+        filename can be specified as 
+        <samp class="ph codeph">NONE</samp> to prevent use of an input file. 
+      </p>
+ 
+      <p class="p">For more information, refer to 
+        <a class="xref" href="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C.html#GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C">opareport</a>.
+        
+      </p>
+ 
+      <p class="p">By default, the error analysis includes PMA counters and slow links
+        (that is, links running below enabled speeds). You can change this using the 
+        <span class="keyword parmname">FF_FABRIC_HEALTH</span> configuration parameter in 
+        <span class="ph filepath">opafastfabric.conf</span>. This parameter specifies the 
+        <samp class="ph codeph">opareport</samp> options and reports to be used for the
+        health analysis. It also can specify the PMA counter clearing behavior
+        (<samp class="ph codeph">-I 
+          <var class="keyword varname">seconds</var></samp>, 
+        <samp class="ph codeph">-C</samp>, or none at all). See 
+        <var class="keyword varname">Appendix&nbsp;A</var> in the 
+        <span class="ph"><em class="ph i">Intel<sup>®</sup> Omni-Path
+            Fabric Suite FastFabric User Guide</em></span> for more information. 
+      </p>
+ 
+      <p class="p">When a 
+        <span class="ph filepath">topology_input</span> file is used, it can also be useful
+        to extend 
+        <span class="keyword parmname">FF_FABRIC_HEALTH</span> to include fabric topology
+        verification options such as 
+        <samp class="ph codeph">-o verifylinks</samp>. 
+      </p>
+ 
+      <p class="p">The thresholds for PMA counter analysis default to 
+        <span class="ph filepath">/etc/sysconfig/opa/opamon.conf</span>. However, you can
+        specify an alternate configuration file for thresholds using the 
+        <samp class="ph codeph">-c</samp> option. The 
+        <span class="ph filepath">opamon.si.conf</span> file can also be used to check for
+        any non-zero values for signal integrity (SI) counters. 
+      </p>
+ 
+      <p class="p">All files generated by 
+        <samp class="ph codeph">opafabricanalysis</samp> start with 
+        <samp class="ph codeph">fabric</samp> in their file name. This is followed by the
+        port selection option identifying the port used for the analysis. Default is 
+        <samp class="ph codeph">0:0</samp>. 
+      </p>
+ 
+      <p class="p">The 
+        <samp class="ph codeph">opafabricanalysis</samp> tool generates files such as the
+        following within 
+        <span class="ph filepath">FF_ANALYSIS_DIR</span>: 
+      </p>
+ 
+      <a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_54870D9588E74B269D884D6C670678F0"><!-- --></a><ul class="ul" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_54870D9588E74B269D884D6C670678F0"> 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_87C8F7BE358D44488FC2DE144053067B"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_87C8F7BE358D44488FC2DE144053067B"><!-- --></a>Health Check 
+          <a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_068FD95DD341419785EF2268D1167BFC"><!-- --></a><ul class="ul" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_068FD95DD341419785EF2268D1167BFC"> 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_F9A74BCEA7E84DF28D0C0B28CF9783F3"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_F9A74BCEA7E84DF28D0C0B28CF9783F3"><!-- --></a><samp class="ph codeph">latest/fabric.0:0.errors</samp>
+              
+              <p class="p"> 
+                <samp class="ph codeph">stdout</samp> of 
+                <samp class="ph codeph">opareport</samp> for errors encountered during fabric
+                error analysis. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_B6002180111C4785B5F5496827F75267"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_B6002180111C4785B5F5496827F75267"><!-- --></a> 
+              <samp class="ph codeph">latest/fabric.0.0.errors.stderr</samp> 
+              <p class="p"><samp class="ph codeph">stderr</samp> of 
+                <samp class="ph codeph">opareport</samp> during fabric error analysis. 
+              </p>
+ 
+            </li>
+ 
+          </ul>
+ 
+        </li>
+ 
+      </ul>
+ 
+      <a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_E78F1D7D8C094E529DF6318365D667D9"><!-- --></a><ul class="ul" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_E78F1D7D8C094E529DF6318365D667D9"> 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_B84DCB205D0042FAA63E3D39E582D2E1"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_B84DCB205D0042FAA63E3D39E582D2E1"><!-- --></a>Baseline 
+          <p class="p">During a baseline run, the following files are also created in 
+            <span class="ph filepath">FF_ANALYSIS_DIR/latest</span>. 
+          </p>
+ 
+          <a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_45E72EDAF1F1423F8204E258163BA736"><!-- --></a><ul class="ul" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_45E72EDAF1F1423F8204E258163BA736"> 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_D3B2D0CD315C4C8D8876A017EFCF3F6D"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_D3B2D0CD315C4C8D8876A017EFCF3F6D"><!-- --></a><samp class="ph codeph">baseline/fabric.0:0.snapshot.xml</samp>
+              
+              <p class="p"><samp class="ph codeph">opareport</samp> snapshot of complete fabric
+                components and SMA configuration. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_8B4E27711B1D45B39F40B9B8739328CC"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_8B4E27711B1D45B39F40B9B8739328CC"><!-- --></a> 
+              <samp class="ph codeph">baseline/fabric.0:0.comps</samp> 
+              <p class="p"><samp class="ph codeph">opareport</samp> summary of fabric components and
+                basic SMA configuration. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_47830510CC944872A35051A06B00921B"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_47830510CC944872A35051A06B00921B"><!-- --></a> 
+              <samp class="ph codeph">baseline/fabric.0.0.links</samp> 
+              <p class="p"><samp class="ph codeph">opareport</samp> summary of internal and external
+                links. 
+              </p>
+ 
+            </li>
+ 
+          </ul>
+ 
+        </li>
+ 
+      </ul>
+ 
+      <a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_1A3B6FA4D4A847BBAEA322E93A23315E"><!-- --></a><ul class="ul" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_1A3B6FA4D4A847BBAEA322E93A23315E"> 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_DCAFB73BA0B8470FA02737C2787EBD1D"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_DCAFB73BA0B8470FA02737C2787EBD1D"><!-- --></a>Full analysis 
+          <a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_3DEFE770388347DCB964A5776D6E6DCA"><!-- --></a><ul class="ul" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_3DEFE770388347DCB964A5776D6E6DCA"> 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_59E7A5A8086141A6887A4BCC9E74FDE3"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_59E7A5A8086141A6887A4BCC9E74FDE3"><!-- --></a><samp class="ph codeph">latest/fabric.0:0.snapshot.xml</samp>
+              
+              <p class="p"> 
+                <samp class="ph codeph">opareport</samp> snapshot of complete fabric
+                components and SMA configuration. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_D7DB629C2AC6489C9AEA802351B350D2"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_D7DB629C2AC6489C9AEA802351B350D2"><!-- --></a> 
+              <samp class="ph codeph">latest/fabric.0:0.snapshot.stderr</samp> 
+              <p class="p"> 
+                <samp class="ph codeph">stderr</samp> of 
+                <samp class="ph codeph">opareport</samp> during snapshot. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_C4E7AF9D7FC84F1B8E0867909D23CFFA"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_C4E7AF9D7FC84F1B8E0867909D23CFFA"><!-- --></a> 
+              <samp class="ph codeph">latest/fabric.0:0.errors</samp> 
+              <p class="p"> 
+                <samp class="ph codeph">stdout</samp> of 
+                <samp class="ph codeph">opareport</samp> for errors encountered during fabric
+                error analysis. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_91E905BE3DDE4F598FFE7C786E265E2D"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_91E905BE3DDE4F598FFE7C786E265E2D"><!-- --></a> 
+              <samp class="ph codeph">latest/fabric.0.0.errors.stderr</samp> 
+              <p class="p"> 
+                <samp class="ph codeph">stderr</samp> of 
+                <samp class="ph codeph">opareport</samp> during fabric error analysis. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_C149FD88F50E42F6B1BD0E415A706734"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_C149FD88F50E42F6B1BD0E415A706734"><!-- --></a> 
+              <samp class="ph codeph">latest/fabric.0:0.comps</samp> 
+              <p class="p"><samp class="ph codeph">stdout</samp> of 
+                <samp class="ph codeph">opareport</samp> for fabric components and SMA
+                configuration. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_510D9F06BCDB45508E295B53FDCA3D43"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_510D9F06BCDB45508E295B53FDCA3D43"><!-- --></a> 
+              <samp class="ph codeph">latest/fabric.0:0.comps.stderr</samp> 
+              <p class="p"><samp class="ph codeph">stderr</samp> of 
+                <samp class="ph codeph">opareport</samp> for fabric components. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_296A889EC0AF4A1C9E1A42A09D6EFE06"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_296A889EC0AF4A1C9E1A42A09D6EFE06"><!-- --></a> 
+              <samp class="ph codeph">latest/fabric.0:0.comps.diff</samp> 
+              <p class="p"> 
+                <samp class="ph codeph">diff</samp> of baseline and latest fabric components.
+                
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_96FD3AC8E2CE42F0B8283D59D453508E"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_96FD3AC8E2CE42F0B8283D59D453508E"><!-- --></a> 
+              <samp class="ph codeph">latest/fabric.0:0.links</samp> 
+              <p class="p"><samp class="ph codeph">stdout</samp> of 
+                <samp class="ph codeph">opareport</samp> summary of internal and external
+                links. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_0B5CE9C6424E4E5E9F81DE20371D829A"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_0B5CE9C6424E4E5E9F81DE20371D829A"><!-- --></a> 
+              <samp class="ph codeph">latest/fabric.0:0.links.stderr</samp> 
+              <p class="p"><samp class="ph codeph">stderr</samp> of 
+                <samp class="ph codeph">opareport</samp> summary of internal and external
+                links. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_2FC1EEA45AA342C69407B90A19E0D451"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_2FC1EEA45AA342C69407B90A19E0D451"><!-- --></a> 
+              <samp class="ph codeph">latest/fabric.0:0.links.diff</samp> 
+              <p class="p"><samp class="ph codeph">diff</samp> of baseline and latest fabric internal
+                and external links. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_4233463265014F28A7EC613CBB02C99E"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_4233463265014F28A7EC613CBB02C99E"><!-- --></a> 
+              <samp class="ph codeph">latest/fabric.0:0.links.changes.stderr</samp> 
+              <p class="p"> 
+                <samp class="ph codeph">stderr</samp> of 
+                <samp class="ph codeph">opareport</samp> comparison of links. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_8563655E38034D39B975F5C12E42D296"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_8563655E38034D39B975F5C12E42D296"><!-- --></a> 
+              <samp class="ph codeph">latest/fabric.0:0.links.changes</samp> 
+              <p class="p"> 
+                <samp class="ph codeph">opareport</samp> comparison of links against
+                baseline. This is typically easier to read than the 
+                <samp class="ph codeph">links.diff</samp> file and contains the same
+                information. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_D7AD60BEF57C41C1870820745A213245"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_D7AD60BEF57C41C1870820745A213245"><!-- --></a> 
+              <samp class="ph codeph">latest/fabric.0:0.comps.changes.stderr</samp> 
+              <p class="p"><samp class="ph codeph">stderr</samp> of 
+                <samp class="ph codeph">opareport</samp> comparison of components. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_1865190DDB8D4E389E4683CA0DC0D2C3"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__LI_1865190DDB8D4E389E4683CA0DC0D2C3"><!-- --></a> 
+              <samp class="ph codeph">latest/fabric.0:0.comps.changes</samp> 
+              <p class="p"> 
+                <samp class="ph codeph">opareport</samp> comparison of components against
+                baseline. This is typically easier to read than the 
+                <span class="ph filepath">comps.diff</span> file and contains the same
+                information. 
+              </p>
+ 
+            </li>
+ 
+          </ul>
+ 
+          <p class="p">The 
+            <samp class="ph codeph">.diff</samp> and 
+            <samp class="ph codeph">.changes</samp> files are only created if differences are
+            detected. 
+          </p>
+ 
+          <p class="p">If the 
+            <samp class="ph codeph">-s</samp> option is used and failures are detected, files
+            related to the checks that failed are also copied to the time-stamped directory
+            name under 
+            <span class="ph filepath">FF_ANALYSIS_DIR</span>. 
+          </p>
+ 
+        </li>
+ 
+      </ul>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__SECTION_F4B768E17275447EB7BD3E573A9C35DE"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__SECTION_F4B768E17275447EB7BD3E573A9C35DE"><!-- --></a><h2 class="sectiontitle">Fabric items checked against the baseline</h2> 
+      <p class="p">Based on 
+        <samp class="ph codeph">opareport -o links</samp>: 
+      </p>
+ 
+      <a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_067F733243C041E4A2419B572DD1740E"><!-- --></a><ul class="ul" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_067F733243C041E4A2419B572DD1740E"> 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118604"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118604"><!-- --></a> Unconnected/down/missing cables 
+        </li>
+ 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118605"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118605"><!-- --></a> Added/moved cables 
+        </li>
+ 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118606"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118606"><!-- --></a> Changes in link width and speed 
+        </li>
+ 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118607"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118607"><!-- --></a> Changes to Node GUIDs in fabric (replacement of HFI
+          or Switch hardware) 
+        </li>
+ 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118608"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118608"><!-- --></a> Adding/Removing Nodes [FI, Virtual FIs, Virtual
+          Switches, Physical Switches, Physical Switch internal switching cards
+          (leaf/spine)] 
+        </li>
+ 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118609"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118609"><!-- --></a> Changes to server or switch names 
+        </li>
+ 
+      </ul>
+ 
+      <p class="p"> Based on 
+        <samp class="ph codeph">opareport -o comps</samp>: 
+      </p>
+ 
+      <a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_6469435A760F41BCAAE4D6C5216C175C"><!-- --></a><ul class="ul" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_6469435A760F41BCAAE4D6C5216C175C"> 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118611"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118611"><!-- --></a> Overlap with items from links report 
+        </li>
+ 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118612"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118612"><!-- --></a> Changes in port MTU, LMC, number of VLs 
+        </li>
+ 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118613"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118613"><!-- --></a> Changes in port speed/width enabled or supported 
+        </li>
+ 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118614"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118614"><!-- --></a> Changes in HFI or switch device
+          IDs/revisions/VendorID (for example, ASIC HW changes) 
+        </li>
+ 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118615"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118615"><!-- --></a> Changes in port Capability mask (which
+          features/agents run on port/server) 
+        </li>
+ 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118616"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118616"><!-- --></a> Changes to ErrorLimits and PKey enforcement per
+          port 
+        </li>
+ 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118617"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118617"><!-- --></a> Changes to IOUs/IOCs/IOC Services provided 
+          <div class="p"> 
+            <div class="note note" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__GUID-3D96FBBF-5EE6-46BD-9A18-A0469FBD8A69"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__GUID-3D96FBBF-5EE6-46BD-9A18-A0469FBD8A69"><!-- --></a><span class="notetitle">Note:</span> Only
+              applicable if IOUs in fabric (such as Virtual IO cards, native storage, and
+              others). 
+            </div>
+ 
+          </div>
+ 
+        </li>
+ 
+      </ul>
+ 
+      <p class="p"> Location (port, node) and number of SMs in fabric. Includes: 
+      </p>
+ 
+      <a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_EFAA30FF6AF5487B8078759F32607D60"><!-- --></a><ul class="ul" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_EFAA30FF6AF5487B8078759F32607D60"> 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118620"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118620"><!-- --></a> Primary and backups 
+        </li>
+ 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118621"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118621"><!-- --></a> Configured priority for SM 
+        </li>
+ 
+      </ul>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__SECTION_6499F9F16995430EABBE649EEF9539CA"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__SECTION_6499F9F16995430EABBE649EEF9539CA"><!-- --></a><h2 class="sectiontitle">Fabric items also checked during health check</h2> 
+      <p class="p">Based on 
+        <samp class="ph codeph">opareport -s -C -o errors -o slowlinks</samp>: 
+      </p>
+ 
+      <a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_932EB3F92D124EF8A7C2267F0F8961C7"><!-- --></a><ul class="ul" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_932EB3F92D124EF8A7C2267F0F8961C7"> 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118624"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118624"><!-- --></a> PMA error counters on all 
+          <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric</span> ports (HFI, switch external and switch internal) checked against
+          configurable thresholds. 
+          <a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_4D62289133164D668D2B0B1384D9896E"><!-- --></a><ul class="ul" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_4D62289133164D668D2B0B1384D9896E"> 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118625"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118625"><!-- --></a> Counters are cleared each time a health check
+              is run. Each health check reflects a counter delta since last health check. 
+            </li>
+ 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118626"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118626"><!-- --></a> Typically identifies potential fabric errors,
+              such as symbol errors. 
+            </li>
+ 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118627"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118627"><!-- --></a> May also identify transient congestion,
+              depending on the counters that are monitored. 
+            </li>
+ 
+          </ul>
+ 
+        </li>
+ 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118628"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118628"><!-- --></a> Link active speed/width as compared to Enabled
+          speed. 
+          <a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_0F5A582FD11147A88CB3742AEA756B7A"><!-- --></a><ul class="ul" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__UL_0F5A582FD11147A88CB3742AEA756B7A"> 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118629"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118629"><!-- --></a> Identifies links whose active speed/width is
+              &lt; min (enabled speed/width on each side of link). 
+            </li>
+ 
+            <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118630"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118630"><!-- --></a> This typically reflects bad cables or bad ports
+              or poor connections. 
+            </li>
+ 
+          </ul>
+ 
+        </li>
+ 
+        <li class="li" id="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118631"><a name="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB__XX1118631"><!-- --></a> Side effect is the verification of SA health. 
+        </li>
+ 
+      </ul>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

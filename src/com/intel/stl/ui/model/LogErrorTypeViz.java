@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.6  2015/11/18 23:57:50  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Changed ESM_NOT_SUPPORTED to SYSLOG_ACCESS_ERROR and added FILE_ACCESS_DENIED and EMPTY_LOG_FILE
+ *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/10/06 15:54:12  rjtierne
  *  Archive Log:    PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
  *  Archive Log:    - Added enums ESM_NOT_SUPPORTED and UNEXPECTED_LOGIN_FAILURE for Log Viewer error messages
@@ -61,7 +65,6 @@
  *  @author: rjtierne
  *
  ******************************************************************************/
-
 package com.intel.stl.ui.model;
 
 import com.intel.stl.api.logs.LogErrorType;
@@ -78,10 +81,14 @@ public enum LogErrorTypeViz {
             UILabels.STL50210_SSH_UNABLE_TO_CONNECT),
     INVALID_LOG_USER(LogErrorType.INVALID_LOG_USER,
             UILabels.STL50214_INVALID_LOG_USER),
-    ESM_NOT_SUPPORTED(LogErrorType.ESM_NOT_SUPPORTED,
-            UILabels.STL50215_ESM_NOT_SUPPORTED),
+    SYSLOG_ACCESS_ERROR(LogErrorType.SYSLOG_ACCESS_ERROR,
+            UILabels.STL50215_SYSLOG_ACCESS_ERROR),
     UNEXPECTED_LOGIN_FAILURE(LogErrorType.UNEXPECTED_LOGIN_FAILURE,
-            UILabels.STL50216_UNEXPECTED_LOGIN_FAILURE);
+            UILabels.STL50216_UNEXPECTED_LOGIN_FAILURE),
+    FILE_ACCESS_DENIED(LogErrorType.FILE_ACCESS_DENIED,
+            UILabels.STL50217_FILE_ACCESS_DENIED),
+    EMPTY_LOG_FILE(LogErrorType.EMPTY_LOG_FILE,
+            UILabels.STL50218_EMPTY_LOG_FILE);
 
     private final LogErrorType type;
 

@@ -35,6 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.6  2015/11/18 23:56:43  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Override setEnabled() so extended formatted text fields could be disabled in a manner similar to the standard JTextField
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/10/21 16:04:38  jijunwan
+ *  Archive Log:    PR 131108 - Overwrite enabled on all FM GUI text fields
+ *  Archive Log:    - changed to insert mode
+ *  Archive Log:    - improved to support undo/redo with  Ctrl+Z/Y
+ *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/10/06 20:19:22  fernande
  *  Archive Log:    PR130749 - FM GUI virtual fabric information doesn't match opafm.xml file. Removed overriding of method setFormatter
  *  Archive Log:
@@ -69,18 +78,29 @@
 
 package com.intel.stl.ui.common.view;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.Format;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.InputVerifier;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
+import javax.swing.KeyStroke;
 import javax.swing.ToolTipManager;
 import javax.swing.border.Border;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.text.DefaultFormatter;
 import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
+import javax.swing.undo.UndoManager;
 
 import com.intel.stl.ui.common.UIConstants;
 
@@ -89,6 +109,10 @@ import com.intel.stl.ui.common.UIConstants;
  */
 public class ExFormattedTextField extends JFormattedTextField {
     private static final long serialVersionUID = 6265122315036017331L;
+
+    private static final String UNDO_ACTION = "UNDO";
+
+    private static final String REDO_ACTION = "REDO";
 
     private Border orgBorder;
 
@@ -117,6 +141,11 @@ public class ExFormattedTextField extends JFormattedTextField {
     }
 
     protected void init() {
+        AbstractFormatter formatter = getFormatter();
+        if (formatter != null && formatter instanceof DefaultFormatter) {
+            ((DefaultFormatter) formatter).setOverwriteMode(false);
+        }
+
         // keep focus when we have invalid value
         setInputVerifier(new InputVerifier() {
             @Override
@@ -155,6 +184,55 @@ public class ExFormattedTextField extends JFormattedTextField {
                 }
             }
         });
+
+        makeUndoable();
+    }
+
+    private void makeUndoable() {
+        final UndoManager undoMgr = new UndoManager();
+        getDocument().addUndoableEditListener(new UndoableEditListener() {
+            @Override
+            public void undoableEditHappened(UndoableEditEvent evt) {
+                undoMgr.addEdit(evt.getEdit());
+            }
+        });
+
+        getActionMap().put(UNDO_ACTION, new AbstractAction(UNDO_ACTION) {
+            private static final long serialVersionUID = 6916362113277049438L;
+
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    if (undoMgr.canUndo()) {
+                        undoMgr.undo();
+                    }
+                } catch (CannotUndoException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        getActionMap().put(REDO_ACTION, new AbstractAction(REDO_ACTION) {
+            private static final long serialVersionUID = 1905302135550403038L;
+
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    if (undoMgr.canRedo()) {
+                        undoMgr.redo();
+                    }
+                } catch (CannotRedoException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        // Create keyboard accelerators for undo/redo actions (Ctrl+Z/Ctrl+Y)
+        getInputMap()
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_Z,
+                        InputEvent.CTRL_DOWN_MASK), UNDO_ACTION);
+        getInputMap()
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_Y,
+                        InputEvent.CTRL_DOWN_MASK), REDO_ACTION);
     }
 
     /**
@@ -167,6 +245,16 @@ public class ExFormattedTextField extends JFormattedTextField {
 
     public void setFixedFormatter(AbstractFormatter formatter) {
         setFormatterFactory(new DefaultFormatterFactory(formatter));
+    }
+
+    @Override
+    public void setEnabled(boolean b) {
+        super.setEnabled(b);
+        if (!b) {
+            setBackground(UIConstants.INTEL_BACKGROUND_GRAY);
+        } else {
+            setBackground(UIConstants.INTEL_WHITE);
+        }
     }
 
 }

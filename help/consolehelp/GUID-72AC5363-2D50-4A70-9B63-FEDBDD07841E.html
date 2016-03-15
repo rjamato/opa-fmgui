@@ -1,0 +1,195 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opacheckload">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opacheckload</title>
+</head>
+<body class="man8" id="GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E"><a name="GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opacheckload</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E__GUID-8E064225-8A63-4579-AB85-F92B40EBA19D"><a name="GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E__GUID-8E064225-8A63-4579-AB85-F92B40EBA19D"><!-- --></a> 
+      <p class="p">Returns load information on hosts in the fabric. 
+      </p>
+ 
+      </div>
+ 
+    <div class="section refsyn" id="GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E__GUID-D390F615-BC62-4270-81CC-D4A2583731DE"><a name="GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E__GUID-D390F615-BC62-4270-81CC-D4A2583731DE"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opacheckload [-f <var class="keyword varname">hostfile</var>] [-h '<var class="keyword varname">hosts</var>'] 
+[-r] [-a|-n numprocs] [-d uploaddir]</pre>
+ 
+      <p class="p">or 
+      </p>
+ 
+      <pre class="pre codeblock">opacheckload --help</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E__GUID-FB818ED8-4F32-4EB3-AEC6-A0106BED1066"><a name="GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E__GUID-FB818ED8-4F32-4EB3-AEC6-A0106BED1066"><!-- --></a><h2 class="sectiontitle">Options</h2> 
+      <a name="GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E__GUID-D984EEEF-0E5E-48E1-B36B-485B7DED0479"><!-- --></a><dl class="dl parml" id="GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E__GUID-D984EEEF-0E5E-48E1-B36B-485B7DED0479"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Produces full help text. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-f 
+              <var class="keyword varname">hostfile</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File with hosts to check. Default = 
+              <span class="ph filepath">/etc/sysconfig/opa/hosts</span> 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-h 
+              <var class="keyword varname">hosts</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of hosts to check. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"> 
+            <samp class="ph codeph">-r</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Reverses output to show the least busy hosts. Default is busiest
+            hosts. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-n 
+              <var class="keyword varname">numprocs</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Shows top 
+            <samp class="ph codeph"><var class="keyword varname">numprocs</var></samp> hosts. Default is 10. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-a 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Shows all hosts. Default is 10. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-d 
+              <var class="keyword varname">upload_dir</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Directory to upload loadavg to. Default is 
+              <span class="ph filepath">uploads</span>. 
+            </p>
+ 
+             
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E__GUID-B9505042-B630-4E4B-82C6-A72974A59EB6"><a name="GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E__GUID-B9505042-B630-4E4B-82C6-A72974A59EB6"><!-- --></a><h2 class="sectiontitle">Examples </h2> 
+      <pre class="pre codeblock">opacheckload
+opacheckload -h 'arwen elrond'
+HOSTS='arwen elrond' opacheckload</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E__GUID-FCFF13F5-2157-4829-8D66-E96F2BFD2152"><a name="GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E__GUID-FCFF13F5-2157-4829-8D66-E96F2BFD2152"><!-- --></a><h2 class="sectiontitle">Environment</h2> 
+      <a name="GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E__GUID-977874AA-31B1-4055-8E7F-C7E355921A21"><!-- --></a><dl class="dl parml" id="GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E__GUID-977874AA-31B1-4055-8E7F-C7E355921A21"> 
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">HOSTS</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of hosts, used if 
+              <samp class="ph codeph">-h</samp> option not supplied. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">HOSTS_FILE</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File containing list of hosts, used in absence of 
+              <samp class="ph codeph">-f</samp> and 
+              <samp class="ph codeph">-h</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">UPLOADS_DIR</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Directory to upload loadavg, used in absence of 
+              <samp class="ph codeph">-d</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_MAX_PARALLEL</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Maximum concurrent operations. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

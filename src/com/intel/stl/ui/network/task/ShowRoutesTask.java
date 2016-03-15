@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.9  2015/11/02 23:56:54  jijunwan
+ *  Archive Log:    PR 131396 - Incorrect Connectivity Table for a VF port
+ *  Archive Log:    - adapted to the new connectivity table controller to support VF port
+ *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/08/17 18:54:05  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -95,6 +99,7 @@ import com.intel.stl.ui.common.ICancelIndicator;
 import com.intel.stl.ui.model.GraphEdge;
 import com.intel.stl.ui.model.GraphNode;
 import com.intel.stl.ui.model.LayoutType;
+import com.intel.stl.ui.monitor.TreeNodeType;
 import com.intel.stl.ui.monitor.tree.FVResourceNode;
 import com.intel.stl.ui.network.IModelChange;
 import com.intel.stl.ui.network.LayoutChange;
@@ -110,6 +115,8 @@ public class ShowRoutesTask extends TopologyUpdateTask {
     private static final boolean DEBUG = true;
 
     private final List<GraphNode> nodes;
+
+    private final String vfName;
 
     private TopologyTreeModel tmpTreeMode;
 
@@ -131,7 +138,31 @@ public class ShowRoutesTask extends TopologyUpdateTask {
             FVResourceNode[] selectedResources, List<GraphNode> nodes) {
         super(controller, source, selectedResources);
         this.nodes = nodes;
+        this.vfName = getVFName(selectedResources);
         setIncludeNeighbors(false);
+    }
+
+    protected String getVFName(FVResourceNode[] selectedResources) {
+        String res = null;
+        FVResourceNode refGroup = null;
+        String vfName = null;
+        for (int i = 0; i < selectedResources.length; i++) {
+            vfName = null;
+            FVResourceNode parent = selectedResources[i].getParent();
+            FVResourceNode group = parent.getParent();
+            if (refGroup != null && group != refGroup) {
+                throw new IllegalArgumentException(
+                        "Nodes have no the same parent!");
+            }
+            if (group.getType() == TreeNodeType.VIRTUAL_FABRIC) {
+                vfName = group.getTitle();
+            }
+            if (i == 0) {
+                res = vfName;
+                refGroup = group;
+            }
+        }
+        return res;
     }
 
     /*
@@ -147,7 +178,7 @@ public class ShowRoutesTask extends TopologyUpdateTask {
         if (indicator != null && indicator.isCancelled()) {
             throw new CancellationException();
         }
-        resourceController.showPath(traceMap);
+        resourceController.showPath(traceMap, vfName);
         if (traceMap == null) {
             return Collections.emptyList();
         }

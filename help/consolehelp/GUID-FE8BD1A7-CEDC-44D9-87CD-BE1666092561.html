@@ -1,0 +1,476 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opasetupssh">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opasetupssh</title>
+</head>
+<body class="man8" id="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561"><a name="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opasetupssh</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__GUID-9A7E3371-3137-463A-AD94-C5FEF45FF2A9"><a name="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__GUID-9A7E3371-3137-463A-AD94-C5FEF45FF2A9"><!-- --></a> 
+      <p class="p"><strong class="ph b">(Linux or Switch)</strong> Creates SSH keys and configures them on all
+        hosts or chassis so the system can use SSH and SCP into all other hosts or
+        chassis without a password prompt. Typically, during cluster setup this tool
+        enables the root user on the Management Node to log into the other hosts (as
+        root) or chassis (as admin) using password-less SSH. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__GUID-6C7401AB-253B-4EB0-A1CC-65A461C420D9"><a name="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__GUID-6C7401AB-253B-4EB0-A1CC-65A461C420D9"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opasetupssh [-C|p|U] [-f <var class="keyword varname">hostfile</var>] [-F <var class="keyword varname">chassisfile</var>] 
+[-h '<var class="keyword varname">hosts</var>'] [-H '<var class="keyword varname">chassis</var>'] [-i <var class="keyword varname">ipoib_suffix</var>] 
+[-u <var class="keyword varname">user</var>] [-S] [-R|P]</pre>
+ 
+      <p class="p">or 
+      </p>
+ 
+      <pre class="pre codeblock">opasetupssh --help</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__XX1212168"><a name="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__XX1212168"><!-- --></a><h2 class="sectiontitle">Options</h2> 
+      <a name="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__GUID-71BAFEF1-20EC-4054-B754-5F5A82731A37"><!-- --></a><dl class="dl parml" id="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__GUID-71BAFEF1-20EC-4054-B754-5F5A82731A37"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Produces full help text. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-C</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Performs operation against chassis. Default is hosts. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-p</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Performs operation against all chassis or hosts in parallel. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-U</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Performs connect only (to enter in local hosts, known hosts).
+              When run in this mode, the 
+              <samp class="ph codeph">-S</samp> option is ignored. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-f 
+              <var class="keyword varname">hostfile</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File with hosts in cluster. Default is 
+              <span class="ph filepath">/etc/sysconfig/opa/hosts</span> file. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-F 
+              <var class="keyword varname">chassisfile</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File with chassis in cluster. Default is 
+              <span class="ph filepath">/etc/sysconfig/opa/chassis</span> file. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-h 
+              <var class="keyword varname">hosts</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of hosts to set up. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-H 
+              <var class="keyword varname">chassis</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of chassis to set up. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-i 
+              <var class="keyword varname">ipoib_suffix</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Suffix to apply to host names to create IPoIB host names.
+              Default is 
+              <samp class="ph codeph">-ib</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-u 
+              <var class="keyword varname">user</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">User on remote system to allow this user to SSH to. Default is
+              current user code for host(s) and admin for chassis. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-S</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Securely prompts for password for user on remote system. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-R</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Skips setup of SSH to local host. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-P</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Skips ping of host (for SSH to devices on Internet with ping
+              firewalled). 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__GUID-F2D3B3DD-41D1-4521-BBCF-7CF6DE1DF1D5"><a name="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__GUID-F2D3B3DD-41D1-4521-BBCF-7CF6DE1DF1D5"><!-- --></a><h2 class="title sectiontitle">Operations on Hosts</h2> 
+       
+      <pre class="pre codeblock">opasetupssh -S -i''
+opasetupssh -U
+opasetupssh -h 'arwen elrond' -U
+HOSTS='arwen elrond' opasetupssh -U</pre>
+ 
+       
+      <pre class="pre codeblock">opasetupssh -C
+opasetupssh -C -H 'chassis1 chassis2'
+CHASSIS='chassis1 chassis2' opasetupssh -C</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__GUID-F91E2A39-FB55-49C5-B26C-21478BF8CCB4"><a name="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__GUID-F91E2A39-FB55-49C5-B26C-21478BF8CCB4"><!-- --></a><h2 class="sectiontitle">Environment Variables</h2> 
+      <p class="p">The following environment variables are also used by this command: 
+      </p>
+ 
+      <a name="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__GUID-776FE95B-0D12-4B5C-BB4D-7A8D394CD19A"><!-- --></a><dl class="dl parml" id="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__GUID-776FE95B-0D12-4B5C-BB4D-7A8D394CD19A"> 
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">HOSTS_FILE</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File containing list of hosts, used in absence of 
+              <samp class="ph codeph">-f</samp> and 
+              <samp class="ph codeph">-h</samp>. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">CHASSIS_FILE 
+            </span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File containing list of chassis, used in absence of 
+              <samp class="ph codeph">-F</samp> and 
+              <samp class="ph codeph">-H</samp>. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">HOSTS</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of hosts, used if 
+              <samp class="ph codeph">-h</samp> option not supplied. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">CHASSIS</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of chassis, used if 
+              <samp class="ph codeph">-C</samp> is used and 
+              <samp class="ph codeph">-H</samp> and 
+              <samp class="ph codeph">-F</samp> options not supplied. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_MAX_PARALLEL</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"> When 
+              <samp class="ph codeph">-p</samp> option is used, maximum concurrent
+              operations. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_IPOIB_SUFFIX</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Suffix to append to hostname to create IPoIB hostname. Used in
+              absence of 
+              <samp class="ph codeph">-i</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_CHASSIS_LOGIN_METHOD</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">How to log into chassis. Can be Telnet or SSH. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_CHASSIS_ADMIN_PASSWORD</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Password for admin on all chassis. Used in absence of 
+              <samp class="ph codeph">-S</samp> option. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__GUID-03B1A959-D526-4E57-BF2E-6A2E3B00F080"><a name="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__GUID-03B1A959-D526-4E57-BF2E-6A2E3B00F080"><!-- --></a><h2 class="sectiontitle">Description</h2> 
+      <p class="p">The 
+        <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric Suite FastFabric</span> Toolset provides additional flexibility in the
+        translation between IPoIB and management network hostnames. Refer to
+        "Configuration of IPoIB Name Mapping" section in the 
+        <span class="ph"><em class="ph i">Intel<sup>®</sup> Omni-Path
+            Fabric Suite FastFabric User Guide</em></span> for more information. 
+      </p>
+ 
+      <p class="p"><samp class="ph codeph">opasetupssh</samp> provides an easy way to create SSH keys
+        and distribute them to the hosts or chassis in the cluster. Many of the 
+        <span class="ph">FastFabric</span> tools (as well as many versions
+        of MPI) require that SSH is set up for password-less operation. Therefore, 
+        <samp class="ph codeph">opasetupssh</samp> is an important setup step. 
+      </p>
+ 
+      <p class="p">This tool also sets up SSH to the local host and the local host's
+        IPoIB name. This capability is required by selected 
+        <span class="ph">FastFabric</span> Toolset commands and may be
+        used by some applications (such as MPI). 
+      </p>
+ 
+      <p class="p"><samp class="ph codeph">opasetupssh</samp> has two modes of operation. The mode is
+        selected by the presence or absence of the 
+        <samp class="ph codeph">-U</samp> option. Typically, 
+        <samp class="ph codeph">opasetupssh</samp> is first run without the 
+        <samp class="ph codeph">-U</samp> option, then it may later be run with the 
+        <samp class="ph codeph">-U</samp> option. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__XX1255152"><a name="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__XX1255152"><!-- --></a><h2 class="sectiontitle">Host Initial Key Exchange</h2> 
+      <p class="p">When run without the 
+        <samp class="ph codeph">-U</samp> option, 
+        <samp class="ph codeph">opasetupssh</samp> performs the initial key exchange and
+        enables password-less SSH and SCP. The preferred way to use 
+        <samp class="ph codeph">opasetupssh</samp> for initial key exchange is with the 
+        <samp class="ph codeph">-S</samp> option. This requires that all hosts are configured
+        with the same password for the specified “user” (typically root). In this mode,
+        the password is prompted for once and then SSH and SCP are used in conjunction
+        with that password to complete the setup for the hosts. This mode also avoids
+        the need to set up 
+        <samp class="ph codeph">rsh/rcp/rlogin</samp> (which can be a security risk). 
+      </p>
+ 
+      <p class="p"><samp class="ph codeph">opasetupssh</samp> configures password-less SSH/SCP for both
+        the management network and IPoIB. Typically, the management network is used for
+        
+        <span class="ph">FastFabric</span> Toolset operations while IPoIB
+        is used for MPI and other applications. 
+      </p>
+ 
+      <p class="p">During initial cluster installation, where the 
+        <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric</span> software is not yet installed on all the hosts, IPoIB is not yet
+        running. In this situation, use the 
+        <samp class="ph codeph">-i</samp> option with an empty string as follows: 
+      </p>
+ 
+      <pre class="pre codeblock">opasetupssh -i ''</pre>
+ 
+      <p class="p">This causes the last part of the setup of SSH for IPoIB to be skipped.
+        
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__XX1146582"><a name="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__XX1146582"><!-- --></a><h2 class="sectiontitle">Refreshing Local Systems Known Hosts</h2> 
+      <p class="p">If aspects of the host have changed, such as IP addresses, MAC
+        addresses, software installation, or server OS reinstallation, you can refresh
+        the local host's SSH 
+        <span class="ph filepath">known_hosts</span> file by running 
+        <samp class="ph codeph">opasetupssh</samp> with the 
+        <samp class="ph codeph">-U</samp> option. This option does not transfer the keys, but
+        instead connects to each host (management network and IPoIB) to refresh the SSH
+        keys. Existing entries for the specified hosts are replaced within the local 
+        <samp class="ph codeph">known_hosts</samp> file. When run in this mode, the 
+        <samp class="ph codeph">-S</samp> option is ignored. This mode assumes SSH has
+        previously been set up for the hosts, as such no files are transferred to the
+        specified hosts and no passwords should be required. 
+      </p>
+ 
+      <p class="p">Typically after completing the installation and booting of 
+        <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric</span> software, 
+        <samp class="ph codeph">opasetupssh</samp> must be rerun with the 
+        <samp class="ph codeph">-U</samp> option to update the 
+        <samp class="ph codeph">known_hosts</samp> file. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__XX1146585"><a name="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__XX1146585"><!-- --></a><h2 class="sectiontitle">Chassis Initial Key Exchange</h2> 
+      <p class="p">When run without the 
+        <samp class="ph codeph">-U</samp> option, 
+        <samp class="ph codeph">opasetupssh</samp> performs the initial key exchange and
+        enables password-less SSH and SCP. For chassis, the key exchange uses SCP and
+        the chassis CLI. During this command you log into the chassis using the
+        configured mechanism for chassis login. 
+      </p>
+ 
+      <p class="p"> The preferred way to use 
+        <samp class="ph codeph">opasetupssh</samp> for initial key exchange is with the 
+        <samp class="ph codeph">-S</samp> option. This requires that all chassis are
+        configured with the same password for admin. In this mode, you are prompted for
+        the password once and then the 
+        <span class="keyword parmname">FF_CHASSIS_LOGIN_METHOD</span> and SCP are used in
+        conjunction with that password to complete the setup for the chassis. This
+        method also avoids the need to setup the chassis password in 
+        <span class="ph filepath">/etc/sysconfig/opa/opafastfabric.conf</span> (which can
+        be a security risk). 
+      </p>
+ 
+      <p class="p">For chassis, the 
+        <samp class="ph codeph">-i</samp> option is ignored. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__XX1146589"><a name="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561__XX1146589"><!-- --></a><h2 class="sectiontitle">Chassis Refreshing Local Systems Known Hosts</h2> 
+      <p class="p">If aspects of the chassis have changed, such as IP addresses or MAC
+        addresses, you can refresh the local host's SSH 
+        <span class="ph filepath">known_hosts</span> file by running 
+        <samp class="ph codeph">opasetupssh</samp> with the 
+        <samp class="ph codeph">-U</samp> option. This option does not transfer the keys, but
+        instead connects to each chassis to refresh the SSH keys. Existing entries for
+        the specified chassis are replaced within the local 
+        <span class="ph filepath">known_hosts</span> file. When run in this mode, the 
+        <samp class="ph codeph">-S</samp> option is ignored. This mode assumes SSH has
+        previously been set up for the chassis, because no files are transferred to the
+        specified hosts and no passwords are required. 
+      </p>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

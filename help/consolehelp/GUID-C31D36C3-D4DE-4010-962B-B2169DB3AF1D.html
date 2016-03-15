@@ -1,0 +1,1265 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opafequery">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opafequery</title>
+</head>
+<body class="man8" id="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D"><a name="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opafequery</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-C7DD1BCD-7D14-4487-B554-9E74C5DC6CB0"><a name="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-C7DD1BCD-7D14-4487-B554-9E74C5DC6CB0"><!-- --></a> 
+      <p class="p"><strong class="ph b">(All)</strong> Used for testing or debugging performance administration
+        (PA) operations to the Fabric Executive (FE). This tool performs custom PA
+        client/server queries. The output formats and arguments are very similar to 
+        <samp class="ph codeph">opapaquery</samp>. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-F17C8E66-3C01-44F4-A326-89D713618657"><a name="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-F17C8E66-3C01-44F4-A326-89D713618657"><!-- --></a><h2 class="sectiontitle">Syntax </h2> 
+      <pre class="pre codeblock">opafequery [-v] [-a <var class="keyword varname">ipAddr</var> | -h <var class="keyword varname">hostName</var>] [-E] [-T paramsfile] -o <var class="keyword varname">type</var> [SA options | PA options]
+</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__XX1186941"><a name="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__XX1186941"><!-- --></a><h2 class="sectiontitle">General Options </h2> 
+      <a name="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-D6CC4920-DA59-44A2-B26A-36842F7732A9"><!-- --></a><dl class="dl parml" id="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-D6CC4920-DA59-44A2-B26A-36842F7732A9"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-v</samp>/<samp class="ph codeph">--verbose</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Verbose output. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-a</samp>/<samp class="ph codeph">--ipAddr 
+              <var class="keyword varname">ipAddr</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">IP address of node running the FE. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-h</samp>/<samp class="ph codeph">--hostName 
+              <var class="keyword varname">hostName</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Host name of node running the FE. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-o</samp>/<samp class="ph codeph">--output 
+              <var class="keyword varname">output</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Output type. See 
+            <a class="xref nopagenum" href="#GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__XX1188365">SA Output Types</a> and 
+            <a class="xref nopagenum" href="#GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-85100129-C544-49C2-9A9C-51429DEFAF78">PA Output Types</a> for details. 
+            </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-E</samp>/<samp class="ph codeph">--feEsm 
+              <var class="keyword varname">ESMName</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">ESM FE name. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-T</samp>/<samp class="ph codeph">--sslParmsFile 
+              <var class="keyword varname">filename</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">SSL/TLS parameters XML file. Default = 
+            <span class="ph filepath">/etc/sysconfig/opa/opaff.xml</span> 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-8BB4AA83-9C27-45AA-8DCD-9F3B15425FB5"><a name="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-8BB4AA83-9C27-45AA-8DCD-9F3B15425FB5"><!-- --></a><h2 class="sectiontitle">SA Specific Options</h2> 
+      <a name="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-CFE11228-FB59-47C7-9D24-9F3859EFD4F4"><!-- --></a><dl class="dl parml" id="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-CFE11228-FB59-47C7-9D24-9F3859EFD4F4"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-I</samp>/<samp class="ph codeph">--IB 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd">Issues query in legacy InfiniBand* format. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-l</samp>/<samp class="ph codeph">--lid 
+              <var class="keyword varname">lid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries a specific LID. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-k</samp>/<samp class="ph codeph">--pkey 
+              <var class="keyword varname">pkey</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries a specific pkey. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-i</samp>/<samp class="ph codeph">--vfindex 
+              <var class="keyword varname">vfindex</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries a specific vfindex. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-S</samp>/<samp class="ph codeph">--serviceId 
+              <var class="keyword varname">serviceId</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries a specific service ID. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-L</samp>/<samp class="ph codeph">--SL 
+              <var class="keyword varname">SL</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries by service level. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-t</samp>/<samp class="ph codeph">--type 
+              <var class="keyword varname">type</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries by node type. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-s</samp>/<samp class="ph codeph">--sysguid 
+              <var class="keyword varname">guid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries by system image GUID. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-n</samp>/<samp class="ph codeph">--nodeguid 
+              <var class="keyword varname">guid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries by node GUID. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-p</samp>/<samp class="ph codeph">--portguid 
+              <var class="keyword varname">guid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries by port GUID. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-u</samp>/<samp class="ph codeph">--portgid 
+              <var class="keyword varname">gid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries by port GID. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-m</samp>/<samp class="ph codeph">--mcgid 
+              <var class="keyword varname">gid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries by multicast GID. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-d</samp>/<samp class="ph codeph">--desc 
+              <var class="keyword varname">name</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries by node name/description. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-P</samp>/<samp class="ph codeph">--guidpair 
+              <var class="keyword varname">'guid guid'</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries by a pair of port GUIDs. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-G</samp>/<samp class="ph codeph">--gidpair 
+              <var class="keyword varname">'gid gid'</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries by a pair of GIDs. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-B</samp>/<samp class="ph codeph">--guidlist 
+              <var class="keyword varname">'sguid ...;dguid ...'</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries by a list of port GUIDs. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-A</samp>/<samp class="ph codeph">--gidlist 
+              <var class="keyword varname">'sgid ...;dgid ...'</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Queries by a list of GIDs. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-x</samp>/<samp class="ph codeph">--sourcegid 
+              <var class="keyword varname">gid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Specifies a source GID for certain queries. 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__SECTION_4951EB0BEE764A3D967379AD7C1D840F"><a name="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__SECTION_4951EB0BEE764A3D967379AD7C1D840F"><!-- --></a><h2 class="sectiontitle">PA Specific Options</h2> 
+      <a name="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-C2BD0A88-2A17-430D-8A9F-DFD822C63AD5"><!-- --></a><dl class="dl parml" id="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-C2BD0A88-2A17-430D-8A9F-DFD822C63AD5"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-g</samp>/<samp class="ph codeph">--groupName 
+              <var class="keyword varname">groupName</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Group name for groupInfo query. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-l</samp>/<samp class="ph codeph">--lid 
+              <var class="keyword varname">lid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">LID of node for portCounters query. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-N</samp>/<samp class="ph codeph">--portNumber</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Port number for portCounters query. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-f</samp>/<samp class="ph codeph">--delta 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd">Delta flag for portCounters query. Values include: 0 or 1. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-U</samp>/<samp class="ph codeph">--userCntrs 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd">User-controlled counters flag for portCounters query. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-e</samp>/<samp class="ph codeph">--select 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd">32-bit select flag for clearing port counters select bits. 0 is
+            least significant (rightmost): 
+            <a name="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-6302FA37-81A3-4072-80A9-071942F43D11"><!-- --></a><dl class="dl parml" id="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-6302FA37-81A3-4072-80A9-071942F43D11"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0</samp> 
+                </dt>
+ 
+                <dd class="dd pd">XmitData 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">1</samp> 
+                </dt>
+ 
+                <dd class="dd pd">RcvData 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">2</samp> 
+                </dt>
+ 
+                <dd class="dd pd">XmitPkts 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">3</samp> 
+                </dt>
+ 
+                <dd class="dd pd">RcvPkts 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">4</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> MulticastXmitPkts 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">5</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> MulticastRcvPkts 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">6</samp> 
+                </dt>
+ 
+                <dd class="dd pd">XmitWait 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">7</samp> 
+                </dt>
+ 
+                <dd class="dd pd">CongDiscards 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">8</samp> 
+                </dt>
+ 
+                <dd class="dd pd">RcvFECN 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">9</samp> 
+                </dt>
+ 
+                <dd class="dd pd">RcvBECN 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">10</samp> 
+                </dt>
+ 
+                <dd class="dd pd">XmitTimeCong 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">11</samp> 
+                </dt>
+ 
+                <dd class="dd pd">XmitWastedBW 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">12</samp> 
+                </dt>
+ 
+                <dd class="dd pd">XmitWaitData 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">13</samp> 
+                </dt>
+ 
+                <dd class="dd pd">RcvBubble 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">14</samp> 
+                </dt>
+ 
+                <dd class="dd pd">MarkFECN 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">15</samp> 
+                </dt>
+ 
+                <dd class="dd pd">RcvConstraintErrors 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">16</samp> 
+                </dt>
+ 
+                <dd class="dd pd">RcvSwitchRelayErrors 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">17</samp> 
+                </dt>
+ 
+                <dd class="dd pd">XmitDiscards 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">18</samp> 
+                </dt>
+ 
+                <dd class="dd pd">XmitConstraintErrors 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">19</samp> 
+                </dt>
+ 
+                <dd class="dd pd">RcvRemotePhysicalErrors 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">20</samp> 
+                </dt>
+ 
+                <dd class="dd pd">LocalLinkIntegrityErrors 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">21</samp> 
+                </dt>
+ 
+                <dd class="dd pd">RcvErrors 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">22</samp> 
+                </dt>
+ 
+                <dd class="dd pd">ExcessiveBufferOverruns 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">23</samp> 
+                </dt>
+ 
+                <dd class="dd pd">FMConfigErrors 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">24</samp> 
+                </dt>
+ 
+                <dd class="dd pd">LinkErrorRecovery 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">25</samp> 
+                </dt>
+ 
+                <dd class="dd pd">LinkDowned 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">26</samp> 
+                </dt>
+ 
+                <dd class="dd pd">UncorrectableErrors 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-c</samp>/<samp class="ph codeph">--focus 
+              <var class="keyword varname">focus</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Focus select value for getting focus ports. Values include: 
+            <a name="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-8025AA34-D491-459B-96A6-72700A9ECC3E"><!-- --></a><dl class="dl parml" id="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-8025AA34-D491-459B-96A6-72700A9ECC3E"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph"> 0x00020001</samp> 
+                </dt>
+ 
+                <dd class="dd pd">Sorted by utilization - highest first. 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph"> 0x00020082</samp> 
+                </dt>
+ 
+                <dd class="dd pd">Sorted by packet rate - highest first. 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph"> 0x00020101</samp> 
+                </dt>
+ 
+                <dd class="dd pd">Sorted by utilization - lowest first. 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0x00030001</samp> 
+                </dt>
+ 
+                <dd class="dd pd">Sorted by integrity errors - highest first. 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0x00030002</samp> 
+                </dt>
+ 
+                <dd class="dd pd">Sorted by congestion errors - highest first. 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0x00030003</samp> 
+                </dt>
+ 
+                <dd class="dd pd">Sorted by SMA congestion errors - highest first. 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0x00030004</samp> 
+                </dt>
+ 
+                <dd class="dd pd">Sorted by bubble errors - highest first. 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0x00030005</samp> 
+                </dt>
+ 
+                <dd class="dd pd">Sorted by security errors - highest first. 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0x00030006</samp> 
+                </dt>
+ 
+                <dd class="dd pd">Sorted by routing errors - highest first. 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-w</samp>/<samp class="ph codeph">--start 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd">Start of window for focus ports - should always be 0. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-r</samp>/<samp class="ph codeph">--range 
+              <var class="keyword varname">range</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Size of window for focus ports list. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-b</samp>/<samp class="ph codeph">--imgNum 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd">64-bit image number. May be used with 
+            <samp class="ph codeph">groupInfo</samp>, 
+            <samp class="ph codeph">groupConfig</samp>, 
+            <samp class="ph codeph">portCounters (delta)</samp> outputs. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-O</samp>/<samp class="ph codeph">--imgOff</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Image offset. May be used with 
+            <samp class="ph codeph">groupInfo</samp>, 
+            <samp class="ph codeph">groupConfig</samp>, 
+            <samp class="ph codeph">portCounters (delta)</samp> outputs. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-F</samp>/<samp class="ph codeph">--moveImgNum 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd">64-bit image number. Used with 
+            <samp class="ph codeph">moveFreeze</samp> output to move a freeze image. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-M</samp>/<samp class="ph codeph">--moveImgOff 
+              <var class="keyword varname">ImgOff</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Image offset. May be used with 
+            <samp class="ph codeph">moveFreeze</samp> output to move a freeze image. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -V</samp>/<samp class="ph codeph">--vfName</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> VF name for vfInfo query. 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__XX1188365"><a name="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__XX1188365"><!-- --></a><h2 class="sectiontitle">SA Output Types </h2> 
+      <p class="p">Output types include: 
+      </p>
+ 
+      <a name="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-619D9D15-649C-4008-85F8-C37FA63E84EE"><!-- --></a><dl class="dl parml" id="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-619D9D15-649C-4008-85F8-C37FA63E84EE"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">saclassPortInfo</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Class port info. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">systemguid</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of system image GUIDs. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">nodeguid</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of node GUIDs. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">portguid</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of port GUIDs. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">lid</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of LIDs. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">desc</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of node descriptions/names. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">path</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of path records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">node</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of node records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">portinfo</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of port info records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">sminfo</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of SM info records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">swinfo</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of switch info records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">link</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of link records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">scsc</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of SC to SC mapping table records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">slsc</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of SL to SC mapping table records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">scsl</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of SC to SL mapping table records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">scvlt</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of SC to VLt table records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">scvlnt</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of SC to VLnt table records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">vlarb</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of VL arbitration table records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">pkey</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of PKey table records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">service</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of service records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">mcmember</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of multicast member records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">inform</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of inform info records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">linfdb</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of switch linear forwarding database (FDB) records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">ranfdb</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of switch random FDB records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">mcfdb</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of switch multicast FDB records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">trace</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of trace records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">vfinfo</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of vFabrics. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">vfinfocsv</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of vFabrics in CSV format. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">vfinfocsv2</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of vFabrics in CSV format with enums. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">fabricinfo</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Summary of fabric devices. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">quarantine</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of quarantined nodes. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">conginfo</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of Congestion Info Records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">swcongset</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of Switch Congestion Settings. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">hficongset</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of HFI Congestion Settings. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">hficongcon</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of HFI Congestion Control Settings. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">bfrctrl</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of buffer control tables. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">cableinfo</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of Cable Info records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">portgroup</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of AR Port Group records. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">portgroupfdb</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of AR Port Group FWD records. 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-85100129-C544-49C2-9A9C-51429DEFAF78"><a name="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-85100129-C544-49C2-9A9C-51429DEFAF78"><!-- --></a><h2 class="sectiontitle">PA Output Types </h2> 
+      <a name="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-ED749E41-D044-41FF-A8ED-6B0855B9F377"><!-- --></a><dl class="dl parml" id="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-ED749E41-D044-41FF-A8ED-6B0855B9F377"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">paclassPortInfo</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Class port info. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">groupList</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of PA groups. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">groupInfo</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Summary statistics of a PA group. Requires 
+            <samp class="ph codeph">-g</samp> option for 
+            <samp class="ph codeph"><var class="keyword varname">groupName</var></samp>. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">groupConfig</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Configuration of a PA group. Requires 
+            <samp class="ph codeph">-g</samp> option for 
+            <samp class="ph codeph"><var class="keyword varname">groupName</var></samp>. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">portCounters</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Port counters of fabric port. Requires 
+            <samp class="ph codeph">-l 
+              <var class="keyword varname">lid</var></samp> and 
+            <samp class="ph codeph">-N 
+              <var class="keyword varname">port</var></samp> options. Optionally, use the 
+            <samp class="ph codeph">-f 
+              <var class="keyword varname">delta</var></samp> option. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">clrPortCounters</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Clears port counters of fabric port. Requires 
+            <samp class="ph codeph">-l 
+              <var class="keyword varname">lid</var></samp>, 
+            <samp class="ph codeph">-N 
+              <var class="keyword varname">port</var></samp>, and 
+            <samp class="ph codeph">-e 
+              <var class="keyword varname">select</var></samp> options. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">clrAllPortCounters</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Clears all port counters in fabric. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">pmConfig</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Retrieves PM configuration information. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">freezeImage</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Creates freeze frame for image ID. Requires 
+            <samp class="ph codeph">-b 
+              <var class="keyword varname">imgNum</var></samp>. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">releaseImage</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Releases freeze frame for image ID. Requires 
+            <samp class="ph codeph">-b 
+              <var class="keyword varname">imgNum</var></samp>. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">renewImage</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Renews lease for freeze frame for image ID. Requires 
+            <samp class="ph codeph">-b&nbsp;<var class="keyword varname">imgNum</var></samp>. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">moveFreeze</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Moves freeze frame from image ID to new image ID. Requires 
+            <samp class="ph codeph">-b&nbsp;<var class="keyword varname">imgNum</var></samp> and 
+            <samp class="ph codeph">-F 
+              <var class="keyword varname">moveImgNum</var></samp>. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">focusPorts</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Gets sorted list of ports using utilization or error values (from
+            group buckets). 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">imageInfo</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Gets information about a PA image (timestamps and other details).
+            Requires 
+            <samp class="ph codeph">-b 
+              <var class="keyword varname">imgNum</var></samp>. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">vfList</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of virtual fabrics. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">vfInfo</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Summary statistics of a virtual fabric. Requires 
+            <samp class="ph codeph">-V 
+              <var class="keyword varname">vfName</var></samp> option. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">vfConfig</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Configuration of a virtual fabric. Requires 
+            <samp class="ph codeph">-V 
+              <var class="keyword varname">vfName</var></samp> option. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">vfPortCounters</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Port counters of fabric port. Requires 
+            <samp class="ph codeph">-V 
+              <var class="keyword varname">vfName</var></samp>, 
+            <samp class="ph codeph">-l 
+              <var class="keyword varname">lid</var></samp>, and 
+            <samp class="ph codeph">-N 
+              <var class="keyword varname">port</var></samp> options. Optionally, use the 
+            <samp class="ph codeph">-f 
+              <var class="keyword varname">delta</var></samp> option. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">vfFocusPorts</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Gets sorted list of virtual fabric ports usingutilization or
+            error values (from VF buckets). Requires 
+            <samp class="ph codeph">-V 
+              <var class="keyword varname">vfName</var></samp> option. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">clrVfPortCounters</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Clears VF port counters of fabric port. Requires 
+            <samp class="ph codeph">-l 
+              <var class="keyword varname">lid</var></samp>, 
+            <samp class="ph codeph">-N 
+              <var class="keyword varname">port</var></samp>, 
+            <samp class="ph codeph">-e 
+              <var class="keyword varname">select</var></samp>, and 
+            <samp class="ph codeph">-V 
+              <var class="keyword varname">vfName</var></samp> options. 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-4BD0D319-12E4-4970-B001-4D17175FF3DD"><a name="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D__GUID-4BD0D319-12E4-4970-B001-4D17175FF3DD"><!-- --></a><h2 class="sectiontitle">Examples </h2> 
+      <pre class="pre codeblock">opafequery -o classPortInfo 
+opafequery -h stewie -o classPortInfo 
+opafequery -a 172.21.2.155  -o classPortInfo 
+opafequery -o groupList 
+opafequery -o groupInfo -g All 
+opafequery -o groupConfig -g All 
+opafequery -h stewie -o groupInfo -g All 
+opafequery -a 172.21.2.155 -o groupInfo -g All 
+opafequery -o portCounters -l 1 -P 1 -d 1 
+opafequery -o portCounters -l 1 -P 1 -d 1 -n 0x20000000d02 -O 1 
+opafequery -o pmConfig 
+opafequery -o freezeImage -n 0x20000000d02 
+opafequery -o releaseImage -n 0xd01 
+opafequery -o renewImage -n 0xd01 
+opafequery -o moveFreeze -n 0xd01 -m 0x20000000d02 -M -2
+opafequery -o focusPorts -g All -f 0x00030001 -S 0 -r 20
+opafequery -o imageInfo -n 0x20000000d02</pre>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

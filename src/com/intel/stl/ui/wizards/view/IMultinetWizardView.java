@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.12  2015/11/09 20:39:15  fernande
+ *  Archive Log:    PR130231 - Cannot delete subnet from Wizard if subnet name is "Unknown Subnet". Some refactoring to decouple tasks from main wizard controller
+ *  Archive Log:
  *  Archive Log:    Revision 1.11  2015/10/06 20:21:10  fernande
  *  Archive Log:    PR130749 - FM GUI virtual fabric information doesn't match opafm.xml file. Removed external access to textfield
  *  Archive Log:
@@ -89,8 +92,6 @@ package com.intel.stl.ui.wizards.view;
 
 import java.util.List;
 
-import javax.swing.event.DocumentListener;
-
 import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.ui.main.view.IFabricView;
 import com.intel.stl.ui.wizards.impl.IMultinetWizardListener;
@@ -99,34 +100,46 @@ import com.intel.stl.ui.wizards.model.MultinetWizardModel;
 
 public interface IMultinetWizardView extends IWizardView {
 
+    void setSubnets(List<SubnetDescription> subnets);
+
+    void addSubnet(SubnetDescription subnet);
+
+    void setSelectedSubnet(SubnetDescription subnet);
+
+    void resetSubnet(SubnetDescription subnet);
+
+    void setTasks(List<IMultinetWizardTask> tasks);
+
+    void setEnableForAllTasks(boolean enable);
+
+    int getSelectedTask();
+
+    void setSelectedTask(int taskNum);
+
+    void setWizardViewType(WizardViewType type);
+
+    boolean isDirty();
+
+    void setDirty(boolean dirty);
+
+    boolean previousTab();
+
+    boolean nextTab();
+
     public void update(MultinetWizardModel model);
-
-    public void updateNavPanel();
-
-    public void initButtonMap(List<SubnetDescription> subnets,
-            SubnetDescription currentSubnet);
 
     public void showErrorMessage(String title, String... msgs);
 
     public void showErrorMessage(String title, Throwable... errors);
 
-    public void updateSelectedButtonText(String name);
-
     public void setWizardListener(IMultinetWizardListener listener);
-
-    public void setTabs(List<IMultinetWizardTask> tasks, boolean newSubnet,
-            boolean wizardStartup);
 
     public void showWizard(SubnetDescription subnet, boolean isFirstRun,
             IFabricView mainFrame);
 
-    public void setSubnetName(String name);
-
-    public String getSubnetName();
+    String getSubnetName();
 
     public void stopSubnetConnectionTest();
-
-    public void assignDocumentListeners(DocumentListener... docListeners);
 
     /**
      * <i>Description:</i>

@@ -1,0 +1,94 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opaxmlindent">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-DA4E890E-6E54-4E11-8EBE-E541B21633BC">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opaxmlindent</title>
+</head>
+<body class="man8" id="GUID-DA4E890E-6E54-4E11-8EBE-E541B21633BC"><a name="GUID-DA4E890E-6E54-4E11-8EBE-E541B21633BC"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opaxmlindent</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-DA4E890E-6E54-4E11-8EBE-E541B21633BC__GUID-6FE08068-CB2E-4842-ACB1-31BAC908E17B"><a name="GUID-DA4E890E-6E54-4E11-8EBE-E541B21633BC__GUID-6FE08068-CB2E-4842-ACB1-31BAC908E17B"><!-- --></a> 
+      <p class="p"><strong class="ph b">(Linux)</strong> Takes well-formed XML as input, filters out comments,
+        and generates a uniformly-indented equivalent XML file. Use 
+        <samp class="ph codeph">opaxmlindent</samp> to reformat files for easier reading and
+        review, also to reformat a file for easy comparison with diff. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-DA4E890E-6E54-4E11-8EBE-E541B21633BC__GUID-164FE89B-4210-4902-8805-1D979D438135"><a name="GUID-DA4E890E-6E54-4E11-8EBE-E541B21633BC__GUID-164FE89B-4210-4902-8805-1D979D438135"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opaxmlindent [-t|-k] [-i <var class="keyword varname">indent</var>] [<var class="keyword varname">input_file</var>]</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-DA4E890E-6E54-4E11-8EBE-E541B21633BC__XX1133258"><a name="GUID-DA4E890E-6E54-4E11-8EBE-E541B21633BC__XX1133258"><!-- --></a><h2 class="sectiontitle">Options </h2> 
+      <a name="GUID-DA4E890E-6E54-4E11-8EBE-E541B21633BC__GUID-31F81D9E-824C-4E58-8040-A8F29928A320"><!-- --></a><dl class="dl parml" id="GUID-DA4E890E-6E54-4E11-8EBE-E541B21633BC__GUID-31F81D9E-824C-4E58-8040-A8F29928A320"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-t 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Trims leading and trailing whitespace in tag contents. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-k</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">In tags with purely whitespace that contain newlines, keep
+              newlines as-is. Default is to format as an empty list. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-i 
+              <var class="keyword varname">indent</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Sets indentation to use per level. Default is 4. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"><var class="keyword varname">input_file</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> XML file to read. Default is 
+            <samp class="ph codeph">stdin</samp>. 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

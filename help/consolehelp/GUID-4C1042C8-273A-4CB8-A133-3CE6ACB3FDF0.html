@@ -1,0 +1,96 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opa-arptbl-tuneup">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opa-arptbl-tuneup</title>
+</head>
+<body class="man1" id="GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0"><a name="GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opa-arptbl-tuneup</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0__GUID-E782BBEC-2AE7-442C-B22D-C8F4CE06CB10"><a name="GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0__GUID-E782BBEC-2AE7-442C-B22D-C8F4CE06CB10"><!-- --></a> 
+      <p class="p">Adjusts kernel ARP/neighbor table sizes for very large subnets based
+        on configured IPv4/IPv6 network interface netmask values. Normally executes
+        once on boot by 
+        <samp class="ph codeph">opa.service</samp>; however, 
+        <samp class="ph codeph">opa-arptbl-tuneup</samp> can be invoked with user discretion
+        for a changed subnet configuration. 
+      </p>
+
+      <div class="note note" id="GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0__GUID-D1D3FB53-61FB-4B91-A796-B1171B9D510A"><a name="GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0__GUID-D1D3FB53-61FB-4B91-A796-B1171B9D510A"><!-- --></a><span class="notetitle">Note:</span>  Must execute as 
+        <samp class="ph codeph">root</samp>. 
+      </div>
+
+    </div>
+ 
+    <div class="section refsyn" id="GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0__GUID-0CE5CFDA-9FEE-4BCF-BD79-65297D247BB9"><a name="GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0__GUID-0CE5CFDA-9FEE-4BCF-BD79-65297D247BB9"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opa-arptbl-tuneup [--help | start | stop | restart | force-reload | status]</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0__GUID-8814F459-5AB2-4BD0-B2F4-6A18F460B1EC"><a name="GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0__GUID-8814F459-5AB2-4BD0-B2F4-6A18F460B1EC"><!-- --></a><h2 class="sectiontitle">Options</h2> 
+      <a name="GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0__GUID-40FCF43B-4077-41AA-A7E0-97E5B32114DC"><!-- --></a><dl class="dl parml" id="GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0__GUID-40FCF43B-4077-41AA-A7E0-97E5B32114DC"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">start</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Adjusts kernel ARP table size. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">stop</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Restores previous configuration.
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">restart</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Stops then starts. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">force-reload</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> Stops then starts. (Identical to 
+            <samp class="ph codeph">restart</samp> option.)
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">status</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Checks if original table size was changed. 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

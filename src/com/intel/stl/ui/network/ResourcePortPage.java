@@ -35,7 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.22.2.1  2015/10/19 22:44:20  jijunwan
+ *  Archive Log:    Revision 1.25  2015/11/02 23:56:52  jijunwan
+ *  Archive Log:    PR 131396 - Incorrect Connectivity Table for a VF port
+ *  Archive Log:    - adapted to the new connectivity table controller to support VF port
+ *  Archive Log:
+ *  Archive Log:    Revision 1.24  2015/10/23 19:07:59  jijunwan
+ *  Archive Log:    PR 129357 - Be able to hide inactive ports
+ *  Archive Log:    - revert back to the old version without visible node support
+ *  Archive Log:
+ *  Archive Log:    Revision 1.23  2015/10/19 20:34:49  jijunwan
  *  Archive Log:    PR 131097 - Connectivity tab under Topology has no information.
  *  Archive Log:    - changed a sort of typo in the code
  *  Archive Log:
@@ -141,6 +149,7 @@ import com.intel.stl.ui.main.Context;
 import com.intel.stl.ui.model.ConnectivityTableModel;
 import com.intel.stl.ui.model.GraphNode;
 import com.intel.stl.ui.monitor.ConnectivityTableController;
+import com.intel.stl.ui.monitor.TreeNodeType;
 import com.intel.stl.ui.monitor.tree.FVResourceNode;
 import com.intel.stl.ui.monitor.view.ConnectivitySubpageView;
 import com.intel.stl.ui.network.view.ResourcePortView;
@@ -296,12 +305,18 @@ public class ResourcePortPage implements IResourceNodeSubpageController {
      */
     @Override
     public void showNode(FVResourceNode source, GraphNode node) {
-        // processNode(node, NodeType.getNodeType(node.getType()));
-        processNode(source, NodeType.getNodeType(node.getType()));
+        String vfName = null;
+        FVResourceNode group = source.getParent();
+        if (group.getType() == TreeNodeType.VIRTUAL_FABRIC) {
+            vfName = group.getTitle();
+        }
+        // processNode(node, NodeType.getNodeType(node.getType()), vfName);
+        processNode(source, NodeType.getNodeType(node.getType()), vfName);
     }
 
-    protected void processNode(FVResourceNode node, NodeType nodeType) {
-        Vector<FVResourceNode> children = node.getVisibleChildren();
+    protected void processNode(FVResourceNode node, NodeType nodeType,
+            String vfName) {
+        Vector<FVResourceNode> children = node.getChildren();
         if (children.size() >= 1) {
             short[] ports = null;
             if (nodeType == NodeType.SWITCH) {
@@ -315,12 +330,12 @@ public class ResourcePortPage implements IResourceNodeSubpageController {
                     ports[i] = (short) children.get(i).getId();
                 }
             }
-            tableController.showConnectivity(node.getId(), null, ports);
+            tableController.showConnectivity(node.getId(), vfName, null, ports);
         }
     }
 
-    protected void processNode(GraphNode node, NodeType nodeType) {
-        node.dump(System.out);
+    protected void processNode(GraphNode node, NodeType nodeType, String vfName) {
+        // node.dump(System.out);
         TreeMap<GraphNode, TreeMap<Integer, Integer>> middleNodes =
                 node.getMiddleNodes();
         List<Short> portList = new ArrayList<Short>();
@@ -361,7 +376,7 @@ public class ResourcePortPage implements IResourceNodeSubpageController {
             }
         }
 
-        tableController.showConnectivity(node.getLid(), null, ports);
+        tableController.showConnectivity(node.getLid(), vfName, null, ports);
     }
 
     @Override

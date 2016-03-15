@@ -1,0 +1,57 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opaextractperf">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-1664B512-90C1-4ED0-A21F-CEEB62D5C2AB">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opaextractperf</title>
+</head>
+<body class="man8" id="GUID-1664B512-90C1-4ED0-A21F-CEEB62D5C2AB"><a name="GUID-1664B512-90C1-4ED0-A21F-CEEB62D5C2AB"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opaextractperf</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-1664B512-90C1-4ED0-A21F-CEEB62D5C2AB__GUID-1E706459-8CDB-4B7E-9574-3466B2FA32C7"><a name="GUID-1664B512-90C1-4ED0-A21F-CEEB62D5C2AB__GUID-1E706459-8CDB-4B7E-9574-3466B2FA32C7"><!-- --></a> 
+      <p class="p">Provides a report of all the performance counters in a format easily
+        imported to Excel for further analysis. It generates a detailed 
+        <samp class="ph codeph">opareport</samp> component summary report and pipes the
+        result to 
+        <samp class="ph codeph">opaxmlextract</samp>, extracting element values for NodeDesc,
+        SystemImageGUID, PortNum, and all the performance counters. Extraction is
+        performed only from the Systems portion of the report, which does not contain
+        Neighbor information (the Neighbor and SMs portions are suppressed). 
+      </p>
+ 
+      </div>
+ 
+    <div class="section refsyn" id="GUID-1664B512-90C1-4ED0-A21F-CEEB62D5C2AB__GUID-32F04DAF-B7FF-4F2A-881B-7C9418BBCFEB"><a name="GUID-1664B512-90C1-4ED0-A21F-CEEB62D5C2AB__GUID-32F04DAF-B7FF-4F2A-881B-7C9418BBCFEB"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <p class="p">The implementation of the script is as follows: 
+      </p>
+ 
+      <pre class="pre codeblock">opareport -o comps -s -x -d 10 | opaxmlextract -d \; 
+-e NodeDesc -e SystemImageGUID -e PortNum -e XmitDataMB 
+-e XmitData -e XmitPkts -e RcvDataMB -e RcvData -e RcvPkts 
+-e SymbolErrors -e LinkErrorRecovery -e LinkDowned -e PortRcvErrors 
+-e PortRcvRemotePhysicalErrors -e PortRcvSwitchRelayErrors 
+-e PortXmitDiscards -e PortXmitConstraintErrors 
+-e PortRcvConstraintErrors -e LocalLinkIntegrityErrors 
+-e ExcessiveBufferOverrunErrors -e VL15Dropped -s Neighbor -s SMs</pre>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

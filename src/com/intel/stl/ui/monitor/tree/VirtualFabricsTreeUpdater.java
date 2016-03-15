@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.11  2015/10/23 19:07:57  jijunwan
+ *  Archive Log:    PR 129357 - Be able to hide inactive ports
+ *  Archive Log:    - revert back to the old version without visible node support
+ *  Archive Log:
  *  Archive Log:    Revision 1.10  2015/09/30 13:26:45  fisherma
  *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
  *  Archive Log:
@@ -187,7 +191,7 @@ public class VirtualFabricsTreeUpdater implements ITreeUpdater {
                 index = -index - 1;
                 nodeUpdater.addNode(index, lid, vfNode, monitors, null);
             } else {
-                FVResourceNode updateNode = vfNode.getModelChildAt(index);
+                FVResourceNode updateNode = vfNode.getChildAt(index);
                 nodeUpdater.updateNode(updateNode, vfNode, monitors, null);
             }
         }
@@ -203,15 +207,13 @@ public class VirtualFabricsTreeUpdater implements ITreeUpdater {
         int id = vfNames.get(vfName);
         FVResourceNode node = TreeNodeFactory.createVfNode(vfName, id);
         FVResourceNode oldNode =
-                id < parent.getModelChildCount() ? parent.getModelChildAt(id)
-                        : null;
+                id < parent.getChildCount() ? parent.getChildAt(id) : null;
         if (!node.equals(oldNode)) {
             parent.addChild(id, node);
             if (monitors != null) {
-                int viewId = parent.getViewIndex(id);
                 for (ITreeMonitor monitor : monitors) {
                     monitor.fireTreeNodesInserted(this, parent.getPath()
-                            .getPath(), new int[] { viewId },
+                            .getPath(), new int[] { id },
                             new FVResourceNode[] { node });
                 }
             }
@@ -231,23 +233,22 @@ public class VirtualFabricsTreeUpdater implements ITreeUpdater {
      */
     public void removeVFNode(int lid, FVResourceNode tree,
             boolean removeEmptyParents, List<ITreeMonitor> monitors) {
-        for (int i = 0; i < tree.getModelChildCount(); i++) {
-            FVResourceNode vfNode = tree.getModelChildAt(i);
-            for (int j = 0; j < vfNode.getModelChildCount(); j++) {
-                FVResourceNode node = vfNode.getModelChildAt(j);
+        for (int i = 0; i < tree.getChildCount(); i++) {
+            FVResourceNode vfNode = tree.getChildAt(i);
+            for (int j = 0; j < vfNode.getChildCount(); j++) {
+                FVResourceNode node = vfNode.getChildAt(j);
                 if (node.getId() == lid) {
                     int index = j;
                     FVResourceNode parent = vfNode;
-                    if (removeEmptyParents && vfNode.getModelChildCount() == 1) {
-                        index = tree.getModelIndex(vfNode);
+                    if (removeEmptyParents && vfNode.getChildCount() == 1) {
+                        index = tree.getIndex(vfNode);
                         parent = tree;
                     }
                     parent.removeChild(index);
                     if (monitors != null) {
-                        int viewIndex = parent.getViewIndex(index);
                         for (ITreeMonitor monitor : monitors) {
                             monitor.fireTreeNodesRemoved(this, parent.getPath()
-                                    .getPath(), new int[] { viewIndex },
+                                    .getPath(), new int[] { index },
                                     new FVResourceNode[] { node });
                         }
                     }

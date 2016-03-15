@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.9  2015/10/23 19:07:57  jijunwan
+ *  Archive Log:    PR 129357 - Be able to hide inactive ports
+ *  Archive Log:    - revert back to the old version without visible node support
+ *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/09/30 13:26:45  fisherma
  *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
  *  Archive Log:
@@ -237,10 +241,10 @@ public class VirtualFabricsTreeSynchronizer extends TreeSynchronizer<String> {
             nodesUpdater.updateTree(node, members, monitors, observer);
         } else {
             FVResourceNode[] children =
-                    new FVResourceNode[node.getModelChildCount()];
-            int[] childIndex = new int[node.getModelChildCount()];
+                    new FVResourceNode[node.getChildCount()];
+            int[] childIndex = new int[node.getChildCount()];
             int index = 0;
-            while (node.getModelChildCount() > 0) {
+            while (node.getChildCount() > 0) {
                 childIndex[index] = index;
                 children[index++] = node.removeChild(0);
             }

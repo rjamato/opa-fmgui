@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.31  2015/11/11 13:26:29  robertja
+ *  Archive Log:    PR 130278 - Store console tab help pane state on a per-tab basis so that help info is restored when focus returns to a tab.
+ *  Archive Log:
  *  Archive Log:    Revision 1.30  2015/10/09 13:40:19  rjtierne
  *  Archive Log:    PR 129027 - Need to handle customized command prompts when detecting commands on console
  *  Archive Log:    - Implementing new interface IConsole to store the console prompt and keep track of whether
@@ -237,8 +240,10 @@ public class ConsoleTerminalController implements IConsoleListener, IConsole {
     private String prompt;
 
     private boolean promptReady;
+    
+    private String lastCommand = "";
 
-    // Added this comment to correct PR 126675 comment above
+	// Added this comment to correct PR 126675 comment above
     public ConsoleTerminalController(ConsoleTerminalView view, String pageName,
             String pageDescription, int id, IHelp consoleHelpListener) {
 
@@ -273,6 +278,20 @@ public class ConsoleTerminalController implements IConsoleListener, IConsole {
             consoleTerminalView.enableHelp(false);
         }
     }
+    
+    /**
+	 * @return the lastCommand
+	 */
+	public synchronized String getLastCommand() {
+		return lastCommand;
+	}
+
+	/**
+	 * @param lastCommand the lastCommand to set
+	 */
+	public synchronized void setLastCommand(String lastCommand) {
+		this.lastCommand = lastCommand;
+	}
 
     public String getHelpID() {
         return HelpAction.getInstance().getAdminConsoleTerminal();

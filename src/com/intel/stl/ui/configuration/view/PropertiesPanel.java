@@ -35,6 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.6  2015/12/03 20:12:47  jijunwan
+ *  Archive Log:    PR 130614 - Select All / Deselect All buttons
+ *  Archive Log:    - Added "select all" and "unselect all" buttons
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/11/02 17:36:00  jijunwan
+ *  Archive Log:    PR 131378 - Toolbars should be locked in place
+ *  Archive Log:    - set toolbar floatable to false
+ *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/08/17 18:54:17  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -96,6 +104,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -103,6 +112,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -162,6 +172,8 @@ public class PropertiesPanel<M extends PropertySet<?>> extends JPanel {
     private IPropertyListener listener;
 
     private Map<String, Boolean> changedOptions;
+
+    private Map<String, JCheckBox> options;
 
     /**
      * Description:
@@ -336,6 +348,7 @@ public class PropertiesPanel<M extends PropertySet<?>> extends JPanel {
     protected Component getCtrlPanel() {
         if (toolBar == null) {
             toolBar = new JToolBar();
+            toolBar.setFloatable(false);
 
             if (enableOptionControl) {
                 addOptionButton();
@@ -489,14 +502,56 @@ public class PropertiesPanel<M extends PropertySet<?>> extends JPanel {
             return;
         }
 
+        options = new HashMap<String, JCheckBox>();
         changedOptions = new HashMap<String, Boolean>();
         popupContent.removeAll();
-        int row = 0;
+
+        // select all
+        GridBagConstraints gc = createConstraints(2, 0, 2, 0);
+        gc.gridwidth = GridBagConstraints.REMAINDER;
+        JPanel panel = new JPanel(new GridLayout(1, 2, 5, 0));
+        panel.setOpaque(false);
+        panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory
+                .createMatteBorder(0, 0, 2, 0, UIConstants.INTEL_ORANGE),
+                BorderFactory.createEmptyBorder(2, 2, 4, 2)));
+        JButton selectAll =
+                ComponentFactory
+                        .getIntelActionButton(STLConstants.K4004_SELECT_ALL
+                                .getValue());
+        selectAll.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for (Entry<String, JCheckBox> option : options.entrySet()) {
+                    option.getValue().setSelected(true);
+                    changedOptions.put(option.getKey(), true);
+                }
+            }
+        });
+        panel.add(selectAll);
+        JButton unselectAll =
+                ComponentFactory
+                        .getIntelActionButton(STLConstants.K4005_UNSELECT_ALL
+                                .getValue());
+        unselectAll.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for (Entry<String, JCheckBox> option : options.entrySet()) {
+                    option.getValue().setSelected(false);
+                    changedOptions.put(option.getKey(), false);
+                }
+            }
+        });
+        panel.add(unselectAll);
+        popupContent.add(panel, gc);
+
+        int row = 1;
         for (PropertyGroup group : groups) {
-            addPropertyGroup(popupContent, group, row);
+            JCheckBox box = addPropertyGroup(popupContent, group, row);
+            options.put(group.getName(), box);
             row++;
         }
-        GridBagConstraints gc = createConstraints(0, 5, 0, 0);
+
+        gc = createConstraints(0, 5, 0, 0);
         gc.fill = GridBagConstraints.BOTH;
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.weightx = 1;
@@ -514,8 +569,8 @@ public class PropertiesPanel<M extends PropertySet<?>> extends JPanel {
         return gc;
     }
 
-    private void addPropertyGroup(JComponent component, PropertyGroup group,
-            int row) {
+    private JCheckBox addPropertyGroup(JComponent component,
+            PropertyGroup group, int row) {
         GridBagConstraints gc = createConstraints(0, 5, 0, 0);
         gc.gridx = 0;
         gc.gridy = row;
@@ -535,6 +590,7 @@ public class PropertiesPanel<M extends PropertySet<?>> extends JPanel {
             }
         });
         component.add(checkbox, gc);
+        return checkbox;
     }
 
 }

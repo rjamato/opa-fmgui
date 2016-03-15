@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.28  2015/11/09 20:45:33  fernande
+ *  Archive Log:    PR130231 - Cannot delete subnet from Wizard if subnet name is "Unknown Subnet". Some refactoring to decouple tasks from main wizard controller
+ *  Archive Log:
  *  Archive Log:    Revision 1.27  2015/08/17 18:54:04  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -284,11 +287,6 @@ public class SubnetWizardController implements IMultinetWizardTask,
      */
     @Override
     public void init() {
-
-        if (!multinetWizardController.isNewWizard()) {
-            view.resetPanel();
-        }
-
         view.setDirty(false);
         view.enableNext(false);
         done = false;
@@ -352,12 +350,6 @@ public class SubnetWizardController implements IMultinetWizardTask,
             updateModel();
         }
 
-        // If we make it this far update the selected button
-        if (!multinetWizardController.isNewWizard()) {
-            multinetWizardController.getView().updateSelectedButtonText(
-                    view.getSubnetName());
-        }
-
         // If we've made it this far, it's a success
         done = true;
         success = true;
@@ -383,9 +375,6 @@ public class SubnetWizardController implements IMultinetWizardTask,
         hostInfoList.add(hostInfo);
         subnet.setFEList(hostInfoList);
         subnet.setCurrentFEIndex(0);
-
-        // Clear the key factories for this subnet
-        multinetWizardController.clearSubnetFactories(subnet);
 
         try {
             connectionTest = true;
@@ -633,7 +622,6 @@ public class SubnetWizardController implements IMultinetWizardTask,
 
             // Get the subnet from the model
             newSubnet = subnetModel.getSubnet();
-            newSubnet.setName(view.getSubnetName());
             newSubnet.setAutoConnect(view.isAutoConnected());
 
             // Loop through the backup hosts

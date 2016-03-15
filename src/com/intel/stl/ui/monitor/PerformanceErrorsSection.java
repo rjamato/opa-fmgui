@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.24  2015/11/02 20:26:13  jijunwan
+ *  Archive Log:    PR 131384 - Incorrect label name on port counter panel
+ *  Archive Log:    - renamed constant RX_CUMULATIVE_DATA to RX_CUMULATIVE_DATA_MB, and TX_CUMULATIVE_DATA to TX_CUMULATIVE_DATA_MB
+ *  Archive Log:    - introduced new constants for RvcData and XmitData and applied them on port counters panel
+ *  Archive Log:
  *  Archive Log:    Revision 1.23  2015/08/17 18:53:41  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -166,8 +171,8 @@ public class PerformanceErrorsSection extends
                 STLConstants.K0746_RECEIVE.getValue(), -1, true));
 
         errorMap.put(
-                STLConstants.K0729_RX_CUMULATIVE_DATA.getValue(),
-                new PerfErrorsItem(STLConstants.K0729_RX_CUMULATIVE_DATA
+                STLConstants.K0730_RX_CUMULATIVE_DATA.getValue(),
+                new PerfErrorsItem(STLConstants.K0730_RX_CUMULATIVE_DATA
                         .getValue(), STLConstants.K0039_NOT_AVAILABLE
                         .getValue(), false));
 
@@ -217,8 +222,8 @@ public class PerformanceErrorsSection extends
                 new PerfErrorsItem(STLConstants.K0745_TRANSMIT.getValue(), -1,
                         true));
         errorMap.put(
-                STLConstants.K0735_TX_CUMULATIVE_DATA.getValue(),
-                new PerfErrorsItem(STLConstants.K0735_TX_CUMULATIVE_DATA
+                STLConstants.K0732_TX_CUMULATIVE_DATA.getValue(),
+                new PerfErrorsItem(STLConstants.K0732_TX_CUMULATIVE_DATA
                         .getValue(), STLConstants.K0039_NOT_AVAILABLE
                         .getValue(), false));
         errorMap.put(
@@ -260,7 +265,7 @@ public class PerformanceErrorsSection extends
     private void insertIntoErrItemMap(PortCountersBean bean) {
         // We want to keep this order. Shouldn't be known to VIEW.
         setConvertedValStr(errorMap,
-                STLConstants.K0729_RX_CUMULATIVE_DATA.getValue(),
+                STLConstants.K0730_RX_CUMULATIVE_DATA.getValue(),
                 bean.getPortRcvData());
         setValStr(errorMap,
                 STLConstants.K0728_RX_CUMULATIVE_PACKETS.getValue(),
@@ -289,7 +294,7 @@ public class PerformanceErrorsSection extends
 
         // Transimitted
         setConvertedValStr(errorMap,
-                STLConstants.K0735_TX_CUMULATIVE_DATA.getValue(),
+                STLConstants.K0732_TX_CUMULATIVE_DATA.getValue(),
                 bean.getPortXmitData());
         setValStr(errorMap,
                 STLConstants.K0734_TX_CUMULATIVE_PACKETS.getValue(),
@@ -314,7 +319,7 @@ public class PerformanceErrorsSection extends
     private void insertIntoErrItemMap(VFPortCountersBean bean) {
         // Received
         setConvertedValStr(errorMap,
-                STLConstants.K0729_RX_CUMULATIVE_DATA.getValue(),
+                STLConstants.K0730_RX_CUMULATIVE_DATA.getValue(),
                 bean.getPortVFRcvData());
         setValStr(errorMap,
                 STLConstants.K0728_RX_CUMULATIVE_PACKETS.getValue(),
@@ -330,7 +335,7 @@ public class PerformanceErrorsSection extends
 
         // Transmitted
         setConvertedValStr(errorMap,
-                STLConstants.K0735_TX_CUMULATIVE_DATA.getValue(),
+                STLConstants.K0732_TX_CUMULATIVE_DATA.getValue(),
                 bean.getPortVFXmitData());
         setValStr(errorMap,
                 STLConstants.K0734_TX_CUMULATIVE_PACKETS.getValue(),

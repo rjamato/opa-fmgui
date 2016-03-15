@@ -35,6 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.6  2015/10/23 14:41:21  rjtierne
+ *  Archive Log:    PR 131107 - Changing log file size from drop down list doesn't allow users to save settings
+ *  Archive Log:    - Call super() to provide parent window with the title and icon
+ *  Archive Log:    - In ItemStateChanged() for the Max File Size Units combo box, call setDirty() to set the
+ *  Archive Log:    OK and Reset buttons to enabled.
+ *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/09/14 16:08:19  jijunwan
  *  Archive Log:    PR 130229 - The text component of all editable combo boxes should provide validation of the input
  *  Archive Log:    - code clean up
@@ -121,6 +127,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -191,8 +198,8 @@ public class LoggingConfigView extends JDialog {
     private final IFabricView owner;
 
     public LoggingConfigView(IFabricView owner) {
-        // super((JFrame) owner, STLConstants.K3048_LOGGING_CONFIGURATION
-        // .getValue(), true);
+        super((JFrame) owner, STLConstants.K3048_LOGGING_CONFIGURATION
+                .getValue(), true);
         this.owner = owner;
         createDocumentListener();
         initComponents();
@@ -359,6 +366,7 @@ public class LoggingConfigView extends JDialog {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 dirty = true;
+                setDirty();
             }
         });
         cboxFileSizeUnit.setUI(new IntelComboBoxUI());

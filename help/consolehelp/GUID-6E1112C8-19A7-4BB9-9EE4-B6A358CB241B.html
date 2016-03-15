@@ -1,0 +1,267 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opahostsmanalysis">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opahostsmanalysis</title>
+</head>
+<body class="man8" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opahostsmanalysis</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__GUID-55F35BFC-D6E8-4C4A-A781-1D1BAB4FA44F"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__GUID-55F35BFC-D6E8-4C4A-A781-1D1BAB4FA44F"><!-- --></a> 
+      <p class="p"><strong class="ph b">(All)</strong> Performs analysis against the local server only. It is
+        assumed that both the host SM and the 
+        <span class="ph">FastFabric</span> are installed on the same
+        system. 
+      </p>
+ 
+      <p class="p">The host SM analysis tool checks the following: 
+      </p>
+ 
+      <a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__UL_74A48170ECEA41579EACC93F57ADD509"><!-- --></a><ul class="ul" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__UL_74A48170ECEA41579EACC93F57ADD509"> 
+        <li class="li" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__XX1118743"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__XX1118743"><!-- --></a> Host SM software version 
+        </li>
+ 
+        <li class="li" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__XX1118744"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__XX1118744"><!-- --></a> Host SM configuration file (simple text compare
+          using 
+          <samp class="ph codeph">FF_DIFF_CMD</samp>) 
+        </li>
+ 
+        <li class="li" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__XX1118745"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__XX1118745"><!-- --></a> Host SM health (for example, is it running?) 
+        </li>
+ 
+      </ul>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__GUID-C28B517A-BDEF-48F9-8B8A-15FBB1029265"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__GUID-C28B517A-BDEF-48F9-8B8A-15FBB1029265"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opahostsmanalysis [-b|-e] [-s] [-d <var class="keyword varname">dir</var>]</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__GUID-8BB4AA83-9C27-45AA-8DCD-9F3B15425FB5"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__GUID-8BB4AA83-9C27-45AA-8DCD-9F3B15425FB5"><!-- --></a><h2 class="sectiontitle">Options</h2> 
+      <a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__GUID-CFE11228-FB59-47C7-9D24-9F3859EFD4F4"><!-- --></a><dl class="dl parml" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__GUID-CFE11228-FB59-47C7-9D24-9F3859EFD4F4"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Produces full help text. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-b</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Baseline mode. Default is the compare/check mode. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-e</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> Evaluates health only. Default is the compare/check mode. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-s</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Saves history of failures (errors/differences). 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-d 
+              <var class="keyword varname">dir</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Top-level directory for saving baseline and history of failed
+            checks. Default = 
+            <span class="ph filepath">/var/opt/opa/analysis</span> 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__SECTION_B98F70FE471F4369B29E5C18D5774BC8"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__SECTION_B98F70FE471F4369B29E5C18D5774BC8"><!-- --></a><h2 class="sectiontitle">Example </h2> 
+      <pre class="pre codeblock">opahostsmanalysis</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__GUID-8EAA159C-C5F0-4ED1-9182-D755CA38C886"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__GUID-8EAA159C-C5F0-4ED1-9182-D755CA38C886"><!-- --></a><h2 class="sectiontitle">Environment Variables</h2> 
+      <p class="p">The following environment variables are also used by this command: 
+      </p>
+ 
+      <a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__GUID-6CF6BEEF-DAB6-421E-B73A-097EE81435A5"><!-- --></a><dl class="dl parml" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__GUID-6CF6BEEF-DAB6-421E-B73A-097EE81435A5"> 
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_ANALYSIS_DIR</span> 
+          </dt>
+ 
+          <dd class="dd pd">Top-level directory for baselines and failed health checks. 
+          </dd>
+ 
+        
+        
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_CURTIME</span> 
+          </dt>
+
+          <dd class="dd pd"> Timestamp to use on the directory created in 
+            <samp class="ph codeph">FF_DIFF_CMD</samp>.
+          </dd>
+
+        
+        
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_DIFF_CMD</span> 
+          </dt>
+
+          <dd class="dd pd"> Linux* command to use to compare baseline to latest snapshot.
+          </dd>
+
+         
+      </dl>
+ 
+      </div>
+ 
+    <div class="section" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__SECTION_5A57CCAEEB174C4CA1FB25284D9E7AC0"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__SECTION_5A57CCAEEB174C4CA1FB25284D9E7AC0"><!-- --></a><h2 class="sectiontitle">Details</h2>
+      
+      <p class="p">All files generated by 
+        <samp class="ph codeph">opahostsmanalysis</samp> start with 
+        <samp class="ph codeph">hostsm</samp> in the file name. 
+      </p>
+ 
+      <p class="p">The 
+        <samp class="ph codeph">opahostsmanalysis</samp> tool generates files such as the
+        following within 
+        <span class="ph filepath">FF_ANALYSIS_DIR</span>. The actual file names reflect the
+        individual chassis commands that have been configured using the 
+        <span class="keyword parmname">FF_CHASSIS_HEALTH</span> and 
+        <span class="keyword parmname">FF_CHASSIS_CMDS 
+        </span>parameters: 
+      </p>
+ 
+      <a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__UL_F9435581CA2D4E0BAA557ABE850278C2"><!-- --></a><ul class="ul" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__UL_F9435581CA2D4E0BAA557ABE850278C2"> 
+        <li class="li" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_066F3F61A2424DF980AFADD7D5E64DF6"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_066F3F61A2424DF980AFADD7D5E64DF6"><!-- --></a>Health Check 
+          <a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__UL_1D0AEDAC3E6B45D6B21090A7939C2AB0"><!-- --></a><ul class="ul" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__UL_1D0AEDAC3E6B45D6B21090A7939C2AB0"> 
+            <li class="li" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_38B96A87BC6F440DB94A2A499BBBB4EF"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_38B96A87BC6F440DB94A2A499BBBB4EF"><!-- --></a><span class="ph filepath">latest/hostsm.smstatus</span>
+              – Output of the 
+              <samp class="ph codeph">sm_query smShowStatus</samp> command. 
+            </li>
+ 
+          </ul>
+ 
+        </li>
+ 
+        <li class="li" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_49688A7D4F344E719581C1F5836C73AA"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_49688A7D4F344E719581C1F5836C73AA"><!-- --></a>Baseline 
+          <a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__UL_58045C5D3B3142D1AAF59CCDF3F699E2"><!-- --></a><ul class="ul" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__UL_58045C5D3B3142D1AAF59CCDF3F699E2"> 
+            <li class="li" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_872FF716425E4BE08A621713DF0A8E6B"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_872FF716425E4BE08A621713DF0A8E6B"><!-- --></a><span class="ph filepath">baseline/hostsm.smver</span>
+              – Host SM version. 
+            </li>
+ 
+            <li class="li" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_E280DFCBEE4543FE82DF9AEA05121049"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_E280DFCBEE4543FE82DF9AEA05121049"><!-- --></a> 
+              <span class="ph filepath">baseline/hostsm.smconfig</span> – Copy of 
+              <samp class="ph codeph">opafm.config</samp>. 
+            </li>
+ 
+          </ul>
+ 
+          <p class="p">During a baseline run, the files are also created in 
+            <span class="ph filepath">FF_ANALYSIS_DIR/latest</span>. 
+          </p>
+ 
+        </li>
+ 
+        <li class="li" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_EEB92916A93C47FDB01D185F9CF6B9F3"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_EEB92916A93C47FDB01D185F9CF6B9F3"><!-- --></a>Full analysis 
+          <a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__UL_50366607D618446C90C2E3A3B5C719EF"><!-- --></a><ul class="ul" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__UL_50366607D618446C90C2E3A3B5C719EF"> 
+            <li class="li" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_6F97B0820FF046C98F71AEE3215F1361"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_6F97B0820FF046C98F71AEE3215F1361"><!-- --></a><span class="ph filepath">latest/hostsm.smstatus</span>
+              – Output of the 
+              <samp class="ph codeph">sm_query smShowStatus</samp> command. 
+            </li>
+ 
+            <li class="li" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_7131822EB8594AD9AE05D99D70DCEC18"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_7131822EB8594AD9AE05D99D70DCEC18"><!-- --></a> 
+              <span class="ph filepath">latest/hostsm.smver</span> – Host SM version. 
+              <p class="p"><span class="ph filepath">latest/hostsm.smver.diff</span> – 
+                <span class="ph filepath">diff</span> of the baseline and latest host SM
+                version. 
+              </p>
+ 
+            </li>
+ 
+            <li class="li" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_877F59C8523E4308A0BF7297992C330C"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_877F59C8523E4308A0BF7297992C330C"><!-- --></a> 
+              <span class="ph filepath">latest/hostsm.smconfig</span> – Copy of 
+              <span class="ph filepath">opafm.xml</span>. 
+            </li>
+ 
+            <li class="li" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_9A4B0AF769334ACEBD3481C9309F68C9"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_9A4B0AF769334ACEBD3481C9309F68C9"><!-- --></a> 
+              <span class="ph filepath">latest/hostsm.smconfig.diff</span> – 
+              <span class="ph filepath">diff</span> of the baseline and the latest 
+              <span class="ph filepath">opafm.xml</span>. 
+            </li>
+ 
+          </ul>
+ 
+          <p class="p">The 
+            <span class="ph filepath">.diff</span> files are only created if differences
+            are detected. 
+          </p>
+ 
+          <p class="p">If the 
+            <samp class="ph codeph">-s</samp> option is used and failures are detected, files
+            related to the checks that failed are also copied to a time-stamped directory
+            name under 
+            <span class="ph filepath">FF_ANALYSIS_DIR</span>. 
+          </p>
+ 
+        </li>
+ 
+        <li class="li" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_4B32A6C4A3EB4E139F0275E1F814561C"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_4B32A6C4A3EB4E139F0275E1F814561C"><!-- --></a>Host SM items checked
+          against the baseline 
+          <a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__UL_F5C4C02772A64A80BF3DC3624CFEBF9B"><!-- --></a><ul class="ul" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__UL_F5C4C02772A64A80BF3DC3624CFEBF9B"> 
+            <li class="li" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__XX1118768"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__XX1118768"><!-- --></a> SM configuration file. 
+            </li>
+ 
+            <li class="li" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__XX1118769"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__XX1118769"><!-- --></a> Version of the SM rpm installed on the system. 
+            </li>
+ 
+          </ul>
+ 
+        </li>
+ 
+        <li class="li" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_02AEC6E9A96849368B65378F73F43BFA"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_02AEC6E9A96849368B65378F73F43BFA"><!-- --></a>Host SM items also checked
+          during healthcheck 
+          <a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__UL_BF6DDE738B614BE7B543254B07312A9E"><!-- --></a><ul class="ul" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__UL_BF6DDE738B614BE7B543254B07312A9E"> 
+            <li class="li" id="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_524F4CDCACD14170BD31D22E46D1EE95"><a name="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B__LI_524F4CDCACD14170BD31D22E46D1EE95"><!-- --></a> The SM is in the
+              running state. 
+            </li>
+ 
+          </ul>
+ 
+        </li>
+ 
+      </ul>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

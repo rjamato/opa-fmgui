@@ -1,0 +1,163 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="oparesolvehfiport">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>oparesolvehfiport</title>
+</head>
+<body class="man1" id="GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B"><a name="GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">oparesolvehfiport</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B__GUID-ED3D25DD-391A-4D77-8C2A-FD0448DDEB7B"><a name="GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B__GUID-ED3D25DD-391A-4D77-8C2A-FD0448DDEB7B"><!-- --></a> 
+      <p class="p"><strong class="ph b">(Host)</strong> Permits the 
+        <span class="ph">Intel<sup>®</sup> Omni-Path Fabric Host
+          Software</span> style 
+        <span class="ph">Intel<sup>®</sup> Omni-Path Host
+          Fabric Interface</span> (<span class="ph">HFI</span>) number and port number
+        arguments to be converted to a 
+        <span class="ph">Host Software</span> style 
+        <span class="ph">HFI</span> name and physical port number. 
+      </p>
+ 
+      </div>
+ 
+    <div class="section refsyn" id="GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B__GUID-9A1B4E13-AD0B-4E0C-8AD9-1095F8596792"><a name="GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B__GUID-9A1B4E13-AD0B-4E0C-8AD9-1095F8596792"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">oparesolvehfiport <var class="keyword varname">hfi</var> <var class="keyword varname">port</var></pre>
+ or 
+      <div class="p"> 
+        <pre class="pre codeblock">oparesolvehfiport --help</pre>
+ 
+      </div>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B__GUID-DC4B77DA-CFA3-4E4B-A8AC-9F404E1F598E"><a name="GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B__GUID-DC4B77DA-CFA3-4E4B-A8AC-9F404E1F598E"><!-- --></a><h2 class="title sectiontitle">Options</h2> 
+       
+      <a name="GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B__GUID-95824E21-A377-4E6C-9639-688A29EF03FE"><!-- --></a><dl class="dl parml" id="GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B__GUID-95824E21-A377-4E6C-9639-688A29EF03FE"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Produces full help text. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"><var class="keyword varname">hfi</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"><span class="ph">HFI</span> to send by. Numbered 1..n. 0 =
+              system-wide port num. Default is first 
+              <span class="ph">HFI</span>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"><var class="keyword varname">port</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Port to send by. Numbered 1..n. 0 (default) is first active
+              port. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+       
+      <a name="GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B__GUID-2EB7B7F0-D46A-4D80-9D71-4727CE830A35"><!-- --></a><dl class="dl parml" id="GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B__GUID-2EB7B7F0-D46A-4D80-9D71-4727CE830A35"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -h 0 -p 0</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">First active port in system. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"> 
+            <samp class="ph codeph">-h 
+              <var class="keyword varname">x</var> -p 0</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">First active port on HFI 
+              <var class="keyword varname">x</var>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"> 
+            <samp class="ph codeph">-h 0 -p 
+              <var class="keyword varname">y</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Port 
+              <var class="keyword varname">y&nbsp; 
+              </var>within system (no matter which ports are active). 
+            </p>
+ 
+            </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"> 
+            <samp class="ph codeph">-h 
+              <var class="keyword varname">x</var> -p 
+              <var class="keyword varname">y</var> 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">HFI 
+              <var class="keyword varname">x</var>, port 
+              <var class="keyword varname">y</var> 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B__GUID-4BD0D319-12E4-4970-B001-4D17175FF3DD"><a name="GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B__GUID-4BD0D319-12E4-4970-B001-4D17175FF3DD"><!-- --></a><h2 class="sectiontitle">Examples </h2> 
+      <pre class="pre codeblock">oparesolvehfiport 0 1
+Output:
+&nbsp;&nbsp;&nbsp;&nbsp;hfi_0:1</pre>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

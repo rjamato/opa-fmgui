@@ -35,6 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.21  2015/12/16 22:33:05  jijunwan
+ *  Archive Log:    PR 132110 - Klocwork issues
+ *  Archive Log:    - updated to be consistent with STL2 code
+ *  Archive Log:
+ *  Archive Log:    Revision 1.20  2015/12/16 21:44:24  jijunwan
+ *  Archive Log:    PR 132110 - Klocwork issues
+ *  Archive Log:
  *  Archive Log:    Revision 1.19  2015/08/17 18:53:46  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -237,6 +244,9 @@ public class PortProperties extends NodeProperties {
         String retVal = "";
 
         if (hasData) {
+            if (portInfo == null) {
+                throw new RuntimeException("portInfo is null in getState.");
+            }
             PortStatesBean portState = portInfo.getPortStates();
 
             if (portState != null) {

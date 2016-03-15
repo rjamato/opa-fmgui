@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.23  2015/11/18 23:50:55  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Provide SshKeyType.MANAGEMENT_KEY to JSchSessionFactory
+ *  Archive Log:
  *  Archive Log:    Revision 1.22  2015/10/06 20:16:42  fernande
  *  Archive Log:    PR130749 - FM GUI virtual fabric information doesn't match opafm.xml file. A previous fix disabled the update of most fields used in the Admin configuration editor. Restored the updating capability in those fields
  *  Archive Log:
@@ -141,6 +145,7 @@ import com.intel.stl.api.subnet.HostType;
 import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.common.STLMessages;
 import com.intel.stl.fecdriver.network.ssh.JSchChannelType;
+import com.intel.stl.fecdriver.network.ssh.SshKeyType;
 import com.intel.stl.fecdriver.network.ssh.impl.JSchSession;
 import com.intel.stl.fecdriver.network.ssh.impl.JSchSessionFactory;
 import com.jcraft.jsch.Channel;
@@ -366,7 +371,8 @@ public class FMConfHelper {
         String userName = hostInfo.getSshUserName();
 
         JSchSession jschSession =
-                JSchSessionFactory.getSession(subnet, false, password);
+                JSchSessionFactory.getSession(subnet, false, password,
+                        SshKeyType.MANAGEMENT_KEY.getKey(subnet.getSubnetId()));
 
         File tmpFile = File.createTempFile("~FV", null);
         tmpFile.deleteOnExit();
@@ -398,7 +404,8 @@ public class FMConfHelper {
     public void cancelFetchConfigFile(SubnetDescription subnet) {
         // See if there are any in-progress or open connections and close them
         JSchSession subnetSession =
-                JSchSessionFactory.getSessionFromMap(subnet);
+                JSchSessionFactory.getSessionFromMap(SshKeyType.MANAGEMENT_KEY
+                        .getKey(subnet.getSubnetId()));
         if (subnetSession != null) {
 
             Channel sftp = null;

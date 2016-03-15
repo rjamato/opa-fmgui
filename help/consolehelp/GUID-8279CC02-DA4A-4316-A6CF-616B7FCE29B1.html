@@ -1,0 +1,314 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opareports">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opareports</title>
+</head>
+<body class="man8" id="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1"><a name="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opareports</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__GUID-6FE08068-CB2E-4842-ACB1-31BAC908E17B"><a name="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__GUID-6FE08068-CB2E-4842-ACB1-31BAC908E17B"><!-- --></a> 
+      <p class="p"><strong class="ph b">(All)</strong> 
+        <samp class="ph codeph">opareports</samp> is a front end to 
+        <samp class="ph codeph">opareport</samp> that provides many of the same options and
+        capabilities. It can also run a report against multiple fabrics or subnets (for
+        example, local host HFI ports). 
+        <samp class="ph codeph">opareports</samp> can use an input file to augment the
+        reports using additional details from the 
+        <span class="ph filepath">topology_input</span> file. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__GUID-164FE89B-4210-4902-8805-1D979D438135"><a name="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__GUID-164FE89B-4210-4902-8805-1D979D438135"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opareports [-t <var class="keyword varname">portsfile</var>] [-p <var class="keyword varname">ports</var>] 
+[opareport <var class="keyword varname">arguments</var>] [-T <var class="keyword varname">topology_input</var>]</pre>
+ 
+      <p class="p">or 
+      </p>
+ 
+      <pre class="pre codeblock">opareports --help</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__XX1133258"><a name="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__XX1133258"><!-- --></a><h2 class="sectiontitle">Options </h2> 
+      <a name="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__GUID-31F81D9E-824C-4E58-8040-A8F29928A320"><!-- --></a><dl class="dl parml" id="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__GUID-31F81D9E-824C-4E58-8040-A8F29928A320"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Produces full help text. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-t 
+              <var class="keyword varname">portsfile</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">File with list of local HFI ports used to access fabric for
+            analysis. Default is 
+            <span class="ph filepath">/etc/sysconfig/opa/ports</span> file. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-p 
+              <var class="keyword varname">ports</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of local 
+              <span class="ph">HFI</span> ports used to access fabric for
+              counter clear. Default is first active port. The first 
+              <span class="ph">HFI</span> in the system is 1. The first
+              port on an 
+              <span class="ph">HFI</span> is 1. 
+            </p>
+ 
+            <p class="p">Uses the format 
+              <samp class="ph codeph">hfi:port</samp>, for example: 
+            </p>
+ 
+            <a name="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__GUID-A8958A2D-DFFF-4F65-A112-54B232CFEFF9"><!-- --></a><dl class="dl parml" id="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__GUID-A8958A2D-DFFF-4F65-A112-54B232CFEFF9"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0:0</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">First active port in system. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0:y</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Port 
+                    <samp class="ph codeph"><var class="keyword varname">y</var></samp> within system. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">x:0</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">First active port on HFI 
+                    <samp class="ph codeph"><var class="keyword varname">x</var></samp>. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">x:y</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">HFI 
+                    <samp class="ph codeph"><var class="keyword varname">x</var></samp>, port 
+                    <samp class="ph codeph"><var class="keyword varname">y</var></samp>. 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">opareport 
+              <var class="keyword varname">arguments</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Any of the other 
+            <samp class="ph codeph">opareport</samp> arguments. The 
+            <samp class="ph codeph">-h</samp> and 
+            <samp class="ph codeph">-X</samp> options are not available. Note that the
+            meaning of 
+            <samp class="ph codeph">-p</samp> is different for 
+            <samp class="ph codeph">opareports</samp> than 
+            <samp class="ph codeph">opareport</samp>. When run against multiple fabrics, the 
+            <samp class="ph codeph">-x</samp> and 
+            <samp class="ph codeph">-o snapshot</samp> options are not available. 
+            <div class="note note" id="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__GUID-5DDDEEC6-150D-416F-999B-309970FE94E3"><a name="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__GUID-5DDDEEC6-150D-416F-999B-309970FE94E3"><!-- --></a><span class="notetitle">Note:</span>  
+              <p class="p">When run against multiple fabrics, the 
+                <samp class="ph codeph">-F</samp> option is applied to all fabrics. See 
+                <a class="xref" href="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C.html#GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C">opareport</a>
+                for more information. 
+              </p>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-T 
+              <var class="keyword varname">topology_input</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Name of a topology input file to use. The filename may have 
+            <span class="ph filepath">%P</span> as a marker which is replaced with the 
+            <samp class="ph codeph">hfi:port</samp> being operated on, such as 0:0 or 1:2.
+            The default filename is specified by 
+            <span class="keyword parmname">FF_TOPOLOGY_FILE</span> as 
+            <span class="ph filepath">/etc/sysconfig/opa/topology.%P.xml</span>. If 
+            <samp class="ph codeph">-T NONE</samp> is specified, no topology input file is
+            used. 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__XX1132882"><a name="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__XX1132882"><!-- --></a><h2 class="sectiontitle">Example </h2> 
+      <pre class="pre codeblock">opareports
+opareports -p '1:1 2:1'</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__XX1132885"><a name="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__XX1132885"><!-- --></a><h2 class="sectiontitle">Environment Variables </h2> 
+      <p class="p">The following environment variables are also used by this command: 
+      </p>
+ 
+      <a name="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__GUID-0C321FBD-48C4-4C20-82FF-3201CB7DE10C"><!-- --></a><dl class="dl parml" id="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__GUID-0C321FBD-48C4-4C20-82FF-3201CB7DE10C"> 
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">PORTS</span> 
+          </dt>
+ 
+          <dd class="dd pd">List of ports, used in absence of 
+            <samp class="ph codeph">-t</samp> and 
+            <samp class="ph codeph">-p</samp>. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">PORTS_FILE</span> 
+          </dt>
+ 
+          <dd class="dd pd">File containing list of ports, used in absence of 
+            <samp class="ph codeph">-t</samp> and 
+            <samp class="ph codeph">-p</samp>. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_TOPOLOGY_FILE</span> 
+          </dt>
+ 
+          <dd class="dd pd">File containing 
+            <samp class="ph codeph">topology_input</samp> (may have %P marker in filename),
+            used in absence of 
+            <samp class="ph codeph">-T</samp>. 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__SECTION_F2587FD96AD547268369CCC0ED176555"><a name="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__SECTION_F2587FD96AD547268369CCC0ED176555"><!-- --></a><h2 class="sectiontitle">Details </h2> 
+      <p class="p">For simple fabrics, the 
+        <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric Suite FastFabric</span> Toolset host is connected to a single fabric. By
+        default, the first active port on the 
+        <span class="ph">FastFabric</span> Toolset host is used to analyze
+        the fabric. 
+      </p>
+ 
+      <p class="p">However, in more complex fabrics, the 
+        <span class="ph">FastFabric</span> Toolset host may be connected
+        to more than one fabric or subnet. In this case, you can specify the ports or
+        HFIs to use with one of the following methods: 
+      </p>
+ 
+      <a name="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__UL_C0A400E814EB4FDAA1CACB385D8C509B"><!-- --></a><ul class="ul" id="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__UL_C0A400E814EB4FDAA1CACB385D8C509B"> 
+        <li class="li" id="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__LI_45D02F7132064EB3A94B7B6E9689CC8D"><a name="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__LI_45D02F7132064EB3A94B7B6E9689CC8D"><!-- --></a>On the command line using
+          the 
+          <samp class="ph codeph">-p</samp> option. 
+        </li>
+ 
+        <li class="li" id="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__LI_3685619C53E44CBFAB2C79F8AF43E7A7"><a name="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__LI_3685619C53E44CBFAB2C79F8AF43E7A7"><!-- --></a>In a file specified using
+          the 
+          <samp class="ph codeph">-t</samp> option. 
+        </li>
+ 
+        <li class="li" id="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__LI_6C661E6935F741C4A365AF6BCB313B3A"><a name="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__LI_6C661E6935F741C4A365AF6BCB313B3A"><!-- --></a>Through the environment
+          variables 
+          <span class="keyword parmname">PORTS</span> or 
+          <span class="keyword parmname">PORTS_FILE</span>. 
+        </li>
+ 
+        <li class="li" id="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__LI_196476A33FEB4E5692D0B0AF0530A5D3"><a name="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__LI_196476A33FEB4E5692D0B0AF0530A5D3"><!-- --></a>Using the 
+          <samp class="ph codeph">ports_file</samp> configuration option in 
+          <span class="ph filepath">/etc/sysconfig/opa/opafastfabric.conf</span>. 
+        </li>
+ 
+      </ul>
+ 
+      <p class="p">If the specified port does not exist or is empty, the first active
+        port on the local system is used. In more complex configurations, you must
+        specify the exact ports to use for all fabrics to be analyzed. 
+        </p>
+ 
+      <p class="p">You can specify the 
+        <span class="ph filepath">topology_input</span> file to be used with one of the
+        following methods: 
+      </p>
+ 
+      <a name="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__UL_C7D62ED6855A4B2FB9FC6ABF5D6F6468"><!-- --></a><ul class="ul" id="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__UL_C7D62ED6855A4B2FB9FC6ABF5D6F6468"> 
+        <li class="li" id="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__LI_740E5E40C39941A397CCE4E6E1A5E595"><a name="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__LI_740E5E40C39941A397CCE4E6E1A5E595"><!-- --></a>On the command line using
+          the 
+          <samp class="ph codeph">-T</samp> option. 
+        </li>
+ 
+        <li class="li" id="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__LI_F9C853AD0CA142FE9A2C1A444232778F"><a name="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__LI_F9C853AD0CA142FE9A2C1A444232778F"><!-- --></a>In a file specified
+          through the environment variable 
+          <span class="keyword parmname">FF_TOPOLOGY_FILE</span>. 
+        </li>
+ 
+        <li class="li" id="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__LI_44B6C3AE361E46C184FD68214C6499DA"><a name="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1__LI_44B6C3AE361E46C184FD68214C6499DA"><!-- --></a>Using the 
+          <samp class="ph codeph">ff_topology_file</samp> configuration option in 
+          <span class="ph filepath">opafastfabric.conf</span>. 
+        </li>
+ 
+      </ul>
+ 
+      <p class="p"> If the specified file does not exist, no 
+        <span class="ph filepath">topology_input</span> file is used. Alternately the
+        filename can be specified as 
+        <samp class="ph codeph">NONE</samp> to prevent use of an input file. 
+      </p>
+ 
+    </div>
+ 
+    </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

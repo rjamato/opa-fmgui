@@ -1,0 +1,214 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opaswenableall">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opaswenableall</title>
+</head>
+<body class="man8" id="GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2"><a name="GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opaswenableall</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2__GUID-9456F577-F101-4BC9-8CF5-44E5043E94A3"><a name="GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2__GUID-9456F577-F101-4BC9-8CF5-44E5043E94A3"><!-- --></a> 
+       
+    </div>
+ 
+    <div class="section refsyn" id="GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2__GUID-32F04DAF-B7FF-4F2A-881B-7C9418BBCFEB"><a name="GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2__GUID-32F04DAF-B7FF-4F2A-881B-7C9418BBCFEB"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opaswenableall [-t <var class="keyword varname">portsfile</var>] [-p <var class="keyword varname">ports</var>] [-F <var class="keyword varname">focus</var>] [-K <var class="keyword varname">mkey</var>]</pre>
+ 
+      <p class="p">or 
+      </p>
+ 
+      <pre class="pre codeblock">opaswenableall --help</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2__GUID-7F84E2EF-5874-4EAD-84C7-9B3AF3B4863D"><a name="GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2__GUID-7F84E2EF-5874-4EAD-84C7-9B3AF3B4863D"><!-- --></a><h2 class="sectiontitle">Options</h2> 
+      <a name="GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2__GUID-F4727B1F-91E5-4328-84CA-521CB072BAFE"><!-- --></a><dl class="dl parml" id="GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2__GUID-F4727B1F-91E5-4328-84CA-521CB072BAFE"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Produces full help text. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-t 
+              <var class="keyword varname">portsfile</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File with list of local 
+              <span class="ph">HFI</span> ports used to access fabrics for
+              operation. Default is 
+              <span class="ph filepath">/etc/sysconfig/opa/ports</span> file. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-p 
+              <var class="keyword varname">ports</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of local 
+              <span class="ph">HFI</span> ports used to access fabrics for
+              operation. Default is first active port. The first 
+              <span class="ph">HFI</span> in the system is 1. The first
+              port on an 
+              <span class="ph">HFI</span> is 1. 
+            </p>
+ 
+            <p class="p">Uses the format 
+              <samp class="ph codeph">hfi:port</samp>, for example: 
+            </p>
+ 
+            <a name="GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2__GUID-A8958A2D-DFFF-4F65-A112-54B232CFEFF9"><!-- --></a><dl class="dl parml" id="GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2__GUID-A8958A2D-DFFF-4F65-A112-54B232CFEFF9"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0:0</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">First active port in system. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0:y</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Port 
+                    <samp class="ph codeph"><var class="keyword varname">y</var></samp> within system. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">x:0</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">First active port on HFI 
+                    <samp class="ph codeph"><var class="keyword varname">x</var></samp>. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">x:y</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">HFI 
+                    <samp class="ph codeph"><var class="keyword varname">x</var></samp>, port 
+                    <samp class="ph codeph"><var class="keyword varname">y</var></samp>. 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-F 
+              <var class="keyword varname">focus</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"> An 
+              <samp class="ph codeph">opareport</samp>-style focus argument to limit the
+              scope of operation. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-K 
+              <var class="keyword varname">mkey</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"> SM management key to access remote ports. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2__GUID-B910320C-3B69-45A6-BFAB-4FEE16A7C880"><a name="GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2__GUID-B910320C-3B69-45A6-BFAB-4FEE16A7C880"><!-- --></a><h2 class="sectiontitle">Examples </h2> 
+      <pre class="pre codeblock">opaswenableall
+opaswenableall -p '1:1 2:1'</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2__GUID-F6744A31-DF66-44C7-94B2-ED5020B69EB0"><a name="GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2__GUID-F6744A31-DF66-44C7-94B2-ED5020B69EB0"><!-- --></a><h2 class="sectiontitle">Environment Variables</h2> 
+      <p class="p">The following environment variables are also used by this command: 
+      </p>
+ 
+      <a name="GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2__GUID-C1C673A6-2B54-4718-8667-C2221A5521F5"><!-- --></a><dl class="dl parml" id="GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2__GUID-C1C673A6-2B54-4718-8667-C2221A5521F5"> 
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">PORTS</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of ports, used in absence of 
+              <samp class="ph codeph">-t</samp> and 
+              <samp class="ph codeph">-p</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">PORTS_FILE</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File containing list of ports, used in absence of 
+              <samp class="ph codeph">-t</samp> and 
+              <samp class="ph codeph">-p</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

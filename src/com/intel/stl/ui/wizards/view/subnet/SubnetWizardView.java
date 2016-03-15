@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.30  2015/11/09 20:56:20  fernande
+ *  Archive Log:    PR130852 - The 1st subnet in the Subnet Wizard displays "Abandon Changes" message when no changes are made. Added special listener for dirty state
+ *  Archive Log:
  *  Archive Log:    Revision 1.29  2015/10/06 20:21:48  fernande
  *  Archive Log:    PR130749 - FM GUI virtual fabric information doesn't match opafm.xml file. Removed external access to textfield
  *  Archive Log:
@@ -168,7 +171,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -179,6 +181,7 @@ import org.slf4j.LoggerFactory;
 import com.intel.stl.api.CertsDescription;
 import com.intel.stl.api.subnet.HostInfo;
 import com.intel.stl.api.subnet.SubnetDescription;
+import com.intel.stl.ui.common.DocumentDirtyListener;
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UIConstants;
 import com.intel.stl.ui.common.Util;
@@ -244,28 +247,16 @@ public class SubnetWizardView extends AbstractTaskView implements ISubnetView,
         super("");
         this.wizardViewListener = wizardViewListener;
         this.chooser = new JFileChooser();
-
-        try {
-            dirty = false;
-        } catch (Exception ex) {
-            log.error(ex.getMessage(), ex);
-        }
+        dirty = false;
     }
 
     public SubnetWizardView(IMultinetWizardView wizardViewListener) {
         super("");
         this.multinetWizardViewListener = wizardViewListener;
         this.chooser = new JFileChooser();
-
-        try {
-            dirty = false;
-        } catch (Exception ex) {
-            log.error(ex.getMessage(), ex);
-        }
+        dirty = false;
 
         createDocumentListener();
-        multinetWizardViewListener.assignDocumentListeners(isDirtyListener,
-                setDirtyListener);
     }
 
     /*
@@ -378,17 +369,6 @@ public class SubnetWizardView extends AbstractTaskView implements ISubnetView,
         }
     }
 
-    protected JTextField createTextField(String txt) {
-        if (isDirtyListener == null || setDirtyListener == null) {
-            createDocumentListener();
-        }
-
-        JTextField txtField = new JTextField(txt);
-        txtField.getDocument().addDocumentListener(setDirtyListener);
-        txtField.getDocument().addDocumentListener(isDirtyListener);
-        return txtField;
-    }
-
     /**
      * 
      * <i>Description: Document listeners to detect when changes occur to the
@@ -396,42 +376,28 @@ public class SubnetWizardView extends AbstractTaskView implements ISubnetView,
      * 
      */
     protected void createDocumentListener() {
-        isDirtyListener = new DocumentListener() {
+        isDirtyListener = new DocumentDirtyListener() {
 
             @Override
-            public void insertUpdate(DocumentEvent e) {
-                dirty = true;
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                dirty = true;
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
+            public void setDirty(DocumentEvent e) {
                 dirty = true;
             }
 
         };
 
-        setDirtyListener = new DocumentListener() {
+        setDirtyListener = new DocumentDirtyListener() {
 
             @Override
-            public void insertUpdate(DocumentEvent e) {
-                setDirty();
+            public void setDirty(DocumentEvent e) {
+                setDirtyFlag();
             }
 
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                setDirty();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                setDirty();
-            }
         };
+    }
+
+    private void setDirtyFlag() {
+        setDirty();
+        return;
     }
 
     /*
@@ -517,7 +483,7 @@ public class SubnetWizardView extends AbstractTaskView implements ISubnetView,
         } else {
             multinetWizardViewListener.enableNext(false);
             multinetWizardViewListener.enableApply(false);
-            multinetWizardViewListener.enableReset(false);
+            multinetWizardViewListener.enableReset(true);
         }
     }
 
@@ -589,7 +555,6 @@ public class SubnetWizardView extends AbstractTaskView implements ISubnetView,
     public void update(SubnetModel subnetModel) {
         HostInfo host = null;
         SubnetDescription subnet = subnetModel.getSubnet();
-        multinetWizardViewListener.setSubnetName(subnet.getName());
 
         try {
             host = subnet.getCurrentFE();
@@ -645,30 +610,6 @@ public class SubnetWizardView extends AbstractTaskView implements ISubnetView,
     public void setWizardListener(IWizardTask listener) {
         super.setWizardListener(listener);
         subnetWizardControlListener = listener;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.intel.stl.ui.wizards.view.subnet.ISubnetView#setSubnetName(java.lang
-     * .String)
-     */
-    @Override
-    public void setSubnetName(String subnetName) {
-        multinetWizardViewListener.setSubnetName(subnetName);
-
-        dirty = false;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.intel.stl.ui.wizards.view.subnet.ISubnetView#getSubnetName()
-     */
-    @Override
-    public String getSubnetName() {
-        return multinetWizardViewListener.getSubnetName();
     }
 
     protected void refresh() {

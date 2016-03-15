@@ -1,0 +1,187 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opacapture">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opacapture</title>
+</head>
+<body class="man1" id="GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D"><a name="GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opacapture</h1>
+ 
+  <div class="body refbody 1"> 
+    <div class="section" id="GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D__GUID-D2BABD21-1C68-49FC-801D-E468AD8CB1B7"><a name="GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D__GUID-D2BABD21-1C68-49FC-801D-E468AD8CB1B7"><!-- --></a> 
+      <p class="p"><strong class="ph b">(Host) 
+        </strong>Captures critical system information into a zipped tar file. The
+        resulting tar file should be sent to Customer Support along with any 
+        <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric</span> problem report regarding this system. 
+      </p>
+ 
+      <div class="note note" id="GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D__GUID-765C0D65-5E94-4E95-A6AE-9EA815492C10"><a name="GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D__GUID-765C0D65-5E94-4E95-A6AE-9EA815492C10"><!-- --></a><span class="notetitle">Note:</span>  
+        <p class="p">The resulting host capture file can require significant amounts of
+          space on the host. The actual size varies, but sizes can be multiple megabytes.
+          Intel recommends ensuring that adequate disk space is available on the host
+          system. 
+        </p>
+ 
+      </div>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D__GUID-E2B43D7A-7374-44F8-8FF4-C9122BB87B38"><a name="GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D__GUID-E2B43D7A-7374-44F8-8FF4-C9122BB87B38"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opacapture [-d <var class="keyword varname">detail</var>] <var class="keyword varname">output_tgz_file</var></pre>
+ 
+      <p class="p">or 
+      </p>
+ 
+      <pre class="pre codeblock">opacapture --help</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D__GUID-38E4FB79-7068-4197-8FB0-585A5491067F"><a name="GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D__GUID-38E4FB79-7068-4197-8FB0-585A5491067F"><!-- --></a><h2 class="sectiontitle">Options</h2> 
+      <a name="GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D__GUID-E7EC5BF8-578C-4F89-AC56-D97EFF58474D"><!-- --></a><dl class="dl parml table" id="GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D__GUID-E7EC5BF8-578C-4F89-AC56-D97EFF58474D"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Shows full help text. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-d 
+              <var class="keyword varname">detail</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <div class="p">Captures level of detail: 
+              <a name="GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D__GUID-80C85C22-62B1-4DE2-BECB-4E9C250616A6"><!-- --></a><dl class="dl parml" id="GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D__GUID-80C85C22-62B1-4DE2-BECB-4E9C250616A6"> 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">1</samp> (Local) 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p">Obtains local information from host. Default if no
+                      options are entered.
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">2</samp> (Fabric) 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p">In addition to 
+                      <var class="keyword varname">Local</var>, also obtains basic fabric
+                      information by queries to the SM and fabric error analysis using 
+                      <span class="keyword cmdname">opareport</span>. 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">3</samp> (Fabric+FDB) 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p"> In addition to 
+                      <var class="keyword varname">Fabric</var>, also obtains the Forwarding
+                      Database (FDB), which includes the switch forwarding tables from the SM and the
+                      server multicast membership. 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+                 
+                  <dt class="dt pt dlterm"><samp class="ph codeph">4</samp> (Analysis) 
+                  </dt>
+ 
+                  <dd class="dd pd"> 
+                    <p class="p">In addition to 
+                      <var class="keyword varname">Fabric+FDB</var>, also obtains 
+                      <samp class="ph codeph">opaallanalysis</samp> results. If 
+                      <samp class="ph codeph">opaallanalysis</samp> has not yet been run, it
+                      is run as part of the capture. 
+                    </p>
+ 
+                  </dd>
+ 
+                 
+              </dl>
+ 
+            </div>
+ 
+            <div class="note note" id="GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D__GUID-9FC499F6-2820-4F79-BB8F-23F056A5C19F"><a name="GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D__GUID-9FC499F6-2820-4F79-BB8F-23F056A5C19F"><!-- --></a><span class="notetitle">Note:</span>  
+              <p class="p">Detail levels 2 – 4 can be used when fabric operational
+                problems occur. If the problem is node-specific, detail level 1 should be
+                sufficient. Detail levels 2 – 4 require an operational Fabric Manager.
+                Typically your support representative requests a given detail level. If a given
+                detail level takes excessively long or fails to be gathered, try a lower detail
+                level. 
+              </p>
+ 
+              <p class="p"> For detail levels 2 – 4, the additional information is only
+                available on a node with 
+                <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric Suite FastFabric</span> Toolset installed. The information is
+                gathered for every fabric specified in the 
+                <span class="ph filepath">/etc/sysconfig/opa/ports</span> file. 
+              </p>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"><var class="keyword varname">output_tgz_file</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">The name of a file to be created by 
+              <samp class="ph codeph">opacapture</samp>. The file name specified is
+              overwritten if it already exists. Intel recommends using the 
+              <span class="ph filepath">.tgz</span> suffix in the file name supplied. If
+              the filename given does not have a 
+              <span class="ph filepath">.tgz</span> suffix, the 
+              <span class="ph filepath">.tgz</span> suffix is added. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D__GUID-6B1EB8B8-D3CF-42E2-AEDD-A898973506C3"><a name="GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D__GUID-6B1EB8B8-D3CF-42E2-AEDD-A898973506C3"><!-- --></a><h2 class="sectiontitle">Examples </h2> 
+      <pre class="pre codeblock">opacapture mycapture.tgz
+opacapture -d 3 030127capture.tgz</pre>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.17  2015/10/22 18:42:44  fisherma
+ *  Archive Log:    Fixing deadlock.  Changed a call to a thread safe revalidate().
+ *  Archive Log:
  *  Archive Log:    Revision 1.16  2015/08/17 18:54:02  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -263,6 +266,6 @@ public class PerfErrorsCardView extends JCardView<ICardListener> {
         }
 
         propCardPanel.repaint();
-        validate();
+        revalidate();
     }
 }

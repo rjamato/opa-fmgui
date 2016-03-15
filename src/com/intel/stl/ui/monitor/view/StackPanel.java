@@ -35,6 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.5  2015/10/23 19:20:58  jijunwan
+ *  Archive Log:    PR 129357 - Be able to hide inactive ports
+ *  Archive Log:    - improved to update on a TreeMode may have changed tree
+ *  Archive Log:
+ *  Archive Log:    Revision 1.4  2015/10/16 22:02:13  jijunwan
+ *  Archive Log:    PR 130289 - Admin Page icons are not working efficiently
+ *  Archive Log:    - changed to use mouseReleased
+ *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/08/17 18:54:25  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -77,6 +85,8 @@ import com.intel.stl.ui.common.UIConstants;
 import com.intel.stl.ui.common.UIImages;
 import com.intel.stl.ui.common.view.ComponentFactory;
 import com.intel.stl.ui.monitor.TreeTypeEnum;
+import com.intel.stl.ui.monitor.tree.FVResourceNode;
+import com.intel.stl.ui.monitor.tree.FVTreeModel;
 
 public class StackPanel extends JPanel {
     private static final long serialVersionUID = -2905931691586163645L;
@@ -114,11 +124,11 @@ public class StackPanel extends JPanel {
             /*
              * (non-Javadoc)
              * 
-             * @see java.awt.event.MouseAdapter#mouseClicked(java.awt.event.
+             * @see java.awt.event.MouseAdapter#mouseReleased(java.awt.event.
              * MouseEvent)
              */
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseReleased(MouseEvent e) {
                 if (opened) {
                     close();
                 } else {
@@ -154,7 +164,7 @@ public class StackPanel extends JPanel {
         nameLabel.setText(id.getName() + " (" + String.valueOf(n) + ")");
     }
 
-    public void setTreeModel(TreeModel pModel) {
+    public void setTreeModel(FVTreeModel pModel) {
         if (tree != null) {
             TreePath[] selections = null;
             Enumeration<TreePath> expanedPaths = null;
@@ -165,13 +175,25 @@ public class StackPanel extends JPanel {
                         tree.getExpandedDescendants(tree.getPathForRow(0));
             }
             tree.setModel(pModel);
+            pModel.fireTreeStructureChanged(this,
+                    ((FVResourceNode) pModel.getRoot()).getPath());
             if (expanedPaths != null) {
                 while (expanedPaths.hasMoreElements()) {
-                    tree.expandPath(expanedPaths.nextElement());
+                    TreePath path = expanedPaths.nextElement();
+                    tree.expandPath(path);
                 }
             }
             if (selections != null) {
-                tree.setSelectionPaths(selections);
+                TreeSelectionListener[] listeners =
+                        tree.getTreeSelectionListeners();
+                for (TreeSelectionListener listener : listeners) {
+                    tree.removeTreeSelectionListener(listener);
+                }
+                TreePath[] newSels = pModel.getTreePaths(selections);
+                tree.setSelectionPaths(newSels);
+                for (TreeSelectionListener listener : listeners) {
+                    tree.addTreeSelectionListener(listener);
+                }
             }
         }
     }
@@ -232,7 +254,9 @@ public class StackPanel extends JPanel {
 
     public void select(TreePath[] paths, boolean[] isExpanded) {
         if (tree != null) {
-            tree.setSelectionPaths(paths);
+            TreePath[] newSels =
+                    ((FVTreeModel) tree.getModel()).getTreePaths(paths);
+            tree.setSelectionPaths(newSels);
             if (paths.length > 0) {
                 for (int i = 0; i < paths.length; i++) {
                     if (!isExpanded[i]) {

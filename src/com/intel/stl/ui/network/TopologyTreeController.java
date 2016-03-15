@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.47  2015/11/02 20:08:52  jijunwan
+ *  Archive Log:    PR 131377 - Port information when selecting between HFI nodes doesn't get updated under Topology tab
+ *  Archive Log:    - improved node comparison to compare the whole path and the root need to be the same instance
+ *  Archive Log:
  *  Archive Log:    Revision 1.46  2015/08/17 18:54:00  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -381,7 +385,7 @@ public class TopologyTreeController extends TreeController<TopologyView> {
         }
 
         if (nodes == null || nodes.length == 0
-                || Arrays.equals(lastTreeSelection, nodes)) {
+                || areSameNodes(lastTreeSelection, nodes)) {
             return;
         }
 
@@ -419,6 +423,31 @@ public class TopologyTreeController extends TreeController<TopologyView> {
                         graphSelectionController, nodes);
                 break;
         } // switch
+    }
+
+    /**
+     * <i>Description:</i> to return <code>true</code>, the nodes in
+     * <code>nodes1</code> and <code>nodes2</code> shall have the same path and
+     * the root needs to be the same instance
+     * 
+     * @param nodes1
+     * @param nodes2
+     * @return
+     */
+    protected boolean areSameNodes(FVResourceNode[] nodes1,
+            FVResourceNode[] nodes2) {
+        if (!Arrays.equals(nodes1, nodes2)) {
+            return false;
+        }
+
+        for (int i = 0; i < nodes1.length; i++) {
+            if (!nodes1[i].hasSamePath(nodes2[i])) {
+                return false;
+            } else if (nodes1[i].getRoot() != nodes2[i].getRoot()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /*

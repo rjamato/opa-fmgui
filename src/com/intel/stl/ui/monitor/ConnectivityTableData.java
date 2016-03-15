@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.13  2015/11/02 23:54:33  jijunwan
+ *  Archive Log:    PR 131396 - Incorrect Connectivity Table for a VF port
+ *  Archive Log:    - changed model to display N/A when a value is not avaiable
+ *  Archive Log:
  *  Archive Log:    Revision 1.12  2015/08/17 18:53:40  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -456,20 +460,21 @@ public class ConnectivityTableData implements Serializable {
     }
 
     public void clear() {
+        String na = STLConstants.K0383_NA.getValue();
         slowLinkState = false;
-        nodeName = "";
-        linkState = "";
-        physicalLinkState = "";
-        activeLinkWidth = "";
-        enabledLinkWidth = "";
-        supportedLinkWidth = "";
-        activeLinkWidthDnGrdTx = "";
-        activeLinkWidthDnGrdRx = "";
-        enabledLinkWidthDnGrd = "";
-        supportedLinkWidthDnGrd = "";
-        activeLinkSpeed = "";
-        enabledLinkSpeed = "";
-        supportedLinkSpeed = "";
+        nodeName = na;
+        linkState = na;
+        physicalLinkState = na;
+        activeLinkWidth = na;
+        enabledLinkWidth = na;
+        supportedLinkWidth = na;
+        activeLinkWidthDnGrdTx = na;
+        activeLinkWidthDnGrdRx = na;
+        enabledLinkWidthDnGrd = na;
+        supportedLinkWidthDnGrd = na;
+        activeLinkSpeed = na;
+        enabledLinkSpeed = na;
+        supportedLinkSpeed = na;
         linkQuality = 0;
         PerformanceData perfData = getPerformanceData();
         if (perfData != null) {
@@ -519,72 +524,72 @@ public class ConnectivityTableData implements Serializable {
     }
 
     public static class PerformanceData {
-        private long tx32BitWords; // TODO Don't know where to get this
+        private Long tx32BitWords; // TODO Don't know where to get this
 
-        private long rx32BitWords; // TODO Don't know where to get this
+        private Long rx32BitWords; // TODO Don't know where to get this
 
-        private long txPackets;
+        private Long txPackets;
 
-        private long rxPackets;
+        private Long rxPackets;
 
-        private long portXmitData;
+        private Long portXmitData;
 
-        private long portRcvData;
+        private Long portRcvData;
 
-        private long numSymbolErrors; // TODO Don't know where to get this
+        private Long numSymbolErrors; // TODO Don't know where to get this
 
-        private long numLinkRecoveries; // TODO Don't know where to get this
+        private Long numLinkRecoveries; // TODO Don't know where to get this
 
-        private long numLinkDown;
+        private Long numLinkDown;
 
-        private long rxErrors;
+        private Long rxErrors;
 
-        private long rxRemotePhysicalErrors;
+        private Long rxRemotePhysicalErrors;
 
-        private long txDiscards;
+        private Long txDiscards;
 
-        private long localLinkIntegrityErrors;
+        private Long localLinkIntegrityErrors;
 
-        private long excessiveBufferOverruns;
+        private Long excessiveBufferOverruns;
 
-        private long switchRelayErrors;
+        private Long switchRelayErrors;
 
-        private long txConstraints;
+        private Long txConstraints;
 
-        private long rxConstraints;
+        private Long rxConstraints;
 
-        private long vl15Dropped; // TODO Don't know where to get this
+        private Long vl15Dropped; // TODO Don't know where to get this
 
-        private long fmConfigErrors;
+        private Long fmConfigErrors;
 
-        private long portMulticastRcvPkts;
+        private Long portMulticastRcvPkts;
 
-        private long portRcvFECN;
+        private Long portRcvFECN;
 
-        private long portRcvBECN;
+        private Long portRcvBECN;
 
-        private long portRcvBubble;
+        private Long portRcvBubble;
 
-        private long portMulticastXmitPkts;
+        private Long portMulticastXmitPkts;
 
-        private long portXmitWait;
+        private Long portXmitWait;
 
-        private long portXmitTimeCong;
+        private Long portXmitTimeCong;
 
-        private long portXmitWastedBW;
+        private Long portXmitWastedBW;
 
-        private long portXmitWaitData;
+        private Long portXmitWaitData;
 
-        private long portMarkFECN;
+        private Long portMarkFECN;
 
-        private short uncorrectableErrors; // unsigned byte
+        private Short uncorrectableErrors; // unsigned byte
 
-        private long swPortCongestion;
+        private Long swPortCongestion;
 
         /**
          * @return the tx32BitWords
          */
-        public long getTx32BitWords() {
+        public Long getTx32BitWords() {
             return tx32BitWords;
         }
 
@@ -592,14 +597,14 @@ public class ConnectivityTableData implements Serializable {
          * @param tx32BitWords
          *            the tx32BitWords to set
          */
-        public void setTx32BitWords(long tx32BitWords) {
+        public void setTx32BitWords(Long tx32BitWords) {
             this.tx32BitWords = tx32BitWords;
         }
 
         /**
          * @return the rx32BitWords
          */
-        public long getRx32BitWords() {
+        public Long getRx32BitWords() {
             return rx32BitWords;
         }
 
@@ -607,14 +612,14 @@ public class ConnectivityTableData implements Serializable {
          * @param rx32BitWords
          *            the rx32BitWords to set
          */
-        public void setRx32BitWords(long rx32BitWords) {
+        public void setRx32BitWords(Long rx32BitWords) {
             this.rx32BitWords = rx32BitWords;
         }
 
         /**
          * @return the txPackets
          */
-        public long getTxPackets() {
+        public Long getTxPackets() {
             return txPackets;
         }
 
@@ -622,14 +627,14 @@ public class ConnectivityTableData implements Serializable {
          * @param txPackets
          *            the txPackets to set
          */
-        public void setTxPackets(long txPackets) {
+        public void setTxPackets(Long txPackets) {
             this.txPackets = txPackets;
         }
 
         /**
          * @return the rxPackets
          */
-        public long getRxPackets() {
+        public Long getRxPackets() {
             return rxPackets;
         }
 
@@ -637,14 +642,14 @@ public class ConnectivityTableData implements Serializable {
          * @param rxPackets
          *            the rxPackets to set
          */
-        public void setRxPackets(long rxPackets) {
+        public void setRxPackets(Long rxPackets) {
             this.rxPackets = rxPackets;
         }
 
         /**
          * @return the numSymbolErrors
          */
-        public long getNumSymbolErrors() {
+        public Long getNumSymbolErrors() {
             return numSymbolErrors;
         }
 
@@ -652,14 +657,14 @@ public class ConnectivityTableData implements Serializable {
          * @param numSymbolErrors
          *            the numSymbolErrors to set
          */
-        public void setNumSymbolErrors(long numSymbolErrors) {
+        public void setNumSymbolErrors(Long numSymbolErrors) {
             this.numSymbolErrors = numSymbolErrors;
         }
 
         /**
          * @return the numLinkRecoveries
          */
-        public long getNumLinkRecoveries() {
+        public Long getNumLinkRecoveries() {
             return numLinkRecoveries;
         }
 
@@ -667,14 +672,14 @@ public class ConnectivityTableData implements Serializable {
          * @param numLinkRecoveries
          *            the numLinkRecoveries to set
          */
-        public void setNumLinkRecoveries(long numLinkRecoveries) {
+        public void setNumLinkRecoveries(Long numLinkRecoveries) {
             this.numLinkRecoveries = numLinkRecoveries;
         }
 
         /**
          * @return the numLinkDown
          */
-        public long getNumLinkDown() {
+        public Long getNumLinkDown() {
             return numLinkDown;
         }
 
@@ -682,14 +687,14 @@ public class ConnectivityTableData implements Serializable {
          * @param numLinkDown
          *            the numLinkDown to set
          */
-        public void setNumLinkDown(long numLinkDown) {
+        public void setNumLinkDown(Long numLinkDown) {
             this.numLinkDown = numLinkDown;
         }
 
         /**
          * @return the rxErrors
          */
-        public long getRxErrors() {
+        public Long getRxErrors() {
             return rxErrors;
         }
 
@@ -697,14 +702,14 @@ public class ConnectivityTableData implements Serializable {
          * @param rxErrors
          *            the rxErrors to set
          */
-        public void setRxErrors(long rxErrors) {
+        public void setRxErrors(Long rxErrors) {
             this.rxErrors = rxErrors;
         }
 
         /**
          * @return the rxRemotePhysicalErrors
          */
-        public long getRxRemotePhysicalErrors() {
+        public Long getRxRemotePhysicalErrors() {
             return rxRemotePhysicalErrors;
         }
 
@@ -712,14 +717,14 @@ public class ConnectivityTableData implements Serializable {
          * @param rxRemotePhysicalErrors
          *            the rxRemotePhysicalErrors to set
          */
-        public void setRxRemotePhysicalErrors(long rxRemotePhysicalErrors) {
+        public void setRxRemotePhysicalErrors(Long rxRemotePhysicalErrors) {
             this.rxRemotePhysicalErrors = rxRemotePhysicalErrors;
         }
 
         /**
          * @return the txDiscards
          */
-        public long getTxDiscards() {
+        public Long getTxDiscards() {
             return txDiscards;
         }
 
@@ -727,14 +732,14 @@ public class ConnectivityTableData implements Serializable {
          * @param txDiscards
          *            the txDiscards to set
          */
-        public void setTxDiscards(long txDiscards) {
+        public void setTxDiscards(Long txDiscards) {
             this.txDiscards = txDiscards;
         }
 
         /**
          * @return the localLinkIntegrityErrors
          */
-        public long getLocalLinkIntegrityErrors() {
+        public Long getLocalLinkIntegrityErrors() {
             return localLinkIntegrityErrors;
         }
 
@@ -742,14 +747,14 @@ public class ConnectivityTableData implements Serializable {
          * @param localLinkIntegrityErrors
          *            the localLinkIntegrityErrors to set
          */
-        public void setLocalLinkIntegrityErrors(long localLinkIntegrityErrors) {
+        public void setLocalLinkIntegrityErrors(Long localLinkIntegrityErrors) {
             this.localLinkIntegrityErrors = localLinkIntegrityErrors;
         }
 
         /**
          * @return the excessiveBufferOverruns
          */
-        public long getExcessiveBufferOverruns() {
+        public Long getExcessiveBufferOverruns() {
             return excessiveBufferOverruns;
         }
 
@@ -757,14 +762,14 @@ public class ConnectivityTableData implements Serializable {
          * @param excessiveBufferOverruns
          *            the excessiveBufferOverruns to set
          */
-        public void setExcessiveBufferOverruns(long excessiveBufferOverruns) {
+        public void setExcessiveBufferOverruns(Long excessiveBufferOverruns) {
             this.excessiveBufferOverruns = excessiveBufferOverruns;
         }
 
         /**
          * @return the switchRelayErrors
          */
-        public long getSwitchRelayErrors() {
+        public Long getSwitchRelayErrors() {
             return switchRelayErrors;
         }
 
@@ -772,14 +777,14 @@ public class ConnectivityTableData implements Serializable {
          * @param switchRelayErrors
          *            the switchRelayErrors to set
          */
-        public void setSwitchRelayErrors(long switchRelayErrors) {
+        public void setSwitchRelayErrors(Long switchRelayErrors) {
             this.switchRelayErrors = switchRelayErrors;
         }
 
         /**
          * @return the txConstraints
          */
-        public long getTxConstraints() {
+        public Long getTxConstraints() {
             return txConstraints;
         }
 
@@ -787,14 +792,14 @@ public class ConnectivityTableData implements Serializable {
          * @param txConstraints
          *            the txConstraints to set
          */
-        public void setTxConstraints(long txConstraints) {
+        public void setTxConstraints(Long txConstraints) {
             this.txConstraints = txConstraints;
         }
 
         /**
          * @return the rxConstraints
          */
-        public long getRxConstraints() {
+        public Long getRxConstraints() {
             return rxConstraints;
         }
 
@@ -802,14 +807,14 @@ public class ConnectivityTableData implements Serializable {
          * @param rxConstraints
          *            the rxConstraints to set
          */
-        public void setRxConstraints(long rxConstraints) {
+        public void setRxConstraints(Long rxConstraints) {
             this.rxConstraints = rxConstraints;
         }
 
         /**
          * @return the vl15Dropped
          */
-        public long getVl15Dropped() {
+        public Long getVl15Dropped() {
             return vl15Dropped;
         }
 
@@ -817,112 +822,112 @@ public class ConnectivityTableData implements Serializable {
          * @param vl15Dropped
          *            the vl15Dropped to set
          */
-        public void setVl15Dropped(long vl15Dropped) {
+        public void setVl15Dropped(Long vl15Dropped) {
             this.vl15Dropped = vl15Dropped;
         }
 
         /**
          * @return the portXmitData
          */
-        public long getPortXmitData() {
+        public Long getPortXmitData() {
             return portXmitData;
         }
 
         /**
          * @return the portRcvData
          */
-        public long getPortRcvData() {
+        public Long getPortRcvData() {
             return portRcvData;
         }
 
         /**
          * @return the fmConfigErrors
          */
-        public long getFmConfigErrors() {
+        public Long getFmConfigErrors() {
             return fmConfigErrors;
         }
 
         /**
          * @return the portMulticastRcvPkts
          */
-        public long getPortMulticastRcvPkts() {
+        public Long getPortMulticastRcvPkts() {
             return portMulticastRcvPkts;
         }
 
         /**
          * @return the portRcvFECN
          */
-        public long getPortRcvFECN() {
+        public Long getPortRcvFECN() {
             return portRcvFECN;
         }
 
         /**
          * @return the portRcvBECN
          */
-        public long getPortRcvBECN() {
+        public Long getPortRcvBECN() {
             return portRcvBECN;
         }
 
         /**
          * @return the portRcvBubble
          */
-        public long getPortRcvBubble() {
+        public Long getPortRcvBubble() {
             return portRcvBubble;
         }
 
         /**
          * @return the portMulticastXmitPkts
          */
-        public long getPortMulticastXmitPkts() {
+        public Long getPortMulticastXmitPkts() {
             return portMulticastXmitPkts;
         }
 
         /**
          * @return the portXmitWait
          */
-        public long getPortXmitWait() {
+        public Long getPortXmitWait() {
             return portXmitWait;
         }
 
         /**
          * @return the portXmitTimeCong
          */
-        public long getPortXmitTimeCong() {
+        public Long getPortXmitTimeCong() {
             return portXmitTimeCong;
         }
 
         /**
          * @return the portXmitWastedBW
          */
-        public long getPortXmitWastedBW() {
+        public Long getPortXmitWastedBW() {
             return portXmitWastedBW;
         }
 
         /**
          * @return the portXmitWaitData
          */
-        public long getPortXmitWaitData() {
+        public Long getPortXmitWaitData() {
             return portXmitWaitData;
         }
 
         /**
          * @return the portMarkFECN
          */
-        public long getPortMarkFECN() {
+        public Long getPortMarkFECN() {
             return portMarkFECN;
         }
 
         /**
          * @return the uncorrectableErrors
          */
-        public short getUncorrectableErrors() {
+        public Short getUncorrectableErrors() {
             return uncorrectableErrors;
         }
 
         /**
          * @return the swPortCongestion
          */
-        public long getSwPortCongestion() {
+        public Long getSwPortCongestion() {
             return swPortCongestion;
         }
 
@@ -930,7 +935,7 @@ public class ConnectivityTableData implements Serializable {
          * @param portXmitData
          *            the portXmitData to set
          */
-        public void setPortXmitData(long portXmitData) {
+        public void setPortXmitData(Long portXmitData) {
             this.portXmitData = portXmitData;
         }
 
@@ -938,7 +943,7 @@ public class ConnectivityTableData implements Serializable {
          * @param portRcvData
          *            the portRcvData to set
          */
-        public void setPortRcvData(long portRcvData) {
+        public void setPortRcvData(Long portRcvData) {
             this.portRcvData = portRcvData;
         }
 
@@ -946,7 +951,7 @@ public class ConnectivityTableData implements Serializable {
          * @param fmConfigErrors
          *            the fmConfigErrors to set
          */
-        public void setFmConfigErrors(long fmConfigErrors) {
+        public void setFmConfigErrors(Long fmConfigErrors) {
             this.fmConfigErrors = fmConfigErrors;
         }
 
@@ -954,7 +959,7 @@ public class ConnectivityTableData implements Serializable {
          * @param portMulticastRcvPkts
          *            the portMulticastRcvPkts to set
          */
-        public void setPortMulticastRcvPkts(long portMulticastRcvPkts) {
+        public void setPortMulticastRcvPkts(Long portMulticastRcvPkts) {
             this.portMulticastRcvPkts = portMulticastRcvPkts;
         }
 
@@ -962,7 +967,7 @@ public class ConnectivityTableData implements Serializable {
          * @param portRcvFECN
          *            the portRcvFECN to set
          */
-        public void setPortRcvFECN(long portRcvFECN) {
+        public void setPortRcvFECN(Long portRcvFECN) {
             this.portRcvFECN = portRcvFECN;
         }
 
@@ -970,7 +975,7 @@ public class ConnectivityTableData implements Serializable {
          * @param portRcvBECN
          *            the portRcvBECN to set
          */
-        public void setPortRcvBECN(long portRcvBECN) {
+        public void setPortRcvBECN(Long portRcvBECN) {
             this.portRcvBECN = portRcvBECN;
         }
 
@@ -978,7 +983,7 @@ public class ConnectivityTableData implements Serializable {
          * @param portRcvBubble
          *            the portRcvBubble to set
          */
-        public void setPortRcvBubble(long portRcvBubble) {
+        public void setPortRcvBubble(Long portRcvBubble) {
             this.portRcvBubble = portRcvBubble;
         }
 
@@ -986,7 +991,7 @@ public class ConnectivityTableData implements Serializable {
          * @param portMulticastXmitPkts
          *            the portMulticastXmitPkts to set
          */
-        public void setPortMulticastXmitPkts(long portMulticastXmitPkts) {
+        public void setPortMulticastXmitPkts(Long portMulticastXmitPkts) {
             this.portMulticastXmitPkts = portMulticastXmitPkts;
         }
 
@@ -994,7 +999,7 @@ public class ConnectivityTableData implements Serializable {
          * @param portXmitWait
          *            the portXmitWait to set
          */
-        public void setPortXmitWait(long portXmitWait) {
+        public void setPortXmitWait(Long portXmitWait) {
             this.portXmitWait = portXmitWait;
         }
 
@@ -1002,7 +1007,7 @@ public class ConnectivityTableData implements Serializable {
          * @param portXmitTimeCong
          *            the portXmitTimeCong to set
          */
-        public void setPortXmitTimeCong(long portXmitTimeCong) {
+        public void setPortXmitTimeCong(Long portXmitTimeCong) {
             this.portXmitTimeCong = portXmitTimeCong;
         }
 
@@ -1010,7 +1015,7 @@ public class ConnectivityTableData implements Serializable {
          * @param portXmitWastedBW
          *            the portXmitWastedBW to set
          */
-        public void setPortXmitWastedBW(long portXmitWastedBW) {
+        public void setPortXmitWastedBW(Long portXmitWastedBW) {
             this.portXmitWastedBW = portXmitWastedBW;
         }
 
@@ -1018,7 +1023,7 @@ public class ConnectivityTableData implements Serializable {
          * @param portXmitWaitData
          *            the portXmitWaitData to set
          */
-        public void setPortXmitWaitData(long portXmitWaitData) {
+        public void setPortXmitWaitData(Long portXmitWaitData) {
             this.portXmitWaitData = portXmitWaitData;
         }
 
@@ -1026,7 +1031,7 @@ public class ConnectivityTableData implements Serializable {
          * @param portMarkFECN
          *            the portMarkFECN to set
          */
-        public void setPortMarkFECN(long portMarkFECN) {
+        public void setPortMarkFECN(Long portMarkFECN) {
             this.portMarkFECN = portMarkFECN;
         }
 
@@ -1034,7 +1039,7 @@ public class ConnectivityTableData implements Serializable {
          * @param uncorrectableErrors
          *            the uncorrectableErrors to set
          */
-        public void setUncorrectableErrors(short uncorrectableErrors) {
+        public void setUncorrectableErrors(Short uncorrectableErrors) {
             this.uncorrectableErrors = uncorrectableErrors;
         }
 
@@ -1042,40 +1047,40 @@ public class ConnectivityTableData implements Serializable {
          * @param swPortCongestion
          *            the swPortCongestion to set
          */
-        public void setSwPortCongestion(long swPortCongestion) {
+        public void setSwPortCongestion(Long swPortCongestion) {
             this.swPortCongestion = swPortCongestion;
         }
 
         public void clear() {
-            tx32BitWords = 0;
-            rx32BitWords = 0;
-            txPackets = 0;
-            rxPackets = 0;
-            numSymbolErrors = 0;
-            numLinkRecoveries = 0;
-            numLinkDown = 0;
-            rxErrors = 0;
-            rxRemotePhysicalErrors = 0;
-            txDiscards = 0;
-            localLinkIntegrityErrors = 0;
-            excessiveBufferOverruns = 0;
-            switchRelayErrors = 0;
-            txConstraints = 0;
-            rxConstraints = 0;
-            vl15Dropped = 0;
-            fmConfigErrors = 0;
-            portMulticastRcvPkts = 0;
-            portRcvFECN = 0;
-            portRcvBECN = 0;
-            portRcvBubble = 0;
-            portMulticastXmitPkts = 0;
-            portXmitWait = 0;
-            portXmitTimeCong = 0;
-            portXmitWastedBW = 0;
-            portXmitWaitData = 0;
-            portMarkFECN = 0;
-            uncorrectableErrors = 0;
-            swPortCongestion = 0;
+            tx32BitWords = null;
+            rx32BitWords = null;
+            txPackets = null;
+            rxPackets = null;
+            numSymbolErrors = null;
+            numLinkRecoveries = null;
+            numLinkDown = null;
+            rxErrors = null;
+            rxRemotePhysicalErrors = null;
+            txDiscards = null;
+            localLinkIntegrityErrors = null;
+            excessiveBufferOverruns = null;
+            switchRelayErrors = null;
+            txConstraints = null;
+            rxConstraints = null;
+            vl15Dropped = null;
+            fmConfigErrors = null;
+            portMulticastRcvPkts = null;
+            portRcvFECN = null;
+            portRcvBECN = null;
+            portRcvBubble = null;
+            portMulticastXmitPkts = null;
+            portXmitWait = null;
+            portXmitTimeCong = null;
+            portXmitWastedBW = null;
+            portXmitWaitData = null;
+            portMarkFECN = null;
+            uncorrectableErrors = null;
+            swPortCongestion = null;
         }
     }
 

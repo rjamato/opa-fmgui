@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN" "http://java.sun.com/products/javahelp/toc_1_0.dtd">
+<toc version="1.0">
+   <tocitem text="Descriptions of Command Line Tools"
+            target="GUID-5DDF2A89-BDEC-4489-AA82-1E2F90D9CF2B">
+      <tocitem text="opa_osd_dump" target="GUID-E94EC577-C968-4F96-9ED7-0FCA599842B0"/>
+      <tocitem text="opa_osd_exercise" target="GUID-371854DD-397B-4D47-8A1B-C5730EF33BFB"/>
+      <tocitem text="opa_osd_perf" target="GUID-B0CAEC65-CCC7-459C-9856-1BD03806C177"/>
+      <tocitem text="opa_osd_query" target="GUID-EF4FB354-A139-4ADA-9BD5-D6F92CA15D2D"/>
+      <tocitem text="opaallanalysis" target="GUID-7233FEEC-0DAE-48A7-98F4-B5BF67473177"/>
+      <tocitem text="opa-arptbl-tuneup" target="GUID-4C1042C8-273A-4CB8-A133-3CE6ACB3FDF0"/>
+      <tocitem text="opacabletest" target="GUID-E698CA72-971A-44A9-A815-557F74EEDD42"/>
+      <tocitem text="opacapture" target="GUID-DB6757FC-0FA8-4C95-92BC-5383E4471F1D"/>
+      <tocitem text="opacaptureall" target="GUID-045748AD-145A-426F-AE52-CCB172DF771D"/>
+      <tocitem text="opachassisadmin" target="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4"/>
+      <tocitem text="opachassisanalysis" target="GUID-A79D50FC-64C0-45E5-AA67-9DA3B9BD5A88"/>
+      <tocitem text="opacheckload" target="GUID-72AC5363-2D50-4A70-9B63-FEDBDD07841E"/>
+      <tocitem text="opacmdall" target="GUID-B147419A-30B6-4415-A82C-208A47E2E84D"/>
+      <tocitem text="opaconfig" target="GUID-FAA506C2-9B81-4017-99E4-A6E435800072"/>
+      <tocitem text="opadisablehosts" target="GUID-1843E9F7-8FCE-4A4E-891E-0D99CD005F9C"/>
+      <tocitem text="opadisableports" target="GUID-4E926BC3-215C-48A7-86DA-15E6447A129B"/>
+      <tocitem text="opadownloadall" target="GUID-50B37E61-E7EF-400E-9DE1-C28B4DE6B4E8"/>
+      <tocitem text="opaenableports" target="GUID-28CB9083-3617-4079-8E3A-260D1264D5FF"/>
+      <tocitem text="opaesmanalysis" target="GUID-669DBEB9-71F9-4330-B0E8-B25B34558012"/>
+      <tocitem text="opaexpandfile" target="GUID-C6470230-49D2-432F-8E44-3046D4FA94BD"/>
+      <tocitem text="opaextractbadlinks" target="GUID-868FA6CE-3790-43E3-A048-B7CF79A19569"/>
+      <tocitem text="opaextracterror" target="GUID-EF438364-0580-4213-A9E7-7494BE56912C"/>
+      <tocitem text="opaextractlids" target="GUID-1043329E-FFDA-4F7F-9840-7B5AFB54E5FB"/>
+      <tocitem text="opaextractlink" target="GUID-A1BBAD13-1265-4FF2-99AF-CEE284FF2377"/>
+      <tocitem text="opaextractperf" target="GUID-1664B512-90C1-4ED0-A21F-CEEB62D5C2AB"/>
+      <tocitem text="opaextractsellinks" target="GUID-9D8ABC37-1AC2-4503-A89D-02EF78565D02"/>
+      <tocitem text="opaextractstat" target="GUID-7379CB19-27DD-4C8E-91E8-427EA8A14B67"/>
+      <tocitem text="opaextractstat2" target="GUID-8A51E60C-3E58-415E-8FC4-A73F1629851A"/>
+      <tocitem text="opafabricanalysis" target="GUID-E2B15A40-03A8-421C-8DAC-4AAEBB09B4AB"/>
+      <tocitem text="opafabricinfo" target="GUID-50AADE23-2E06-4177-AFDE-520CE997B1C1"/>
+      <tocitem text="opafastfabric" target="GUID-CB5FA49F-6F79-463C-A3C6-D0CCACFC1324"/>
+      <tocitem text="opafequery" target="GUID-C31D36C3-D4DE-4010-962B-B2169DB3AF1D"/>
+      <tocitem text="opafindgood" target="GUID-1916B0BF-D1E0-4F40-9469-601DB2470ADE"/>
+      <tocitem text="opafirmware" target="GUID-15B1D4A3-8ECC-4EC6-BC8E-45FA66BA965B"/>
+      <tocitem text="opagenchassis" target="GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2"/>
+      <tocitem text="opagenesmchassis" target="GUID-F0BEA71A-0815-4672-BF7C-7FCE855C342C"/>
+      <tocitem text="opagenswitches" target="GUID-F36528CA-A55C-476F-953D-CD28F4B73924"/>
+      <tocitem text="opagentopology" target="GUID-658121D4-0092-4CBC-87C7-22E2E7EEB7F1"/>
+      <tocitem text="opagetvf" target="GUID-C669A8F2-D7CB-48E7-9066-033AE165D295"/>
+      <tocitem text="opagetvf_env" target="GUID-82DCD5EF-8998-4DB4-8DF2-A2D259A44A61"/>
+      <tocitem text="opahfirev" target="GUID-0424E994-67E4-40DA-B7B2-E2793872DFB3"/>
+      <tocitem text="opahostadmin" target="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8"/>
+      <tocitem text="opahostsmanalysis" target="GUID-6E1112C8-19A7-4BB9-9EE4-B6A358CB241B"/>
+      <tocitem text="opainfo" target="GUID-A2410287-7C2C-49FE-95C8-F60723366B89"/>
+      <tocitem text="opa-init-kernel" target="GUID-B6772D9D-224B-4EC4-88E6-60B7800318E1"/>
+      <tocitem text="opalinkanalysis" target="GUID-F6252046-EF49-4CFA-B677-D2EFB73A43A7"/>
+      <tocitem text="opapacketcapture" target="GUID-E89E6CB2-FD46-445F-88AD-FE4B309BE62B"/>
+      <tocitem text="opapaquery" target="GUID-32B3A8C9-F920-49B8-8F50-098A8A11FBA4"/>
+      <tocitem text="opapingall" target="GUID-477C6295-03BC-42C6-A232-A3DCBB06DC27"/>
+      <tocitem text="opapmaquery" target="GUID-52538002-3A36-4195-B69E-3648C71CBC07"/>
+      <tocitem text="opaportconfig" target="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE"/>
+      <tocitem text="opaportinfo" target="GUID-8E62215E-07FC-45E9-BA56-A0CB4BC77EED"/>
+      <tocitem text="opareport" target="GUID-03910E5A-245C-4F29-A84D-5D9872BBE30C"/>
+      <tocitem text="opareports" target="GUID-8279CC02-DA4A-4316-A6CF-616B7FCE29B1"/>
+      <tocitem text="oparesolvehfiport" target="GUID-AE8BF3C2-4D6D-47D5-92DE-F15C2890742B"/>
+      <tocitem text="opasaquery" target="GUID-B6E993CB-6B15-40F5-A8FC-EED3F2F207DA"/>
+      <tocitem text="opascpall" target="GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2"/>
+      <tocitem text="opasetupssh" target="GUID-FE8BD1A7-CEDC-44D9-87CD-BE1666092561"/>
+      <tocitem text="opashowallports" target="GUID-061AC405-4CEB-40BF-A8A6-DA3E18AB7849"/>
+      <tocitem text="opashowmc" target="GUID-DD384F8F-1D6C-43FE-94BB-A6429AB1D551"/>
+      <tocitem text="opasmaquery" target="GUID-82EA2EE5-65FA-4066-9464-EA48FE5A4826"/>
+      <tocitem text="opasorthosts" target="GUID-0DBD3FAB-D135-4AB4-A5B1-970D15FF8255"/>
+      <tocitem text="opaswdisableall" target="GUID-94C93BF1-A33F-4B19-B426-4C43FF91343B"/>
+      <tocitem text="opaswenableall" target="GUID-6D119EC3-1C8F-4B45-BBCB-C62446AAC4F2"/>
+      <tocitem text="opaswitchadmin" target="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474"/>
+      <tocitem text="opatmmtool" target="GUID-C059690C-08E0-42EC-B311-9023DC08F562"/>
+      <tocitem text="opatop" target="GUID-68D9779D-C250-4834-9776-72118EC25571"/>
+      <tocitem text="opauploadall" target="GUID-E780E09D-CBCB-4AFA-8BAC-AA0EA0142FF5"/>
+      <tocitem text="opaverifyhosts" target="GUID-9833885C-E36C-4CCD-9E60-27AC14C0768B"/>
+      <tocitem text="opaxlattopology" target="GUID-86FC70A6-91C9-4545-9E6F-A3213FB6B564"/>
+      <tocitem text="opaxlattopology_cust" target="GUID-00C2EEEE-D2A4-4585-ADDF-BF8C4499828B"/>
+      <tocitem text="opaxmlextract" target="GUID-627B3946-32F2-41C4-8FF5-7EB00229FF2A"/>
+      <tocitem text="opaxmlfilter" target="GUID-3DAD6DC1-7393-4B70-9605-2CAC1AF85686"/>
+      <tocitem text="opaxmlgenerate" target="GUID-4D1815D7-6663-4B0C-94F7-6E4312D05405"/>
+      <tocitem text="opaxmlindent" target="GUID-DA4E890E-6E54-4E11-8EBE-E541B21633BC"/>
+   </tocitem>
+</toc>

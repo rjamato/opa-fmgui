@@ -1,0 +1,233 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opascpall">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opascpall</title>
+</head>
+<body class="man8" id="GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2"><a name="GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opascpall</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2__GUID-AE72ED79-984F-4F0D-9131-1D40B66903C0"><a name="GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2__GUID-AE72ED79-984F-4F0D-9131-1D40B66903C0"><!-- --></a> 
+      <p class="p"><strong class="ph b">(Linux)</strong> Copies files or directories from the current system to
+        multiple hosts in the fabric. When copying large directory trees, use the 
+        <samp class="ph codeph">-t</samp> option to improve performance. This option tars and
+        compresses the tree, transfers the resulting compressed tarball to each node,
+        and untars it on each node. 
+      </p>
+ 
+      <p class="p">Use this tool for copying data files, operating system files, or
+        applications to all the hosts (or a subset of hosts) within the fabric. 
+      </p>
+ 
+      <div class="note note" id="GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2__GUID-41F93BEB-3D32-4760-8F66-2DA357327EB3"><a name="GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2__GUID-41F93BEB-3D32-4760-8F66-2DA357327EB3"><!-- --></a><span class="notetitle">Note:</span>  
+        <p class="p">This tool can only copy from this system to a group of systems in
+          the cluster. To copy from hosts in the cluster to this host, use 
+          <samp class="ph codeph">opauploadall</samp>. 
+        </p>
+ 
+        <p class="p"> 
+          <samp class="ph codeph">user@</samp> style syntax cannot be used when specifying
+          filenames. 
+        </p>
+ 
+      </div>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2__GUID-6D20B5CD-D5B6-4545-808D-94720D12B53A"><a name="GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2__GUID-6D20B5CD-D5B6-4545-808D-94720D12B53A"><!-- --></a><h2 class="sectiontitle">Syntax </h2> 
+      <pre class="pre codeblock">opascpall [-p] [-r] [-f <var class="keyword varname">hostfile</var>] [-h '<var class="keyword varname">hosts</var>'] [-u <var class="keyword varname">user</var>] source_file ... dest_file
+
+opascpall -t [-p] [-f <var class="keyword varname">hostfile</var>] [-h '<var class="keyword varname">hosts</var>'] [-u <var class="keyword varname">user</var>] [<var class="keyword varname">source_dir</var> [<var class="keyword varname">dest_dir</var>]]</pre>
+ 
+      <p class="p">or 
+      </p>
+ 
+      <pre class="pre codeblock">opascpall --help</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2__XX1146718"><a name="GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2__XX1146718"><!-- --></a><h2 class="sectiontitle">Options </h2> 
+      <a name="GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2__GUID-69CB590E-7087-4072-A854-DAB63E502515"><!-- --></a><dl class="dl parml" id="GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2__GUID-69CB590E-7087-4072-A854-DAB63E502515"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Produces full help text. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-p</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Performs copy in parallel on all hosts. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-r</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Performs recursive copy of directories. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-t</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Performs optimized recursive copy of directories using tar. 
+              <samp class="ph codeph"><var class="keyword varname">dest_dir</var></samp> is optional. If 
+              <samp class="ph codeph"><var class="keyword varname">dest_dir</var></samp> is not specified, it
+              defaults to the current directory name. If both 
+              <samp class="ph codeph"><var class="keyword varname">source_dir</var></samp> and 
+              <samp class="ph codeph"><var class="keyword varname">dest_dir</var></samp> are omitted, they
+              both default to the current directory name. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-h 
+              <var class="keyword varname">hosts</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> List of hosts to copy to. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-f 
+              <var class="keyword varname">hostfile</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">File with hosts in cluster. Default is 
+            <span class="ph filepath">/etc/sysconfig/opa/hosts</span> file. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-u 
+              <var class="keyword varname">user</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">User to perform copy to. Default is current user code. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"><var class="keyword varname">source_file</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Name of files to copy from this system, relative to the current
+            directory. Multiple files may be listed. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"><var class="keyword varname">source_dir</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Name of directory to copy from this system, relative to the
+            current directory. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"><var class="keyword varname">dest_file</var></samp> or 
+            <samp class="ph codeph"><var class="keyword varname">dest_dir</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">Name of the file or directory on the destination system to copy
+            to, relative to the home directory of the specified user. An absolute path name
+            may be specified. 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2__XX1146752"><a name="GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2__XX1146752"><!-- --></a><h2 class="sectiontitle">Example </h2> 
+      <pre class="pre codeblock"># copy a single file
+opascpall MPI-PMB /root/MPI-PMB
+# efficiently copy an entire directory tree
+opascpall -t -p /opt/opa/src/mpi_apps /opt/opa/src/mpi_apps
+# copy a group of files
+opascpall a b c /root/tools/
+# copy to an explitly specified set of hosts
+opascpall -h 'arwen elrond' a b c /root/tools
+HOSTS='arwen elrond' opascpall a b c /root/tools</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2__XX1117288"><a name="GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2__XX1117288"><!-- --></a><h2 class="sectiontitle">Environment Variables </h2> 
+      <p class="p">The following environment variables are also used by this command: 
+      </p>
+ 
+      <a name="GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2__GUID-A8AF3822-F76C-4644-AEBA-9817396ED1D0"><!-- --></a><dl class="dl parml" id="GUID-7469D7A3-7D41-4882-BF2B-736FB6778DF2__GUID-A8AF3822-F76C-4644-AEBA-9817396ED1D0"> 
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">HOSTS</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of hosts; used if 
+              <samp class="ph codeph">-h</samp> option not supplied. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"> 
+            <span class="keyword parmname">HOSTS_FILE</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File containing list of hosts; used in absence of 
+              <samp class="ph codeph">-f</samp> and 
+              <samp class="ph codeph">-h</samp>. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_MAX_PARALLEL</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">When the 
+              <samp class="ph codeph">-p</samp> option is used, maximum concurrent operations
+              are performed. 
+            </p>
+ 
+          </dd>
+ 
+         
+        </dl>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

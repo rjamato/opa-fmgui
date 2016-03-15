@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.64  2015/10/29 12:11:43  robertja
+ *  Archive Log:    PR 131014 MailNotifier is now updated if user changes events or recipients in wizard after start-up.
+ *  Archive Log:
  *  Archive Log:    Revision 1.63  2015/08/17 18:53:38  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -1298,4 +1301,9 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
             getConfigurationApi().submitMessage(subject, body, recipientsList);
         }
     }
+
+	@Override
+	public Context getContext(SubnetDescription subnetDescription) {
+		return contexts.get(subnetDescription);
+	}
 }

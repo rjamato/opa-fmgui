@@ -35,6 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.4  2015/11/18 23:48:33  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Passing LogInitBean to startLog() since the host can now be configured by the user
+ *  Archive Log:    - Added getLogFilePath() and getDefaultLogPath() for display purposes
+ *  Archive Log:    - Added getSubnetDescription() to get access to the subnet
+ *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/09/29 15:30:48  rjtierne
  *  Archive Log:    PR 130332 - windows FM GUI - Admin-Logs - when logging in it displays error message about NULL log
  *  Archive Log:    - Added method stopLog() for terminating the log process when the login cancel button is clicked
@@ -60,6 +66,7 @@ import com.intel.stl.api.configuration.impl.SubnetContextImpl;
 import com.intel.stl.api.logs.ILogApi;
 import com.intel.stl.api.logs.ILogStateListener;
 import com.intel.stl.api.logs.LogHelper;
+import com.intel.stl.api.logs.LogInitBean;
 import com.intel.stl.api.subnet.SubnetDescription;
 
 public class LogApi implements ILogApi {
@@ -136,13 +143,14 @@ public class LogApi implements ILogApi {
     /*
      * (non-Javadoc)
      * 
-     * @see com.intel.stl.api.logger.ILoggerApi#startLogger()
+     * @see
+     * com.intel.stl.api.logs.ILogApi#startLog(com.intel.stl.api.logs.LogInitBean
+     * , char[])
      */
     @Override
-    public void startLog(SubnetDescription subnet, boolean strictHostKey,
-            char[] password) {
+    public void startLog(LogInitBean logInitBean, char[] password) {
+        logHelper.startLog(logInitBean, password);
 
-        logHelper.startLog(subnet, strictHostKey, password);
     }
 
     /*
@@ -189,11 +197,21 @@ public class LogApi implements ILogApi {
     /*
      * (non-Javadoc)
      * 
-     * @see com.intel.stl.api.logs.ILogApi#getLogFileName()
+     * @see com.intel.stl.api.logs.ILogApi#getLogFilePath()
      */
     @Override
-    public String getLogFileName() {
-        return logHelper.getLogFileName();
+    public String getLogFilePath() {
+        return logHelper.getLogFilePath();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.api.logs.ILogApi#getDefaultLogFilePath()
+     */
+    @Override
+    public String getDefaultLogFilePath() {
+        return logHelper.getDefaultLogFilePath();
     }
 
     /*
@@ -226,4 +244,13 @@ public class LogApi implements ILogApi {
         return logHelper.getTotalLines();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.api.logs.ILogApi#getSubnetDescription()
+     */
+    @Override
+    public SubnetDescription getSubnetDescription() {
+        return logHelper.getSubnetDescription();
+    }
 }

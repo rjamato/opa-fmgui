@@ -35,6 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.7  2015/11/24 16:49:00  rjtierne
+ *  Archive Log:    PR 131720 - Code cleanup for PRQCode cleanup for PRQ
+ *  Archive Log:    - In method getVFName(), changed error message for IllegalArgumentException to use the
+ *  Archive Log:    new STLConstant K0808.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.6  2015/11/02 23:56:54  jijunwan
+ *  Archive Log:    PR 131396 - Incorrect Connectivity Table for a VF port
+ *  Archive Log:    - adapted to the new connectivity table controller to support VF port
+ *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/08/17 18:54:05  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -69,8 +78,10 @@ import java.util.List;
 import java.util.Set;
 
 import com.intel.stl.ui.common.ICancelIndicator;
+import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.model.GraphEdge;
 import com.intel.stl.ui.model.LayoutType;
+import com.intel.stl.ui.monitor.TreeNodeType;
 import com.intel.stl.ui.monitor.tree.FVResourceNode;
 import com.intel.stl.ui.network.IModelChange;
 import com.intel.stl.ui.network.LayoutChange;
@@ -81,6 +92,8 @@ import com.mxgraph.model.mxCell;
 
 public class ShowEdgesTask extends TopologyUpdateTask {
     private final List<GraphEdge> edges;
+
+    private final String vfName;
 
     private TopologyTreeModel tmpTreeMode;
 
@@ -98,7 +111,31 @@ public class ShowEdgesTask extends TopologyUpdateTask {
             FVResourceNode[] selectedResources, List<GraphEdge> edges) {
         super(controller, source, selectedResources);
         this.edges = edges;
+        this.vfName = getVFName(selectedResources);
         setIncludeNeighbors(false);
+    }
+
+    protected String getVFName(FVResourceNode[] selectedResources) {
+        String res = null;
+        FVResourceNode refGroup = null;
+        String vfName = null;
+        for (int i = 0; i < selectedResources.length; i++) {
+            vfName = null;
+            FVResourceNode parent = selectedResources[i].getParent();
+            FVResourceNode group = parent.getParent();
+            if (refGroup != null && group != refGroup) {
+                throw new IllegalArgumentException(
+                        STLConstants.K0808_DIFFERENT_PARENTS_ERROR.getValue());
+            }
+            if (group.getType() == TreeNodeType.VIRTUAL_FABRIC) {
+                vfName = group.getTitle();
+            }
+            if (i == 0) {
+                res = vfName;
+                refGroup = group;
+            }
+        }
+        return res;
     }
 
     /*
@@ -110,7 +147,7 @@ public class ShowEdgesTask extends TopologyUpdateTask {
      */
     @Override
     public void preBackgroundTask(ICancelIndicator indicator, TopGraph oldGraph) {
-        resourceController.showLinks(edges);
+        resourceController.showLinks(edges, vfName);
     }
 
     /*

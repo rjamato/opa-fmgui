@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.6  2015/11/09 20:46:37  fernande
+ *  Archive Log:    PR130231 - Cannot delete subnet from Wizard if subnet name is "Unknown Subnet". Fixed bug with listeners.
+ *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/08/17 18:53:53  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -121,24 +124,13 @@ public class MultinetWizardModel implements IWizardModel {
      * .stl.ui.wizards.model.IModelChangeListener)
      */
     @Override
-    public void addModelListener(IModelChangeListener<IWizardModel> listener) {
-
-        WizardType key = null;
+    public void addModelListener(IModelChangeListener<IWizardModel> listener,
+            WizardType wizardType) {
 
         listeners.add(listener);
 
-        if (listener instanceof MultinetWizardModel) {
-            key = WizardType.MULTINET;
-        } else if (listener instanceof SubnetModel) {
-            key = WizardType.SUBNET;
-        } else if (listener instanceof EventsModel) {
-            key = WizardType.EVENT;
-        } else if (listener instanceof PreferencesModel) {
-            key = WizardType.PREFERENCES;
-        }
-
-        if (key != null) {
-            listenerMap.put(key, listener);
+        if (wizardType != null) {
+            listenerMap.put(wizardType, listener);
         }
     }
 
@@ -149,12 +141,9 @@ public class MultinetWizardModel implements IWizardModel {
      */
     @Override
     public void notifyModelChange() {
-
         // Notify all wizards of changes to the top model
-        if (listeners.size() > 0) {
-            for (IModelChangeListener<IWizardModel> listener : listeners) {
-                listener.onModelChange(this);
-            }
+        for (IModelChangeListener<IWizardModel> listener : listeners) {
+            listener.onModelChange(this);
         }
     }
 
@@ -167,13 +156,11 @@ public class MultinetWizardModel implements IWizardModel {
      */
     @Override
     public void notifyModelChange(WizardType wizardType) {
-
-        if (listenerMap.size() > 0) {
-            IModelChangeListener<IWizardModel> listener =
-                    listenerMap.get(wizardType);
-            if (listener != null) {
-                listener.onModelChange(this);
-            }
+        // Notify only interested wizards of changes to the top model
+        IModelChangeListener<IWizardModel> listener =
+                listenerMap.get(wizardType);
+        if (listener != null) {
+            listener.onModelChange(this);
         }
     }
 

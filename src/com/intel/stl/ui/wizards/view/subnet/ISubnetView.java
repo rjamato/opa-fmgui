@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.9  2015/11/09 20:54:57  fernande
+ *  Archive Log:    PR130231 - Cannot delete subnet from Wizard if subnet name is "Unknown Subnet". Some refactoring to decouple tasks from main wizard controller
+ *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/08/17 18:54:33  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -81,10 +84,6 @@ public interface ISubnetView {
     public void showMessage(String message, int messageType);
 
     public void setControlListener(ISubnetControl listener);
-
-    public void setSubnetName(String subnetName);
-
-    public String getSubnetName();
 
     public void update(SubnetModel subnetModel);
 

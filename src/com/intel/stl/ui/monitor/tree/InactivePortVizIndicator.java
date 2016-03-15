@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.2  2015/10/23 19:10:43  jijunwan
+ *  Archive Log:    PR 129357 - Be able to hide inactive ports
+ *  Archive Log:    - added isEnabled method to indicator whether a filter is enabled or not
+ *  Archive Log:
  *  Archive Log:    Revision 1.1  2015/09/30 13:26:45  fisherma
  *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
  *  Archive Log:
@@ -77,6 +81,16 @@ public class InactivePortVizIndicator implements INodeVisbilityIndicator {
         } else {
             return true;
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.ui.monitor.tree.INodeVisbilityIndicator#isEnabled()
+     */
+    @Override
+    public boolean isEnabled() {
+        return context.getController().getHideInactiveNodes();
     }
 
 }

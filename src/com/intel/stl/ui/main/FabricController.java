@@ -35,6 +35,27 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.133  2015/12/21 21:48:33  jijunwan
+ *  Archive Log:    PR 131988 - Failover as I switch networks results in ERROR - Statement is closed to be dispalyed
+ *  Archive Log:    - improved the SubnetSwitchTask to support both foreground and background tasks
+ *  Archive Log:    - changed to put tree builder on foreground tasks to ensure we set context for tree builder first
+ *  Archive Log:
+ *  Archive Log:    Revision 1.132  2015/11/19 17:38:26  rjtierne
+ *  Archive Log:    PR 131647 - Restarting SM cause FM GUI to lockup
+ *  Archive Log:    When Failover completes, onRefresh() is called. But onRefresh() returns immediately because mainFrame isn't ready.
+ *  Archive Log:    - In onFailoverCompleted(), set mainFrame to ready on Failover success so refresh is executed.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.131  2015/10/26 13:42:07  fernande
+ *  Archive Log:    130979 - Error statement is closed when FE node is rebooted. Added check for Refresh in progress using the isReady() method in the view.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.130  2015/10/19 22:31:22  jijunwan
+ *  Archive Log:    PR 131091 - On an unsuccessful Failover, the Admin | Applications doesn't show the login window
+ *  Archive Log:    - changed refresh admin page when failover failed
+ *  Archive Log:
+ *  Archive Log:    Revision 1.129  2015/10/14 23:26:32  jypak
+ *  Archive Log:    PR 130913 - Java Help Window missing icon.
+ *  Archive Log:    Use a correct JDialog constructor in HelpMainWindow.
+ *  Archive Log:
  *  Archive Log:    Revision 1.128  2015/09/30 13:26:47  fisherma
  *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
  *  Archive Log:
@@ -486,7 +507,6 @@ import static com.intel.stl.ui.common.UILabels.STL60009_PRESS_REFRESH;
 
 import java.awt.Rectangle;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -639,7 +659,7 @@ public class FabricController extends
         loggingConfigController = createLoggingConfigController();
 
         helpAction = HelpAction.getInstance();
-        helpAction.enableHelpKey(view.getMainFrame());
+        helpAction.enableHelpMenu(view.getMainFrame().getOnlineHelpMenu());
         certsLoginCtr = createCertsLoginController();
 
         emailSettingsController =
@@ -675,11 +695,6 @@ public class FabricController extends
 
     protected PinBoardController createPinBoardController() {
         return new PinBoardController(view.getPinBoardView(), this);
-    }
-
-    @Override
-    public void applyHelpAction(ActionEvent e) {
-        helpAction.actionPerformed(e);
     }
 
     protected void setupEventBus() {
@@ -810,6 +825,8 @@ public class FabricController extends
 
     @Override
     public void initializeContext(Context context) {
+        System.out.println("FabricController.initializeContext: " + context);
+
         this.subnetName = context.getSubnetDescription().getName();
         checkBackgroundTask();
         // Show progress on UI
@@ -819,11 +836,16 @@ public class FabricController extends
                 UILabels.STL10104_INIT_SUBNET.getDescription(subnetName), true);
         mainFrame.setProgress(0);
 
-        List<IContextAware> contextPages = new ArrayList<IContextAware>();
-        contextPages.add(builder);
-        contextPages.addAll(pages);
-        contextPages.add(eventSummaryBarPanelController);
-        contextPages.add(eventTableController);
+        // need to set context for builder first before Performance and Topology
+        // page do the conext setting.
+        List<IContextAware> foregroundContextPages =
+                new ArrayList<IContextAware>();
+        foregroundContextPages.add(builder);
+
+        List<IContextAware> backgroundContextPages = new ArrayList<IContextAware>();
+        backgroundContextPages.addAll(pages);
+        backgroundContextPages.add(eventSummaryBarPanelController);
+        backgroundContextPages.add(eventTableController);
         backgroundTotalWork =
                 builder.getContextSwitchWeight().getWeight()
                         + eventSummaryBarPanelController
@@ -832,7 +854,9 @@ public class FabricController extends
                                 .getWeight();
         backgroundTotalWork += pageLoadWork;
         backgroundWork = 0.0;
-        backgroundTask = new SubnetSwitchTask(model, context, contextPages);
+        backgroundTask =
+                new SubnetSwitchTask(model, context, foregroundContextPages,
+                        backgroundContextPages);
         backgroundTask.addPropertyChangeListener(this);
         mainFrame.setTitle(STLConstants.K0001_FABRIC_VIEWER_TITLE.getValue());
         submitTask(backgroundTask);
@@ -849,11 +873,16 @@ public class FabricController extends
                 UILabels.STL10104_INIT_SUBNET.getDescription(subnetName), true);
         mainFrame.setProgress(0);
 
-        List<IContextAware> contextPages = new ArrayList<IContextAware>();
-        contextPages.add(builder);
-        contextPages.addAll(pages);
-        contextPages.add(eventSummaryBarPanelController);
-        contextPages.add(eventTableController);
+        // need to set context for builder first before Performance and Topology
+        // page do the conext setting.
+        List<IContextAware> foregroundContextPages =
+                new ArrayList<IContextAware>();
+        foregroundContextPages.add(builder);
+
+        List<IContextAware> backgroundContextPages = new ArrayList<IContextAware>();
+        backgroundContextPages.addAll(pages);
+        backgroundContextPages.add(eventSummaryBarPanelController);
+        backgroundContextPages.add(eventTableController);
         backgroundTotalWork =
                 builder.getContextSwitchWeight().getWeight()
                         + eventSummaryBarPanelController
@@ -862,7 +891,9 @@ public class FabricController extends
                                 .getWeight();
         backgroundTotalWork += pageLoadWork;
         backgroundWork = 0.0;
-        backgroundTask = new SubnetSwitchTask(model, newContext, contextPages);
+        backgroundTask =
+                new SubnetSwitchTask(model, newContext, foregroundContextPages,
+                        backgroundContextPages);
         backgroundTask.addPropertyChangeListener(this);
         mainFrame.setTitle(STLConstants.K0001_FABRIC_VIEWER_TITLE.getValue());
         submitTask(backgroundTask);
@@ -902,7 +933,17 @@ public class FabricController extends
         }
     }
 
+    /*
+     * Initially, an instance of FabricController was able to support multiple
+     * subnets; that is, the subnet could change to another. With multiple
+     * subnet support, an instance of FabricController is associated with one
+     * subnet only, and onRefresh should always use the isReady flag to avoid
+     * extra refreshes (if they come from failover)
+     */
     public synchronized void onRefresh() {
+        if (!mainFrame.isReady()) {
+            return;
+        }
         isSystemUpdate = true;
 
         Context context = getContext();
@@ -946,6 +987,8 @@ public class FabricController extends
         if (backgroundTask != null && !backgroundTask.isDone()) {
             backgroundTask.removePropertyChangeListener(this);
             try {
+                System.out
+                        .println("FabricController cancelling backgroundTask!");
                 backgroundTask.cancel(true);
             } catch (CancellationException ce) {
                 // If the background task is actually running, here is where we
@@ -1467,7 +1510,8 @@ public class FabricController extends
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
-                mainFrame.showProgress(null, false);
+                mainFrame.showProgress(UILabels.STL10110_REFRESHING_PAGES
+                        .getDescription(getCurrentSubnet().getName()), true);
                 mainFrame.setReady(true);
                 onRefresh();
             }
@@ -1489,6 +1533,12 @@ public class FabricController extends
                     mainFrame.showMessage(
                             STL60009_PRESS_REFRESH.getDescription(),
                             STL60008_CONN_LOST.getDescription());
+                    // special case: refresh AdminPage
+                    for (IPageController page : pages) {
+                        if (page instanceof AdminPage) {
+                            page.onRefresh(null);
+                        }
+                    }
                 }
             }
         });

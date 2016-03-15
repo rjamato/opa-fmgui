@@ -1,0 +1,1043 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opahostadmin">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opahostadmin</title>
+</head>
+<body class="man8" id="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8"><a name="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opahostadmin</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-88145982-4BD8-486A-9C99-A3FB62D587DA"><a name="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-88145982-4BD8-486A-9C99-A3FB62D587DA"><!-- --></a> 
+      <p class="p"><strong class="ph b">(Host)</strong> Performs a number of multi-step host initialization and
+        verification operations, including upgrading software or firmware, rebooting
+        hosts, and other operations. In general, operations performed by 
+        <samp class="ph codeph">opahostadmin</samp> involve a login to one or more host
+        systems. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-53299A6B-2EE3-4266-9CD7-77B4FF31D1AE"><a name="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-53299A6B-2EE3-4266-9CD7-77B4FF31D1AE"><!-- --></a><h2 class="sectiontitle">Syntax </h2> 
+      <pre class="pre codeblock">opahostadmin [-c] [-i <var class="keyword varname">ipoib_suffix</var>] [-f <var class="keyword varname">hostfile</var>] 
+[-h '<var class="keyword varname">hosts</var>'] [-r <var class="keyword varname">release</var>] [-I <var class="keyword varname">install_options</var>] 
+[-U <var class="keyword varname">upgrade_options</var>] [-d <var class="keyword varname">dir</var>] [-T <var class="keyword varname">product</var>] 
+[-P <var class="keyword varname">packages</var>] [-m <var class="keyword varname">netmask</var>] [-S] <var class="keyword varname">operation</var> ...</pre>
+ 
+      <p class="p">or 
+      </p>
+ 
+      <pre class="pre codeblock">opahostadmin --help</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__XX1137815"><a name="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__XX1137815"><!-- --></a><h2 class="sectiontitle">Options </h2> 
+      <a name="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-37ED0872-A88A-47BA-B5FE-66AA7EC56F70"><!-- --></a><dl class="dl parml" id="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-37ED0872-A88A-47BA-B5FE-66AA7EC56F70"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Produces full help text. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-c</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Clobbers result files from any previous run before starting this
+              run. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-i 
+              <var class="keyword varname">ipoib_suffix</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Suffix to apply to host names to create ipoib host names.
+              Default is 
+              <samp class="ph codeph">-opa</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-f 
+              <var class="keyword varname">hostfile</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File with the names of hosts in a cluster. Default is 
+              <span class="ph filepath">/etc/sysconfig/opa/hosts</span> file. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-h 
+              <var class="keyword varname">hosts</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of hosts to execute the operation against. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-r 
+              <var class="keyword varname">release</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Software version to load/upgrade to. Default is the version of 
+              <span class="ph">Intel<sup>®</sup> Omni-Path Software</span> presently being run on the server. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-d 
+              <var class="keyword varname">dir</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Directory to retrieve 
+              <span class="ph filepath"><var class="keyword varname">product</var>.<var class="keyword varname">release</var>.tgz</span>
+              for load or upgrade. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-I 
+              <var class="keyword varname">install_options</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Software install options. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-U 
+              <var class="keyword varname">upgrade_options</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Software upgrade options. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-T 
+              <var class="keyword varname">product</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Product type to install. Default = 
+              <span class="ph filepath">IntelOPA-Basic.RHEL7-x86_64</span> 
+            </p>
+ 
+            <p class="p"> Other options include: 
+              <span class="ph filepath">IntelOPA-Basic.<var class="keyword varname">&lt;distro&gt;</var></span>,
+              
+              <span class="ph filepath">IntelOPA-IFS.<var class="keyword varname">&lt;distro&gt;</var></span>
+              where 
+              <samp class="ph codeph"><var class="keyword varname">&lt;distro&gt;</var></samp> is the
+              distribution and CPU. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-P 
+              <var class="keyword varname">packages</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Packages to install. Default = 
+              <samp class="ph codeph">oftools ipoib mpi</samp> 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-m 
+              <var class="keyword varname">netmask</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">IPoIB netmask to use for 
+              <samp class="ph codeph">configipoib</samp> operation. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-S</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Securely prompts for user password on remote system. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"><var class="keyword varname">operation</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Performs the specified 
+              <samp class="ph codeph"><var class="keyword varname">operation</var></samp>, which can be one
+              or more of the following: 
+            </p>
+ 
+            <a name="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-28F3E075-1547-4858-8F88-262D50970857"><!-- --></a><dl class="dl parml" id="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-28F3E075-1547-4858-8F88-262D50970857"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">load</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Starts initial installation of all hosts. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">upgrade</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Upgrades installation of all hosts. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">configipoib</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Creates 
+                    <span class="ph filepath">ifcfg-ib1</span> using host IP address from 
+                    <span class="ph filepath">/etc/hosts</span> file. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">reboot</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Reboots hosts, ensures they go down and come back. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">sacache</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Confirms 
+                    <span class="ph filepath">sacache</span> has all hosts in it. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">ipoibping</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Verifies this host can ping each host through IPoIB. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">mpiperf</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Verifies latency and bandwidth for each host. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">mpiperfdeviation</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Verifies latency and bandwidth for each host against a
+                    defined threshold (or relative to average host performance). 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__XX1118385"><a name="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__XX1118385"><!-- --></a><h2 class="sectiontitle">Example </h2> 
+      <pre class="pre codeblock">opahostadmin -c reboot
+opahostadmin upgrade
+opahostadmin -h 'elrond arwen' reboot
+HOSTS='elrond arwen' opahostadmin reboot</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__XX1118390"><a name="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__XX1118390"><!-- --></a><h2 class="sectiontitle">Details </h2> 
+      <div class="p"><samp class="ph codeph">opahostadmin</samp> provides detailed logging of its
+        results. During each run, the following files are produced: 
+        <a name="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-DFB5F1C2-941F-4B93-81D6-C3F18BDF64EB"><!-- --></a><dl class="dl parml" id="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-DFB5F1C2-941F-4B93-81D6-C3F18BDF64EB"> 
+           
+            <dt class="dt pt dlterm"><samp class="ph codeph">test.res</samp> 
+            </dt>
+ 
+            <dd class="dd pd"> 
+              <p class="p">Appended with summary results of run. 
+              </p>
+ 
+            </dd>
+ 
+           
+           
+            <dt class="dt pt dlterm"><samp class="ph codeph">test.log</samp> 
+            </dt>
+ 
+            <dd class="dd pd"> 
+              <p class="p">Appended with detailed results of run. 
+              </p>
+ 
+            </dd>
+ 
+           
+           
+            <dt class="dt pt dlterm"><samp class="ph codeph">save_tmp/</samp> 
+            </dt>
+ 
+            <dd class="dd pd"> 
+              <p class="p">Contains a directory per failed test with detailed logs. 
+              </p>
+ 
+            </dd>
+ 
+           
+           
+            <dt class="dt pt dlterm"><samp class="ph codeph">test_tmp*/</samp> 
+            </dt>
+ 
+            <dd class="dd pd"> 
+              <p class="p">Intermediate result files while test is running. 
+              </p>
+ 
+            </dd>
+ 
+           
+        </dl>
+ The 
+        <samp class="ph codeph">-c</samp> option removes all log files. 
+      </div>
+ 
+      <p class="p">Results from 
+        <samp class="ph codeph">opahostadmin</samp> are grouped into 
+        <em class="ph i">test suites</em>, 
+        <em class="ph i">test cases</em>, and 
+        <em class="ph i">test items</em>. A given run of 
+        <samp class="ph codeph">opahostadmin</samp> represents a single test suite. Within a
+        test suite, multiple test cases occur; typically one test case per host being
+        operated on. Some of the more complex operations may have multiple test items
+        per test case. Each test item represents a major step in the overall test case.
+        
+      </p>
+ 
+      <p class="p">Each 
+        <samp class="ph codeph">opahostadmin</samp> run appends to 
+        <span class="ph filepath">test.res</span> and 
+        <span class="ph filepath">test.log</span>, and creates temporary files in 
+        <span class="ph filepath">test_tmp$PID</span> in the current directory. 
+        <span class="ph filepath">test.res</span> provides an overall summary of operations
+        performed and their results. The same information is also displayed while 
+        <samp class="ph codeph">opahostadmin</samp> is executing. 
+        <span class="ph filepath">test.log</span> contains detailed information about what
+        was performed, including the specific commands executed and the resulting
+        output. The 
+        <span class="ph filepath">test_tmp</span> directories contain temporary files which
+        reflect tests in progress (or killed). The logs for any failures are logged in
+        the 
+        <span class="ph filepath">save_temp</span> directory with a directory per failed
+        test case. If the same test case fails more than once, 
+        <span class="ph filepath">save_temp</span> retains the information from the first
+        failure. Subsequent runs of 
+        <samp class="ph codeph">opahostadmin</samp> are appended to 
+        <span class="ph filepath">test.log</span>. Intel recommends reviewing failures and
+        using the 
+        <samp class="ph codeph">-c</samp> option to remove old logs before subsequent runs of
+        
+        <samp class="ph codeph">opahostadmin</samp>. 
+      </p>
+ 
+      <p class="p"><samp class="ph codeph">opahostadmin</samp> implicitly performs its operations in
+        parallel. However, as for the other tools, 
+        <span class="keyword parmname">FF_MAX_PARALLEL</span> can be exported to change the
+        degree of parallelism. Twenty (20) parallel operations is the default. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__XX1118399"><a name="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__XX1118399"><!-- --></a><h2 class="sectiontitle">Environment Variables </h2> 
+      <p class="p">The following environment variables are also used by this command: 
+      </p>
+ 
+      <a name="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-5AAADC3B-58EA-47B8-A2D2-FF770EA5A2EF"><!-- --></a><dl class="dl parml" id="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-5AAADC3B-58EA-47B8-A2D2-FF770EA5A2EF"> 
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">HOSTS</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"> List of hosts, used if 
+              <samp class="ph codeph">-h</samp> option not supplied. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">HOSTS_FILE</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File containing list of hosts, used in absence of 
+              <samp class="ph codeph">-f</samp> and 
+              <samp class="ph codeph">-h</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_MAX_PARALLEL</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Maximum concurrent operations are performed. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_SERIALIZE_OUTPUT</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Serialize output of parallel operations (yes or no). 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-D34AFC52-96EA-48F5-AE91-591128EFB920"><a name="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-D34AFC52-96EA-48F5-AE91-591128EFB920"><!-- --></a><h2 class="title sectiontitle">opahostadmin Operation Details</h2> 
+       
+      <p class="p"><strong class="ph b">(Host)</strong> Intel recommends that you set up password SSH or SCP for
+        use during this operation. Alternatively, the 
+        <samp class="ph codeph">-S</samp> option can be used to securely prompt for a
+        password, in which case the same password is used for all hosts. Alternately,
+        the password may be put in the environment or the 
+        <span class="ph filepath">opafastfabric.conf</span> file using 
+        <span class="keyword parmname">FF_PASSWORD</span> and 
+        <span class="keyword parmname">FF_ROOTPASS</span>. 
+      </p>
+ 
+      <a name="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-DB7945F2-8D91-4F48-A123-63E01B91BF3F"><!-- --></a><dl class="dl parml" id="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-DB7945F2-8D91-4F48-A123-63E01B91BF3F"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">load</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Performs an initial installation of 
+              <span class="ph">Intel<sup>®</sup> Omni-Path Software</span> on a group of hosts. Any existing installation is uninstalled and
+              existing configuration files are removed. Subsequently, the hosts are installed
+              with a default 
+              <span class="ph">Intel<sup>®</sup> Omni-Path Software</span> configuration. The 
+              <samp class="ph codeph">-I</samp> option can be used to select different
+              install packages. Default = 
+              <samp class="ph codeph">oftools ipoib mpi</samp> The 
+              <samp class="ph codeph">-r</samp> option can be used to specify a release to
+              install other than the one that this host is presently running. The 
+              <span class="ph filepath"><var class="keyword varname">FF_PRODUCT</var>.<var class="keyword varname">FF_PRODUCT_VERSION</var>.tgz</span>
+              file (for example, 
+              <span class="ph filepath">IntelOPA-Basic.<var class="keyword varname">version</var>.tgz</span>)
+              is expected to exist in the directory specified by 
+              <samp class="ph codeph">-d</samp>. Default is the current working directory.
+              The specified software is copied to all the selected hosts and installed. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">upgrade</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Upgrades all selected hosts without modifying existing
+            configurations. This operation is comparable to the 
+            <samp class="ph codeph">-U</samp> option when running 
+            <samp class="ph codeph">./INSTALL</samp> manually. The 
+            <samp class="ph codeph">-r</samp> option can be used to upgrade to a release
+            different from this host. The default is to upgrade to the same release as this
+            host. The 
+            <span class="ph filepath"><var class="keyword varname">FF_PRODUCT</var>.<var class="keyword varname">FF_PRODUCT_VERSION</var>.tgz</span>
+            file (for example, 
+            <samp class="ph codeph">IntelOPA-Basic.<var class="keyword varname">version</var>.tgz</samp>) is
+            expected to exist in the directory specified by 
+            <samp class="ph codeph">-d</samp>. (The default is the current working
+            directory.) The specified software is copied to all the end nodes and
+            installed. 
+            <div class="note note" id="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-1A2AC317-FC3F-4B5D-9BD0-A24D25E57623"><a name="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-1A2AC317-FC3F-4B5D-9BD0-A24D25E57623"><!-- --></a><span class="notetitle">Note:</span>  
+              <p class="p">Only components that are currently installed are upgraded.
+                This operation fails for hosts that do not have 
+                <span class="ph">Intel<sup>®</sup> Omni-Path Software</span> installed. 
+              </p>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">configipoib</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Creates a 
+              <samp class="ph codeph">ifcfg-ib1</samp> configuration file for each node using
+              the IP address found using the resolver on the node. The standard Linux*
+              resolver is used through the 
+              <samp class="ph codeph">host</samp> command. (If running 
+              <span class="ph">OFA Delta</span>, this option configures 
+              <samp class="ph codeph">ifcfg-ib0</samp>.) 
+            </p>
+ 
+            <p class="p"> If the host is not found, 
+              <span class="ph filepath">/etc/hosts</span> on the node is checked. The 
+              <samp class="ph codeph">-i</samp> option specifies an IPoIB suffix to apply to
+              the host name to create the IPoIB host name for the node. The default suffix is
+              
+              <samp class="ph codeph">-ib</samp>. The 
+              <samp class="ph codeph">-m</samp> option specifies a netmask other than the
+              default for the given class of IP address, such as when dividing a class A or B
+              address into smaller IP subnets. IPoIB is configured for a static IP address
+              and is autostarted at boot. For the 
+              <span class="ph">Intel<sup>®</sup> OP Software</span> Stack, the default 
+              <span class="ph filepath">/etc/sysconfig/ipoib.cfg</span> file is used, which
+              provides a redundant IPoIB configuration using both ports of the first HFI in
+              the system. 
+            </p>
+ 
+            <div class="note note" id="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-2D40093C-0214-4520-9D42-B2441837B95A"><a name="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-2D40093C-0214-4520-9D42-B2441837B95A"><!-- --></a><span class="notetitle">Note:</span>  
+              <p class="p"><samp class="ph codeph">opahostadmin configipoib</samp> now supports DHCP
+                (<samp class="ph codeph">auto</samp> or 
+                <samp class="ph codeph">static</samp> options) for configuring the IPoIB
+                interface. You must specify these options in 
+                <span class="ph filepath">/etc/sysconfig/opa/opafastfabric.conf</span>
+                against the 
+                <span class="keyword parmname">FF_IPOIB_CONFIG</span> variable. If no options
+                are found, the 
+                <samp class="ph codeph">static</samp> IP configuration is used by default. If
+                
+                <samp class="ph codeph">auto</samp> is specified, then one IP address from
+                either 
+                <samp class="ph codeph">static</samp> or 
+                <samp class="ph codeph">dhcp</samp> is chosen. Static is used if the IP
+                address can be obtained out of 
+                <span class="ph filepath">/etc/hosts</span> or the resolver, otherwise DHCP
+                is used. 
+              </p>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">reboot</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Reboots the given hosts and ensures they go down and come back
+              up by pinging them during the reboot process. The ping rate is slow (5
+              seconds), so if the servers boot faster than this, false failures may be seen. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">sacache</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Verifies the given hosts can properly communicate with the SA
+              and any cached SA data that is up to date. To run this command, 
+              <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric</span> software must be installed and running on the given hosts. The
+              subnet manager and switches must be up. If this test fails: 
+              <samp class="ph codeph">opacmdall 'opasaquery -o desc'</samp> can be run
+              against any problem hosts. 
+            </p>
+ 
+            <div class="note note" id="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-1CA3A507-C6B4-45B0-99A5-9844D22B6D87"><a name="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-1CA3A507-C6B4-45B0-99A5-9844D22B6D87"><!-- --></a><span class="notetitle">Note:</span>  
+              <p class="p">This operation requires that the hosts being queried are
+                specified by a resolvable TCP/IP host name. This operation FAILS if the
+                selected hosts are specified by IP address. 
+              </p>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">ipoibping</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Verifies IPoIB basic operation by ensuring that the host can
+              ping all other nodes through IPoIB. To run this command, 
+              <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric</span> software must be installed, IPoIB must be configured and running on
+              the host, and the given hosts, the SM, and switches must be up. The 
+              <samp class="ph codeph">-i</samp> option can specify an alternate IPoIB
+              hostname suffix. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">mpiperf</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Verifies that MPI is operational and checks MPI end-to-end
+              latency and bandwidth between pairs of nodes (for example, 1-2, 3-4, 5-6). Use
+              this to verify switch latency/hops, PCI bandwidth, and overall MPI performance.
+              The 
+              <span class="ph filepath">test.res</span> file contains the results of each
+              pair of nodes tested. 
+            </p>
+ 
+            <div class="note note" id="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-38F25EC0-B529-4D48-A480-85EAA23D7909"><a name="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-38F25EC0-B529-4D48-A480-85EAA23D7909"><!-- --></a><span class="notetitle">Note:</span>  
+              <p class="p">This option is available for the 
+                <span class="ph">Intel<sup>®</sup> Omni-Path Fabric Host
+          Software</span> 
+                <span class="ph">OFA Delta</span> packaging, but is not
+                presently available for other packagings of OFED. 
+              </p>
+ 
+            </div>
+ 
+            <p class="p">To obtain accurate results, this test should be run at a time
+              when no other stressful applications (for example, MPI jobs or high stress file
+              system operations) are running on the given hosts. 
+            </p>
+ 
+            <p class="p">Bandwidth issues typically indicate server configuration issues
+              (for example, incorrect slot used, incorrect BIOS settings, or incorrect HFI
+              model), or fabric issues (for example, symbol errors, incorrect link width, or
+              speed). Assuming 
+              <samp class="ph codeph">opareport</samp> has previously been used to check for
+              link errors and link speed issues, the server configuration should be verified.
+              
+            </p>
+ 
+            <p class="p">Note that BIOS settings and differences between server models
+              can account for 10-20% differences in bandwidth. 
+               For more details about BIOS settings, consult the
+              documentation from the server supplier and/or the server PCI chipset
+              manufacturer. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">mpiperfdeviation</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Enhanced version of 
+              <samp class="ph codeph">mpiperf</samp> that verifies MPI performance. Can be
+              used to verify switch latency/hops, PCI bandwidth, and overall MPI performance.
+              It performs assorted pair-wise bandwidth and latency tests, and reports pairs
+              outside an acceptable tolerance range. The tool identifies specific nodes that
+              have problems and provides a concise summary of results. The 
+              <span class="ph filepath">test.res</span> file contains the results of each
+              pair of nodes tested. 
+            </p>
+ 
+            <p class="p">By default, concurrent mode is used to quickly analyze the
+              fabric and host performance. Pairs that have 20% less bandwidth or 50% more
+              latency than the average pair are reported as failures. 
+            </p>
+ 
+            <p class="p">The tool can be run in a 
+              <dfn class="term">sequential</dfn> or a 
+              <dfn class="term">concurrent</dfn> mode. Sequential mode runs each host
+              against a reference host. By default, the reference host is selected based on
+              the best performance from a quick test of the first 40 hosts. In concurrent
+              mode, hosts are paired up and all pairs are run concurrently. Since there may
+              be fabric contention during such a run, any poor performing pairs are then
+              rerun sequentially against the reference host. 
+            </p>
+ 
+            <p class="p">Concurrent mode runs the tests in the shortest amount of time,
+              however, the results could be slightly less accurate due to switch contention.
+              In heavily oversubscribed fabric designs, if concurrent mode is producing
+              unexpectedly low performance, try sequential mode. 
+            </p>
+ 
+            <div class="note note" id="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-2476F339-BD15-4F33-A228-84317C8DE6FC"><a name="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-2476F339-BD15-4F33-A228-84317C8DE6FC"><!-- --></a><span class="notetitle">Note:</span>  
+              <p class="p">This option is available for the 
+                <span class="ph">Intel<sup>®</sup> Omni-Path Fabric Host
+          Software</span> 
+                <span class="ph">OFA Delta</span> packaging, but is not
+                presently available for other packagings of OFED. 
+              </p>
+ 
+            </div>
+ 
+            <p class="p">To obtain accurate results, this test should be run at a time
+              when no other stressful applications (for example, MPI jobs, high stress file
+              system operations) are running on the given hosts. 
+            </p>
+ 
+            <p class="p">Bandwidth issues typically indicate server configuration issues
+              (for example, incorrect slot used, incorrect BIOS settings, or incorrect HFI
+              model), or fabric issues (for example, symbol errors, incorrect link width, or
+              speed). Assuming 
+              <samp class="ph codeph">opareport</samp> has previously been used to check for
+              link errors and link speed issues, the server configuration should be verified.
+              
+            </p>
+ 
+            <p class="p">Note that BIOS settings and differences between server models
+              can account for 10-20% differences in bandwidth. A result 5-10% below the
+              average is typically not cause for serious alarm, but may reflect limitations
+              in the server design or the chosen BIOS settings. 
+            </p>
+ 
+            <p class="p">For more details about BIOS settings, consult the documentation
+              from the server supplier and/or the server PCI chipset manufacturer. 
+            </p>
+ 
+            <p class="p">The deviation application supports a number of parameters which
+              allow for more precise control over the mode, benchmark and pass/fail criteria.
+              The parameters to use can be selected using the 
+              <span class="keyword parmname">FF_DEVIATION_ARGS</span> configuration parameter in
+              
+              <span class="ph filepath">opafastfabric.conf</span> 
+            </p>
+ 
+            <p class="p">Available parameters for deviation application: 
+            </p>
+ 
+            <pre class="pre codeblock">[-bwtol bwtol] [-bwdelta MBs] [-bwthres MBs]
+[-bwloop count] [-bwsize size] [-lattol latol]
+[-latdelta usec] [-latthres usec] [-latloop count]
+[-latsize size][-c] [-b] [-v] [-vv]
+[-h reference_host]</pre>
+ 
+            <a name="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-E04ACFDA-6041-4E36-9E2D-5B9B25F69195"><!-- --></a><dl class="dl parml" id="GUID-B0EFD637-4F9E-433F-A2DC-CF1301D144F8__GUID-E04ACFDA-6041-4E36-9E2D-5B9B25F69195"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">-bwtol</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Percent of bandwidth degradation allowed below average
+                    value. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">-bwbidir</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Performs a bidirectional bandwidth test. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">-bwunidir</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Performs a unidirectional bandwidth test (default). 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">-bwdelta</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Limit in MB/s of bandwidth degradation allowed below
+                    average value. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">-bwthres</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Lower limit in MB/s of bandwidth allowed. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph"> -bwloop</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Number of loops to execute each bandwidth test. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph"> -bwsize</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Size of message to use for bandwidth test. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">-lattol</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Percent of latency degradation allowed above average
+                    value. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph"> -latdelta</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Limit in usec of latency degradation allowed above average
+                    value. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph"> -latthres</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Lower limit in usec of latency allowed. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph"> -latloop</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Number of loops to execute each latency test. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph"> -latsize</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Size of message to use for latency test. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph"> -c</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Runs test pairs concurrently instead of the default of
+                    sequential. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph"> -b</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">When comparing results against tolerance and delta, uses
+                    best instead of average. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph"> -v</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Verbose output. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph"> -vv</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Very verbose output. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph"> -h</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Reference host to use for sequential pairing. 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+            <p class="p"> Both 
+              <samp class="ph codeph">bwtol</samp> and 
+              <samp class="ph codeph">bwdelta</samp> must be exceeded to fail bandwidth test.
+              
+            </p>
+ 
+            <p class="p"> When 
+              <samp class="ph codeph">bwthres</samp> is supplied, 
+              <samp class="ph codeph">bwtol</samp> and 
+              <samp class="ph codeph">bwdelta</samp> are ignored. 
+            </p>
+ 
+            <p class="p"> Both 
+              <samp class="ph codeph">lattol</samp> and 
+              <samp class="ph codeph">latdelta</samp> must be exceeded to fail latency test. 
+            </p>
+ 
+            <p class="p"> When 
+              <samp class="ph codeph">latthres</samp> is supplied, 
+              <samp class="ph codeph">lattol</samp> and 
+              <samp class="ph codeph">latdelta</samp> are ignored. 
+            </p>
+ 
+            <p class="p"> For consistency with OSU benchmarks, MB/s is defined as 1000000
+              bytes/s. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

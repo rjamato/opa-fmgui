@@ -1,0 +1,296 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opatop">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-68D9779D-C250-4834-9776-72118EC25571">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opatop</title>
+</head>
+<body class="man8" id="GUID-68D9779D-C250-4834-9776-72118EC25571"><a name="GUID-68D9779D-C250-4834-9776-72118EC25571"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opatop</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-68D9779D-C250-4834-9776-72118EC25571__GUID-9456F577-F101-4BC9-8CF5-44E5043E94A3"><a name="GUID-68D9779D-C250-4834-9776-72118EC25571__GUID-9456F577-F101-4BC9-8CF5-44E5043E94A3"><!-- --></a> 
+      <p class="p">Starts the 
+        <samp class="ph codeph">opatop</samp> Text User Interface (TUI) menu to display
+        performance, congestion, and error information about a fabric. Refer to 
+        <span class="ph"><em class="ph i">Intel<sup>®</sup> Omni-Path
+            Fabric Suite FastFabric User Guide</em></span> for additional details. 
+      </p>
+
+    </div>
+ 
+    <div class="section refsyn" id="GUID-68D9779D-C250-4834-9776-72118EC25571__GUID-32F04DAF-B7FF-4F2A-881B-7C9418BBCFEB"><a name="GUID-68D9779D-C250-4834-9776-72118EC25571__GUID-32F04DAF-B7FF-4F2A-881B-7C9418BBCFEB"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opatop [-v] [-q] [-h <var class="keyword varname">hfi</var>] [-p <var class="keyword varname">port</var>] [-i <var class="keyword varname">seconds</var>]</pre>
+ 
+      <p class="p">or 
+      </p>
+ 
+      <pre class="pre codeblock">opatop --help</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-68D9779D-C250-4834-9776-72118EC25571__GUID-7F84E2EF-5874-4EAD-84C7-9B3AF3B4863D"><a name="GUID-68D9779D-C250-4834-9776-72118EC25571__GUID-7F84E2EF-5874-4EAD-84C7-9B3AF3B4863D"><!-- --></a><h2 class="title sectiontitle">Options</h2> 
+       
+      <a name="GUID-68D9779D-C250-4834-9776-72118EC25571__GUID-F4727B1F-91E5-4328-84CA-521CB072BAFE"><!-- --></a><dl class="dl parml" id="GUID-68D9779D-C250-4834-9776-72118EC25571__GUID-F4727B1F-91E5-4328-84CA-521CB072BAFE"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Produces full help text. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-v/--verbose level</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Verbose output level. Value is additive and includes: 
+            <a name="GUID-68D9779D-C250-4834-9776-72118EC25571__GUID-10FDC593-22FC-4604-B954-F75714D028B8"><!-- --></a><dl class="dl parml" id="GUID-68D9779D-C250-4834-9776-72118EC25571__GUID-10FDC593-22FC-4604-B954-F75714D028B8"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">1</samp> 
+                </dt>
+ 
+                <dd class="dd pd">Screen 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">4</samp> 
+                </dt>
+ 
+                <dd class="dd pd">STDERR opatop 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">16</samp> 
+                </dt>
+ 
+                <dd class="dd pd">Screen PaClient 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-q/--quiet</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Disables progress reports. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-h/--hfi 
+              <var class="keyword varname">hfi</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">HFI, numbered 1..n. Using 0 specifies that the 
+              <samp class="ph codeph">-p 
+                <var class="keyword varname">port</var></samp> is a system-wide port number.
+              Default is 0. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-p/--port 
+              <var class="keyword varname">port</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of local 
+              <span class="ph">HFI</span> ports used to access fabrics for
+              counter clear. Default is first active port. The first 
+              <span class="ph">HFI</span> in the system is 1. The first
+              port on an 
+              <span class="ph">HFI</span> is 1. 
+            </p>
+ 
+            <p class="p">Uses the format 
+              <samp class="ph codeph">hfi:port</samp>, for example: 
+            </p>
+ 
+            <a name="GUID-68D9779D-C250-4834-9776-72118EC25571__GUID-A8958A2D-DFFF-4F65-A112-54B232CFEFF9"><!-- --></a><dl class="dl parml" id="GUID-68D9779D-C250-4834-9776-72118EC25571__GUID-A8958A2D-DFFF-4F65-A112-54B232CFEFF9"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0:0</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">First active port in system. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0:y</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Port 
+                    <samp class="ph codeph"><var class="keyword varname">y</var></samp> within system. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">x:0</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">First active port on HFI 
+                    <samp class="ph codeph"><var class="keyword varname">x</var></samp>. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">x:y</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">HFI 
+                    <samp class="ph codeph"><var class="keyword varname">x</var></samp>, port 
+                    <samp class="ph codeph"><var class="keyword varname">y</var></samp>. 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-i/--interval 
+              <var class="keyword varname">seconds</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Interval in 
+              <samp class="ph codeph"><var class="keyword varname">seconds</var></samp> at which PA queries
+              are performed to refresh to the latest PA image. Default = 10 seconds. 
+            </p>
+
+            </dd>
+ 
+         
+      </dl>
+ 
+       
+      <a name="GUID-68D9779D-C250-4834-9776-72118EC25571__GUID-2EB7B7F0-D46A-4D80-9D71-4727CE830A35"><!-- --></a><dl class="dl parml" id="GUID-68D9779D-C250-4834-9776-72118EC25571__GUID-2EB7B7F0-D46A-4D80-9D71-4727CE830A35"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -h 0</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">First active port in system (default). 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -h 0 -p 0</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">First active port in system. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -h 
+              <var class="keyword varname">x</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">First active port on HFI 
+              <var class="keyword varname">x</var>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"> 
+            <samp class="ph codeph">-h 
+              <var class="keyword varname">x</var> -p 0</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">First active port on HFI 
+              <var class="keyword varname">x</var>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"> 
+            <samp class="ph codeph">-h 0 -p 
+              <var class="keyword varname">y</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Port 
+              <var class="keyword varname">y&nbsp; 
+              </var> within system (no matter which ports are active). 
+            </p>
+ 
+            </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"> 
+            <samp class="ph codeph">-h 
+              <var class="keyword varname">x</var> -p 
+              <var class="keyword varname">y</var> 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">HFI 
+              <var class="keyword varname">x</var>, port 
+              <var class="keyword varname">y</var>. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

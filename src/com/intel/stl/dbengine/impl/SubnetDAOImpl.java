@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.38  2015/12/04 22:23:22  fernande
+ *  Archive Log:    PR131909 - FM GUI does not update switch names after switch name is changed. Changed saveTopology method in SubnetDAO to check for a change in NodeDesc and update node info in database if needed.
+ *  Archive Log:
  *  Archive Log:    Revision 1.37  2015/08/17 18:49:34  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - change backend files' headers
@@ -922,7 +925,9 @@ public class SubnetDAOImpl extends BaseDAO implements SubnetDAO {
                 getLinkSet(currTopology, links, lidMap);
         Set<TopologyNodeRecord> currNodes = currTopology.getNodes();
         Set<TopologyLinkRecord> currLinks = currTopology.getLinks();
-        boolean nodesNeedDeletion = retainExistingNodes(currNodes, newNodes);
+        Set<NodeRecord> updNodes = new HashSet<NodeRecord>();
+        boolean nodesNeedDeletion =
+                retainExistingNodes(currNodes, newNodes, updNodes);
         boolean someNodesInTopology = newNodes.removeAll(currNodes);
         boolean noNodeChanges =
                 !nodesNeedDeletion && someNodesInTopology
@@ -938,6 +943,11 @@ public class SubnetDAOImpl extends BaseDAO implements SubnetDAO {
                             && (newLinks.size() == 0);
         }
         startTransaction();
+        if (updNodes.size() > 0) {
+            for (NodeRecord node : updNodes) {
+                em.merge(node);
+            }
+        }
         if (noNodeChanges && noLinkChanges) {
             // Only update nodes whose LID have changed
             updateNodeSet(currNodes);
@@ -1050,7 +1060,7 @@ public class SubnetDAOImpl extends BaseDAO implements SubnetDAO {
     }
 
     private boolean retainExistingNodes(Set<TopologyNodeRecord> currNodes,
-            Set<TopologyNodeRecord> newNodes) {
+            Set<TopologyNodeRecord> newNodes, Set<NodeRecord> updNodes) {
         boolean nodesRemoved = false;
         Iterator<TopologyNodeRecord> currit = currNodes.iterator();
         while (currit.hasNext()) {
@@ -1060,6 +1070,12 @@ public class SubnetDAOImpl extends BaseDAO implements SubnetDAO {
             while (newit.hasNext()) {
                 TopologyNodeRecord newNode = newit.next();
                 if (topoNode.equals(newNode)) {
+                    if (nodeDescNeedsUpdate(topoNode, newNode)) {
+                        NodeRecord updNode = topoNode.getNode();
+                        updNode.getNode().setNodeDesc(
+                                newNode.getNode().getNode().getNodeDesc());
+                        updNodes.add(updNode);
+                    }
                     if (topoNode.getLid() != newNode.getLid()) {
                         topoNode.setLid(newNode.getLid());
                         topoNode.setLidChanged(true);
@@ -1076,6 +1092,13 @@ public class SubnetDAOImpl extends BaseDAO implements SubnetDAO {
 
         }
         return nodesRemoved;
+    }
+
+    private boolean nodeDescNeedsUpdate(TopologyNodeRecord currNode,
+            TopologyNodeRecord newNode) {
+        NodeRecordBean currBean = currNode.getNode().getNode();
+        NodeRecordBean newBean = newNode.getNode().getNode();
+        return !currBean.getNodeDesc().equals(newBean.getNodeDesc());
     }
 
     private void updateNodeSet(Set<TopologyNodeRecord> nodes) {

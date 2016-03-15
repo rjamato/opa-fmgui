@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.26  2015/11/02 23:56:52  jijunwan
+ *  Archive Log:    PR 131396 - Incorrect Connectivity Table for a VF port
+ *  Archive Log:    - adapted to the new connectivity table controller to support VF port
+ *  Archive Log:
  *  Archive Log:    Revision 1.25  2015/08/17 18:54:00  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -370,7 +374,7 @@ public class ResourceLinkPage implements IPageController {
         return nodeName;
     }
 
-    public void showLink(GraphEdge edge) {
+    public void showLink(GraphEdge edge, String vfName) {
         if (edge.getLinks().size() == 1) {
 
             NodeRecordBean fromNodeBean = null;
@@ -423,14 +427,15 @@ public class ResourceLinkPage implements IPageController {
             }
 
             // Show the data
-            tableController.showConnectivity(edge.getFromLid(), null, ports);
+            tableController.showConnectivity(edge.getFromLid(), vfName, null,
+                    ports);
         } else {
             throw new IllegalArgumentException(
                     "Link has more than one paire of ports!");
         }
     } // showLink
 
-    public void showPath(GraphEdge trace, List<GraphEdge> links) {
+    public void showPath(GraphEdge trace, List<GraphEdge> links, String vfName) {
         LinkedHashMap<GraphEdge, Short> portMap =
                 new LinkedHashMap<GraphEdge, Short>();
 
@@ -467,7 +472,7 @@ public class ResourceLinkPage implements IPageController {
         setDescription(description);
 
         // Update the table
-        tableController.showPathConnectivity(portMap, null);
+        tableController.showPathConnectivity(portMap, vfName, null);
     }
 
     public void setName(String name) {

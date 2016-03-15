@@ -35,6 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.30  2015/12/16 21:44:25  jijunwan
+ *  Archive Log:    PR 132110 - Klocwork issues
+ *  Archive Log:
+ *  Archive Log:    Revision 1.29  2015/12/09 16:11:42  jijunwan
+ *  Archive Log:    PR 131944 - If "# Worst Nodes" is <10 or >100, there is a Entry Validation warning for the Refresh Rate
+ *  Archive Log:
+ *  Archive Log:    - improved PreferencesWizardController to throw WizardValidationException on validation errors
+ *  Archive Log:
  *  Archive Log:    Revision 1.28  2015/08/17 18:54:52  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -142,6 +150,7 @@ package com.intel.stl.ui.wizards.impl.preferences;
 
 import javax.swing.JComponent;
 
+import com.intel.stl.api.IMessage;
 import com.intel.stl.api.configuration.ConfigurationException;
 import com.intel.stl.api.performance.PMConfigBean;
 import com.intel.stl.ui.common.STLConstants;
@@ -282,6 +291,10 @@ public class PreferencesWizardController implements IMultinetWizardTask,
                 Util.showError(view, e);
                 return false;
             }
+        } else {
+            PreferencesValidatorError error =
+                    PreferencesValidatorError.UNABLE_TO_VALIDATE;
+            throw new WizardValidationException(error.getLabel());
         }
 
         // Since it is possible to be unable to connect to the host,
@@ -301,7 +314,13 @@ public class PreferencesWizardController implements IMultinetWizardTask,
             success = true;
         } else {
             view.logMessage(PreferencesValidatorError.getValue(errorCode));
-
+            IMessage message = PreferencesValidatorError.getMessage(errorCode);
+            if (message != null) {
+                throw new WizardValidationException(message,
+                        PreferencesValidatorError.getData(errorCode));
+            } else {
+                throw new WizardValidationException();
+            }
         }
 
         return (success && connectable);

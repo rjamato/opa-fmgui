@@ -1,0 +1,183 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opagenchassis">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opagenchassis</title>
+</head>
+<body class="man8" id="GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2"><a name="GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opagenchassis</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2__GUID-A1DFCFE0-3312-4820-AD42-665E5E187AAC"><a name="GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2__GUID-A1DFCFE0-3312-4820-AD42-665E5E187AAC"><!-- --></a> 
+      <p class="p">Generates a list of IPv4, IPv6, and/or TCP names in a format
+        acceptable for inclusion in the 
+        <span class="ph filepath">/etc/sysconfig/opa/chassis</span> file. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2__GUID-59C67892-5AEB-40DB-B64C-C133E3EB4FAE"><a name="GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2__GUID-59C67892-5AEB-40DB-B64C-C133E3EB4FAE"><!-- --></a><h2 class="sectiontitle">Syntax </h2> 
+      <pre class="pre codeblock">opagenchassis [-t <var class="keyword varname">portsfile</var>] [-p <var class="keyword varname">ports</var>]</pre>
+ 
+      <p class="p"><samp class="ph codeph"> or</samp> 
+      </p>
+ 
+      <pre class="pre codeblock">opagenchassis --help</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2__XX1175466"><a name="GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2__XX1175466"><!-- --></a><h2 class="sectiontitle">Options </h2> 
+      <a name="GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2__GUID-6902D811-5451-46C2-8FEF-29306C816BE7"><!-- --></a><dl class="dl parml" id="GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2__GUID-6902D811-5451-46C2-8FEF-29306C816BE7"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">--help</samp> 
+          </dt>
+ 
+          <dd class="dd pd">Produces full help text. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-t 
+              <var class="keyword varname">portsfile</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd">File with list of local HFI ports used to access fabric for
+            analysis. Default is 
+            <span class="ph filepath">/etc/sysconfig/opa/ports</span> file. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-p 
+              <var class="keyword varname">ports</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of local 
+              <span class="ph">HFI</span> ports used to access fabrics for
+              counter clear. Default is first active port. The first 
+              <span class="ph">HFI</span> in the system is 1. The first
+              port on an 
+              <span class="ph">HFI</span> is 1. 
+            </p>
+ 
+            <p class="p">Uses the format 
+              <samp class="ph codeph">hfi:port</samp>, for example: 
+            </p>
+ 
+            <a name="GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2__GUID-A8958A2D-DFFF-4F65-A112-54B232CFEFF9"><!-- --></a><dl class="dl parml" id="GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2__GUID-A8958A2D-DFFF-4F65-A112-54B232CFEFF9"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0:0</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">First active port in system. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0:y</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Port 
+                    <samp class="ph codeph"><var class="keyword varname">y</var></samp> within system. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">x:0</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">First active port on HFI 
+                    <samp class="ph codeph"><var class="keyword varname">x</var></samp>. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">x:y</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">HFI 
+                    <samp class="ph codeph"><var class="keyword varname">x</var></samp>, port 
+                    <samp class="ph codeph"><var class="keyword varname">y</var></samp>. 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2__XX1175475"><a name="GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2__XX1175475"><!-- --></a><h2 class="sectiontitle">Environment </h2> 
+      <a name="GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2__GUID-1CCDA9EE-6EAB-421C-A223-EC317F8D70A9"><!-- --></a><dl class="dl parml" id="GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2__GUID-1CCDA9EE-6EAB-421C-A223-EC317F8D70A9"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">PORTS</samp> 
+          </dt>
+ 
+          <dd class="dd pd">List of ports, used in absence of 
+            <samp class="ph codeph">-t</samp> and 
+            <samp class="ph codeph">-p</samp>. 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="ph filepath">PORTS_FILE</span> 
+          </dt>
+ 
+          <dd class="dd pd">File containing list of ports, used in absence of 
+            <samp class="ph codeph">-t</samp> and 
+            <samp class="ph codeph">-p</samp>. 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2__XX1175478"><a name="GUID-3CEC55D8-A03D-433F-982A-24F14DA8E5C2__XX1175478"><!-- --></a><h2 class="sectiontitle">Examples </h2> 
+      <pre class="pre codeblock">opagenchassis
+opagenchassis -p '1:1 2:1'
+opagenchassis &gt;&gt; /etc/sysconfig/opa/chassis</pre>
+ 
+      <p class="p">Or while editing the file, use a vi command to include its output,
+        such as: 
+      </p>
+ 
+      <pre class="pre codeblock">:r! opagenchassis</pre>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

@@ -35,7 +35,7 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6.4.1  2015/10/13 17:32:50  jijunwan
+ *  Archive Log:    Revision 1.7  2015/10/13 15:33:58  jijunwan
  *  Archive Log:    PR 130976 - Empty property on switch port zero
  *  Archive Log:    - changed code to handle exception
  *  Archive Log:    - change to display N/A when a category is unavailable
@@ -217,15 +217,15 @@ public class DevicePropertiesController
         clearTimer();
         view.clearPanel();
         for (DevicePropertyGroup group : model.getGroups()) {
-        	try {
+            try {
                 DevicePropertyGroupPanel groupPanel =
                         new DevicePropertyGroupPanel(style);
                 String helpID = getHelpID(model.getResourceType(), group);
                 new PropertyGroupController(group, groupPanel, eventBus, helpID);
                 view.addPropertyGroupPanel(groupPanel);
-        	} catch (Exception e) {
-        		e.printStackTrace();
-        	}
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         List<PropertyGroup> groups =
                 userSettings.getPropertiesDisplayOptions().get(

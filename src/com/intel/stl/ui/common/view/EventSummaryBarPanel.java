@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.12  2015/12/03 14:56:29  jypak
+ *  Archive Log:    PR 131817 - FM GUI, the status Column to the right requires a header/title.
+ *  Archive Log:
  *  Archive Log:    Revision 1.11  2015/08/17 18:53:36  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -102,6 +105,7 @@ import com.intel.stl.api.notice.NoticeSeverity;
 import com.intel.stl.ui.common.IEventSummaryBarListener;
 import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UIConstants;
+import com.intel.stl.ui.common.UILabels;
 import com.intel.stl.ui.model.NoticeSeverityViz;
 
 public class EventSummaryBarPanel extends JPanel {
@@ -129,6 +133,9 @@ public class EventSummaryBarPanel extends JPanel {
     private MouseListener panelMouseListener = null;
 
     private IEventSummaryBarListener iEventSummaryBarListener = null;
+    
+    private JPanel titlePanel;
+    private String timingWindow;
 
     public EventSummaryBarPanel() {
         super();
@@ -166,6 +173,24 @@ public class EventSummaryBarPanel extends JPanel {
      * 
      */
     public void initializeEventSeverity() {
+    	
+        titlePanel = new JPanel();
+    	JLabel titleLabel = ComponentFactory.getH4Label(
+                STLConstants.K0128_NODES_DISTR_SEVERITY.getValue(),
+                Font.BOLD);
+    	
+    	GridBagConstraints constraints = new GridBagConstraints();
+    	constraints.insets = new Insets(2, 5, 2, 0);
+        
+        constraints.weightx = 1;
+        constraints.gridwidth = GridBagConstraints.REMAINDER;
+        titlePanel.add(titleLabel, constraints);
+        
+        titlePanel.addMouseListener(panelMouseListener);
+        severityPanelConstraints.weighty = 0.0;
+
+        addToEventSummaryBarPane(titlePanel);
+    	
         NoticeSeverity[] array = NoticeSeverity.values();
         for (int i = array.length - 1; 0 <= i; i--) {
             LabelPanel panel = new LabelPanel(array[i]);
@@ -187,6 +212,9 @@ public class EventSummaryBarPanel extends JPanel {
     }
 
     public void updateEventSeverity(EnumMap<NoticeSeverity, Integer> countMap) {
+    	
+    	titlePanel.setToolTipText(UILabels.STL10008_NODES_DISTR_SEVERITY.getDescription(timingWindow));
+    	
         // The severityPanelList is fully populated with four possible
         // severities.
         // Find a matching entry and update the count label.
@@ -209,6 +237,10 @@ public class EventSummaryBarPanel extends JPanel {
         add(panel, severityPanelConstraints);
     }
 
+    public void setTimingWindow(String timingWindow){
+    	this.timingWindow = timingWindow;
+    }
+    
     private class LabelPanel extends JPanel {
         private static final long serialVersionUID = -2905931691586163645L;
 

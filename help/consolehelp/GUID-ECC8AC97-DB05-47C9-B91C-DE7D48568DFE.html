@@ -1,0 +1,663 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opaportconfig">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opaportconfig</title>
+</head>
+<body class="man1" id="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE"><a name="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opaportconfig</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-E156CCD8-626F-4BA3-82DA-F692146D1766"><a name="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-E156CCD8-626F-4BA3-82DA-F692146D1766"><!-- --></a> 
+      <p class="p"><strong class="ph b">(Host or Switch)</strong> Controls the configuration and state of a
+        specified 
+        <span class="ph">Intel<sup>®</sup> Omni-Path Host
+          Fabric Interface</span> (HFI) port on the local host or a remote switch. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-A0952A75-4212-4CBD-BC81-886AE9BB995E"><a name="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-A0952A75-4212-4CBD-BC81-886AE9BB995E"><!-- --></a><h2 class="sectiontitle">Syntax</h2> 
+      <pre class="pre codeblock">opaportconfig [-l <var class="keyword varname">lid</var> [-m <var class="keyword varname">dest_port</var>]] [-h <var class="keyword varname">hfi</var>] [-p <var class="keyword varname">port</var>] [-r <var class="keyword varname">secs</var>] [-z] 
+[-S <var class="keyword varname">state</var>] [-P <var class="keyword varname">physstate</var>] [-s <var class="keyword varname">speed</var>] [-w <var class="keyword varname">width</var>] [-c <var class="keyword varname">LTPCRC</var>]  [-K <var class="keyword varname">mkey</var>] 
+[-v] [-x] [-L <var class="keyword varname">lid</var>] [&lt;<var class="keyword varname">sub command</var>&gt;]</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-167F649B-4B92-440B-9DAF-F421D01B06C0"><a name="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-167F649B-4B92-440B-9DAF-F421D01B06C0"><!-- --></a><h2 class="title sectiontitle">Options</h2> 
+       
+      <a name="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-9B114476-8865-407B-B382-B5182D51F15B"><!-- --></a><dl class="dl parml" id="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-9B114476-8865-407B-B382-B5182D51F15B"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-l 
+              <var class="keyword varname">lid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Destination LID. Default is local port. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-m 
+              <var class="keyword varname">dest_port</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Destination port. Default is port with given LID. Used to access
+              switch ports. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-h 
+              <var class="keyword varname">hfi</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">HFI to send through/to. Default is first HFI. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-p 
+              <var class="keyword varname">port</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Port to send through/to. Default is first port. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-K 
+              <var class="keyword varname">mkey</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">SM management key to access remote ports. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"><var class="keyword varname">sub command</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">One of the following choices: 
+            </p>
+ 
+            <a name="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-41C938DD-73C7-4E2C-AA1A-4E6E8F11B86E"><!-- --></a><dl class="dl parml" id="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-41C938DD-73C7-4E2C-AA1A-4E6E8F11B86E"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">enable</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Enables port. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">disable</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Disables port. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">bounce</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Bounces port. 
+                  </p>
+ 
+                  <div class="note note" id="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-0A758853-D024-4076-85A3-156A227633CE"><a name="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-0A758853-D024-4076-85A3-156A227633CE"><!-- --></a><span class="notetitle">Note:</span> Bouncing
+                    remote ports may cause timeouts. 
+                  </div>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">ledon</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Turns port LED on. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">ledoff</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Turns port LED off. 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+       
+      <a name="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-B84952B3-EF00-4C5F-903E-2D8921543FFB"><!-- --></a><dl class="dl parml" id="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-B84952B3-EF00-4C5F-903E-2D8921543FFB"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-r 
+              <var class="keyword varname">secs</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Repeats to keep the port down for the specified amount of
+              seconds. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-S 
+              <var class="keyword varname">state</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">New state. Default is 0. 
+            </p>
+ 
+            <a name="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-421F6A64-67AE-4C3D-AE38-D02BA8E81925"><!-- --></a><dl class="dl parml" id="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-421F6A64-67AE-4C3D-AE38-D02BA8E81925"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">No-op. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">1</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Down. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">2</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Initiate. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">3</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Armed. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">4</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Active. 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-P 
+              <var class="keyword varname">physstate</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">New physical state. Default is 0. 
+            </p>
+ 
+            <div class="note note" id="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-453D6861-17A9-4C87-A76D-DE0E6C52639C"><a name="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-453D6861-17A9-4C87-A76D-DE0E6C52639C"><!-- --></a><span class="notetitle">Note:</span> All
+              transitions are valid. 
+            </div>
+ 
+            <a name="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-5B12B17E-67C1-421F-8C0C-16B04F4622F8"><!-- --></a><dl class="dl parml" id="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-5B12B17E-67C1-421F-8C0C-16B04F4622F8"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">No-op. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">2</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Polling. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">3</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Disabled. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">11</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Phy-Test . Current physstate must be 
+                    <samp class="ph codeph">disabled</samp>. 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-s 
+              <var class="keyword varname">speed</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">New link speeds enabled. Default is 0. To enable multiple
+              speeds, use the sum of the desired speeds. 
+            </p>
+ 
+            <a name="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-6BE69437-62BC-4664-A77B-611FB2EA2D61"><!-- --></a><dl class="dl parml" id="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-6BE69437-62BC-4664-A77B-611FB2EA2D61"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">No-op. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">2</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">0x0002 - 25 Gb/s. 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-w 
+              <var class="keyword varname">width</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">New link widths enabled. Default is 0. To enable multiple
+              widths, use sum of desired widths. 
+            </p>
+ 
+            <a name="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-108E1CD5-2505-40E5-96EB-82BBBB81A9D4"><!-- --></a><dl class="dl parml" id="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-108E1CD5-2505-40E5-96EB-82BBBB81A9D4"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">No-op. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">1</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">0x01 - 1x. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">2</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">0x02 - 2x. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">4</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">0x04 - 3x. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">8</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">0x08 - 4x. 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-c 
+              <var class="keyword varname">LTPCRC</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">New LTP CRCs enabled. Default is 0. To enable multiple LTP CRCs,
+              use sum of desired LTP CRCs. 
+            </p>
+ 
+            <a name="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-9B510CFB-8D71-4DAD-BA96-4EFFAC3C97EE"><!-- --></a><dl class="dl parml" id="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-9B510CFB-8D71-4DAD-BA96-4EFFAC3C97EE"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">No-op. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">1</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">0x1 - 14-bit LTP CRC mode. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">2</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">0x2 - 16-bit LTP CRC mode. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">4</samp> 
+                </dt>
+ 
+                <dd class="dd pd">0x4 - 48-bit LTP CRC mode. 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">8</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">0x8 - 12/16 bits per lane LTP CRC mode. 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+       
+      <a name="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-BBF1C922-00C1-4B15-8230-C57CE2EE7488"><!-- --></a><dl class="dl parml" id="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-BBF1C922-00C1-4B15-8230-C57CE2EE7488"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -h 0</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p"> First port in system (default). 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -h 
+              <var class="keyword varname">x</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">First port on HFI 
+              <samp class="ph codeph"><var class="keyword varname">x</var></samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -h 0 -p 
+              <samp class="ph codeph"><var class="keyword varname">y</var></samp></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Port 
+              <samp class="ph codeph"><var class="keyword varname">y</var></samp> within system. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -h 
+              <var class="keyword varname">x</var> -p 
+              <var class="keyword varname">y</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">HFI 
+              <samp class="ph codeph"><var class="keyword varname">x</var></samp>, port 
+              <samp class="ph codeph"><var class="keyword varname">y</var></samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+       
+      <a name="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-A5256017-8E07-4C39-A697-32B2210CD333"><!-- --></a><dl class="dl parml" id="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-A5256017-8E07-4C39-A697-32B2210CD333"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-v</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Verbose output. Additional invocations turn on debugging, 
+              <samp class="ph codeph">openib</samp> debugging, and 
+              <samp class="ph codeph">libibumad</samp> debugging. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-z</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Does not get port info first, clears most port attributes. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-L 
+              <var class="keyword varname">lid</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Sets PortInfo.LID = 
+              <samp class="ph codeph">lid</samp>. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-A7D9D4D0-689A-42FD-884F-CC6729CBA5D4"><a name="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-A7D9D4D0-689A-42FD-884F-CC6729CBA5D4"><!-- --></a><h2 class="sectiontitle">Examples </h2> 
+      <pre class="pre codeblock">opaportconfig -w 1
+opaportconfig -p 1 -h 2 -w 3</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-361CA3AA-7537-4273-A38C-7DDBC4390FB3"><a name="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-361CA3AA-7537-4273-A38C-7DDBC4390FB3"><!-- --></a><h2 class="sectiontitle">Description</h2> 
+      <p class="p">Port configuration is transient in nature. If the given host is
+        rebooted or its 
+        <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric</span> Stack is restarted, the port reverts to its default configuration
+        and state. Typically, the default state is to have the port enabled with all
+        speeds and widths supported by the given HFI port. 
+      </p>
+ 
+      <p class="p">To access switch ports using this command, the 
+        <samp class="ph codeph">-l</samp> and 
+        <samp class="ph codeph">-m</samp> options must be given. The 
+        <samp class="ph codeph">-l</samp> option specifies the lid of switch port 0 (the
+        logical management port for the switch) and 
+        <samp class="ph codeph">-m</samp> specifies the actual switch port to access. If SMA
+        mkeys are used, the 
+        <samp class="ph codeph">-K</samp> option is also needed. However, the 
+        <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric Suite Fabric Manager</span> does not use SMA mkeys by default, therefore
+        this option may not be required. 
+      </p>
+ 
+      <div class="note note" id="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-BA7A64D6-125F-4CA1-96A0-43E8243B972F"><a name="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-BA7A64D6-125F-4CA1-96A0-43E8243B972F"><!-- --></a><span class="notetitle">Note:</span>  
+        <p class="p">The 
+          <span class="ph filepath">/etc/init.d/opaportconfig</span> script is provided as
+          an example of changing port speed every time the server boots. This script can
+          be edited, then scheduled, using 
+          <samp class="ph codeph">chkconfig</samp> to control link settings on any set of HFI
+          ports. 
+        </p>
+ 
+      </div>
+ 
+      <div class="cautiontitle" id="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-3AB23A86-FB2B-4232-B08E-F2FD969884B7"><a name="GUID-ECC8AC97-DB05-47C9-B91C-DE7D48568DFE__GUID-3AB23A86-FB2B-4232-B08E-F2FD969884B7"><!-- --></a>CAUTION:</div><div class="note caution"> 
+        <p class="p">When using this command to disable or reconfigure switch ports, if
+          the final port in the path between the Fabric Management Node and the switch is
+          disabled or fails to come online, then 
+          <samp class="ph codeph">opaenableports</samp> is not able to reenable it. In this
+          case, the switch CLI and/or a switch reboot may be needed to correct the
+          situation. 
+        </p>
+ 
+      </div>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

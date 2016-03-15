@@ -1,0 +1,154 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="concept">
+<meta name="DC.Title" content="PM Counter Categories Group">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-25D1F25A-CC7E-4F46-BDB5-9B10F2624065">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>PM Counter Categories Group</title>
+</head>
+<body id="GUID-25D1F25A-CC7E-4F46-BDB5-9B10F2624065"><a name="GUID-25D1F25A-CC7E-4F46-BDB5-9B10F2624065"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">PM Counter Categories Group</h1>
+ 
+  <div class="body conbody"> 
+    <p class="p">The PM Counter Categories Group is similar to the Utilization Group
+      except the following metrics are applied: 
+    </p>
+ 
+    <a name="GUID-25D1F25A-CC7E-4F46-BDB5-9B10F2624065__GUID-2EC317BB-319A-485F-AAF9-41472962D764"><!-- --></a><ul class="ul" id="GUID-25D1F25A-CC7E-4F46-BDB5-9B10F2624065__GUID-2EC317BB-319A-485F-AAF9-41472962D764"> 
+      <li class="li">Congestion
+      </li>
+ 
+      <li class="li">SMA Congestion 
+      </li>
+ 
+      <li class="li"> Integrity 
+      </li>
+ 
+      <li class="li">Bubble
+      </li>
+ 
+      <li class="li">Security
+      </li>
+ 
+      <li class="li">Routing 
+      </li>
+ 
+    </ul>
+ 
+    <div class="section" id="GUID-25D1F25A-CC7E-4F46-BDB5-9B10F2624065__GUID-ACDE09CC-32E0-4F51-9905-239081787784"><a name="GUID-25D1F25A-CC7E-4F46-BDB5-9B10F2624065__GUID-ACDE09CC-32E0-4F51-9905-239081787784"><!-- --></a><h2 class="title sectiontitle">Congestion</h2> 
+       
+      <p class="p">These counters reflect possible errors that indicate traffic
+        congestion in the fabric. 
+      </p>
+ 
+      <p class="p">When congestion or a packet that has seen congestion is detected, one
+        of these counters will be incremented and then depending on the issue reported,
+        the packet will just have to wait or in an extreme case, it may be dropped. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-25D1F25A-CC7E-4F46-BDB5-9B10F2624065__GUID-9BEDEE37-CCCE-47EB-AD8E-531B82B71A55"><a name="GUID-25D1F25A-CC7E-4F46-BDB5-9B10F2624065__GUID-9BEDEE37-CCCE-47EB-AD8E-531B82B71A55"><!-- --></a><h2 class="title sectiontitle">SMA Congestion</h2> 
+       
+      <p class="p">These counters reflect congestion in the fabric specific to
+        communication between the Subnet Manager and Subnet Manager Agents using the
+        management VL (VL 15). 
+      </p>
+ 
+      <p class="p">The category is calculated exactly as the Congestion category using
+        the same weights and the correct VL15 utilization counters. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-25D1F25A-CC7E-4F46-BDB5-9B10F2624065__GUID-13E23396-C8D3-4341-A40B-F6271EB2CC6A"><a name="GUID-25D1F25A-CC7E-4F46-BDB5-9B10F2624065__GUID-13E23396-C8D3-4341-A40B-F6271EB2CC6A"><!-- --></a><h2 class="title sectiontitle"> Integrity</h2> 
+       
+      <p class="p">These counters reflect errors in the Physical (PHY) and Link Layers,
+        as well as errors in Firmware. The typical cause is a hardware problem such as
+        a poor connection, marginal cable, incorrect length/model cable for signal
+        rate, or damaged/broken hardware (for example, bad connectors). 
+      </p>
+ 
+      <p class="p">When a bad packet is detected, one of these counters are incremented
+        and the Link Layer discards the packet. 
+      </p>
+ 
+      <p class="p">During the link training sequence, assorted errors may be observed.
+        This is a normal part of the link training and clock synchronization process.
+        Hence, errors observed as part of rebooting nodes or moving cables should not
+        be considered a problem. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-25D1F25A-CC7E-4F46-BDB5-9B10F2624065__GUID-76B50A89-F108-41E3-822B-9DECA2623DFA"><a name="GUID-25D1F25A-CC7E-4F46-BDB5-9B10F2624065__GUID-76B50A89-F108-41E3-822B-9DECA2623DFA"><!-- --></a><h2 class="title sectiontitle">Bubble </h2> 
+       
+      <p class="p">These counters occur when an unexpected idle 
+        <em class="ph i">flit</em> is transmitted or received. the term 
+        <em class="ph i">flit</em> refers to a Flow Control Digit or Flit, the smallest unit
+        of information on which flow control may be performed. 
+        <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric</span> packets are divided into flits of 64 bits for transmission across a
+        link. The flit excludes any headers; the 64 bits is the payload size. 
+      </p>
+ 
+      <p class="p">The transmit port will send idle flits until it can continue sending
+        the rest of the packet. The category is calculated as follows: 
+      </p>
+ 
+      <a name="GUID-25D1F25A-CC7E-4F46-BDB5-9B10F2624065__GUID-5F82BED2-1D3B-4B50-A583-B63B988FF301"><!-- --></a><ol class="ol" id="GUID-25D1F25A-CC7E-4F46-BDB5-9B10F2624065__GUID-5F82BED2-1D3B-4B50-A583-B63B988FF301"> 
+        <li class="li">The maximum value between the sum of the XmitWastedBW and
+          XmitWaitData or the neighbor's PortRcvBubble. 
+        </li>
+ 
+        <li class="li">Divide the previous value by the port's utilization to provide
+          context. 
+        </li>
+ 
+      </ol>
+ 
+      <p class="p"> 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-25D1F25A-CC7E-4F46-BDB5-9B10F2624065__GUID-62976BA7-FCCF-4846-9FF4-7C3509F1AEA9"><a name="GUID-25D1F25A-CC7E-4F46-BDB5-9B10F2624065__GUID-62976BA7-FCCF-4846-9FF4-7C3509F1AEA9"><!-- --></a><h2 class="title sectiontitle">Security </h2> 
+       
+      <p class="p">These counters reflect possible security problems in the fabric. 
+      </p>
+ 
+      <p class="p">Security problems occur if a PKey or SLID violation occurs at the port
+        during the ingress or egress of a packet. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-25D1F25A-CC7E-4F46-BDB5-9B10F2624065__GUID-75E55EFA-D629-4BF3-934C-8CFF2F6C9294"><a name="GUID-25D1F25A-CC7E-4F46-BDB5-9B10F2624065__GUID-75E55EFA-D629-4BF3-934C-8CFF2F6C9294"><!-- --></a><h2 class="title sectiontitle">Routing </h2> 
+       
+      <p class="p">These counters reflect possible routing issues. When a routing issue
+        occurs, the offending packet is dropped. 
+      </p>
+ 
+      <p class="p">A typical cause of this error is the routing to a wrong egress port or
+        an improper Service Channel (SC) mapping. 
+      </p>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: February 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

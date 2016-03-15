@@ -1,0 +1,182 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="concept">
+<meta name="DC.Title" content="Intel Omni-Path Fabric Suite Fabric Manager GUI Setup Wizard">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-4B372184-0331-4BEA-9958-578F7E030F39">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>Intel Omni-Path Fabric Suite Fabric Manager GUI Setup Wizard</title>
+</head>
+<body id="GUID-4B372184-0331-4BEA-9958-578F7E030F39"><a name="GUID-4B372184-0331-4BEA-9958-578F7E030F39"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1"><span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric Suite Fabric Manager GUI</span> Setup Wizard</h1>
+ 
+  <div class="body conbody"> 
+    <p class="p"> Setup Wizard guides a user to set up the 
+      <span class="ph">Fabric Manager GUI</span> , including the areas
+      described below. 
+    </p>
+ 
+    <div class="p"> 
+    <a name="GUID-4B372184-0331-4BEA-9958-578F7E030F39__GUID-44BC11A9-C5F8-4F47-91B4-8B19E7E100BA"><!-- --></a><ul class="ul" id="GUID-4B372184-0331-4BEA-9958-578F7E030F39__GUID-44BC11A9-C5F8-4F47-91B4-8B19E7E100BA"> 
+      <li class="li">Hosts 
+      </li>
+ 
+      <li class="li">Events 
+      </li>
+ 
+      <li class="li">Preferences 
+      </li>
+ 
+    </ul>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-4B372184-0331-4BEA-9958-578F7E030F39__GUID-8E0E154A-3350-4943-B94E-DAFEA9BED053"><a name="GUID-4B372184-0331-4BEA-9958-578F7E030F39__GUID-8E0E154A-3350-4943-B94E-DAFEA9BED053"><!-- --></a><h2 class="title sectiontitle">Hosts</h2> 
+       
+      <p class="p">To add a new subnet, click the 
+        <img class="image" src="GUID-55DCD376-CD65-4FB4-9FF0-1C6A691B3F7D-low.png" width="19" height="19"> button on the Hosts tab and provide the following
+        attributes: 
+      </p>
+ 
+      <a name="GUID-4B372184-0331-4BEA-9958-578F7E030F39__GUID-75266006-A87B-4694-9002-8CC580DE5F62"><!-- --></a><ul class="ul" id="GUID-4B372184-0331-4BEA-9958-578F7E030F39__GUID-75266006-A87B-4694-9002-8CC580DE5F62"> 
+        <li class="li"> Name – 
+          <u class="ph u">unique</u> name of the subnet 
+        </li>
+ 
+        <li class="li">IP address or Host name – address used to connect with the FM,
+          specifically the address used to connect to the FE 
+        </li>
+ 
+        <li class="li">Port number - the port number used to connect 
+        </li>
+ 
+      </ul>
+ 
+      <p class="p">To add a subnet, user name is not required. Even for the secure
+        connection (when the 
+        <span class="ph uicontrol">Secure</span> check box is checked), user name is not
+        necessary. 
+      </p>
+ 
+      <p class="p">For a secure connection, check the 
+        <span class="ph uicontrol">Secure</span> check box and enter 
+        <span class="ph uicontrol">Key Store</span> and 
+        <span class="ph uicontrol">Trust Store</span> information. 
+      </p>
+ 
+      <p class="p">The 
+        <span class="ph uicontrol">Auto Connect</span> checkbox must be selected to make
+        the connection automatic. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-4B372184-0331-4BEA-9958-578F7E030F39__GUID-9AFD8FD8-CDB9-4CD7-93BD-38BEFA5A8195"><a name="GUID-4B372184-0331-4BEA-9958-578F7E030F39__GUID-9AFD8FD8-CDB9-4CD7-93BD-38BEFA5A8195"><!-- --></a><h2 class="title sectiontitle">Events</h2> 
+       
+      <p class="p"> In the course of exploring a fabric, the 
+        <span class="ph">Fabric Manager</span> may send an event
+        message to the 
+        <span class="ph">Fabric Manager GUI</span> to notify the user
+        about an incident occurring on the network. The Events tab lists the
+        classification and type of each event, and allows the user to select the
+        severity level and action to take when an event is received. 
+      </p>
+ 
+      <p class="p"> Events are defined with the following attributes: 
+      </p>
+ 
+      <a name="GUID-4B372184-0331-4BEA-9958-578F7E030F39__GUID-5108E5EB-D51C-4EC6-91BD-8228B89905A0"><!-- --></a><ul class="ul" id="GUID-4B372184-0331-4BEA-9958-578F7E030F39__GUID-5108E5EB-D51C-4EC6-91BD-8228B89905A0"> 
+        <li class="li"> Event Class – Subnet Event, Miscellaneous Event, etc. 
+        </li>
+ 
+        <li class="li"> Event Type – Lost Connection with FE, Inactive Port, etc. 
+        </li>
+ 
+        <li class="li"> Severity – Informational, Warning, Error, Critical 
+        </li>
+ 
+        <li class="li">Action – Set notification with an email, display, or both 
+        </li>
+ 
+      </ul>
+ 
+      <p class="p">All events have predefined default values, so you need to change only
+        those events of interest. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-4B372184-0331-4BEA-9958-578F7E030F39__GUID-AB0E3421-ED72-4755-B65E-FC545BFE987F"><a name="GUID-4B372184-0331-4BEA-9958-578F7E030F39__GUID-AB0E3421-ED72-4755-B65E-FC545BFE987F"><!-- --></a><h2 class="title sectiontitle">User Preferences</h2> 
+       
+      <p class="p"> On the Preferences tab, you define the following attributes: 
+      </p>
+ 
+      <p class="p"> Refresh Rate – the rate at which the UI is refreshed with the latest
+        data from the 
+        <span class="ph">Fabric Manager</span>. This rate must not be
+        less than the 
+        <span class="ph">Fabric Manager</span> sweep rate. 
+      </p>
+ 
+      <div class="p"> Time Window – the duration of the sliding time window over which the
+        number of active nodes and ports: 
+      <a name="GUID-4B372184-0331-4BEA-9958-578F7E030F39__GUID-D0281F51-9163-4FBE-9BD2-9506920FFF7A"><!-- --></a><ul class="ul" id="GUID-4B372184-0331-4BEA-9958-578F7E030F39__GUID-D0281F51-9163-4FBE-9BD2-9506920FFF7A"> 
+        <li class="li">Reported a Critical, Error, or Warning event type 
+        </li>
+ 
+        <li class="li">Was classified as a Worst Node based on its performance 
+        </li>
+ 
+      </ul>
+ 
+      </div>
+ 
+      <p class="p">In the following figure, a time window of 1 hour is defined. As time
+        transpires the data collected prior to the time window is removed as new
+        information is reported. 
+      </p>
+ 
+      <div class="fig fignone" id="GUID-4B372184-0331-4BEA-9958-578F7E030F39__GUID-6EEF1B82-55C9-45D3-8DCB-3E49FDDCED56"><a name="GUID-4B372184-0331-4BEA-9958-578F7E030F39__GUID-6EEF1B82-55C9-45D3-8DCB-3E49FDDCED56"><!-- --></a><span xmlns:xs="http://www.w3.org/2001/XMLSchema" class="figcap">Time Window</span> 
+        <br><div class="imageleft"><img class="image imageleft" src="GUID-0016BB4D-FD7D-46C5-934E-4DAC03624C33-low.png" height="35" width="306"></div><br> 
+      </div>
+ 
+      <p class="p">Indicators for these values can be found on the Home and Performance
+        pages as shown in the highlighted panels below. 
+      </p>
+ 
+      <div class="fig fignone" id="GUID-4B372184-0331-4BEA-9958-578F7E030F39__GUID-0056DAE7-0FBF-45D1-A36D-FB351EF34285"><a name="GUID-4B372184-0331-4BEA-9958-578F7E030F39__GUID-0056DAE7-0FBF-45D1-A36D-FB351EF34285"><!-- --></a><span xmlns:xs="http://www.w3.org/2001/XMLSchema" class="figcap">Metrics Collected in Time Window</span> 
+        <br><div class="imageleft"><img class="image imageleft" src="GUID-62FAB128-0397-45F4-AA77-73C30F9273E0-low.png" height="246" width="300"></div><br> 
+      </div>
+ 
+      <div class="note note" id="GUID-4B372184-0331-4BEA-9958-578F7E030F39__GUID-BB025C8B-4CAF-4317-86CE-832B7EF5A0B8"><a name="GUID-4B372184-0331-4BEA-9958-578F7E030F39__GUID-BB025C8B-4CAF-4317-86CE-832B7EF5A0B8"><!-- --></a><span class="notetitle">Note:</span> This value must be
+        larger than 10 * FM sweep rate. 
+      </div>
+ 
+      <p class="p"> # Worst Nodes – number of the worst nodes to display. 
+      </p>
+ 
+      <p class="p"> Email recipients – used to list recipients of email notifications for
+        the subnet. See 
+        <a class="xref" href="GUID-5A74E7B0-928A-49BF-BAD6-ED126360D409.html#GUID-5A74E7B0-928A-49BF-BAD6-ED126360D409">Setting up Email Notification</a>
+        for more details. 
+      </p>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: February 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

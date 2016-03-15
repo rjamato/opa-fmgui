@@ -34,7 +34,11 @@
  *  Archive Source: $Source$
  * 
  *  Archive Log: $Log$
- *  Archive Log: Revision 1.3.4.1  2015/10/13 17:32:49  jijunwan
+ *  Archive Log: Revision 1.5  2015/12/16 21:39:00  jijunwan
+ *  Archive Log: PR 132107 - Error messages in log file that are not really errors
+ *  Archive Log: - change to level to warning and show message rather then stack trace
+ *  Archive Log:
+ *  Archive Log: Revision 1.4  2015/10/13 15:33:57  jijunwan
  *  Archive Log: PR 130976 - Empty property on switch port zero
  *  Archive Log: - changed code to handle exception
  *  Archive Log: - change to display N/A when a category is unavailable
@@ -84,9 +88,9 @@ import com.intel.stl.ui.model.DevicePropertyCategory;
 public class SC2VLNTMTBarChartPanel extends DevicePropertyCategoryPanel {
 
     private static final long serialVersionUID = 1L;
-    
+
     private static final Logger log = LoggerFactory
-    		.getLogger(SC2VLNTMTBarChartPanel.class);
+            .getLogger(SC2VLNTMTBarChartPanel.class);
 
     private static final Dimension PREFERRED_CHART_SIZE = new Dimension(360,
             240);
@@ -101,7 +105,7 @@ public class SC2VLNTMTBarChartPanel extends DevicePropertyCategoryPanel {
 
     @Override
     public void modelChanged(DevicePropertyCategory model) {
-    	try {
+        try {
             double[] values = (double[]) model.getProperty(VLNT).getObject();
 
             int numSCs = (Integer) model.getProperty(SC).getObject();
@@ -116,13 +120,14 @@ public class SC2VLNTMTBarChartPanel extends DevicePropertyCategoryPanel {
             dataset.addSeries(xyseries);
 
             chartPanel.getChart().getXYPlot().getDomainAxis()
-            		.setRange(0, numSCs);
-    	} catch (Exception e) {
-    		log.warn("Failed to display model", e);
-    		propsPanel.remove(chartPanel);
-    		propsPanel.add(ComponentFactory.getH4Label(
-    				STLConstants.K0039_NOT_AVAILABLE.getValue(), Font.PLAIN)); 
-    	}
+                    .setRange(0, numSCs);
+        } catch (Exception e) {
+            log.warn("Failed to display model because of '" + e.getMessage()
+                    + "'");
+            propsPanel.remove(chartPanel);
+            propsPanel.add(ComponentFactory.getH4Label(
+                    STLConstants.K0039_NOT_AVAILABLE.getValue(), Font.PLAIN));
+        }
     }
 
     @Override

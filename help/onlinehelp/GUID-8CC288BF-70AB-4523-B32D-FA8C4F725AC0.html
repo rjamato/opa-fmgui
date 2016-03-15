@@ -1,0 +1,336 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="concept">
+<meta name="DC.Title" content="Port Counters">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-8CC288BF-70AB-4523-B32D-FA8C4F725AC0">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>Port Counters</title>
+</head>
+<body id="GUID-8CC288BF-70AB-4523-B32D-FA8C4F725AC0"><a name="GUID-8CC288BF-70AB-4523-B32D-FA8C4F725AC0"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">Port Counters</h1>
+ 
+  <div class="body conbody"> 
+    <p class="p">This section displays the Receive and Transmit data shown below. 
+    </p>
+ 
+    
+<div class="tablenoborder"><a name="GUID-8CC288BF-70AB-4523-B32D-FA8C4F725AC0__GUID-3D66FA3F-41A1-4299-9DDF-973AA9906AAB"><!-- --></a><table cellpadding="4" cellspacing="0" summary="" id="GUID-8CC288BF-70AB-4523-B32D-FA8C4F725AC0__GUID-3D66FA3F-41A1-4299-9DDF-973AA9906AAB" class="table" frame="border" border="1" rules="all"><caption xmlns:xs="http://www.w3.org/2001/XMLSchema"><span class="tablecap">Receive Counters</span></caption> 
+      <thead class="thead" align="left"> 
+        <tr class="row"> 
+          <th class="entry" valign="top" width="41.84100418410042%" id="d5069e28"><strong class="ph b"> Data Displayed</strong> 
+          </th>
+ 
+          <th class="entry" valign="top" width="58.15899581589959%" id="d5069e33"><strong class="ph b">Description</strong> 
+          </th>
+ 
+        </tr>
+</thead>
+ 
+      <tbody class="tbody"> 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="41.84100418410042%" headers="d5069e28 ">RcvData 
+          </td>
+ 
+          <td class="entry" valign="top" width="58.15899581589959%" headers="d5069e33 ">The total number of fabric packet flits
+            received. 
+            <p class="p">This counter includes all fabric packet flits received with and
+              without errors (such as PktBadTail). Only includes flits actually received (for
+              example, 
+              <samp class="ph codeph">PktLen</samp> in header may exceed actual flits
+              received in certain error situations, in which case only actual flits received
+              are counted. In IB mode: The total number of data octets, divided by 4,
+              received. 
+            </p>
+ 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="41.84100418410042%" headers="d5069e28 ">RcvPkts 
+          </td>
+ 
+          <td class="entry" valign="top" width="58.15899581589959%" headers="d5069e33 ">The total number of fabric packets received. 
+            <p class="p">This counter includes all fabric packet head flits received with
+              and without errors (such as 
+              <samp class="ph codeph">PktBadHead</samp>). 
+            </p>
+ 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="41.84100418410042%" headers="d5069e28 ">MulticastRcvPkts 
+          </td>
+ 
+          <td class="entry" valign="top" width="58.15899581589959%" headers="d5069e33 ">The total number of multicast and collective
+            packets received. 
+            <p class="p">This counter includes all valid packets and all packets with a
+              header up to and including the DLID, where the DLID is within the configured
+              range for multicast or collectives. Packets within the configured multicast or
+              collective address space are counted, even if later checks determine the packet
+              is unroutable or exceeds the SwitchInfo.MulticastFDBCap,
+              SwitchInfo.CollectiveFDBCap, configured SwitchInfo.MulticastFDBTop or
+              configured SwitchInfo.CollectiveFDBTop. 
+            </p>
+ 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row keeptogether "> 
+          <td class="entry" valign="top" width="41.84100418410042%" headers="d5069e28 ">RcvErrors 
+          </td>
+ 
+          <td class="entry" valign="top" width="58.15899581589959%" headers="d5069e33 "> This counter indicates the total number of
+            packets containing an error that were received by the port, including physical
+            errors and malformed packets. It may indicate possible misconfiguration of a
+            port, either by the SM or (more likely) by user intervention (e.g., using a
+            tool such as opaportconfig). 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="41.84100418410042%" headers="d5069e28 ">RcvConstraintErrors 
+          </td>
+ 
+          <td class="entry" valign="top" width="58.15899581589959%" headers="d5069e33 "> This counter is incremented when partition key
+            or source LID violations are detected in a received packet, indicating a
+            possible security issue or misconfiguration of device security settings. 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="41.84100418410042%" headers="d5069e28 ">RcvSwitchRelayErrors 
+          </td>
+ 
+          <td class="entry" valign="top" width="58.15899581589959%" headers="d5069e33 "> This counter indicates the number of packets
+            that were dropped due to internal routing errors. It is indicative of the
+            possible misconfiguration of a switch by the SM. 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="41.84100418410042%" headers="d5069e28 ">RcvRemotePhysicalErrors 
+          </td>
+ 
+          <td class="entry" valign="top" width="58.15899581589959%" headers="d5069e33 "> This counter indicates the number of
+            downstream effects of signal integrity problems. It is indicative of an SI
+            issue in the upstream path. 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="41.84100418410042%" headers="d5069e28 ">RcvFECN 
+          </td>
+ 
+          <td class="entry" valign="top" width="58.15899581589959%" headers="d5069e33 "> When a device receives a packet with the FECN
+            (Forward Explicit Congestion Notification) bit set to one, this counter is
+            incremented. 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="41.84100418410042%" headers="d5069e28 ">RcvBECN 
+          </td>
+ 
+          <td class="entry" valign="top" width="58.15899581589959%" headers="d5069e33 ">When a device receives a packet with the BECN
+            (Backward Explicit Congestion Notification) bit set to one, this counter is
+            incremented. 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row keeptogether "> 
+          <td class="entry" valign="top" width="41.84100418410042%" headers="d5069e28 ">RcvBubble 
+          </td>
+ 
+          <td class="entry" valign="top" width="58.15899581589959%" headers="d5069e33 "> This counter indicates the total number of
+            "flit times" where one or more packets have been started to be received, but
+            receiver received idle flits from the wire. 
+          </td>
+ 
+        </tr>
+ 
+      </tbody>
+ 
+    </table>
+</div>
+ 
+    
+<div class="tablenoborder"><a name="GUID-8CC288BF-70AB-4523-B32D-FA8C4F725AC0__GUID-3AE23A4F-7FCD-4156-828B-B22D8CF10F76"><!-- --></a><table cellpadding="4" cellspacing="0" summary="" id="GUID-8CC288BF-70AB-4523-B32D-FA8C4F725AC0__GUID-3AE23A4F-7FCD-4156-828B-B22D8CF10F76" class="table" frame="border" border="1" rules="all"><caption xmlns:xs="http://www.w3.org/2001/XMLSchema"><span class="tablecap">Transmit Counters</span></caption> 
+      <thead class="thead" align="left"> 
+        <tr class="row"> 
+          <th class="entry" valign="top" width="36.76470588235294%" id="d5069e163"><strong class="ph b">Data Displayed</strong> 
+          </th>
+ 
+          <th class="entry" valign="top" width="63.235294117647065%" id="d5069e168"><strong class="ph b">Description</strong> 
+          </th>
+ 
+        </tr>
+</thead>
+ 
+      <tbody class="tbody"> 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="36.76470588235294%" headers="d5069e163 ">XmitData 
+          </td>
+ 
+          <td class="entry" valign="top" width="63.235294117647065%" headers="d5069e168 "> 
+            <p class="p">The total number of fabric packet flits transmitted. Does not
+              include idle nor other LF command flits. 
+            </p>
+ 
+            <p class="p">This counter includes all fabric packet flits transmitted
+              without and with errors (such as PktBadTail). Only includes flits actually
+              transmitted (e.g., PktLen in header may exceed actual flits transmitted in
+              certain error situations, in which case only actual flits transmitted are
+              counted). 
+            </p>
+ 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="36.76470588235294%" headers="d5069e163 ">XmitPkts 
+          </td>
+ 
+          <td class="entry" valign="top" width="63.235294117647065%" headers="d5069e168 ">The total number of fabric packets transmitted.
+            
+            <p class="p">This counter includes all fabric packet head flits transmitted
+              with and without errors (such as PktBadHead). 
+            </p>
+ 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="36.76470588235294%" headers="d5069e163 ">MulticastXmitPkts 
+          </td>
+ 
+          <td class="entry" valign="top" width="63.235294117647065%" headers="d5069e168 ">The total number of multicast and collective
+            packets transmitted 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="36.76470588235294%" headers="d5069e163 ">Transmit Discards 
+          </td>
+ 
+          <td class="entry" valign="top" width="63.235294117647065%" headers="d5069e168 "> 
+            <p class="p">The number of packets dropped due to one of the following
+              errors: 
+            </p>
+ 
+            <a name="GUID-8CC288BF-70AB-4523-B32D-FA8C4F725AC0__GUID-95740FCB-2445-4C8B-9EA6-DC8053CC2EA4"><!-- --></a><ul class="ul" id="GUID-8CC288BF-70AB-4523-B32D-FA8C4F725AC0__GUID-95740FCB-2445-4C8B-9EA6-DC8053CC2EA4"> 
+              <li class="li">Switch lifetime Limit exceeded 
+              </li>
+ 
+              <li class="li">Switch head-of-queue lifetime limit exceeded 
+              </li>
+ 
+              <li class="li">Output port not in active state 
+              </li>
+ 
+              <li class="li">Packet length exceeded maximum fabric packet size for MTU for
+                VL 
+              </li>
+ 
+              <li class="li">Flow control disabled and insufficient credits available 
+              </li>
+ 
+              <li class="li">SC2VL_t mapping invalid for given SC 
+              </li>
+ 
+            </ul>
+ 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="36.76470588235294%" headers="d5069e163 ">XmitConstraintErrors 
+          </td>
+ 
+          <td class="entry" valign="top" width="63.235294117647065%" headers="d5069e168 "> This counter is incremented when partition key
+            or source LID violations are detected in a packet attempting to be transmitted,
+            indicating a possible security issue or misconfiguration of device security
+            settings. 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="36.76470588235294%" headers="d5069e163 ">XmitWait 
+          </td>
+ 
+          <td class="entry" valign="top" width="63.235294117647065%" headers="d5069e168 "> This counter indicates the amount of time (in
+            "flit times") any virtual lane had data but was unable to transmit (for reasons
+            such as no credits available, or that the link was busy sending non-data
+            packets such as link layer retraining or flow control). 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row keeptogether "> 
+          <td class="entry" valign="top" width="36.76470588235294%" headers="d5069e163 ">XmitTimeCong 
+          </td>
+ 
+          <td class="entry" valign="top" width="63.235294117647065%" headers="d5069e168 ">This counter indicates the total number of
+            "flit times" that the counter was in a congested state. 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="36.76470588235294%" headers="d5069e163 ">XmitWastedBW 
+          </td>
+ 
+          <td class="entry" valign="top" width="63.235294117647065%" headers="d5069e168 "> This counter indicates the number of "flit
+            times" where one or more packets have been started but the transmitters is
+            forced to send idles due to bubbles. 
+          </td>
+ 
+        </tr>
+ 
+        <tr class="row"> 
+          <td class="entry" valign="top" width="36.76470588235294%" headers="d5069e163 ">XmitWaitData 
+          </td>
+ 
+          <td class="entry" valign="top" width="63.235294117647065%" headers="d5069e168 "> This counter indicates the number of "flit
+            times" where one or more packets have been started but interrupted due to
+            bubbles in the ingress stream. 
+          </td>
+ 
+        </tr>
+ 
+      </tbody>
+ 
+    </table>
+</div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: February 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

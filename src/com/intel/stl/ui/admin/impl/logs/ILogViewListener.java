@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.4  2015/11/18 23:52:57  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Moved non-listener methods to ILogController interface
+ *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/09/25 13:55:07  rjtierne
  *  Archive Log:    PR 130011 - Enhance SM Log Viewer to include Standard and Advanced requirements
  *  Archive Log:    - Added new filtering functionality and a document listener for the search field
@@ -56,8 +60,6 @@
 
 package com.intel.stl.ui.admin.impl.logs;
 
-import javax.swing.event.DocumentListener;
-
 import com.intel.stl.api.logs.LogResponse;
 
 public interface ILogViewListener {
@@ -72,15 +74,17 @@ public interface ILogViewListener {
 
     public void onCancelSearch(String searchKey);
 
-    public void setLogMessage(LogResponse msg);
-
     public void onFilter();
 
-    public DocumentListener getDocumentListener();
-
-    public boolean isDirty();
+    public void onConfigure();
 
     public void setDirty(boolean dirty);
 
+    public void setLogMessage(LogResponse msg);
+
     public void setCurrentSelection(String key, int start, int end);
+
+    public void updateLoginView();
+
+    public void restoreAutoConfigView();
 }

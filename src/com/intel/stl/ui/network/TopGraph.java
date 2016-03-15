@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.16  2015/12/16 21:44:23  jijunwan
+ *  Archive Log:    PR 132110 - Klocwork issues
+ *  Archive Log:
  *  Archive Log:    Revision 1.15  2015/10/07 00:19:04  fernande
  *  Archive Log:    PR130711 - Rename of Partition Enforcement table. Undoing Klocwork fix since unit test is failing
  *  Archive Log:
@@ -246,6 +249,9 @@ public class TopGraph extends mxGraph {
      */
     @Override
     public mxIGraphModel getModel() {
+        if (modelRef == null) {
+            throw new RuntimeException("modelRef get is null in getModel.");
+        }
         return modelRef.get();
     }
 

@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.30  2015/10/23 19:09:33  jijunwan
+ *  Archive Log:    PR 129357 - Be able to hide inactive ports
+ *  Archive Log:    - changed input argument to FVTreeModel rather than TreeModel
+ *  Archive Log:
  *  Archive Log:    Revision 1.29  2015/08/17 18:54:24  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -169,7 +173,6 @@ import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.ScrollPaneLayout;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import com.intel.stl.ui.common.IBackgroundService;
@@ -386,7 +389,7 @@ public abstract class TreeView extends JPanel implements TreeViewInterface,
      */
     @Override
     public void setTreeModel(final TreeTypeEnum pTreeType,
-            final TreeModel pModel) {
+            final FVTreeModel pModel) {
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {

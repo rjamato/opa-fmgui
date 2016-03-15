@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.4  2015/11/09 20:47:16  fernande
+ *  Archive Log:    PR130231 - Cannot delete subnet from Wizard if subnet name is "Unknown Subnet". Fixed bug with listeners.
+ *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/08/17 18:53:53  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -64,7 +67,8 @@ import com.intel.stl.ui.wizards.impl.WizardType;
 
 public interface IWizardModel {
 
-    public void addModelListener(IModelChangeListener<IWizardModel> listener);
+    public void addModelListener(IModelChangeListener<IWizardModel> listener,
+            WizardType wizardType);
 
     public void notifyModelChange();
 

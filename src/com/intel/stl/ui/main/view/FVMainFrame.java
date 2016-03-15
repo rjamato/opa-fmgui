@@ -35,6 +35,17 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.79  2015/12/17 22:38:30  jijunwan
+ *  Archive Log:    PR 131988 - Failover as I switch networks results in ERROR - Statement is closed to be dispalyed
+ *  Archive Log:    - changed code to be silent on StatementClose on UI side
+ *  Archive Log:
+ *  Archive Log:    Revision 1.78  2015/11/18 14:49:30  fisherma
+ *  Archive Log:    Block all the user interaction (key/mouse) to the FV main frame when certificates credentials request form is showing on FM GUI subnet connection.
+ *  Archive Log:
+ *  Archive Log:    Revision 1.77  2015/10/14 23:26:33  jypak
+ *  Archive Log:    PR 130913 - Java Help Window missing icon.
+ *  Archive Log:    Use a correct JDialog constructor in HelpMainWindow.
+ *  Archive Log:
  *  Archive Log:    Revision 1.76  2015/09/30 13:26:49  fisherma
  *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
  *  Archive Log:
@@ -330,6 +341,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -359,8 +373,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.jdesktop.swingx.VerticalLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.intel.stl.api.FMGuiPlugin;
+import com.intel.stl.api.StatementClosedException;
 import com.intel.stl.api.StringUtils;
 import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.ui.common.EventTableController;
@@ -380,6 +397,8 @@ import com.intel.stl.ui.main.FabricController;
 import com.intel.stl.ui.main.FabricModel;
 
 public class FVMainFrame extends JFrame implements IFabricView, ChangeListener {
+    private final Logger log = LoggerFactory.getLogger(FVMainFrame.class);
+
     /**
      * Serial Version UID
      */
@@ -567,6 +586,18 @@ public class FVMainFrame extends JFrame implements IFabricView, ChangeListener {
         gc.fill = GridBagConstraints.NONE;
         gc.anchor = GridBagConstraints.CENTER;
         glassPanel.add(progressPanel, gc);
+
+        //
+        // The following listeners are being added to consume and block
+        // any events to the FV main frame behind the glass panel with
+        // certificates details.
+        //
+        glassPanel.addMouseListener(new MouseAdapter() {
+        });
+        glassPanel.addMouseMotionListener(new MouseMotionAdapter() {
+        });
+        glassPanel.addKeyListener(new KeyAdapter() {
+        });
 
         setGlassPane(glassPanel);
 
@@ -872,13 +903,6 @@ public class FVMainFrame extends JFrame implements IFabricView, ChangeListener {
                 controller.onHideInactiveNodes(hideInactiveNodes);
             }
         });
-        setHelpAction(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                controller.applyHelpAction(e);
-            }
-        });
         addComponentListener(new ComponentAdapter() {
 
             @Override
@@ -1100,6 +1124,10 @@ public class FVMainFrame extends JFrame implements IFabricView, ChangeListener {
     public void setHelpAction(ActionListener listener) {
         onlineHelpMenu.addActionListener(listener);
     };
+
+    public JMenuItem getOnlineHelpMenu() {
+        return onlineHelpMenu;
+    }
 
     public void setHideNodesAction(ActionListener listener) {
         hideNodesMenu.addActionListener(listener);
@@ -1372,6 +1400,11 @@ public class FVMainFrame extends JFrame implements IFabricView, ChangeListener {
         setReady(true);
         if (caught instanceof InterruptedException
                 || caught instanceof CancellationException) {
+            return;
+        }
+        if (caught instanceof StatementClosedException) {
+            // silent on StatementClosedException
+            log.error(caught.getMessage(), caught);
             return;
         }
         caught.printStackTrace();

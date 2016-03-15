@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.2  2015/11/11 13:26:29  robertja
+ *  Archive Log:    PR 130278 - Store console tab help pane state on a per-tab basis so that help info is restored when focus returns to a tab.
+ *  Archive Log:
  *  Archive Log:    Revision 1.1  2015/10/09 13:40:30  rjtierne
  *  Archive Log:    PR 129027 - Need to handle customized command prompts when detecting commands on console
  *  Archive Log:    - Interface for storing the console prompt and keep track of whether a console has been initialized or not
@@ -61,4 +64,6 @@ public interface IConsole {
     public void setPromptReady(boolean b);
 
     public boolean isPromptReady();
+    
+    public void setLastCommand(String command);
 }

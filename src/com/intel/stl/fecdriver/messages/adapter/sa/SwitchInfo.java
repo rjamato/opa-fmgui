@@ -34,6 +34,10 @@
  *  Archive Source: $Source$
  * 
  *  Archive Log: $Log$
+ *  Archive Log: Revision 1.11  2015/11/02 18:43:29  jijunwan
+ *  Archive Log: PR 131379 - Adaptive Routing table Frequency and algorithm reporting incorrect information
+ *  Archive Log: - fixed data parser code
+ *  Archive Log:
  *  Archive Log: Revision 1.10  2015/08/17 18:48:48  jijunwan
  *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log: - change backend files' headers
@@ -57,8 +61,7 @@ import com.intel.stl.fecdriver.messages.adapter.SimpleDatagram;
 
 /**
  * 
- * @author jijunwan
- *         ref: /ALL_EMB/IbAcess/Common/Inc/stl_sm.h v1.125
+ * @author jijunwan ref: /ALL_EMB/IbAcess/Common/Inc/stl_sm.h v1.125
  * 
  *         <pre>
  * typedef struct {
@@ -323,15 +326,14 @@ public class SwitchInfo extends SimpleDatagram<SwitchInfoBean> {
         byteVal = buffer.get();
         bean.setCollectiveMask((byte) ((byteVal >>> 3) & 0x7));
         bean.setMulticastMask((byte) (byteVal & 0x7));
-        byteVal = buffer.get();
-        bean.setAdaptiveRoutingEnable((byteVal & 0x80) == 0x80);
-        bean.setAdaptiveRoutingPause((byteVal & 0x40) == 0x40);
-        bean.setAdaptiveRoutingFrequency((byte) ((byteVal >>> 3) & 0x07));
-        bean.setAdaptiveRoutingAlgorithm((byte) ((byteVal) & 0x07));
-        byteVal = buffer.get();
-        bean.setAdaptiveRoutingLostRoutesOnly((byteVal & 0x80) == 0x80);
-        bean.setAdaptiveRoutingThreshold((byte) ((byteVal >>> 4) & 0x7));
         short shortVal = buffer.getShort();
+        bean.setAdaptiveRoutingEnable((shortVal & 0x8000) == 0x8000);
+        bean.setAdaptiveRoutingPause((shortVal & 0x4000) == 0x4000);
+        bean.setAdaptiveRoutingAlgorithm((byte) ((shortVal >>> 11) & 0x07));
+        bean.setAdaptiveRoutingFrequency((byte) ((shortVal >>> 8) & 0x07));
+        bean.setAdaptiveRoutingLostRoutesOnly((shortVal & 0x80) == 0x80);
+        bean.setAdaptiveRoutingThreshold((byte) ((shortVal >>> 4) & 0x7));
+        shortVal = buffer.getShort();
         bean.setAddrRangeConfigSupported((shortVal & 0x4) == 0x4);
         bean.setAdaptiveRoutingSupported((shortVal & 0x1) == 0x1);
         shortVal = buffer.getShort();

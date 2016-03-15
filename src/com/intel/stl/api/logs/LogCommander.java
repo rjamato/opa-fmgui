@@ -35,6 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.6  2015/11/19 12:51:15  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Restore the original command syntax in getNumLines()
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/11/18 23:49:12  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Added new command to check if the user has permission to access the log file
+ *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/09/25 13:53:00  rjtierne
  *  Archive Log:    PR 130011 - Enhance SM Log Viewer to include Standard and Advanced requirements
  *  Archive Log:    - Fixed incorrect commanding for getPreviousPage()
@@ -98,6 +106,10 @@ public class LogCommander {
                 cmdStr = checkForFile(fileInfo);
                 break;
 
+            case CHECK_FILE_ACCESS:
+                cmdStr = checkFileAccess(fileInfo);
+                break;
+
             case PREVIOUS_PAGE:
                 cmdStr = getPreviousPage(fileInfo, numLinesRequested);
                 break;
@@ -131,6 +143,17 @@ public class LogCommander {
         String cmdStr = null;
 
         cmdStr = "ls " + fileInfo.getFileName();
+
+        return cmdStr;
+    }
+
+    protected synchronized String checkFileAccess(FileInfoBean fileInfo) {
+
+        String cmdStr = null;
+
+        cmdStr =
+                "tail " + fileInfo.getFileName()
+                        + " > /dev/null > 2&>1; echo $?";
 
         return cmdStr;
     }
@@ -215,6 +238,7 @@ public class LogCommander {
         String numLines = "tail -c $diffSize " + fileName + " | wc -l";
 
         if (firstTime) {
+            // String fileSize = "ls -l " + fileName + " | awk '{print $5}'";
             String fileSize = "ls -l " + fileName + " | awk '{print $5}'";
             cmdStr = "tail -c " + fileSize + " " + fileName + " | wc -l";
             firstTime = false;

@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.16  2015/11/02 23:56:52  jijunwan
+ *  Archive Log:    PR 131396 - Incorrect Connectivity Table for a VF port
+ *  Archive Log:    - adapted to the new connectivity table controller to support VF port
+ *  Archive Log:
  *  Archive Log:    Revision 1.15  2015/08/18 14:36:09  jijunwan
  *  Archive Log:    PR 130033 - Fix critical issues found by Klocwork or FindBugs
  *  Archive Log:    - clean dead code
@@ -290,13 +294,13 @@ public class ResourceLinkSection extends
         return currentSubpageName;
     }
 
-    protected void showLinks(List<GraphEdge> links) {
+    protected void showLinks(List<GraphEdge> links, String vfName) {
         links = toPortLinks(links);
         if (links != null && links.equals(currentLinks)) {
             for (GraphEdge link : links) {
                 ResourceLinkPage page = subpages.get(link);
                 if (page != null) {
-                    page.showLink(link);
+                    page.showLink(link, vfName);
                 } else {
                     Log.warn("Cannot find page for " + link);
                 }
@@ -337,7 +341,7 @@ public class ResourceLinkSection extends
                     new ResourceLinkPage(linkTableModel, linkTableView,
                             linkView);
             linkPage.setContext(context, null);
-            linkPage.showLink(link);
+            linkPage.showLink(link, vfName);
 
             // Add subpage to list of subpages
             subpages.put(link, linkPage);
@@ -371,10 +375,11 @@ public class ResourceLinkSection extends
         return res;
     }
 
-    protected void showPath(final Map<GraphEdge, List<GraphEdge>> traceMap) {
+    protected void showPath(final Map<GraphEdge, List<GraphEdge>> traceMap,
+            String vfName) {
         if (traceMap != null && traceMap.equals(currentTraces)) {
             for (GraphEdge link : traceMap.keySet()) {
-                subpages.get(link).showPath(link, traceMap.get(link));
+                subpages.get(link).showPath(link, traceMap.get(link), vfName);
             }
             return;
         }
@@ -419,7 +424,7 @@ public class ResourceLinkSection extends
             pathPage.setContext(context, null);
 
             // Update the table with the new page info
-            pathPage.showPath(entry.getKey(), entry.getValue());
+            pathPage.showPath(entry.getKey(), entry.getValue(), vfName);
 
             // Add this pathPage to the list of subpages
             subpages.put(entry.getKey(), pathPage);

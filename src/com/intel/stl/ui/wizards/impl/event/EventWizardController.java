@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.19  2015/11/09 20:43:44  fernande
+ *  Archive Log:    PR130231 - Cannot delete subnet from Wizard if subnet name is "Unknown Subnet". Fixed bug where reset would not work in the events step.
+ *  Archive Log:
  *  Archive Log:    Revision 1.18  2015/08/17 18:54:42  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -406,11 +409,9 @@ public class EventWizardController implements IMultinetWizardTask,
      */
     @Override
     public void onReset() {
-
-        multinetWizardController.setCurrentSubnet(multinetWizardController
-                .getSubnet());
         userSettings = multinetWizardController.retrieveUserSettings();
         updateModel(userSettings.getEventRules());
+        view.setDirty(false);
     }
 
     /*

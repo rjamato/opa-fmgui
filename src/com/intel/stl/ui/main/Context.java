@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.53  2015/12/17 21:51:11  jijunwan
+ *  Archive Log:    PR 132124 - Newly created VF not displayed after reboot of SM
+ *  Archive Log:    - improved the arch to do cache reset
+ *  Archive Log:
  *  Archive Log:    Revision 1.52  2015/09/25 20:52:27  fernande
  *  Archive Log:    PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
  *  Archive Log:
@@ -520,6 +524,10 @@ public class Context implements ISubnetEventListener, IConnectionAssistant {
     @Override
     public void onSSLStoreError(FMException fmException) {
         errors.add(fmException);
+    }
+
+    public void reset() {
+        subnetContext.reset();
     }
 
     private Throwable getPasswordException(Throwable e) {

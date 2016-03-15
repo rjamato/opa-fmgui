@@ -1,0 +1,830 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head xmlns:xs="http://www.w3.org/2001/XMLSchema"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="copyright" content="(C) Copyright 2005">
+<meta name="DC.rights.owner" content="(C) Copyright 2005">
+<meta name="DC.Type" content="reference">
+<meta name="DC.Title" content="opaswitchadmin">
+<meta name="DC.Format" content="XHTML">
+<meta name="DC.Identifier" content="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474">
+<meta name="DC.Language" content="en-US">
+<link rel="stylesheet" type="text/css" href="commonltr.css">
+<link rel="stylesheet" type="text/css" href="intelltr.css">
+<title>opaswitchadmin</title>
+</head>
+<body class="man8" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474"><!-- --></a>
+<div id="custom-header" style="text-align:right">
+	<img src="intel_logo.png">
+</div>
+ 
+  <h1 class="title topictitle1">opaswitchadmin</h1>
+ 
+  <div class="body refbody"> 
+    <div class="section" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-53BD96B6-FBF1-4DC6-B845-3AA5B025E8CE"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-53BD96B6-FBF1-4DC6-B845-3AA5B025E8CE"><!-- --></a> 
+      <p class="p"><strong class="ph b">(Switch)</strong> Performs a number of multi-step initialization and
+        verification operations against one or more externally managed 
+        <span class="ph">Intel<sup>®</sup> Omni-Path</span>
+        switches. The operations include initial switch setup, firmware upgrades,
+        chassis reboot, and others. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section refsyn" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-54F2AF5B-E4A9-4CD2-9935-CE0508751990"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-54F2AF5B-E4A9-4CD2-9935-CE0508751990"><!-- --></a><h2 class="sectiontitle">Syntax </h2> 
+      <pre class="pre codeblock">opaswitchadmin [-c] [-N '<var class="keyword varname">nodes</var>'] [-L <var class="keyword varname">nodefile</var>] [-O]
+ [-P <var class="keyword varname">packages</var>] [-a <var class="keyword varname">action</var>] [-t <var class="keyword varname">portsfile</var>] 
+[-p <var class="keyword varname">ports</var>] <var class="keyword varname">operation</var> ...</pre>
+ 
+      <p class="p">or 
+      </p>
+ 
+      <pre class="pre codeblock">opaswitchadmin --help</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__SECTION_167EA9F9BA694F2C807CE54E87D26386"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__SECTION_167EA9F9BA694F2C807CE54E87D26386"><!-- --></a><h2 class="sectiontitle">Options </h2> 
+      <a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-B2278212-1A73-4D97-977E-8E7EFEECDFC7"><!-- --></a><dl class="dl parml" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-B2278212-1A73-4D97-977E-8E7EFEECDFC7"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-help</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Produces full help text. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-c</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Clobbers result files from any previous run before starting this
+              run. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-N 
+              <var class="keyword varname">nodes</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of nodes to execute the operation against. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-L 
+              <var class="keyword varname">nodefile</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File with nodes in the cluster. Default is 
+              <span class="ph filepath">/etc/sysconfig/opa/switches</span> file. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-P 
+              <var class="keyword varname">packages</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-44202E42-27C0-4E1F-B953-020BEE3AAD06"><!-- --></a><dl class="dl parml" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-44202E42-27C0-4E1F-B953-020BEE3AAD06"> 
+               
+                <dt class="dt pt dlterm">For upgrades 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">File name or directory where the firmware image is to
+                    install. For the directory specified, 
+                    <span class="ph filepath">.emfw</span> file in the directory tree is
+                    used. 
+                    <span class="ph filepath">shell</span> wild cards may also be used
+                    within quotes. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm">For capture 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">File name to upload to. Default is 
+                    <span class="ph filepath">switchcapture</span> file. 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-t 
+              <var class="keyword varname">portsfile</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File with list of local HFI ports used to access fabrics for
+              switch access. Default is 
+              <span class="ph filepath">/etc/sysconfig/opa/ports</span> file. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"> -p 
+              <var class="keyword varname">ports</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of local HFI ports used to access fabrics for switch
+              access. Default is first active port. The first 
+              <span class="ph">HFI</span> in the system is 1. The first
+              port on an 
+              <span class="ph">HFI</span> is 1. 
+            </p>
+ 
+            <p class="p">Uses the format 
+              <samp class="ph codeph">hfi:port</samp>, for example: 
+            </p>
+ 
+            <a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-A8958A2D-DFFF-4F65-A112-54B232CFEFF9"><!-- --></a><dl class="dl parml" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-A8958A2D-DFFF-4F65-A112-54B232CFEFF9"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0:0</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">First active port in system. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">0:y</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Port 
+                    <samp class="ph codeph"><var class="keyword varname">y</var></samp> within system. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">x:0</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">First active port on HFI 
+                    <samp class="ph codeph"><var class="keyword varname">x</var></samp>. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">x:y</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">HFI 
+                    <samp class="ph codeph"><var class="keyword varname">x</var></samp>, port 
+                    <samp class="ph codeph"><var class="keyword varname">y</var></samp>. 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-a 
+              <var class="keyword varname">action</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Action for firmware file for switch upgrade. The 
+              <samp class="ph codeph">action</samp> argument can be one or more of the
+              following: 
+            </p>
+ 
+            <a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-21936EB5-1C90-46D0-81B2-36603DCFAF29"><!-- --></a><dl class="dl parml" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-21936EB5-1C90-46D0-81B2-36603DCFAF29"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">select</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Ensures firmware is in primary (default). 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">run</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Ensures firmware is in primary and running. 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">-O 
+            </samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Override for firmware upgrades, bypasses the previous firmware
+              version checks, and forces the update unconditionally. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph"><var class="keyword varname">operation</var></samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Performs the specified 
+              <samp class="ph codeph"><var class="keyword varname">operation</var></samp>, which can be one
+              or more of the following: 
+            </p>
+ 
+            <a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-12CE6327-B73C-4F0D-8D09-8D97F83E1A70"><!-- --></a><dl class="dl parml" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-12CE6327-B73C-4F0D-8D09-8D97F83E1A70"> 
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">reboot</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Reboots switches, ensures they go down and come back. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">configure</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Runs wizard to set up switch configuration. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">upgrade</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Upgrades installation of all switches. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">info</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Reports firmware and hardware version, part number, and
+                    data rate capability of all nodes. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">hwvpd</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Completes hardware Vital Product Data (VPD) report of all
+                    nodes. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">ping</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Pings all nodes and tests for presence. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">fwverify</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Reports integrity of failsafe firmware of all nodes. 
+                  </p>
+ 
+                </dd>
+ 
+               
+               
+                <dt class="dt pt dlterm"><samp class="ph codeph">getconfig</samp> 
+                </dt>
+ 
+                <dd class="dd pd"> 
+                  <p class="p">Gets port configurations of an externally managed switch. 
+                  </p>
+ 
+                </dd>
+ 
+               
+            </dl>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+      <p class="p">For more information on operations, see 
+        <a class="xref" href="GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4.html#GUID-6C1865DD-50E8-4BCD-9919-8400A68B53C4__GUID-3048A135-A5EB-4695-8B56-2D215294EB00">opachassisadmin
+          operation Details</a>. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__SECTION_37D3485971254F1AB29319A640DAA202"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__SECTION_37D3485971254F1AB29319A640DAA202"><!-- --></a><h2 class="sectiontitle">Example </h2> 
+      <pre class="pre codeblock">opaswitchadmin -c reboot
+opaswitchadmin -P /root/ChassisFw<var class="keyword varname">X.X.X.X.X</var> upgrade
+opaswitchadmin -a run -P '*.emfw' upgrade</pre>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__SECTION_F5212AB2876C4FB79B43A952D02E77A0"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__SECTION_F5212AB2876C4FB79B43A952D02E77A0"><!-- --></a><h2 class="sectiontitle">Environment Variables </h2> 
+      <p class="p">The following environment variables are also used by this command: 
+      </p>
+ 
+      <a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-39D31A70-DF64-43FB-96E2-4CEB50813BD9"><!-- --></a><dl class="dl parml" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-39D31A70-DF64-43FB-96E2-4CEB50813BD9"> 
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname"> OPASWITCHES</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">List of nodes, used in absence of 
+              <samp class="ph codeph">-N</samp> and 
+              <samp class="ph codeph">-L</samp> options. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname"> OPASWITCHES_FILE</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">File containing list of nodes, used in absence of 
+              <samp class="ph codeph">-N</samp> and 
+              <samp class="ph codeph">-L</samp> options. 
+              </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_MAX_PARALLEL</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Maximum concurrent operations. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><span class="keyword parmname">FF_SERIALIZE_OUTPUT</span> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Serialize output of parallel operations (yes or no). 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-59277838-75A2-4759-B9AE-DE8043B2750E"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-59277838-75A2-4759-B9AE-DE8043B2750E"><!-- --></a><h2 class="sectiontitle">Details</h2> 
+      <p class="p"><samp class="ph codeph">opaswitchadmin</samp> provides detailed logging of its
+        results. During each run, the following files are produced: 
+      </p>
+ 
+      <a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-DFB5F1C2-941F-4B93-81D6-C3F18BDF64EB"><!-- --></a><dl class="dl parml" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-DFB5F1C2-941F-4B93-81D6-C3F18BDF64EB"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">test.res</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Appended with summary results of run. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">test.log</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Appended with detailed results of run. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">save_tmp/</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Contains a directory per failed test with detailed logs. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">test_tmp*/</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Intermediate result files while test is running. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+      <p class="p">The 
+        <samp class="ph codeph">-c</samp> option removes all log files. 
+      </p>
+ 
+      <p class="p">Results from 
+        <samp class="ph codeph">opaswitchadmin</samp> are grouped into 
+        <em class="ph i">test suites</em>, 
+        <em class="ph i">test cases</em>, and 
+        <em class="ph i">test items</em>. A given run of 
+        <samp class="ph codeph">opaswitchadmin</samp> represents a single test suite. Within
+        a test suite, multiple test cases occur; typically one test case per chassis
+        being operated on. Some of the more complex operations may have multiple test
+        items per test case. Each test item represents a major step in the overall test
+        case. 
+      </p>
+ 
+      <p class="p">Each 
+        <samp class="ph codeph">opaswitchadmin</samp> run appends to 
+        <span class="ph filepath">test.res</span> and 
+        <span class="ph filepath">test.log</span> and creates temporary files in 
+        <span class="ph filepath">test_tmp$PID</span> in the current directory. the 
+        <span class="ph filepath">test.res</span> file provides an overall summary of
+        operations performed and their results. The same information is also displayed
+        while 
+        <samp class="ph codeph">opaswitchadmin</samp> is executing. 
+        <span class="ph filepath">test.log</span> contains detailed information about what
+        was performed, including the specific commands executed and the resulting
+        output. The 
+        <span class="ph filepath">test_tmp</span> directories contain temporary files that
+        reflect tests in progress (or killed). The logs for any failures are logged in
+        the 
+        <span class="ph filepath">save_temp</span> directory with a directory per failed
+        test case. If the same test case fails more than once, 
+        <span class="ph filepath">save_temp</span> retains the information from the first
+        failure. Subsequent runs of 
+        <samp class="ph codeph">opaswitchadmin</samp> are appended to 
+        <span class="ph filepath">test.log</span>. Intel recommends reviewing failures and
+        using the 
+        <samp class="ph codeph">-c</samp> option to remove old logs before subsequent runs of
+        
+        <samp class="ph codeph">opaswitchadmin</samp>. 
+        <samp class="ph codeph">opaswitchadmin</samp> also appends to 
+        <span class="ph filepath">punchlist.csv</span> for failing switches. 
+      </p>
+ 
+      <p class="p"><samp class="ph codeph">opaswitchadmin</samp> implicitly performs its operations in
+        parallel. However, as for the other tools, 
+        <span class="keyword parmname">FF_MAX_PARALLEL</span> can be exported to change the
+        degree of parallelism. Twenty (20) parallel operations is the default. 
+      </p>
+ 
+    </div>
+ 
+    <div class="section" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-97704432-E573-401C-9AFB-5FAA00CC520B"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-97704432-E573-401C-9AFB-5FAA00CC520B"><!-- --></a><h2 class="title sectiontitle">opaswitchadmin Operation Details</h2> 
+       
+      <p class="p"><strong class="ph b">(Switch)</strong> All operations against 
+        <span class="ph">Intel<sup>®</sup> Omni-Path
+          Fabric</span> externally-managed switches (except ping) securely access the
+        selected switches. If a password has been set, the 
+        <samp class="ph codeph">-S</samp> option must be used to securely prompt for a
+        password. In this case, the same password is used for all switches. 
+      </p>
+ 
+      <a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-51C3AC8A-3D17-4A5A-9747-E6915622727B"><!-- --></a><dl class="dl parml" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-51C3AC8A-3D17-4A5A-9747-E6915622727B"> 
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">reboot</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Reboots the given switches. 
+            </p>
+ 
+            <p class="p">Use the 
+              <span class="keyword parmname">FF_MAX_PARALLEL</span> value to select either a
+              rolling reboot or a parallel reboot. In most cases, a parallel reboot is
+              recommended for expediency. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">upgrade</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Upgrades the firmware on each specified switch. The 
+              <samp class="ph codeph">-P</samp> option selects a directory containing a 
+              <span class="ph filepath">.emfw</span> file or provides an explicit 
+              <span class="ph filepath">.emfw</span> file for the switches. If more than
+              one 
+              <span class="ph filepath">.emfw</span> file is specified, the operation is
+              undefined. The 
+              <samp class="ph codeph">-a</samp> option selects the desired minimal state for
+              the new firmware. Only the 
+              <samp class="ph codeph">select</samp> and 
+              <samp class="ph codeph">run</samp> options are valid for this operation. 
+            </p>
+ 
+            <p class="p">When the 
+              <samp class="ph codeph">-a</samp> option specifies 
+              <samp class="ph codeph">run</samp>, switches are rebooted. Use the 
+              <span class="keyword parmname">FF_MAX_PARALLEL</span> value to select a rolling
+              upgrade or a parallel upgrade. In most cases, a parallel upgrade is recommended
+              for expediency. 
+            </p>
+ 
+            <p class="p">The upgrade process also sets the switch name. 
+              </p>
+ 
+            <p class="p">The upgrade process is used to set, clear, or change the
+              password of the switches using the 
+              <samp class="ph codeph">-s</samp> option. When this option is specified, you
+              are prompted for a new password to be set on the switches. To reset (clear) the
+              password, press 
+              <span class="ph uicontrol">Enter</span> when prompted. This option can be
+              used to configure the switches to not require a password for subsequent
+              operations. A change to the password does not take effect until the next reboot
+              of the switch. 
+            </p>
+ 
+            <p class="p">For more information about switch firmware, refer to the 
+              <span class="ph"><em class="ph i">Intel<sup>®</sup> Omni-Path Fabric
+            Switches GUI User Guide</em></span> and 
+              <span class="ph"><em class="ph i">Intel<sup>®</sup> Omni-Path
+            Fabric Externally-Managed Switches Release Notes</em></span>. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">configure</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Runs the switch setup wizard, which asks a series of questions.
+              Once the wizard has finished prompting for configuration information, all the
+              selected switches are configured according to the entered responses. The
+              following items are configurable for all 
+              <span class="ph">Intel<sup>®</sup> Omni-Path Switch
+          100 Series</span>: 
+            </p>
+ 
+            <a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__UL_5707667782064A0A9F7ED331ED675775"><!-- --></a><ul class="ul" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__UL_5707667782064A0A9F7ED331ED675775"> 
+              <li class="li" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1168208"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1168208"><!-- --></a> MTU 
+              </li>
+ 
+              <li class="li" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1168209"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1168209"><!-- --></a> VL Capability 
+              </li>
+ 
+              <li class="li" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1175278"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1175278"><!-- --></a> VL credit distribution 
+              </li>
+ 
+              <li class="li" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1169606"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1169606"><!-- --></a> Link Width Supported 
+              </li>
+ 
+              <li class="li" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1169607"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1169607"><!-- --></a>OPA Node Description 
+              </li>
+ 
+            </ul>
+ 
+            <div class="note note" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-CCB45E28-8176-4431-A488-EABF01D055C1"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-CCB45E28-8176-4431-A488-EABF01D055C1"><!-- --></a><span class="notetitle">Note:</span>  
+              <p class="p">Typically, the Node Description is updated automatically
+                during a firmware upgrade, if it is configured properly in the 
+                <span class="ph filepath">switches</span> file. Updating the node
+                description is also available using the configure option without performing a
+                firmware upgrade. 
+              </p>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">info</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Queries the switches and displays the following information: 
+            </p>
+ 
+            <a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__UL_10BFF0E60EBB41ED8FAA8732CFCE38C5"><!-- --></a><ul class="ul" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__UL_10BFF0E60EBB41ED8FAA8732CFCE38C5"> 
+              <li class="li" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136075"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136075"><!-- --></a> Firmware version 
+              </li>
+ 
+              <li class="li" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136076"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136076"><!-- --></a> Hardware version 
+              </li>
+ 
+              <li class="li" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136077"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136077"><!-- --></a> Hardware part number, including revision
+                information 
+              </li>
+ 
+              <li class="li" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136078"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136078"><!-- --></a> Speed capability 
+              </li>
+ 
+              <li class="li" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136079"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136079"><!-- --></a> Fan status 
+              </li>
+ 
+              <li class="li" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136080"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136080"><!-- --></a> Power supply status 
+              </li>
+ 
+            </ul>
+ 
+            <p class="p">This operation also outputs a summary of various configuration
+              settings for each switch within a fabric. 
+            </p>
+ 
+            </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">hwvpd</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Queries the switches and displays the Vital Product Data (VPD)
+              including: 
+            </p>
+ 
+            <a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__UL_EB7957B582C44319911071CC9694524D"><!-- --></a><ul class="ul" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__UL_EB7957B582C44319911071CC9694524D"> 
+              <li class="li" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136083"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136083"><!-- --></a> Serial number 
+              </li>
+ 
+              <li class="li" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136084"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136084"><!-- --></a> Part number 
+              </li>
+ 
+              <li class="li" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136085"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136085"><!-- --></a> Model name 
+              </li>
+ 
+              <li class="li" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136086"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136086"><!-- --></a> Hardware version 
+              </li>
+ 
+              <li class="li" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136087"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136087"><!-- --></a> Manufacturer 
+              </li>
+ 
+              <li class="li" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136088"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136088"><!-- --></a> Product description 
+              </li>
+ 
+              <li class="li" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136089"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136089"><!-- --></a> Manufacturer ID 
+              </li>
+ 
+              <li class="li" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136090"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136090"><!-- --></a> Manufacture date 
+              </li>
+ 
+              <li class="li" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136091"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__XX1136091"><!-- --></a> Manufacture time 
+              </li>
+ 
+            </ul>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">ping</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Issues an inband packet to the switches to test for presence and
+              reports on presence/non-presence of each selected switch. 
+            </p>
+ 
+            <div class="note note" id="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-AB4571AC-C1D0-43D4-BAE9-B58DBEFDAB84"><a name="GUID-1925EC96-8D1E-4874-BFC3-A4C291911474__GUID-AB4571AC-C1D0-43D4-BAE9-B58DBEFDAB84"><!-- --></a><span class="notetitle">Note:</span>  
+              <p class="p">It is not necessary to supply a password (using 
+                <samp class="ph codeph">-S</samp>) for this operation. 
+              </p>
+ 
+            </div>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">fwverify</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Verifies the integrity of the firmware images in the EEPROMs of
+              the selected switches. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">capture</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Gets switch hardware and firmware state capture of all nodes. 
+            </p>
+ 
+          </dd>
+ 
+         
+         
+          <dt class="dt pt dlterm"><samp class="ph codeph">getconfig</samp> 
+          </dt>
+ 
+          <dd class="dd pd"> 
+            <p class="p">Gets port configurations of an externally managed switch. This
+              operation also outputs a summary of various configuration settings for each
+              switch within a fabric. For example, in a fabric with seven switches, a report
+              similar to the following is displayed. 
+            </p>
+ 
+            <p class="p">This summary helps determine if all switches have the same
+              configuration, and if not, indicates how many have each value. If some of the
+              values are not as expected, view the 
+              <span class="ph filepath">test.res</span> file to identify which switches
+              have the undesirable values. 
+            </p>
+ 
+          </dd>
+ 
+         
+      </dl>
+ 
+    </div>
+ 
+  </div>
+ 
+<div xmlns:xs="http://www.w3.org/2001/XMLSchema" id="custom-footer"><hr><p class="copyright-notice">*Other names and brands may be claimed as the property of others.</p><p class="copyright-notice">Revised: January 2016</p><p class="copyright-notice">Copyright © 2016 Intel Corporation. All rights reserved.</p></div>
+</body>
+</html>

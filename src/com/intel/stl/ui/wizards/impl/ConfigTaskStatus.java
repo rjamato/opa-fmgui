@@ -35,6 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.3  2015/12/09 16:12:36  jijunwan
+ *  Archive Log:    PR 131944 - If "# Worst Nodes" is <10 or >100, there is a Entry Validation warning for the Refresh Rate
+ *  Archive Log:
+ *  Archive Log:    - improved ConfigTaskStatus to hold errors
+ *  Archive Log:    - changed  ConfigureSubnetTask to fill in errors into ConfigTaskStatus
+ *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/08/17 18:54:10  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -51,16 +57,22 @@
 
 package com.intel.stl.ui.wizards.impl;
 
+import java.util.List;
+
 public class ConfigTaskStatus {
 
     private ConfigTaskType type;
 
     private boolean status;
 
-    public ConfigTaskStatus(ConfigTaskType type, boolean status) {
+    private final List<? extends Exception> errors;
+
+    public ConfigTaskStatus(ConfigTaskType type, boolean status,
+            List<? extends Exception> errors) {
 
         this.type = type;
         this.status = status;
+        this.errors = errors;
     }
 
     public ConfigTaskType getType() {
@@ -77,6 +89,13 @@ public class ConfigTaskStatus {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    /**
+     * @return the errors
+     */
+    public List<? extends Exception> getErrors() {
+        return errors;
     }
 
 }

@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.3  2015/10/23 19:09:33  jijunwan
+ *  Archive Log:    PR 129357 - Be able to hide inactive ports
+ *  Archive Log:    - changed input argument to FVTreeModel rather than TreeModel
+ *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/08/17 18:54:25  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -52,13 +56,13 @@
 package com.intel.stl.ui.monitor.view;
 
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.TreeModel;
 
 import com.intel.stl.ui.monitor.TreeTypeEnum;
+import com.intel.stl.ui.monitor.tree.FVTreeModel;
 
 public interface ISearchView {
 
-    void setTreeModel(TreeTypeEnum pTreeType, TreeModel pModel, int nodeCount);
+    void setTreeModel(TreeTypeEnum pTreeType, FVTreeModel pModel, int nodeCount);
 
     void addTreeSelectionListener(TreeSelectionListener listener);
 

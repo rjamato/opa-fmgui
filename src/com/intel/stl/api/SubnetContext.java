@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.21  2015/12/17 21:51:10  jijunwan
+ *  Archive Log:    PR 132124 - Newly created VF not displayed after reboot of SM
+ *  Archive Log:    - improved the arch to do cache reset
+ *  Archive Log:
  *  Archive Log:    Revision 1.20  2015/08/17 18:48:51  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - change backend files' headers
@@ -321,4 +325,11 @@ public interface SubnetContext {
      * @return deleted flag
      */
     boolean isDeleted();
+
+    /**
+     * 
+     * <i>Description:</i> reset to clear all cached data
+     * 
+     */
+    void reset();
 }

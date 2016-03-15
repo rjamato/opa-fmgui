@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.15  2015/11/09 20:41:23  fernande
+ *  Archive Log:    PR130231 - Cannot delete subnet from Wizard if subnet name is "Unknown Subnet". Some refactoring to decouple tasks from main wizard controller
+ *  Archive Log:
  *  Archive Log:    Revision 1.14  2015/08/17 18:54:10  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -118,7 +121,11 @@ import com.intel.stl.ui.wizards.view.subnet.SubnetWizardView;
 
 public interface IMultinetWizardListener extends IWizardListener {
 
-    public void onNewSubnet();
+    void onNewSubnet();
+
+    void onSelectSubnet(SubnetDescription subnet);
+
+    boolean haveUnsavedChanges();
 
     public void onTab(String tabName);
 
@@ -133,12 +140,8 @@ public interface IMultinetWizardListener extends IWizardListener {
 
     public List<SubnetDescription> getSubnets();
 
-    public List<IMultinetWizardTask> getTasks();
-
     @Override
     public IMultinetWizardView getView();
-
-    public SubnetDescription getNewSubnet();
 
     public SubnetDescription getCurrentSubnet();
 
@@ -150,13 +153,9 @@ public interface IMultinetWizardListener extends IWizardListener {
 
     public void setCurrentTask(int taskPosition);
 
-    public void updateModels(SubnetDescription subnet);
-
     public void clearTasks();
 
     public boolean isNewWizard();
-
-    public void setCurrentSubnet(SubnetDescription subnet);
 
     public String getHostIp(String hostName);
 
@@ -175,8 +174,6 @@ public interface IMultinetWizardListener extends IWizardListener {
     public void resetWorkerStatus();
 
     public SubnetWizardView getSubnetView();
-
-    public void clearSubnetFactories(SubnetDescription subnet);
 
     public void cancelConfiguration();
 

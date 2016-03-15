@@ -35,6 +35,14 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.44  2015/12/17 21:51:09  jijunwan
+ *  Archive Log:    PR 132124 - Newly created VF not displayed after reboot of SM
+ *  Archive Log:    - improved the arch to do cache reset
+ *  Archive Log:
+ *  Archive Log:    Revision 1.43  2015/12/17 21:07:32  jijunwan
+ *  Archive Log:    PR 132124 - Newly created VF not displayed after reboot of SM
+ *  Archive Log:    - added code to clear vf and dg list cache
+ *  Archive Log:
  *  Archive Log:    Revision 1.42  2015/08/17 18:49:03  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - change backend files' headers
@@ -343,7 +351,7 @@ public class PerformanceApi implements IPerformanceApi {
      * @see com.intel.hpc.stl.api.IPerformanceApi#getGroupList()
      */
     @Override
-    public List<GroupListBean> getGroupList() {
+    public synchronized List<GroupListBean> getGroupList() {
         if (groupList == null) {
             try {
                 groupList = helper.getGroupList();
@@ -620,7 +628,7 @@ public class PerformanceApi implements IPerformanceApi {
      * @see com.intel.stl.api.performance.IPerformanceApi#getVFList()
      */
     @Override
-    public List<VFListBean> getVFList() {
+    public synchronized List<VFListBean> getVFList() {
         if (vfList == null) {
             try {
                 vfList = helper.getVFList();
@@ -1009,6 +1017,18 @@ public class PerformanceApi implements IPerformanceApi {
 
     protected ConcurrentLinkedQueue<GroupInfoBean> getGroupInfoSaveBuffer() {
         return groupInfoSaveBuffer;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.api.performance.IPerformanceApi#reset()
+     */
+    @Override
+    public synchronized void reset() {
+        vfList = null;
+        groupList = null;
+        // will reset cacheMgr in SubnetContext.
     }
 
     /*

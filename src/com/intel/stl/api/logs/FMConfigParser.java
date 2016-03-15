@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.4  2015/11/18 23:48:08  rjtierne
+ *  Archive Log:    PR 130965 - ESM support on Log Viewer
+ *  Archive Log:    - Updated getLogFilePath() to only retrieve log file if it can't be obtained from FMConfigHelper
+ *  Archive Log:
  *  Archive Log:    Revision 1.3  2015/08/17 18:48:54  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - change backend files' headers
@@ -110,8 +114,12 @@ public class FMConfigParser {
         // Set up XPath and FM configuration file
         xPath = xPathFactory.newXPath();
         try {
-            fmConfigHelper.fetchConfigFile(password);
             fmConfigFile = fmConfigHelper.getConfFile();
+            if (fmConfigFile == null) {
+                fmConfigHelper.fetchConfigFile(password);
+                fmConfigFile = fmConfigHelper.getConfFile();
+            }
+
         } catch (Exception e) {
             log.error(e.getMessage());
         }

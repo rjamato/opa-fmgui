@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.3  2015/12/16 21:44:26  jijunwan
+ *  Archive Log:    PR 132110 - Klocwork issues
+ *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/08/17 18:54:10  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -57,6 +60,10 @@ import com.intel.stl.api.IMessage;
 public class WizardValidationException extends FMException {
 
     private static final long serialVersionUID = 7273129760818821705L;
+
+    public WizardValidationException() {
+        super((Throwable) null);
+    }
 
     public WizardValidationException(IMessage message) {
         super(message);

@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.5  2015/12/07 18:43:02  jijunwan
+ *  Archive Log:    PR 131909 - FM GUI does not update switch names after switch name is changed.
+ *  Archive Log:    - added cache clear for GroupConf
+ *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/09/20 23:40:02  jijunwan
  *  Archive Log:    PR 130523 - Performance Event window reports negative when nodes are rebooted
  *  Archive Log:    - improved cache to handle new node
@@ -150,6 +154,22 @@ public class GroupConfCacheImpl extends MemoryCache<Void> implements
     @Override
     public boolean isCacheReady() {
         return cacheReady.get();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.intel.stl.configuration.MemoryCache#reset()
+     */
+    @Override
+    public void reset() {
+        super.reset();
+        synchronized (groupConfigs) {
+            groupConfigs.clear();
+        }
+        synchronized (vfConfigs) {
+            vfConfigs.clear();
+        }
     }
 
     /*

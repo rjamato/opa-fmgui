@@ -34,6 +34,10 @@
  *  Archive Source: $Source$
  * 
  *  Archive Log: $Log$
+ *  Archive Log: Revision 1.50  2015/12/16 14:26:04  jijunwan
+ *  Archive Log: PR 132071 - Error on initial CLI launch of FM GUI in RHEL 7.1
+ *  Archive Log: - fixed Klocwork issue
+ *  Archive Log:
  *  Archive Log: Revision 1.49  2015/09/02 15:56:22  fernande
  *  Archive Log: PR 130220 - FM GUI "about" window displays unmatched version and build #. Passing the OPA FM version thru the manifest.
  *  Archive Log:
@@ -950,10 +954,13 @@ public class DatabaseManagerImpl implements DatabaseManager, AppComponent {
                     SubnetRecord newRec =
                             DatabaseMigrationHelper.insertSubnetRecord(em,
                                     subnet);
-                    for (UserRecord user : users) {
-                        if (user.getId().getFabricId() == id) {
-                            user.getId().setFabricId(newRec.getId());
-                            DatabaseMigrationHelper.insertUserRecord(em, user);
+                    if (users != null) {
+                        for (UserRecord user : users) {
+                            if (user.getId().getFabricId() == id) {
+                                user.getId().setFabricId(newRec.getId());
+                                DatabaseMigrationHelper.insertUserRecord(em,
+                                        user);
+                            }
                         }
                     }
                 }

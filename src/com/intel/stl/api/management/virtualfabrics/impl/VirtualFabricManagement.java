@@ -35,6 +35,16 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.6  2015/11/10 18:43:59  jijunwan
+ *  Archive Log:    PR 131078 - Default virtual fabric un-editable
+ *  Archive Log:    - removed Default from reserved item list
+ *  Archive Log:
+ *  Archive Log:    Revision 1.5  2015/10/26 20:19:10  jijunwan
+ *  Archive Log:    PR 131169 - Unable to delete Device Groups created within the opafm.xml file
+ *  Archive Log:    - introduced ChangeManager to maintain changes
+ *  Archive Log:    - changed changes from set to list because when the changes depend on each other, the order does matter
+ *  Archive Log:    - changed xxxManagement to use ChangeManager
+ *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/08/17 18:49:46  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - change backend files' headers
@@ -88,6 +98,7 @@ import org.w3c.dom.NodeList;
 
 import com.intel.stl.api.IMessage;
 import com.intel.stl.api.StringUtils;
+import com.intel.stl.api.management.ChangeManager;
 import com.intel.stl.api.management.DuplicateNameException;
 import com.intel.stl.api.management.FMConfHelper;
 import com.intel.stl.api.management.XMLUtils;
@@ -105,14 +116,14 @@ public class VirtualFabricManagement implements IVirtualFabricManagement {
         private static final long serialVersionUID = -8507198541424973196L;
 
         {
-            add("Default");
+            // add("Default");
             add("Admin");
         }
     };
 
     private final FMConfHelper confHelp;
 
-    private final Set<String> changes = new HashSet<String>();
+    private final ChangeManager changeMgr = new ChangeManager();
 
     /**
      * Description:
@@ -222,7 +233,7 @@ public class VirtualFabricManagement implements IVirtualFabricManagement {
             uniqueNameCheck(null, vf.getName());
             addVirtualFabric(confFile, confFile, vf);
             log.info("Added Virtual Fabric " + vf);
-            changes.add(vf.getName());
+            changeMgr.addChange(vf.getName());
         } catch (Exception e) {
             throw createVirtualFabricException(STLMessages.STL63022_ADD_VF_ERR,
                     e, vf.getName(), confHelp.getHost(),
@@ -272,7 +283,7 @@ public class VirtualFabricManagement implements IVirtualFabricManagement {
             File confFile = confHelp.getConfFile();
             removeVirtualFabric(confFile, confFile, name);
             log.info("Removed application '" + name + "'");
-            changes.add(name);
+            changeMgr.addChange(name);
         } catch (Exception e) {
             throw createVirtualFabricException(
                     STLMessages.STL63023_REMOVE_VF_ERR, e, name,
@@ -320,8 +331,8 @@ public class VirtualFabricManagement implements IVirtualFabricManagement {
             }
             updateVirtualFabric(confFile, confFile, oldName, vf, false);
             log.info("Updated Virtual Fabric " + vf);
-            changes.add(oldName);
-            changes.add(vf.getName());
+            changeMgr.addChange(oldName);
+            changeMgr.addChange(vf.getName());
         } catch (Exception e) {
             throw createVirtualFabricException(
                     STLMessages.STL63024_UPDATE_VF_ERR, e, vf.getName(),
@@ -344,8 +355,8 @@ public class VirtualFabricManagement implements IVirtualFabricManagement {
             File confFile = confHelp.getConfFile();
             updateVirtualFabric(confFile, confFile, oldName, vf, true);
             log.info("Added or updated Virtual Fabric " + vf);
-            changes.add(oldName);
-            changes.add(vf.getName());
+            changeMgr.addChange(oldName);
+            changeMgr.addChange(vf.getName());
         } catch (Exception e) {
             throw createVirtualFabricException(
                     STLMessages.STL63025_ADDUPDATE_VF_ERR, e, vf.getName(),
@@ -419,18 +430,8 @@ public class VirtualFabricManagement implements IVirtualFabricManagement {
         return new VirtualFabricException(msg, error, args);
     }
 
-    /**
-     * 
-     * <i>Description:</i>
-     * 
-     * @return the names of the VF changed
-     */
-    public Set<String> getChanges() {
-        return changes;
-    }
-
-    public void resetChanges() {
-        changes.clear();
+    public boolean hasChanges() {
+        return !changeMgr.getChanges().isEmpty();
     }
 
     public void applyChangesTo(VirtualFabricManagement target)
@@ -440,7 +441,7 @@ public class VirtualFabricManagement implements IVirtualFabricManagement {
         for (VirtualFabric vf : vfs) {
             map.put(vf.getName(), vf);
         }
-        for (String change : changes) {
+        for (String change : changeMgr.getChanges()) {
             VirtualFabric cur = map.get(change);
             if (cur == null) {
                 target.removeVirtualFabric(change);
