@@ -11,15 +11,15 @@
 
 Name: IntelOPA-FMGUI
 Version: 10_0_0_0_2
-Release: beta
+Release: prq
 Summary: Fabric Manager Graphical User Interface
 Group: Applications/System
-ExclusiveArch: x86_64 ix86 
-BuildArch: x86_64 ix86
+BuildArch: noarch
 Source0: IntelOPA-FMGUI-10_0_0_0_2.source.tar 
 Buildroot: %{_topdir}/BUILD/%{name}-%{version}-buildroot
 URL: www.intel.com
 Requires: libgnome
+Requires: jre >= 1.7
 License: BSD 3-clause "New" or "Revised" License
 
 %description
@@ -123,7 +123,7 @@ fi
 export PATH
 echo "PATH:                    " $PATH
 cd %{name}-%{version}
-ant -v build
+gradle copyDeps build
 if  [ -e "%{_topdir}/%{appjar}" ]; then
     cp %{_topdir}/%{appjar} .
 fi
@@ -133,6 +133,7 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}%{_javadir}/%{appfolder}
 mkdir -p %{buildroot}%{_javadir}/%{appfolder}/lib
 mkdir -p %{buildroot}%{_javadir}/%{appfolder}/help
+mkdir -p %{buildroot}%{_javadir}/%{appfolder}/util
 mkdir -p %{buildroot}/usr/local/bin
 mkdir -p %{buildroot}/usr/local/share/applications
 mkdir -p %{buildroot}/usr/local/share/desktop-directories
@@ -143,9 +144,15 @@ mkdir -p %{buildroot}/var/opt/opafm/fmgui
 cp -a %{appdir}/%{appjar} %{buildroot}%{_javadir}/%{appfolder}
 cp -a %{appdir}/LICENSE %{buildroot}%{_javadir}/%{appfolder}
 cp -a %{appdir}/THIRD-PARTY-README %{buildroot}%{_javadir}/%{appfolder}
+cp -a %{appdir}/Pre-Release_Notice_v.2.pdf %{buildroot}%{_javadir}/%{appfolder}
 cp -a %{appdir}/Third_Party_Copyright_Notices_and_Licenses.docx %{buildroot}%{_javadir}/%{appfolder}
 cp -a %{appdir}/lib/* %{buildroot}%{_javadir}/%{appfolder}/lib
-cp -a %{appdir}/help/* %{buildroot}%{_javadir}/%{appfolder}/help
+cp -a %{appdir}/target/help/* %{buildroot}%{_javadir}/%{appfolder}/help
+cp %{appdir}/help/*.html %{buildroot}%{_javadir}/%{appfolder}/help
+cp %{appdir}/help/LICENSE %{buildroot}%{_javadir}/%{appfolder}/help
+cp -a %{appdir}/util/fmguiclear.sh %{buildroot}%{_javadir}/%{appfolder}/util
+cp -a %{appdir}/util/postsetup.sh %{buildroot}%{_javadir}/%{appfolder}/util
+cp -a %{appdir}/util/ClearFMGUICache.desktop %{buildroot}%{_javadir}/%{appfolder}/util
 cp -a %{appdir}/install/fmgui.sh %{buildroot}/usr/local/bin/fmgui
 cp -a %{appdir}/install/fmguivars.sh %{buildroot}/etc/profile.d
 cp -a %{appdir}/install/fmgui.desktop %{buildroot}/usr/local/share/applications
