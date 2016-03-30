@@ -7,6 +7,7 @@ allprojects {
     sourceCompatibility = 1.7
 
     repositories {
+        xmvn()
         mavenCentral()
     }
 
@@ -27,7 +28,7 @@ project(':gritty') {
 
     dependencies {
         grittyLibs group: 'log4j', name: 'log4j', version: '1.2.14', ext: 'jar'
-        compile group: 'com.jcraft', name: 'jsch', version: '0.1.51', ext: 'jar'
+        compile group: 'com.jcraft', name: 'jsch', version: '0.1.53', ext: 'jar'
     }
 
     sourceSets{
@@ -52,15 +53,19 @@ project(':gritty') {
     compile group: 'org.hsqldb', name: 'hsqldb', version: '2.3.2', ext: 'jar'
     compile group: 'org.jboss', name: 'jandex', version: '1.1.0.Final', ext: 'jar'
     compile group: 'com.sun.mail', name: 'javax.mail', version: '1.5.2', ext: 'jar'
-    compile group: 'com.jcraft', name: 'jsch', version: '0.1.51', ext: 'jar'
+    compile group: 'com.jcraft', name: 'jsch', version: '0.1.53', ext: 'jar'
     compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: '1.7.7', ext: 'jar'
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.7', ext: 'jar'
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.2', ext: 'jar'
     compile group: 'ch.qos.logback', name: 'logback-core', version: '1.1.2', ext: 'jar'
     compile group: 'net.engio', name: 'mbassador', version: '1.1.9', ext: 'jar'
     compile group: 'org.jfree', name: 'jfreechart', version: '1.0.17', ext: 'jar'
-    compile group: 'com.github.monkeysintown', name: 'jgraphx', version: '3.3.1.1', ext: 'jar'
+    compile group: 'com.mxgraph', name: 'jgraphx', version: '3.5.0.0', ext: 'jar'
+    compile group: 'org.swinglabs.swingx', name: 'swingx-action', version: '1.6.4', ext: 'jar'
     compile group: 'org.swinglabs.swingx', name: 'swingx-all', version: '1.6.4', ext: 'jar'
+    compile group: 'org.swinglabs.swingx', name: 'swingx-autocomplete', version: '1.6.4', ext: 'jar'
+    compile group: 'org.swinglabs.swingx', name: 'swingx-core', version: '1.6.4', ext: 'jar'
+    compile group: 'org.swinglabs.swingx', name: 'swingx-plaf', version: '1.6.4', ext: 'jar'
     compile group: 'org.jfree', name: 'jcommon', version: '1.0.21', ext: 'jar'
     compile group: 'javax.help', name: 'javahelp', version: '2.0.05', ext: 'jar'
 
