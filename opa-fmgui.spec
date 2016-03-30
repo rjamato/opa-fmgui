@@ -19,9 +19,6 @@ URL:            www.intel.com
 # 3) git archive --format=tar --prefix=opa-fmgui-10.0.0.0.3/ \
 # 1eb32a3ad39bcdde9b4bf96c991f4af9fa3da73b | gzip > opa-fmgui-10.0.0.0.3.tar.gz
 Source0:        opa-fmgui-10.0.0.0.3.tar.gz 
-Patch0:         
-Patch1:         
-Patch2:        
 BuildArch:      noarch
 
 BuildRequires: gradle-local
