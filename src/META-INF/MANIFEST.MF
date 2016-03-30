@@ -37,6 +37,7 @@ Class-Path: . lib/antlr.jar
  lib/swingx-all.jar 
  lib/swingx-autocomplete.jar 
  lib/swingx-plaf.jar 
+ lib/swingx-core.jar 
  help/fm-gui-consolehelp.jar 
  help/fm-gui-onlinehelp.jar 
  lib/javahelp.jar
