@@ -22,8 +22,8 @@ Class-Path: . lib/antlr.jar
  lib/javax.mail.jar 
  lib/jboss-logging.jar 
  lib/jboss-logging-annotations.jar 
- lib/jboss-transaction-api_1.2_spec.jar 
- lib/jcommon.jar
+ lib/jboss-transaction-api_1.2_spec.jar  
+ lib/jcommon.jar 
  lib/jfreechart.jar 
  lib/jgraphx.jar 
  lib/jhall.jar 
@@ -33,10 +33,10 @@ Class-Path: . lib/antlr.jar
  lib/logback-core.jar 
  lib/mbassador.jar 
  lib/slf4j-api.jar 
- lib/swingx-action.jar
+ lib/swingx-action.jar 
  lib/swingx-all.jar 
- lib/swingx-autocomplete.jar
- lib/swingx-plaf.jar
+ lib/swingx-autocomplete.jar 
+ lib/swingx-plaf.jar 
  help/fm-gui-consolehelp.jar 
  help/fm-gui-onlinehelp.jar 
  lib/javahelp.jar
