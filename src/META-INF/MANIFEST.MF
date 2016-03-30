@@ -35,10 +35,18 @@ Class-Path: . lib/antlr.jar
  lib/slf4j-api.jar 
  lib/swingx-action.jar 
  lib/swingx-all.jar 
- lib/swingx-autocomplete.jar 
- lib/swingx-plaf.jar 
+ lib/swingx-autocomplete.jar  
+ lib/swingx-beaninfo.jar 
+ lib/swingx-common.jar 
  lib/swingx-core.jar 
+ lib/swingx-demos.jar 
+ lib/swingx-experimental.jar 
+ lib/swingx-graphics.jar 
+ lib/swingx-mavensupport.jar 
  lib/swingx-painters.jar 
+ lib/swingx-plaf.jar 
+ lib/swingx-testsupport.jar 
+ lib/swingx-unused.jar 
  lib/javahelp2.jar 
  help/fm-gui-consolehelp.jar 
  help/fm-gui-onlinehelp.jar 
