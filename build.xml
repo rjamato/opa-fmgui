@@ -13,7 +13,7 @@
 	<target name="init" description="Creates the build directory structure">
 	    <mkdir dir="${target}"/>
 	    <mkdir dir="${target}/classes"/>
-        <condition property="build.javac" value="${env.OPA_JAVA}\bin\javac" else="${env.JAVA_HOME}\bin\javac">
+        <condition property="build.javac" value="${env.OPA_JAVA}\bin\javac" else="\usr\bin\javac">
             <isset property="env.OPA_JAVA"/>
         </condition>
 	</target>
