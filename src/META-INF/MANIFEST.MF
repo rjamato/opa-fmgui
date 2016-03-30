@@ -38,9 +38,9 @@ Class-Path: . lib/antlr.jar
  lib/swingx-autocomplete.jar 
  lib/swingx-plaf.jar 
  lib/swingx-core.jar 
+ lib/javahelp.jar 
  help/fm-gui-consolehelp.jar 
  help/fm-gui-onlinehelp.jar 
- lib/javahelp.jar
 
 Name: com/intel/stl/
 Implementation-Vendor: Intel Corporation
