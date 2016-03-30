@@ -8,7 +8,7 @@ mkdir -p $HOME/.local/share/applications
 \cp -f $THISDIR/ClearFMGUICache.desktop $HOME/.local/share/applications/ClearFMGUICache.desktop
 chmod 744 $HOME/.local/share/applications/ClearFMGUICache.desktop
 mkdir -p $HOME/.local/share/desktop-directories
-cp -a /usr/local/share/desktop-directories/Fabric.directory $HOME/.local/share/desktop-directories/Fabric.directory
+cp -a /usr/share/desktop-directories/Fabric.directory $HOME/.local/share/desktop-directories/Fabric.directory
 mkdir -p $HOME/.config/menus/applications-merged
 cp -a /etc/xdg/menus/applications-merged/Fabric.menu $HOME/.config/menus/applications-merged/Fabric.menu
 
