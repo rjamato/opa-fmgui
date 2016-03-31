@@ -1062,7 +1062,13 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
         FabricView view = new FabricView(new FVMainFrame(subnetName));
 
         MBassador<IAppEvent> eventBus =
-                new MBassador<IAppEvent>(BusConfiguration.Default());
+                new MBassador<IAppEvent>(new IPublicationErrorHandler() {
+                    @Override
+                    public void handleError(PublicationError error) {
+                        log.error(null, error);
+                        error.getCause().printStackTrace();
+                    }
+                });
         IFabricController controller =
                 new FabricController(subnetName, view, this, eventBus);
         return controller;
