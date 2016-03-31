@@ -50,78 +50,12 @@ source tool used for dependency management and build.  It can be
 downloaded from http://gradle.org 
 
 Java Development Kit
-The Fabric Manager GUI build requires a Java Development Kit (JDK) 7. 
+The Fabric Manager GUI build requires a Java Development Kit (JDK) 7 or higher. 
 The JDK 7 binaries can be downloaded from Oracle's Java SE Downloads site.
 http://www.oracle.com/technetwork/java/javase/downloads/index.html
 You should set the environment variable JAVA_HOME to the location of the JDK
 installation; this is the pathname of the folder that contains folders bin,
 lib and include.
 
-Building the Jar
 
-After the build requirements have been met, the steps to generate 
-the FM GUI jar are straightforward:
-
-Open a terminal/command window at the location where you unzipped 
-the FM GUI distribution source. We will refer to this location as FMGUI_SRC
-Start the build process by entering the following command:
-
-	gradle copyDeps build
-
-Wait for the successful completion of the build process:
-
-    BUILD SUCCESSFUL
-    Total time: n seconds
-
-The build will produce the fmgui.jar file which will appear in {FMGUI_SRC} 
-directory.  The build will also download the necessary compile and runtime
-dependecies and copy them into the {FMGUI_SRC}/lib directory to make them
-available for the FM GUI application during runtime.
-
-Type the following command to start the application:
-
-    ./fmgui.sh
-
-Creating RPMs
-The opa-fmgui.spec file was created to act as part of Intel's internal build process
-but can be used manually create RPMs through the following steps.
-
-Change directory to the level above the opa-fmgui directory
-
-       cd ..
-
-Change the name of the directory from opa-fmgui to IntelOPA-FMGUI-10_0_0_0_2
-
-       mv opa-fmgui IntelOPA-FMGUI-10_0_0_0_2
-
-Create a tar file of the opa-fmgui sources in the rpmbuild/SOURCES directory
-
-       tar -cvf $HOME/rpmbuild/SOURCES/IntelOPA-FMGUI-10_0_0_0_2.source.tar IntelOPA-FMGUI-10_0_0_0_2
-
-Change directory back into the opa-fmgui directory now called IntelOPA-FMGUI-10_0_0_0_2
-
-       cd IntelOPA-FMGUI-10_0_0_0_2
-
-Create RPM build environment:
-cd {$HOME}
-mkdir -p ~/rpmbuild/{RPMS,SRPMS,BUILD,SOURCES,SPECS,tmp}
-cat <<EOF >~/.rpmmacros
-%_topdir   %(echo $HOME)/rpmbuild
-%_tmppath  %{_topdir}/tmp
-EOF
-
-Copy tar file to the SOURCES directory:
-cp {path-to-tar}/IntelOPA-FMGUI-10_0_0_0_2.source.tar ~/rpmbuild/SOURCES/
-
-Copy the spec file from the opa-fmgui directory into SPECS directory:
-cp {opa-fmgui}/fmgui.spec ~/rpmbuild/SPECS
-
-Build the rpm:
-rpmbuild -ba ~/rpmbuild/SPECS/fmgui.spec
-
-Upon completion you’ll find the rpm in ~/rpmbuild/RPMS directory.
-
-Put the directory back to its original name
-
-       cd ..; mv IntelOPA-FMGUI-10_0_0_0_2 opa-fmgui; cd opa-fmgui
 
