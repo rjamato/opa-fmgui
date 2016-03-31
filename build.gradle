@@ -58,7 +58,7 @@ project(':gritty') {
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.7', ext: 'jar'
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.2', ext: 'jar'
     compile group: 'ch.qos.logback', name: 'logback-core', version: '1.1.2', ext: 'jar'
-    compile group: 'net.engio', name: 'mbassador', version: '1.1.9', ext: 'jar'
+    compile group: 'net.engio', name: 'mbassador', version: '1.2.4', ext: 'jar'
     compile group: 'org.jfree', name: 'jfreechart', version: '1.0.17', ext: 'jar'
     compile group: 'com.mxgraph', name: 'jgraphx', version: '3.5.0.0', ext: 'jar'
     compile group: 'org.swinglabs.swingx', name: 'swingx-action', version: '1.6.5', ext: 'jar'
