@@ -521,10 +521,9 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JFrame;
 import javax.swing.SwingWorker;
 
-import net.engio.mbassy.IPublicationErrorHandler;
-import net.engio.mbassy.PublicationError;
 import net.engio.mbassy.bus.MBassador;
-import net.engio.mbassy.bus.config.BusConfiguration;
+import net.engio.mbassy.bus.error.IPublicationErrorHandler;
+import net.engio.mbassy.bus.error.PublicationError;
 import net.engio.mbassy.listener.Handler;
 
 import org.slf4j.Logger;
@@ -698,13 +697,6 @@ public class FabricController extends
     }
 
     protected void setupEventBus() {
-        eventBus.addErrorHandler(new IPublicationErrorHandler() {
-            @Override
-            public void handleError(PublicationError error) {
-                log.error(null, error);
-                error.getCause().printStackTrace();
-            }
-        });
         eventBus.subscribe(this);
     }
 
@@ -1184,7 +1176,13 @@ public class FabricController extends
         } finally {
             init();
             eventBus.shutdown();
-            eventBus = new MBassador<IAppEvent>(BusConfiguration.Default());
+            eventBus = new MBassador<IAppEvent>(new IPublicationErrorHandler() {
+                @Override
+                public void handleError(PublicationError error) {
+                    log.error(null, error);
+                    error.getCause().printStackTrace();
+                }
+            });
             Context context = getContext();
             if (context != null) {
                 clearContext(context);
