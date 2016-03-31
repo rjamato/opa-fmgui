@@ -275,7 +275,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.SwingWorker;
 
 import net.engio.mbassy.bus.MBassador;
-import net.engio.mbassy.bus.config.BusConfiguration;
+import net.engio.mbassy.bus.error.IPublicationErrorHandler;
+import net.engio.mbassy.bus.error.PublicationError;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
