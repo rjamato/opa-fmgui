@@ -3,8 +3,8 @@
 #
 # Copyright (c) 2015 Intel Corporation
 #
-%define appfolder fmgui
-%define appjar fmgui.jar
+%global appfolder fmgui
+%global appjar fmgui.jar
 
 Name:           opa-fmgui
 Version:        10.0.0.0.3
@@ -119,5 +119,5 @@ fi
 %license LICENSE
 
 %changelog
-* Thu Mar 24 2016 YOUR REAL NAME <business_email@intel.com> - 10.0.0.0.3-1
+* Fri Apr 01 2016 Robert Amato <robert.amato@intel.com> - 10.0.0.0.3-1
 - Import fmgui for Fedora
