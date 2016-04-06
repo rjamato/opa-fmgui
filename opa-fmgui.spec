@@ -72,7 +72,6 @@ invoking the Bash script fmgui.
 
 install -m 755 -pDt %{buildroot}/%{_javadir}/%{appfolder} %{appjar}
 install -m 644 -pDt %{buildroot}/%{_javadir}/%{appfolder} THIRD-PARTY-README
-install -m 644 -pDt %{buildroot}/%{_javadir}/%{appfolder} Pre-Release_Notice_v.2.pdf
 install -m 644 -pDt %{buildroot}/%{_javadir}/%{appfolder} Third_Party_Copyright_Notices_and_Licenses.docx
 # All jar files provided by other RPMs had been prevented from scanning for deps.
 install -m 755 -pDt %{buildroot}/%{_javadir}/%{appfolder}/lib lib/*
