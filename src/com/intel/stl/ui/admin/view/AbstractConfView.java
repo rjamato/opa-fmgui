@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: AbstrctConfView.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.13  2016/03/03 17:06:28  jijunwan
+ *  Archive Log:    PR 133087 - Writing VFs on multiplane are written in common section
+ *  Archive Log:
+ *  Archive Log:    - improved login panel with note
+ *  Archive Log:
  *  Archive Log:    Revision 1.12  2015/11/18 23:54:48  rjtierne
  *  Archive Log:    PR 130965 - ESM support on Log Viewer
  *  Archive Log:    - Disable host field for configuration tasks
@@ -80,7 +85,7 @@
  *  Archive Log:    init version to support Application management
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: jijunwan
  *
@@ -91,7 +96,11 @@ package com.intel.stl.ui.admin.view;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -100,6 +109,8 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.ListModel;
+
+import org.jdesktop.swingx.JXLabel;
 
 import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.ui.admin.IConfListener;
@@ -145,7 +156,7 @@ public abstract class AbstractConfView<T, E extends AbstractEditorPanel<T>>
 
     /**
      * Description:
-     * 
+     *
      */
     public AbstractConfView(String name) {
         super();
@@ -170,8 +181,8 @@ public abstract class AbstractConfView<T, E extends AbstractEditorPanel<T>>
 
             JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
             selectionPanel = createItemSelectionPanel();
-            selectionPanel.setBorder(BorderFactory
-                    .createEmptyBorder(5, 5, 5, 5));
+            selectionPanel
+                    .setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             pane.setLeftComponent(selectionPanel);
 
             JPanel panel = new JPanel(new BorderLayout(5, 5));
@@ -198,10 +209,49 @@ public abstract class AbstractConfView<T, E extends AbstractEditorPanel<T>>
         if (loginCardPanel == null) {
             loginCardPanel = new JPanel(new FlowLayout());
             loginCardPanel.setBackground(UIConstants.INTEL_WHITE);
-            loginPanel = new LoginPanel(this);
+            loginPanel = new LoginPanel(this) {
+                private static final long serialVersionUID =
+                        7717352774226770775L;
+
+                /*
+                 * (non-Javadoc)
+                 *
+                 * @see com.intel.stl.ui.admin.view.LoginPanel#initLoginPanel()
+                 */
+                @Override
+                protected void initLoginPanel() {
+                    super.initLoginPanel();
+
+                    gc.gridx = 0;
+                    gc.gridy += 1;
+                    gc.insets = new Insets(0, 10, 5, 10);
+                    gc.gridwidth = GridBagConstraints.REMAINDER;
+                    JPanel panel = createConfNotePanel();
+                    add(panel, gc);
+
+                    setPreferredSize(new Dimension(400, 430));
+                }
+
+            };
             loginCardPanel.add(loginPanel);
         }
         return loginCardPanel;
+    }
+
+    private JPanel createConfNotePanel() {
+
+        JPanel pnlEsmNote = new JPanel(new BorderLayout());
+        pnlEsmNote.setBorder(
+                BorderFactory.createLineBorder(UIConstants.INTEL_GRAY));
+        JXLabel lblEsmNote =
+                new JXLabel(UILabels.STL50220_FM_CONFIG_NOTE.getDescription());
+        lblEsmNote.setFont(UIConstants.H5_FONT.deriveFont(Font.BOLD));
+        lblEsmNote.setForeground(UIConstants.INTEL_BLUE);
+        lblEsmNote.setLineWrap(true);
+        lblEsmNote.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        pnlEsmNote.add(lblEsmNote, BorderLayout.CENTER);
+
+        return pnlEsmNote;
     }
 
     private JPanel getDeployCardPanel() {
@@ -289,9 +339,8 @@ public abstract class AbstractConfView<T, E extends AbstractEditorPanel<T>>
 
     protected void installButtons(JPanel panel) {
         panel.setLayout(new FlowLayout(FlowLayout.TRAILING));
-        deployBtn =
-                ComponentFactory.getIntelActionButton(STLConstants.K2131_DEPLOY
-                        .getValue());
+        deployBtn = ComponentFactory
+                .getIntelActionButton(STLConstants.K2131_DEPLOY.getValue());
         deployBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -336,7 +385,7 @@ public abstract class AbstractConfView<T, E extends AbstractEditorPanel<T>>
 
     /**
      * <i>Description:</i>
-     * 
+     *
      * @param first
      */
     public void selectItem(int index) {
@@ -347,7 +396,7 @@ public abstract class AbstractConfView<T, E extends AbstractEditorPanel<T>>
 
     /**
      * <i>Description:</i>
-     * 
+     *
      */
     public void updateItems() {
         selectionPanel.repaint();
@@ -355,7 +404,7 @@ public abstract class AbstractConfView<T, E extends AbstractEditorPanel<T>>
 
     /**
      * <i>Description:</i>
-     * 
+     *
      */
     public int confirmDiscard() {
         return Util.showConfirmDialog(this,
@@ -407,7 +456,7 @@ public abstract class AbstractConfView<T, E extends AbstractEditorPanel<T>>
     /**
      * <i>Description:</i> Clear the password text field and the password data
      * saved in the LoginBean credentials.
-     * 
+     *
      */
     public void clearLoginCard() {
         loginPanel.clearLoginData();

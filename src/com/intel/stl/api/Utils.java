@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: PortUtils.java
@@ -35,6 +35,13 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.12  2016/01/28 17:51:55  jijunwan
+ *  Archive Log:    PR 132498 - Unit value missing from Y axis of HoQLife by VL table
+ *  Archive Log:
+ *  Archive Log:    - changed to display real HoQ values in ms on chart
+ *  Archive Log:    - changed chart Y axis label to milliseconds
+ *  Archive Log:    - changes chart tooltip to display value in us, ms or s
+ *  Archive Log:
  *  Archive Log:    Revision 1.11  2015/12/08 20:54:08  rjtierne
  *  Archive Log:    PR 131945 - "UnknownHostKey" when trying to unlock console
  *  Archive Log:    - In method getKnownHosts(), create the .ssh directory if it doesn't
@@ -89,7 +96,7 @@
  *  Archive Log:    Added utilities that is able to detect port status. We should always reuse these utilities when possible to ensure we have consistent results
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: jijunwan
  *
@@ -228,6 +235,22 @@ public class Utils {
                 || activeWidthBit != rxActiveWidthDownBit;
     }
 
+    /**
+     *
+     * <i>Description:</i>
+     *
+     * @param id
+     *            HoQLife id
+     * @return HoqLife in ms
+     */
+    public static final double getHoQLife(byte id) {
+        if (id >= 0x14) {
+            return Double.POSITIVE_INFINITY;
+        } else {
+            return (0x04 << id) / 1024.0;
+        }
+    }
+
     public static final Date convertFromUnixTime(long unixTime) {
         return new Date(unixTime * 1000);
     }
@@ -283,9 +306,8 @@ public class Utils {
         InputStream stream = null;
         KeyManagerFactory kmf;
         try {
-            kmf =
-                    KeyManagerFactory.getInstance(TRUST_MANAGEMENT_ALGORITHM,
-                            SECURITY_PROVIDER);
+            kmf = KeyManagerFactory.getInstance(TRUST_MANAGEMENT_ALGORITHM,
+                    SECURITY_PROVIDER);
             KeyStore ks = KeyStore.getInstance(KEYSTORE_TYPE);
             stream = new FileInputStream(cert);
             ks.load(stream, pwd);
@@ -367,28 +389,28 @@ public class Utils {
     public static String listToConcatenatedString(List<String> stringList,
             String delimiter) {
         StringBuffer sb = new StringBuffer();
-	    if (stringList != null){
-	        for (String str : stringList) {
-	        	if(str != null){
-		            if (str.contains(delimiter)) {
-		                throw new IllegalArgumentException("Source name '" + str
-		                        + "' contains DELIMITER '" + delimiter + "'");
-		            }
-		
-		            if (sb.length() == 0) {
-		                sb.append(str);
-		            } else {
-		                sb.append(delimiter + str);
-		            }
-	        	}
-	        }
+        if (stringList != null) {
+            for (String str : stringList) {
+                if (str != null) {
+                    if (str.contains(delimiter)) {
+                        throw new IllegalArgumentException("Source name '" + str
+                                + "' contains DELIMITER '" + delimiter + "'");
+                    }
+
+                    if (sb.length() == 0) {
+                        sb.append(str);
+                    } else {
+                        sb.append(delimiter + str);
+                    }
+                }
+            }
         }
         return sb.toString();
     }
 
     public static List<String> concatenatedStringToList(String concatString,
             String delimiter) {
-        if ((concatString == null) || concatString.isEmpty()){
+        if ((concatString == null) || concatString.isEmpty()) {
             return new ArrayList<String>();
         } else {
             return Arrays.asList(concatString.split(delimiter));

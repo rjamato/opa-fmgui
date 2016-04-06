@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: VFInfoSubscriber.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.11  2016/02/09 20:23:09  jijunwan
+ *  Archive Log:    PR 132575 - [PSC] Null pointer message in FM GUI
+ *  Archive Log:
+ *  Archive Log:    - some minor improvements
+ *  Archive Log:
  *  Archive Log:    Revision 1.10  2015/08/17 18:53:39  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -105,16 +110,16 @@ public class VFInfoSubscriber extends Subscriber<VFInfoBean> {
 
     private static Logger log = LoggerFactory.getLogger(VFInfoSubscriber.class);
 
-    public VFInfoSubscriber(IRegisterTask taskScheduler, IPerformanceApi perfApi) {
+    public VFInfoSubscriber(IRegisterTask taskScheduler,
+            IPerformanceApi perfApi) {
         super(taskScheduler, perfApi);
     }
 
     public synchronized Task<VFInfoBean> registerVFInfo(final String name,
             ICallback<VFInfoBean> callback) {
-        Task<VFInfoBean> task =
-                new Task<VFInfoBean>(PAConstants.STL_PA_ATTRID_GET_VF_INFO,
-                        name,
-                        UILabels.STL40009_VFINFO_TASK.getDescription(name));
+        Task<VFInfoBean> task = new Task<VFInfoBean>(
+                PAConstants.STL_PA_ATTRID_GET_VF_INFO, name,
+                UILabels.STL40009_VFINFO_TASK.getDescription(name));
         Callable<VFInfoBean> caller = new Callable<VFInfoBean>() {
             @Override
             public VFInfoBean call() throws Exception {
@@ -124,13 +129,11 @@ public class VFInfoSubscriber extends Subscriber<VFInfoBean> {
             }
         };
         try {
-            Task<VFInfoBean> submittedTask =
-                    taskScheduler
-                            .scheduleTask(taskList, task, callback, caller);
+            Task<VFInfoBean> submittedTask = taskScheduler
+                    .scheduleTask(taskList, task, callback, caller);
             return submittedTask;
         } catch (Exception e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             return null;
         }
     }
@@ -140,17 +143,15 @@ public class VFInfoSubscriber extends Subscriber<VFInfoBean> {
         try {
             taskScheduler.removeTask(taskList, task, callback);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
     public synchronized List<Task<VFInfoBean>> registerVFInfo(
             final String[] names, ICallback<VFInfoBean[]> callback) {
         List<Task<VFInfoBean>> tasks = new ArrayList<Task<VFInfoBean>>();
-        BatchedCallback<VFInfoBean> bCallback =
-                new BatchedCallback<VFInfoBean>(names.length, callback,
-                        VFInfoBean.class);
+        BatchedCallback<VFInfoBean> bCallback = new BatchedCallback<VFInfoBean>(
+                names.length, callback, VFInfoBean.class);
         for (int i = 0; i < names.length; i++) {
             Task<VFInfoBean> task =
                     registerVFInfo(names[i], bCallback.getCallback(i));
@@ -164,8 +165,7 @@ public class VFInfoSubscriber extends Subscriber<VFInfoBean> {
         try {
             taskScheduler.removeTask(taskList, tasks, callbacks);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -181,9 +181,8 @@ public class VFInfoSubscriber extends Subscriber<VFInfoBean> {
                             int offset) {
                         VFInfoBean[] res = new VFInfoBean[groups.length];
                         for (int i = 0; i < groups.length; i++) {
-                            VFInfoBean gib =
-                                    perfApi.getVFInfoHistory(groups[i],
-                                            imageIDs[i], offset);
+                            VFInfoBean gib = perfApi.getVFInfoHistory(groups[i],
+                                    imageIDs[i], offset);
                             if (gib != null) {
                                 res[i] = gib;
                             } else {

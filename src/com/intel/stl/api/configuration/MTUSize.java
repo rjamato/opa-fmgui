@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: MTUSize.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.7  2016/01/27 21:50:54  jijunwan
+ *  Archive Log:    PR 132499 - MaxMTU field values needs to be updated to match support SM MTU values
+ *  Archive Log:
+ *  Archive Log:    - removed 256, 512 and 1024 as suggested
+ *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/08/17 18:48:36  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - change backend files' headers
@@ -56,7 +61,7 @@
  *  Archive Log:    Initial version
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: fernande
  *
@@ -72,7 +77,7 @@ import com.intel.stl.api.StringUtils;
  * MTU of neighbor endnode connected to this port:
  * this enum is used for all SM and CM messages
  * it is also used in other datatypes as noted below
- * 
+ *
  * typedef enum _IB_MTU {
  *     IB_MTU_256      = 1,
  *     IB_MTU_512      = 2,
@@ -82,7 +87,7 @@ import com.intel.stl.api.StringUtils;
  *     IB_MTU_MAX      = 5
  *     /* 0, 6 - 15 (or 63 in some packets): reserved
  * } IB_MTU;
- * 
+ *
  * ref: /ALL_EMB/IbAccess/Common/Inc/stl_types.h v1.27
  * STL MTU values continue from IB_MTU
  * #define STL_MTU_0           0
@@ -93,9 +98,10 @@ import com.intel.stl.api.StringUtils;
  */
 public enum MTUSize {
     INVALID((byte) 0, "0"),
-    IB_MTU_256((byte) 1, "256"),
-    IB_MTU_512((byte) 2, "512"),
-    IB_MTU_1024((byte) 3, "1024"),
+    // remove the following as they are no longer supported by the SM
+    // IB_MTU_256((byte) 1, "256"),
+    // IB_MTU_512((byte) 2, "512"),
+    // IB_MTU_1024((byte) 3, "1024"),
     IB_MTU_2048((byte) 4, "2048"),
     IB_MTU_4096((byte) 5, "4096"),
     STL_MTU_8192((byte) 6, "8192"),
@@ -127,8 +133,8 @@ public enum MTUSize {
                 return mtu;
             }
         }
-        throw new IllegalArgumentException("Unsupported MTUSize "
-                + StringUtils.byteHexString(inval));
+        throw new IllegalArgumentException(
+                "Unsupported MTUSize " + StringUtils.byteHexString(inval));
     }
 
     public static MTUSize getMTUSize(String name) {
@@ -137,6 +143,7 @@ public enum MTUSize {
                 return mtu;
             }
         }
-        throw new IllegalArgumentException("Unsupported MTUSize '" + name + "'");
+        throw new IllegalArgumentException(
+                "Unsupported MTUSize '" + name + "'");
     }
 }

@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: TreeUpater.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.8  2016/02/09 20:23:10  jijunwan
+ *  Archive Log:    PR 132575 - [PSC] Null pointer message in FM GUI
+ *  Archive Log:
+ *  Archive Log:    - some minor improvements
+ *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/10/23 19:07:57  jijunwan
  *  Archive Log:    PR 129357 - Be able to hide inactive ports
  *  Archive Log:    - revert back to the old version without visible node support
@@ -60,7 +65,7 @@
  *  Archive Log:    tree update based on merge sort algorithm
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: jijunwan
  *
@@ -81,7 +86,7 @@ public abstract class TreeSynchronizer<E> {
 
     /**
      * Description:
-     * 
+     *
      * @param nodeComparator
      */
     public TreeSynchronizer(boolean removeEmptyGroup) {
@@ -90,11 +95,11 @@ public abstract class TreeSynchronizer<E> {
     }
 
     /**
-     * 
+     *
      * <i>Description:</i> update a tree branch to ensure its members
      * synchronize with the given elements that are described by keys. The
      * algorithm used here is very similar to merged sort.
-     * 
+     *
      * @param parent
      *            the tree branch to update
      * @param elements
@@ -104,26 +109,27 @@ public abstract class TreeSynchronizer<E> {
      */
     public void updateTree(FVResourceNode parent, E[] elements,
             List<ITreeMonitor> monitors, IProgressObserver observer) {
+        if (elements == null || elements.length == 0) {
+            return;
+        }
+
         if (observer == null) {
             observer = new ObserverAdapter();
         }
 
         int oldIndex = 0;
         int newIndex = 0;
-        FVResourceNode oldNode =
-                oldIndex >= parent.getChildCount() ? null : parent
-                        .getChildAt(oldIndex);
+        FVResourceNode oldNode = oldIndex >= parent.getChildCount() ? null
+                : parent.getChildAt(oldIndex);
         E element = elements[newIndex];
         while (oldNode != null || element != null) {
-            int comp =
-                    oldNode == null ? 1 : (element == null ? -1 : compare(
-                            oldNode, element));
+            int comp = oldNode == null ? 1
+                    : (element == null ? -1 : compare(oldNode, element));
             if (comp == 0) {
                 updateNode(oldNode, parent, monitors, observer);
                 oldIndex += 1;
-                oldNode =
-                        oldIndex >= parent.getChildCount() ? null : parent
-                                .getChildAt(oldIndex);
+                oldNode = oldIndex >= parent.getChildCount() ? null
+                        : parent.getChildAt(oldIndex);
                 newIndex += 1;
                 element =
                         newIndex >= elements.length ? null : elements[newIndex];
@@ -135,9 +141,8 @@ public abstract class TreeSynchronizer<E> {
                         newIndex >= elements.length ? null : elements[newIndex];
             } else {
                 removeNode(oldIndex, oldNode, parent, monitors, observer);
-                oldNode =
-                        oldIndex >= parent.getChildCount() ? null : parent
-                                .getChildAt(oldIndex);
+                oldNode = oldIndex >= parent.getChildCount() ? null
+                        : parent.getChildAt(oldIndex);
             }
         }
 
@@ -189,9 +194,9 @@ public abstract class TreeSynchronizer<E> {
     protected abstract FVResourceNode createNode(E key);
 
     /**
-     * 
+     *
      * <i>Description:</i> Remove a device node from the given tree branch
-     * 
+     *
      * @param bean
      *            the node record to be removed
      * @param parent
@@ -209,9 +214,9 @@ public abstract class TreeSynchronizer<E> {
     }
 
     /**
-     * 
+     *
      * <i>Description:</i> update a node in a given tree branch
-     * 
+     *
      * @param bean
      *            the node record to be updated on a tree branch
      * @param parent

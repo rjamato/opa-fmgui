@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -26,14 +26,17 @@
  */
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- * 
+ *
  *  Functional Group: Fabric Viewer Application
- * 
+ *
  *  File Name: HSqlDbEngine.java
- * 
+ *
  *  Archive Source: $Source$
- * 
+ *
  *  Archive Log: $Log$
+ *  Archive Log: Revision 1.16  2016/01/26 18:45:42  fernande
+ *  Archive Log: PR 132387 - [Dell]: FMGUI Fails to Open Due to Database Lock. Added compact option for the database on shutdown
+ *  Archive Log:
  *  Archive Log: Revision 1.15  2015/08/17 18:49:34  jijunwan
  *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log: - change backend files' headers
@@ -54,11 +57,11 @@
  *  Archive Log: - wrote a tool to check and insert file header
  *  Archive Log: - applied on backend files
  *  Archive Log:
- * 
+ *
  *  Overview:
- * 
+ *
  *  @author: Fernando Fernandez
- * 
+ *
  ******************************************************************************/
 
 package com.intel.stl.dbengine.impl;
@@ -96,9 +99,9 @@ import com.intel.stl.dbengine.DatabaseEngine;
 /**
  * This class is responsible for initializing, starting up and shutting down the
  * database under HyperSQL
- * 
+ *
  * @author Fernando Fernandez
- * 
+ *
  */
 public class HSqlDbEngine implements DatabaseEngine {
     private static Logger log = LoggerFactory.getLogger(HSqlDbEngine.class);
@@ -117,7 +120,7 @@ public class HSqlDbEngine implements DatabaseEngine {
 
     private static final String SLASHES = "//";
 
-    private String databaseDefinition;
+    private final String databaseDefinition;
 
     private String databaseFolder;
 
@@ -164,10 +167,9 @@ public class HSqlDbEngine implements DatabaseEngine {
             connectionUrl = null;
         }
         if (connectionUrl == null) {
-            this.connectionUrl =
-                    "jdbc:hsqldb:file:" + databaseFolder + File.separatorChar
-                            + databaseName
-                            + ";hsqldb.default_table_type=cached";
+            this.connectionUrl = "jdbc:hsqldb:file:" + databaseFolder
+                    + File.separatorChar + databaseName
+                    + ";hsqldb.default_table_type=cached";
         } else {
             this.connectionUrl = connectionUrl;
         }
@@ -191,7 +193,7 @@ public class HSqlDbEngine implements DatabaseEngine {
     }
 
     @Override
-    public void stop() throws DatabaseException {
+    public void stop(boolean compact) throws DatabaseException {
         Connection conn = getConnection();
         try {
             PreparedStatement shutdown =
@@ -243,9 +245,8 @@ public class HSqlDbEngine implements DatabaseEngine {
         try {
             conn.close();
         } catch (SQLException e) {
-            String errMsg =
-                    STL30007_ERROR_STARTING_DB_ENGINE.getDescription(
-                            DB_ENGINE_NAME, "close()", e.getErrorCode());
+            String errMsg = STL30007_ERROR_STARTING_DB_ENGINE.getDescription(
+                    DB_ENGINE_NAME, "close()", e.getErrorCode());
             log.error(errMsg, e);
             AppConfigurationException ace =
                     new AppConfigurationException(errMsg, e);
@@ -254,9 +255,8 @@ public class HSqlDbEngine implements DatabaseEngine {
     }
 
     private void checkSchemaTimestamp() throws DatabaseException {
-        long defTimestamp =
-                DatabaseUtils
-                        .getDatabaseDefinitionTimestamp(DB_DEFINITION_FILE);
+        long defTimestamp = DatabaseUtils
+                .getDatabaseDefinitionTimestamp(DB_DEFINITION_FILE);
         // File dbTimestampFile = new File(databaseFolder + File.separatorChar
         // + databaseName + DB_TIMESTAMP_EXT);
         // long dbTimestamp =
@@ -271,9 +271,8 @@ public class HSqlDbEngine implements DatabaseEngine {
         try {
             conn = pool.getConnection();
         } catch (SQLException e) {
-            DatabaseException dbe =
-                    new DatabaseException(STL30006_SQLEXCEPTION, e,
-                            e.getErrorCode(), StringUtils.getErrorMessage(e));
+            DatabaseException dbe = new DatabaseException(STL30006_SQLEXCEPTION,
+                    e, e.getErrorCode(), StringUtils.getErrorMessage(e));
             log.error(dbe.getMessage(), e);
             throw dbe;
         }
@@ -308,11 +307,9 @@ public class HSqlDbEngine implements DatabaseEngine {
 
     private void renameDbFolder() {
         Date dateSuffix = new Date();
-        String rename =
-                databaseFolder
-                        + "-"
-                        + new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss")
-                                .format(dateSuffix);
+        String rename = databaseFolder + "-"
+                + new SimpleDateFormat("yyyy-MM-dd_hh-mm-ss")
+                        .format(dateSuffix);
         File dbFolderRename = new File(rename);
         File dbFolder = new File(databaseFolder);
         if (!dbFolder.renameTo(dbFolderRename)) {
@@ -367,8 +364,8 @@ public class HSqlDbEngine implements DatabaseEngine {
         if (colon >= 0) {
             int slash = connectionUrl.indexOf("/", colon + 1);
             if (slash >= 0) {
-                return Integer.parseInt(connectionUrl.substring(colon + 1,
-                        slash));
+                return Integer
+                        .parseInt(connectionUrl.substring(colon + 1, slash));
             } else {
                 return Integer.parseInt(connectionUrl.substring(colon + 1));
             }

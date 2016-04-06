@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: FMGUI.java
@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.10  2016/01/26 18:35:32  fernande
+ *  Archive Log:    PR 132387 - [Dell]: FMGUI Fails to Open Due to Database Lock. The application was compacting the database on every application exit; changed the scheduling to compact the database after a purge of performance data is done; and to always display a splash screen when shutting down the application so the user gets feedback of the application shutdown process.
+ *  Archive Log:
  *  Archive Log:    Revision 1.9  2015/08/17 18:48:51  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - change backend files' headers
@@ -64,7 +67,7 @@
  *  Archive Log:    Initial version
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: fernande
  *
@@ -74,23 +77,55 @@ package com.intel.stl.api;
 
 import java.util.List;
 
-public interface FMGui {
-
-    public void init(AppContext appContext);
-
-    public void showProgress(String message, int progress);
+public interface FMGui extends StartupProgressObserver {
 
     /**
-     * Description:
-     * 
-     * @param firstRun
-     * @param configurationApi
+     *
+     * <i>Description:</i>initializes a FM graphical user interface (front end
+     * code). Implementors should initialize their UI components in preparation
+     * for the front end code to be invoked after the back end code is
+     * initialized (see invokeMain)
+     *
+     * @param appContext
+     *            the application context to be used in UI operations
      */
-    public void invokeMain(boolean firstRun);
+    void init(AppContext appContext);
 
-    public void shutdown();
+    /**
+     *
+     * <i>Description:</i>passes control to the front end code after the back
+     * end code has been initialized.
+     *
+     * @param firstRun
+     *            a boolean indicating whether the application is being run for
+     *            the first time. The meaning of this flag is implementation
+     *            dependent.
+     */
+    void invokeMain(boolean firstRun);
 
-    public AppContext getAppContext();
+    /**
+     *
+     * <i>Description:</i>requests a shutdown for the front end code.
+     *
+     */
+    void shutdown();
 
-    public void showErrors(List<Throwable> errors);
+    /**
+     *
+     * <i>Description:</i>return the application context associated with the
+     * front end code.
+     *
+     * @return
+     */
+    AppContext getAppContext();
+
+    /**
+     *
+     * <i>Description:</i>requests the front end code to display the list of
+     * errors that occurred during back end processing
+     *
+     * @param errors
+     *            a list of errors in the back end code
+     */
+    void showErrors(List<Throwable> errors);
 }

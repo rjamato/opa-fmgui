@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *  
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: PSSubpageController.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.58  2016/02/09 20:23:08  jijunwan
+ *  Archive Log:    PR 132575 - [PSC] Null pointer message in FM GUI
+ *  Archive Log:
+ *  Archive Log:    - some minor improvements
+ *  Archive Log:
  *  Archive Log:    Revision 1.57  2015/10/15 21:16:04  jijunwan
  *  Archive Log:    PR 131044 - Switch/HFI status can go beyond 100%
  *  Archive Log:    - changed to use larger number of nodes
@@ -271,8 +276,6 @@ import java.util.Set;
 
 import javax.swing.ImageIcon;
 
-import net.engio.mbassy.bus.MBassador;
-
 import com.intel.stl.api.notice.NoticeSeverity;
 import com.intel.stl.api.performance.GroupConfigRspBean;
 import com.intel.stl.api.performance.GroupInfoBean;
@@ -311,8 +314,10 @@ import com.intel.stl.ui.publisher.TaskScheduler;
 import com.intel.stl.ui.publisher.subscriber.EventSubscriber;
 import com.intel.stl.ui.publisher.subscriber.SubscriberType;
 
-public class PSSubpageController implements IPerfSubpageController,
-        IStateChangeListener {
+import net.engio.mbassy.bus.MBassador;
+
+public class PSSubpageController
+        implements IPerfSubpageController, IStateChangeListener {
 
     private final SummarySubpageView mSubpageView;
 
@@ -412,7 +417,7 @@ public class PSSubpageController implements IPerfSubpageController,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.intel.stl.ui.common.IPageController#onRefresh(com.intel.stl.ui.common
      * .IProgressObserver)
@@ -441,7 +446,7 @@ public class PSSubpageController implements IPerfSubpageController,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.IPageController#clear()
      */
     @Override
@@ -456,13 +461,12 @@ public class PSSubpageController implements IPerfSubpageController,
     protected void installEventMonitor() {
         mContext.getEvtCal().addListener(this);
 
-        eventSubscriber =
-                (EventSubscriber) mTaskScheduler
-                        .getSubscriber(SubscriberType.EVENT);
+        eventSubscriber = (EventSubscriber) mTaskScheduler
+                .getSubscriber(SubscriberType.EVENT);
         stateSummaryCallback = new CallbackAdapter<StateSummary>() {
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see
              * com.intel.hpc.stl.ui.publisher.CallBackAdapter#onDone(java.lang
              * .Object)
@@ -490,18 +494,19 @@ public class PSSubpageController implements IPerfSubpageController,
     }
 
     @Override
-    public void setParentController(PerformanceTreeController parentController) {
+    public void setParentController(
+            PerformanceTreeController parentController) {
     }
 
     /**
-     * 
+     *
      * Description: Populates the device group statistics and calls the
      * controller to update the screen
-     * 
+     *
      * @param groupList
      *            - list of GroupConfigBeans for the groups listed in the
      *            deviceList
-     * 
+     *
      * @param group
      *            - group config bean
      */
@@ -531,13 +536,14 @@ public class PSSubpageController implements IPerfSubpageController,
     /**
      * Description: Generate DeviceGroupStatistics based on the specified
      * GroupConfigBean
-     * 
+     *
      * @param portList
      *            - a list of port config bean
-     * 
+     *
      * @return devices statistics
      */
-    private DevicesStatistics getDevicesStats(List<GroupConfigRspBean> portList) {
+    private DevicesStatistics getDevicesStats(
+            List<GroupConfigRspBean> portList) {
         DevicesStatistics res = new DevicesStatistics();
         Map<Integer, NodeType> nodeTypes = new HashMap<Integer, NodeType>();
         EnumMap<NodeType, Long> portsTypeDist =
@@ -576,12 +582,12 @@ public class PSSubpageController implements IPerfSubpageController,
                         break;
                 }
                 Integer nodesCount = nodesTypeDist.get(nodeType);
-                nodesTypeDist.put(nodeType, nodesCount == null ? 1
-                        : nodesCount + 1);
+                nodesTypeDist.put(nodeType,
+                        nodesCount == null ? 1 : nodesCount + 1);
             }
             Long portsCount = portsTypeDist.get(nodeType);
-            portsTypeDist
-                    .put(nodeType, portsCount == null ? 1 : portsCount + 1);
+            portsTypeDist.put(nodeType,
+                    portsCount == null ? 1 : portsCount + 1);
             realNumPorts += 1;
         } // for
         portsTypeDist.put(NodeType.OTHER, desiredTotalPorts - realNumPorts);
@@ -593,7 +599,8 @@ public class PSSubpageController implements IPerfSubpageController,
         return res;
     }
 
-    private DevicesStatistics getVFDevicesStats(List<VFConfigRspBean> portList) {
+    private DevicesStatistics getVFDevicesStats(
+            List<VFConfigRspBean> portList) {
         DevicesStatistics res = new DevicesStatistics();
         Map<Integer, NodeType> nodeTypes = new HashMap<Integer, NodeType>();
         EnumMap<NodeType, Long> portsTypeDist =
@@ -632,12 +639,12 @@ public class PSSubpageController implements IPerfSubpageController,
                         break;
                 }
                 Integer nodesCount = nodesTypeDist.get(nodeType);
-                nodesTypeDist.put(nodeType, nodesCount == null ? 1
-                        : nodesCount + 1);
+                nodesTypeDist.put(nodeType,
+                        nodesCount == null ? 1 : nodesCount + 1);
             }
             Long portsCount = portsTypeDist.get(nodeType);
-            portsTypeDist
-                    .put(nodeType, portsCount == null ? 1 : portsCount + 1);
+            portsTypeDist.put(nodeType,
+                    portsCount == null ? 1 : portsCount + 1);
             realNumPorts += 1;
         } // for
         portsTypeDist.put(NodeType.OTHER, desiredTotalPorts - realNumPorts);
@@ -651,6 +658,10 @@ public class PSSubpageController implements IPerfSubpageController,
 
     private void processNewEvent(StateSummary summary, NodeType type,
             final Set<Integer> nodes) {
+        if (summary == null) {
+            return;
+        }
+
         int total = 0;
         EnumMap<NoticeSeverity, Integer> severityMap = null;
         synchronized (dgStatsLock) {
@@ -659,21 +670,22 @@ public class PSSubpageController implements IPerfSubpageController,
             }
 
             EnumMap<NodeType, Integer> currenDist = dgStats.getNodeTypesDist();
+            if (currenDist == null) {
+                return;
+            }
+
             if (type == NodeType.HFI) {
-                total =
-                        Math.max(summary.getBaseTotalHFIs(),
-                                currenDist.get(NodeType.HFI));
+                total = Math.max(summary.getBaseTotalHFIs(),
+                        currenDist.get(NodeType.HFI));
                 severityMap = summary.getHfiStates();
             } else if (type == NodeType.SWITCH) {
-                total =
-                        Math.max(summary.getBaseTotalSWs(),
-                                currenDist.get(NodeType.SWITCH));
+                total = Math.max(summary.getBaseTotalSWs(),
+                        currenDist.get(NodeType.SWITCH));
                 severityMap = summary.getSwitchStates();
             } else if (selectedTreeNode != null
                     && selectedTreeNode.getType() == TreeNodeType.ALL) {
-                total =
-                        Math.max(summary.getBaseTotalNodes(),
-                                dgStats.getNumNodes());
+                total = Math.max(summary.getBaseTotalNodes(),
+                        dgStats.getNumNodes());
                 severityMap = summary.getStates(null);
             } else if (nodes != null && !nodes.isEmpty()) {
                 total = nodes.size();
@@ -715,7 +727,7 @@ public class PSSubpageController implements IPerfSubpageController,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.IPageController#onEnter()
      */
     @Override
@@ -724,7 +736,7 @@ public class PSSubpageController implements IPerfSubpageController,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.IPageController#onExit()
      */
     @Override
@@ -733,7 +745,7 @@ public class PSSubpageController implements IPerfSubpageController,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.IPageController#canExit()
      */
     @Override
@@ -743,7 +755,7 @@ public class PSSubpageController implements IPerfSubpageController,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.intel.stl.ui.common.IPerfSubpageController#showNode(com.intel.stl
      * .ui.monitor.FVResourceNode)
@@ -825,8 +837,8 @@ public class PSSubpageController implements IPerfSubpageController,
             if (treeNode.getTitle().equals(DefaultDeviceGroup.HFI.getName())) {
                 mGraphSectionController.setDisabledDataTypes(DataType.ALL,
                         DataType.INTERNAL);
-            } else if (treeNode.getTitle().equals(
-                    DefaultDeviceGroup.ALL.getName())) {
+            } else if (treeNode.getTitle()
+                    .equals(DefaultDeviceGroup.ALL.getName())) {
                 mGraphSectionController.setDisabledDataTypes(DataType.ALL,
                         DataType.EXTERNAL, DataType.TRANSMIT, DataType.RECEIVE);
             } else {

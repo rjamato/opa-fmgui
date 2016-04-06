@@ -2,7 +2,7 @@
 #
 # $Id$
 #
-# Runs the Fabric Manager GUI.
+# Runs the Intel Omni-Path Architecture Fabric Manager Graphical User Interface.
 checkJava() {
 if [ $DEBUG -eq 1 ]; then 
     echo Checking JVM $2

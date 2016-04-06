@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: EmailSetupController.java
@@ -35,6 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.5  2016/03/02 18:27:31  jijunwan
+ *  Archive Log:    PR 133067 - Add a popup window that e-mail was sent successfully when "test" button is click
+ *  Archive Log:
+ *  Archive Log:    - changed to disable button after we click test button
+ *  Archive Log:    - changed to show "sending email..." message when we are sending out a test email
+ *  Archive Log:    - changed to show "Test message sent out, please check your email account." after email sent out
+ *  Archive Log:    - change to recover message to normal text when there is a user action
+ *  Archive Log:    - added undo/redo capability to email address text area
+ *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/08/21 04:01:30  fisherma
  *  Archive Log:    Added property to turn email notifications feature on/off.  Added strings to localization file.  Fixed dialog to be sized properly on different operating systems under various look and feel.
  *  Archive Log:
@@ -49,13 +58,17 @@
  *  Archive Log:    PR 128974 - Email notification functionality.
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: fisherma
  *
  ******************************************************************************/
 
 package com.intel.stl.ui.email;
+
+import java.util.concurrent.ExecutionException;
+
+import javax.swing.SwingWorker;
 
 import com.intel.stl.api.configuration.MailProperties;
 import com.intel.stl.api.notice.IEmailEventListener;
@@ -67,8 +80,8 @@ import com.intel.stl.ui.email.view.EmailSettingsView;
 import com.intel.stl.ui.main.ISubnetManager;
 import com.intel.stl.ui.main.view.FVMainFrame;
 
-public class EmailSettingsController implements IEmailController,
-        IEmailEventListener<NoticeBean> {
+public class EmailSettingsController
+        implements IEmailController, IEmailEventListener<NoticeBean> {
 
     private static EmailSettingsController instance = null;
 
@@ -78,8 +91,8 @@ public class EmailSettingsController implements IEmailController,
 
     private String smtpServerName = "";
 
-    private String smtpPortNumber = new Integer(UIConstants.DEFAULT_SMTP_PORT)
-            .toString();
+    private String smtpPortNumber =
+            new Integer(UIConstants.DEFAULT_SMTP_PORT).toString();
 
     private String fromAddress = "";
 
@@ -105,7 +118,7 @@ public class EmailSettingsController implements IEmailController,
 
     /**
      * <i>Description:</i>
-     * 
+     *
      */
     private void setSmtpSettingsInView() {
         view.setSmtpServerNameStr(smtpServerName);
@@ -116,7 +129,7 @@ public class EmailSettingsController implements IEmailController,
 
     /**
      * <i>Description:</i>
-     * 
+     *
      */
     private void getSmtpSettingsFromDb() {
         MailProperties mailProperties =
@@ -135,18 +148,17 @@ public class EmailSettingsController implements IEmailController,
     /**
      * <i>Description:</i> If there is NO instance of EmailSettingsController,
      * create one with the current FVMainFrame as owner.
-     * 
+     *
      * If there is an instance of EmailSettingsController, update its owner to
      * the FVMainFrame passed as the parameter. This is to allow for proper
      * parenting and appearance of the dialog.
-     * 
+     *
      */
     public static EmailSettingsController getInstance(FVMainFrame owner,
             ISubnetManager subMgr) {
         if (instance == null) {
-            instance =
-                    new EmailSettingsController(new EmailSettingsView(owner),
-                            subMgr);
+            instance = new EmailSettingsController(new EmailSettingsView(owner),
+                    subMgr);
         } else {
             instance.updateOwner(owner);
         }
@@ -156,7 +168,7 @@ public class EmailSettingsController implements IEmailController,
 
     /**
      * <i>Description:</i>
-     * 
+     *
      * @param owner
      */
     private void updateOwner(FVMainFrame owner) {
@@ -165,7 +177,7 @@ public class EmailSettingsController implements IEmailController,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.email.IEmailControl#onReset()
      */
     @Override
@@ -176,7 +188,7 @@ public class EmailSettingsController implements IEmailController,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.email.IEmailControl#onOK()
      */
     @Override
@@ -201,33 +213,65 @@ public class EmailSettingsController implements IEmailController,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.email.IEmailControl#onTest()
      */
     @Override
     public void onTest() {
-        // Should retrieve the values presently set in the view and use
-        // these values to send the test email
-        String testSmtpHostName = view.getSmtpServerNameStr();
-        String testSmtpPortNum = view.getSmtpServerPortStr();
-        String testToAddr = view.getToAddrStr();
-        String testFromAddr = view.getFromAddrStr();
+        view.showTesting(true);
+        SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 
+            /*
+             * (non-Javadoc)
+             *
+             * @see javax.swing.SwingWorker#doInBackground()
+             */
+            @Override
+            protected Void doInBackground() throws Exception {
+                // Should retrieve the values presently set in the view and use
+                // these values to send the test email
+                String testSmtpHostName = view.getSmtpServerNameStr();
+                String testSmtpPortNum = view.getSmtpServerPortStr();
+                String testToAddr = view.getToAddrStr();
+                String testFromAddr = view.getFromAddrStr();
 
-        // Test connection with above values...
-        MailProperties mailProperties = new MailProperties();
-        mailProperties.setSmtpServer(testSmtpHostName);
-        mailProperties.setFromAddr(testFromAddr);
-        mailProperties.setSmtpPort(new Integer(testSmtpPortNum));
-        String subject = UILabels.STL92001_TEST_EMAIL_SUBJECT.getDescription();
-        String body = "";
-        subnetMgr.getConfigurationApi().sendTestMail(mailProperties,
-                testToAddr, subject, body);
+                // Test connection with above values...
+                MailProperties mailProperties = new MailProperties();
+                mailProperties.setSmtpServer(testSmtpHostName);
+                mailProperties.setFromAddr(testFromAddr);
+                mailProperties.setSmtpPort(new Integer(testSmtpPortNum));
+                String subject =
+                        UILabels.STL92001_TEST_EMAIL_SUBJECT.getDescription();
+                String body = "";
+                subnetMgr.getConfigurationApi().sendTestMail(mailProperties,
+                        testToAddr, subject, body);
+                return null;
+            }
+
+            /*
+             * (non-Javadoc)
+             *
+             * @see javax.swing.SwingWorker#done()
+             */
+            @Override
+            protected void done() {
+                try {
+                    get();
+                } catch (InterruptedException e) {
+                } catch (ExecutionException e) {
+                    Util.showError(view, e);
+                } finally {
+                    view.showTesting(false);
+                }
+            }
+
+        };
+        worker.execute();
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.email.IEmailControl#showEmailSettingsDlg()
      */
     @Override
@@ -240,7 +284,7 @@ public class EmailSettingsController implements IEmailController,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.email.IEmailControl#hideEmailSettingsDlg()
      */
     @Override
@@ -250,7 +294,7 @@ public class EmailSettingsController implements IEmailController,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.intel.stl.api.notice.IEmailEventListener#onNewEvent(java.lang.Object
      * [])

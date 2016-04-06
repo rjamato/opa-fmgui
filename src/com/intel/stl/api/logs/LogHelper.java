@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: LogHelper2.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.9  2016/02/09 20:23:16  jijunwan
+ *  Archive Log:    PR 132575 - [PSC] Null pointer message in FM GUI
+ *  Archive Log:
+ *  Archive Log:    - some minor improvements
+ *  Archive Log:
  *  Archive Log:    Revision 1.8  2015/11/18 23:50:00  rjtierne
  *  Archive Log:    PR 130965 - ESM support on Log Viewer
  *  Archive Log:    - Modified initializationTask() and initializeSsh() to accommodate user-configured login info
@@ -102,8 +107,8 @@ import com.intel.stl.fecdriver.network.ssh.impl.JSchSession;
 import com.intel.stl.fecdriver.network.ssh.impl.JSchSessionFactory;
 import com.jcraft.jsch.JSchException;
 
-public class LogHelper implements IResponseListener, ILogErrorListener,
-        ILogPageListener {
+public class LogHelper
+        implements IResponseListener, ILogErrorListener, ILogPageListener {
 
     private final static Logger log = LoggerFactory.getLogger(LogHelper.class);
 
@@ -178,10 +183,9 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
 
                     if (errorCode == LogErrorType.LOG_OK) {
                         // Initialize the User Command Processor
-                        userCommandProcessor =
-                                new LogCommandProcessor(jschSession,
-                                        RESPONSE_TIMEOUT, helper.getClass()
-                                                .getSimpleName());
+                        userCommandProcessor = new LogCommandProcessor(
+                                jschSession, RESPONSE_TIMEOUT,
+                                helper.getClass().getSimpleName());
                         userCommandProcessor.setResponseListener(helper);
 
                         // Initialize the log file path
@@ -239,9 +243,8 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
 
     protected void startLogStatusTask(long delay, long timeBetweenExecutions) {
         // Initialize the timer task to retrieve total # lines
-        logStatusTask =
-                new LogStatusTask(logFilePath, LogMessageType.NUM_LINES,
-                        jschSession);
+        logStatusTask = new LogStatusTask(logFilePath, LogMessageType.NUM_LINES,
+                jschSession);
         logStatusTask.setResponseListener(helper);
         logStatusTask.setErrorListener(helper);
         logStatusTask.start(delay, timeBetweenExecutions);
@@ -341,20 +344,20 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
             HostInfo hostInfo = subnet.getCurrentFE();
             SshLoginBean sshLoginBean =
                     new SshLoginBean(subnet.getSubnetId(), subnet.getName(),
-                    /* hostInfo.getSshUserName(), */logInitBean.getUserName(),
-                            logInitBean.getLogHost(), Integer.valueOf(hostInfo
-                                    .getPort()), subnet.getCurrentFE()
-                                    .getCertsDescription());
+                            /* hostInfo.getSshUserName(), */logInitBean
+                                    .getUserName(),
+                            logInitBean.getLogHost(),
+                            Integer.valueOf(hostInfo.getPort()),
+                            subnet.getCurrentFE().getCertsDescription());
             SubnetDescription sNet = new SubnetDescription(sshLoginBean);
 
             // Initialize the session with the copied subnet
-            jschSession =
-                    JSchSessionFactory.getSession(sNet,
-                            logInitBean.isStrictHostKey(), password,
-                            SshKeyType.LOG_KEY.getKey(subnet.getSubnetId()));
+            jschSession = JSchSessionFactory.getSession(sNet,
+                    logInitBean.isStrictHostKey(), password,
+                    SshKeyType.LOG_KEY.getKey(subnet.getSubnetId()));
         } catch (JSchException e) {
             error = LogErrorType.SSH_HOST_CONNECT_ERROR;
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
         return error;
     }
@@ -368,9 +371,8 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
 
         // Check if the factory has a session for this subnet
         // and if it does, verify that it is connected
-        JSchSession session =
-                JSchSessionFactory.getSessionFromMap(SshKeyType.LOG_KEY
-                        .getKey(subnet.getSubnetId()));
+        JSchSession session = JSchSessionFactory.getSessionFromMap(
+                SshKeyType.LOG_KEY.getKey(subnet.getSubnetId()));
 
         if (session != null) {
             connectionStatus = session.isConnected();
@@ -403,7 +405,7 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.api.logs.IErrorListener#stopLog()
      */
     @Override
@@ -429,8 +431,8 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
         } finally {
             try {
                 // Shut down the session
-                JSchSessionFactory.closeSession(SshKeyType.LOG_KEY
-                        .getKey(subnet.getSubnetId()));
+                JSchSessionFactory.closeSession(
+                        SshKeyType.LOG_KEY.getKey(subnet.getSubnetId()));
             } finally {
                 logRunning = false;
             }
@@ -439,7 +441,7 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.intel.stl.api.logs.ICommandListener#onResponseReceived(LogResponse)
      */
@@ -502,7 +504,7 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.intel.stl.api.logs.IResponseListener#onResponseError(LogErrorType,
      * LogMessageType)
@@ -563,7 +565,7 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.api.logs.ILogPageListener#setFirstPage(boolean)
      */
     @Override
@@ -573,7 +575,7 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.api.logs.ILogPageListener#setLastPage(boolean)
      */
     @Override
@@ -583,7 +585,7 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.api.logs.ILogPageListener#setStartLine(long)
      */
     @Override
@@ -593,7 +595,7 @@ public class LogHelper implements IResponseListener, ILogErrorListener,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.api.logs.ILogPageListener#setEndLine(long)
      */
     @Override

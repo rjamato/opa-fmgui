@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: NoticeCalculator.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.28  2016/02/09 20:23:12  jijunwan
+ *  Archive Log:    PR 132575 - [PSC] Null pointer message in FM GUI
+ *  Archive Log:
+ *  Archive Log:    - some minor improvements
+ *  Archive Log:
  *  Archive Log:    Revision 1.27  2015/09/29 13:29:14  fernande
  *  Archive Log:    PR129920 - revisit health score calculation. Fixed divide by zero in B2B configuration; the score will be zero if nothing is found in the fabric.
  *  Archive Log:
@@ -130,7 +135,7 @@
  *  Archive Log:    added state and heal score calculation
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: jijunwan
  *
@@ -177,8 +182,8 @@ import com.intel.stl.ui.model.TimedScore;
 import com.intel.stl.ui.model.UserPreference;
 import com.intel.stl.ui.publisher.NodeEvents.EventItem;
 
-public class EventCalculator implements IEventListener<EventDescription>,
-        IStateMonitor {
+public class EventCalculator
+        implements IEventListener<EventDescription>, IStateMonitor {
     private static Logger log = LoggerFactory.getLogger(EventCalculator.class);
 
     private static final boolean DEBUG = false;
@@ -187,6 +192,7 @@ public class EventCalculator implements IEventListener<EventDescription>,
             new EnumMap<NoticeSeverity, Double>(NoticeSeverity.class) {
                 private static final long serialVersionUID =
                         2065678798638714805L;
+
                 {
                     put(NoticeSeverity.INFO, 1.0);
                     put(NoticeSeverity.WARNING, 0.8);
@@ -244,7 +250,7 @@ public class EventCalculator implements IEventListener<EventDescription>,
 
     private final EnumMap<HealthScoreAttribute, Integer> weights;
 
-    private long[] baseline = new long[] { 0, 0, 0, 0, 0, 0 };
+    private final long[] baseline = new long[] { 0, 0, 0, 0, 0, 0 };
 
     private int totalWeight;
 
@@ -253,7 +259,7 @@ public class EventCalculator implements IEventListener<EventDescription>,
 
     /**
      * Description:
-     * 
+     *
      * @param timeWindowInSeconds
      */
     public EventCalculator(EnumMap<NodeType, Integer> nodes,
@@ -276,18 +282,14 @@ public class EventCalculator implements IEventListener<EventDescription>,
         switchStates = new int[NoticeSeverity.values().length];
         hfiStates = new int[NoticeSeverity.values().length];
         events = new LinkedList<NodeEvents>();
-        weightSettings =
-                new EnumMap<HealthScoreAttribute, Integer>(
-                        HealthScoreAttribute.class);
-        values =
-                new EnumMap<HealthScoreAttribute, Long>(
-                        HealthScoreAttribute.class);
-        totals =
-                new EnumMap<HealthScoreAttribute, Long>(
-                        HealthScoreAttribute.class);
-        weights =
-                new EnumMap<HealthScoreAttribute, Integer>(
-                        HealthScoreAttribute.class);
+        weightSettings = new EnumMap<HealthScoreAttribute, Integer>(
+                HealthScoreAttribute.class);
+        values = new EnumMap<HealthScoreAttribute, Long>(
+                HealthScoreAttribute.class);
+        totals = new EnumMap<HealthScoreAttribute, Long>(
+                HealthScoreAttribute.class);
+        weights = new EnumMap<HealthScoreAttribute, Integer>(
+                HealthScoreAttribute.class);
         setHealthScoreWeights(userPreference);
         // Initialize switch and HFI states.
         sweep();
@@ -337,7 +339,7 @@ public class EventCalculator implements IEventListener<EventDescription>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.api.notice.IEventListener#onNewEvent()
      */
     @Override
@@ -378,7 +380,8 @@ public class EventCalculator implements IEventListener<EventDescription>,
                 events.add(ne);
             }
             NoticeSeverity newSeverity = ne.addEvent(time, type, severity);
-            // System.out.println("AddEvent "+oldSeverity+" "+newSeverity+" "+ne);
+            // System.out.println("AddEvent "+oldSeverity+" "+newSeverity+"
+            // "+ne);
             updateStates(nodeSource.getNodeType(), oldSeverity, newSeverity);
         }
     }
@@ -391,10 +394,10 @@ public class EventCalculator implements IEventListener<EventDescription>,
     }
 
     /**
-     * 
+     *
      * <i>Description:</i>If a user change severity level in setup wizard, clear
      * all events before we apply the new severity levels.
-     * 
+     *
      * @param userSettings
      */
     public void clear() {
@@ -423,7 +426,8 @@ public class EventCalculator implements IEventListener<EventDescription>,
 
     protected void updateStates(NodeType type, NoticeSeverity oldSeverity,
             NoticeSeverity newSeverity) {
-        // System.out.println("updateStates "+type+" "+oldSeverity+" "+newSeverity);
+        // System.out.println("updateStates "+type+" "+oldSeverity+"
+        // "+newSeverity);
         if (type == NodeType.SWITCH) {
             if (oldSeverity != null) {
                 switchStates[oldSeverity.ordinal()] -= 1;
@@ -480,7 +484,7 @@ public class EventCalculator implements IEventListener<EventDescription>,
 
     /**
      * Description:
-     * 
+     *
      */
     protected void sweep() {
         sweep(System.currentTimeMillis());
@@ -515,7 +519,7 @@ public class EventCalculator implements IEventListener<EventDescription>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.publisher.IStateMonitor#getHealthScore()
      */
     @Override
@@ -555,7 +559,7 @@ public class EventCalculator implements IEventListener<EventDescription>,
         if (totalNodes <= 0 || !hasSweep) {
             return null;
         }
-
+    
         double penaltySum = 0;
         synchronized (critical) {
             for (int i = 0; i < switchStatesImage.length; i++) {
@@ -577,7 +581,7 @@ public class EventCalculator implements IEventListener<EventDescription>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.publisher.IStateMonitor#getSwitchStates()
      */
     @Override
@@ -598,7 +602,7 @@ public class EventCalculator implements IEventListener<EventDescription>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.publisher.IStateMonitor#getHFIStates()
      */
     @Override
@@ -632,10 +636,9 @@ public class EventCalculator implements IEventListener<EventDescription>,
             NodeEvents ne = nodes.get(i);
             EventItem item = ne.getLatestEvent();
             if (item != null) {
-                res[i] =
-                        new NodeScore(ne.getName(), ne.getNodeType(),
-                                ne.getLid(), item.getType(), sweepTime,
-                                item.getHealthScore());
+                res[i] = new NodeScore(ne.getName(), ne.getNodeType(),
+                        ne.getLid(), item.getType(), sweepTime,
+                        item.getHealthScore());
             }
         }
         Arrays.sort(res);
@@ -646,7 +649,8 @@ public class EventCalculator implements IEventListener<EventDescription>,
     public StateSummary getSummary() {
         // System.out.println("EventCalculaor.getSummary");
         if (!hasSweep) {
-            // System.out.println("EventCalculaor.getSummary - hasSweep = null");
+            // System.out.println("EventCalculaor.getSummary - hasSweep =
+            // null");
             return null;
         }
 
@@ -711,21 +715,22 @@ public class EventCalculator implements IEventListener<EventDescription>,
 
     public void processHealthScoreStats(FabricInfoBean fabricInfo,
             ImageInfoBean imageInfo) {
+        if (fabricInfo == null || imageInfo == null) {
+            return;
+        }
+
         long numSwitches = fabricInfo.getNumSwitches();
         long numHFIs = fabricInfo.getNumHFIs();
         long numSwitchPorts = imageInfo.getNumSwitchPorts();
         long numHFIPorts = imageInfo.getNumHFIPorts();
-        long numISLs =
-                fabricInfo.getNumInternalISLs()
-                        + fabricInfo.getNumExternalISLs()
-                        + fabricInfo.getNumDegradedISLs();
-        long numHFILinks =
-                fabricInfo.getNumInternalHFILinks()
-                        + fabricInfo.getNumExternalHFILinks()
-                        + fabricInfo.getNumDegradedHFILinks();
-        long[] newTotal =
-                new long[] { numSwitches, numHFIs, numSwitchPorts, numHFIPorts,
-                        numISLs, numHFILinks };
+        long numISLs = fabricInfo.getNumInternalISLs()
+                + fabricInfo.getNumExternalISLs()
+                + fabricInfo.getNumDegradedISLs();
+        long numHFILinks = fabricInfo.getNumInternalHFILinks()
+                + fabricInfo.getNumExternalHFILinks()
+                + fabricInfo.getNumDegradedHFILinks();
+        long[] newTotal = new long[] { numSwitches, numHFIs, numSwitchPorts,
+                numHFIPorts, numISLs, numHFILinks };
         boolean baselineChanged = false;
         for (int i = 0; i < baseline.length; i++) {
             if (newTotal[i] > baseline[i]) {
@@ -756,9 +761,11 @@ public class EventCalculator implements IEventListener<EventDescription>,
         if (baseline[0] == 0) {
             newWeight = 0;
         } else {
-            newWeight =
-                    (int) ((setting == -1) ? ((baseline[2] / baseline[0]) + 1)
-                            : setting); // numSwitchPorts / numSwitches + 1
+            newWeight = (int) ((setting == -1)
+                    ? ((baseline[2] / baseline[0]) + 1) : setting); // numSwitchPorts
+                                                                    // /
+                                                                    // numSwitches
+                                                                    // + 1
         }
         weights.put(NUM_SWITCHES, newWeight);
         totals.put(NUM_SWITCHES, baseline[0]);
@@ -769,9 +776,10 @@ public class EventCalculator implements IEventListener<EventDescription>,
         if (baseline[1] == 0) {
             newWeight = 0;
         } else {
-            newWeight =
-                    (int) ((setting == -1) ? ((baseline[3] / baseline[1]) + 1)
-                            : setting); // numHFIPorts / numHFIs + 1
+            newWeight = (int) ((setting == -1)
+                    ? ((baseline[3] / baseline[1]) + 1) : setting); // numHFIPorts
+                                                                    // / numHFIs
+                                                                    // + 1
         }
         weights.put(NUM_HFIS, newWeight);
         totals.put(NUM_HFIS, baseline[1]);

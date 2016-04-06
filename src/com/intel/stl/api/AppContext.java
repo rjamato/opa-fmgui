@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: SubnetContext.java
@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.16  2016/01/26 18:35:32  fernande
+ *  Archive Log:    PR 132387 - [Dell]: FMGUI Fails to Open Due to Database Lock. The application was compacting the database on every application exit; changed the scheduling to compact the database after a purge of performance data is done; and to always display a splash screen when shutting down the application so the user gets feedback of the application shutdown process.
+ *  Archive Log:
  *  Archive Log:    Revision 1.15  2015/08/17 18:48:51  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - change backend files' headers
@@ -88,7 +91,7 @@
  *  Archive Log:    Changes to defer creation of APIs until a subnet is chosen
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: fernande
  *
@@ -106,16 +109,63 @@ public interface AppContext {
 
     void registerSecurityHandler(ISecurityHandler securityHandler);
 
-    List<SubnetDescription> getSubnets() throws DatabaseException;
+    /**
+     *
+     * <i>Description:</i>returns the list of subnets configured in the
+     * application
+     *
+     * @return
+     */
+    List<SubnetDescription> getSubnets();
 
+    /**
+     *
+     * <i>Description:</i>returns the Configuration API
+     *
+     * @return
+     */
     IConfigurationApi getConfigurationApi();
 
+    /**
+     *
+     * <i>Description:</i>creates a SubnetContext for the specified subnet
+     *
+     * @param subnet
+     *            a subnet description
+     * @return a SubnetContext
+     */
     SubnetContext getSubnetContextFor(SubnetDescription subnet);
 
+    /**
+     *
+     * <i>Description:</i>creates a SubnetContext for the specified subnet and
+     * starts background tasks associated with the subnet
+     *
+     * @param subnetName
+     * @param startBackgroundTasks
+     * @return
+     */
     SubnetContext getSubnetContextFor(SubnetDescription subnetName,
             boolean startBackgroundTasks);
 
+    /**
+     *
+     * <i>Description:</i>returns the application setting with the specified
+     * name; if the specified setting has not been set, the default value is
+     * returned. Application settings are provided through the settings.xml file
+     * located in the application data folder.
+     *
+     * @param settingName
+     * @param defaultValue
+     * @return
+     */
     String getAppSetting(String settingName, String defaultValue);
 
-    public void shutdown();
+    /**
+     *
+     * <i>Description:</i>shuts down the application
+     *
+     */
+    void shutdown();
+
 }

@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.10  2016/01/28 18:03:16  jijunwan
+ *  Archive Log:    PR 132498 - Unit value missing from Y axis of HoQLife by VL table
+ *  Archive Log:
+ *  Archive Log:    - label adjustment
+ *  Archive Log:
  *  Archive Log:    Revision 1.9  2015/08/17 18:53:46  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -102,7 +107,7 @@ public enum PropertyGroupViz {
     PORT_ERROR_ACTIONS(STLConstants.K1041_PORT_ERROR_ACTIONS),
     MISCELLANEOUS(STLConstants.K0822_MISCELLANEOUS),
     MTU(STLConstants.K1066_MTU_SERIES),
-    HOQLIFE(STLConstants.K1069_HOQLIFE),
+    HOQLIFE(STLConstants.K1069_HOQLIFE_BY_VL),
     VL_STALL_COUNT(STLConstants.K1070_VLSTALL_SERIES),
     CABLE_INFO(STLConstants.K1071_QSFP_CABLE_INFO),
     SC2SLMT(STLConstants.K1104_SC2SL_MAPPING_TABLE),

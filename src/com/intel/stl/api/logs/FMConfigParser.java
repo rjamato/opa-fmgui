@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: ConfigParser.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.5  2016/02/09 20:23:16  jijunwan
+ *  Archive Log:    PR 132575 - [PSC] Null pointer message in FM GUI
+ *  Archive Log:
+ *  Archive Log:    - some minor improvements
+ *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/11/18 23:48:08  rjtierne
  *  Archive Log:    PR 130965 - ESM support on Log Viewer
  *  Archive Log:    - Updated getLogFilePath() to only retrieve log file if it can't be obtained from FMConfigHelper
@@ -84,8 +89,8 @@ import com.intel.stl.api.configuration.ConfigurationException;
 import com.intel.stl.api.management.FMConfHelper;
 
 public class FMConfigParser {
-    private final static Logger log = LoggerFactory
-            .getLogger(FMConfigParser.class);
+    private final static Logger log =
+            LoggerFactory.getLogger(FMConfigParser.class);
 
     private static final String XPATH_LOG_FILE =
             "/Config/Common/Shared/LogFile";
@@ -121,7 +126,7 @@ public class FMConfigParser {
             }
 
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
 
         // Get the FM Config file and locate the log file path/name
@@ -141,9 +146,8 @@ public class FMConfigParser {
                     (Node) xPath.evaluate(XPATH_LOG_FILE, config, NODE);
             return logFileNode;
         } catch (XPathExpressionException e) {
-            ConfigurationException ce =
-                    new ConfigurationException(
-                            STL50011_INVALID_XPATH_EXPRESSION, XPATH_LOG_FILE);
+            ConfigurationException ce = new ConfigurationException(
+                    STL50011_INVALID_XPATH_EXPRESSION, XPATH_LOG_FILE);
             log.error(ce.getMessage(), e);
             throw ce;
         }
@@ -156,10 +160,9 @@ public class FMConfigParser {
                         documentBuilderFactory.newDocumentBuilder();
                 this.config = db.parse(fmConfigFile);
             } catch (Exception e) {
-                ConfigurationException ce =
-                        new ConfigurationException(
-                                STL50013_ERROR_PARSING_FM_CONFIG,
-                                StringUtils.getErrorMessage(e));
+                ConfigurationException ce = new ConfigurationException(
+                        STL50013_ERROR_PARSING_FM_CONFIG,
+                        StringUtils.getErrorMessage(e));
                 log.error(ce.getMessage(), e);
                 throw ce;
             }

@@ -1,7 +1,7 @@
 Introduciton
 
-This README file contains instructions to build the Intel OPA Fabric Manager GUI 
-jar file from source. However, you should be aware that the FM GUI jar 
+This README file contains instructions to build the Intel OPA Fabric Manager Graphical User Interface 
+(FMGUI) jar file from source. However, you should be aware that the FM GUI jar 
 distributed by Intel is signed but this build process does not sign the generated jar 
 and a CA certificate is not distributed with the source. Distributing the 
 generated jar will result in user machines not being able to verify the origin 
@@ -10,7 +10,7 @@ of the jar file.
 Source Directory Structure
 
 Architecture
-The Fabric Manager GUI has a component-based architecture. In this section, 
+The FMGUI has a component-based architecture. In this section, 
 the main components are briefly described, what their function is, and how 
 they can be found in the source directory structure.
 
@@ -45,12 +45,12 @@ com.intel.stl.ui
 
 Build Requirements
 Gradle
-The Fabric Manager GUI build requires Gradle 2.9.  Gradle is an open 
+The FMGUI build requires Gradle 2.9.  Gradle is an open 
 source tool used for dependency management and build.  It can be
 downloaded from http://gradle.org 
 
 Java Development Kit
-The Fabric Manager GUI build requires a Java Development Kit (JDK) 7 or higher. 
+The FMGUI build requires a Java Development Kit (JDK) 7 or higher. 
 The JDK 7 binaries can be downloaded from Oracle's Java SE Downloads site.
 http://www.oracle.com/technetwork/java/javase/downloads/index.html
 You should set the environment variable JAVA_HOME to the location of the JDK

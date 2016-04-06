@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: PerformanceTableSection.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.38  2016/02/16 22:16:05  jijunwan
+ *  Archive Log:    PR 132888 - Include Num Lanes Down in port counters display
+ *  Archive Log:
+ *  Archive Log:    - added Num Lanes Down
+ *  Archive Log:
  *  Archive Log:    Revision 1.37  2015/08/17 18:53:41  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -185,7 +190,7 @@
  *  Archive Log:    Initial Version
  *  Archive Log:
  *
- *  Overview: This is the "Table" section controller for the Performance "Node" 
+ *  Overview: This is the "Table" section controller for the Performance "Node"
  *  view which holds the performance table
  *
  *  @author: rjtierne
@@ -197,8 +202,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import net.engio.mbassy.bus.MBassador;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -218,11 +221,13 @@ import com.intel.stl.ui.main.HelpAction;
 import com.intel.stl.ui.model.PerformanceTableModel;
 import com.intel.stl.ui.monitor.view.PerformanceXTableView;
 
+import net.engio.mbassy.bus.MBassador;
+
 public class PerformanceTableSection extends
         BaseSectionController<ISectionListener, JSectionView<ISectionListener>> {
 
-    private final static Logger log = LoggerFactory
-            .getLogger(PerformanceTableSection.class);
+    private final static Logger log =
+            LoggerFactory.getLogger(PerformanceTableSection.class);
 
     /**
      * Performance Table Model
@@ -255,7 +260,7 @@ public class PerformanceTableSection extends
 
     /**
      * Description:
-     * 
+     *
      * @param view
      */
     public PerformanceTableSection(PerformanceTableModel tableModel,
@@ -269,7 +274,7 @@ public class PerformanceTableSection extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.BaseSectionController#getHelpID()
      */
     @Override
@@ -278,9 +283,9 @@ public class PerformanceTableSection extends
     }
 
     /**
-     * 
+     *
      * Description: updates the table
-     * 
+     *
      * @param event
      *            - event message
      */
@@ -341,12 +346,12 @@ public class PerformanceTableSection extends
     }
 
     /**
-     * 
+     *
      * Description: Creates an data entry object for the performance table
-     * 
+     *
      * @param bean
      *            - port counters bean associated with a given port
-     * 
+     *
      * @return performance table data
      */
     public PerformanceTableData createPortEntry(PortCountersBean bean) {
@@ -383,10 +388,12 @@ public class PerformanceTableSection extends
 
         // Initialize port values
         portData.setPortNumber(bean.getPortNumber());
-        portData.setPortRxRemotePhysicalErrors(bean
-                .getPortRcvRemotePhysicalErrors());
-        portData.setPortRxDataRate(createTableDataDescription(rxDataRate, true));
-        portData.setPortTxDataRate(createTableDataDescription(txDataRate, true));
+        portData.setPortRxRemotePhysicalErrors(
+                bean.getPortRcvRemotePhysicalErrors());
+        portData.setPortRxDataRate(
+                createTableDataDescription(rxDataRate, true));
+        portData.setPortTxDataRate(
+                createTableDataDescription(txDataRate, true));
         portData.setPortRxSwitchRelayErrors(bean.getPortRcvSwitchRelayErrors());
         portData.setPortTxDiscards(bean.getPortXmitDiscards());
         portData.setExcessiveBufferOverruns(bean.getExcessiveBufferOverruns());
@@ -401,17 +408,20 @@ public class PerformanceTableSection extends
         portData.setPortRcvBubble(bean.getPortRcvBubble());
 
         portData.setPortMulticastXmitPkts(bean.getPortMulticastXmitPkts());
-        portData.setPortXmitConstraintErrors(bean.getPortXmitConstraintErrors());
+        portData.setPortXmitConstraintErrors(
+                bean.getPortXmitConstraintErrors());
         portData.setPortXmitWait(bean.getPortXmitWait());
         portData.setPortXmitTimeCong(bean.getPortXmitTimeCong());
         portData.setPortXmitWastedBW(bean.getPortXmitWastedBW());
         portData.setPortXmitWaitData(bean.getPortXmitWaitData());
 
-        portData.setLocalLinkIntegrityErrors(bean.getLocalLinkIntegrityErrors());
+        portData.setLocalLinkIntegrityErrors(
+                bean.getLocalLinkIntegrityErrors());
 
         portData.setPortMarkFECN(bean.getPortMarkFECN());
         portData.setLinkErrorRecovery(bean.getLinkErrorRecovery());
         portData.setLinkDowned(bean.getLinkDowned());
+        portData.setNumLanesDown(bean.getNumLanesDown());
         portData.setUncorrectableErrors(bean.getUncorrectableErrors());
         portData.setSwPortCongestion(bean.getSwPortCongestion());
 
@@ -434,28 +444,31 @@ public class PerformanceTableSection extends
             // Clean calculation for each port entry.
             // Calculate the delta packets and data
             if (bean.getTimestamp() > lastAccessMap.get(bean.getPortNumber())) {
-                long deltaTime =
-                        bean.getTimestamp()
-                                - lastAccessMap.get(bean.getPortNumber());
-                portData.setPortRxPktsRate((rxPackets - portDataAcc
-                        .getRxCumulativePacket()) / deltaTime);
+                long deltaTime = bean.getTimestamp()
+                        - lastAccessMap.get(bean.getPortNumber());
+                portData.setPortRxPktsRate(
+                        (rxPackets - portDataAcc.getRxCumulativePacket())
+                                / deltaTime);
                 portData.setPortRxDataRate(createTableDataDescription(
                         (rxData - portDataAcc.getRxCumulativeData())
-                                / deltaTime, true));
-                portData.setPortTxPktsRate((txPackets - portDataAcc
-                        .getTxCumulativePacket()) / deltaTime);
+                                / deltaTime,
+                        true));
+                portData.setPortTxPktsRate(
+                        (txPackets - portDataAcc.getTxCumulativePacket())
+                                / deltaTime);
                 portData.setPortTxDataRate(createTableDataDescription(
                         (txData - portDataAcc.getTxCumulativeData())
-                                / deltaTime, true));
+                                / deltaTime,
+                        true));
             }
 
             // Store the cumulative packets and data
             portData.setPortRxCumulativePkts(rxPackets);
-            portData.setPortRxCumulativeData(createTableDataDescription(rxData,
-                    false));
+            portData.setPortRxCumulativeData(
+                    createTableDataDescription(rxData, false));
             portData.setPortTxCumulativePkts(txPackets);
-            portData.setPortTxCumulativeData(createTableDataDescription(txData,
-                    false));
+            portData.setPortTxCumulativeData(
+                    createTableDataDescription(txData, false));
 
             // Collect the most recent cumulative values
             portDataAcc.setRxCumulativePacket(rxPackets);
@@ -506,8 +519,10 @@ public class PerformanceTableSection extends
         // Initialize port values
         portData.setPortNumber(bean.getPortNumber());
         portData.setPortRxRemotePhysicalErrors(-1);
-        portData.setPortRxDataRate(createTableDataDescription(rxDataRate, true));
-        portData.setPortTxDataRate(createTableDataDescription(txDataRate, true));
+        portData.setPortRxDataRate(
+                createTableDataDescription(rxDataRate, true));
+        portData.setPortTxDataRate(
+                createTableDataDescription(txDataRate, true));
         portData.setPortRxSwitchRelayErrors(-1);
         portData.setPortTxDiscards(bean.getPortVFXmitDiscards());
         portData.setExcessiveBufferOverruns(-1);
@@ -532,6 +547,7 @@ public class PerformanceTableSection extends
         portData.setPortMarkFECN(bean.getPortVFMarkFECN());
         portData.setLinkErrorRecovery(-1);
         portData.setLinkDowned(-1);
+        portData.setNumLanesDown((byte) -1);
         portData.setUncorrectableErrors((short) -1);
         portData.setSwPortCongestion(bean.getSwPortVFCongestion());
 
@@ -554,28 +570,31 @@ public class PerformanceTableSection extends
             // Clean calculation for each port entry.
             // Calculate the delta packets and data
             if (bean.getTimestamp() > lastAccessMap.get(bean.getPortNumber())) {
-                long deltaTime =
-                        bean.getTimestamp()
-                                - lastAccessMap.get(bean.getPortNumber());
-                portData.setPortRxPktsRate((rxPackets - portDataAcc
-                        .getRxCumulativePacket()) / deltaTime);
+                long deltaTime = bean.getTimestamp()
+                        - lastAccessMap.get(bean.getPortNumber());
+                portData.setPortRxPktsRate(
+                        (rxPackets - portDataAcc.getRxCumulativePacket())
+                                / deltaTime);
                 portData.setPortRxDataRate(createTableDataDescription(
                         (rxData - portDataAcc.getRxCumulativeData())
-                                / deltaTime, true));
-                portData.setPortTxPktsRate((txPackets - portDataAcc
-                        .getTxCumulativePacket()) / deltaTime);
+                                / deltaTime,
+                        true));
+                portData.setPortTxPktsRate(
+                        (txPackets - portDataAcc.getTxCumulativePacket())
+                                / deltaTime);
                 portData.setPortTxDataRate(createTableDataDescription(
                         (txData - portDataAcc.getTxCumulativeData())
-                                / deltaTime, true));
+                                / deltaTime,
+                        true));
             }
 
             // Store the cumulative packets and data
             portData.setPortRxCumulativePkts(rxPackets);
-            portData.setPortRxCumulativeData(createTableDataDescription(rxData,
-                    false));
+            portData.setPortRxCumulativeData(
+                    createTableDataDescription(rxData, false));
             portData.setPortTxCumulativePkts(txPackets);
-            portData.setPortTxCumulativeData(createTableDataDescription(txData,
-                    false));
+            portData.setPortTxCumulativeData(
+                    createTableDataDescription(txData, false));
 
             // Collect the most recent cumulative values
             portDataAcc.setRxCumulativePacket(rxPackets);
@@ -592,9 +611,9 @@ public class PerformanceTableSection extends
     } // updatePerformanceTable
 
     /**
-     * 
+     *
      * <i>Description:</i>Data rate converted from flits to bytes.
-     * 
+     *
      * @param data
      * @return
      */
@@ -604,13 +623,11 @@ public class PerformanceTableSection extends
 
         String dataFlits = null;
         if (isRate) {
-            dataFlits =
-                    Double.toString(data) + " "
-                            + STLConstants.K3222_FPS.getValue();
+            dataFlits = Double.toString(data) + " "
+                    + STLConstants.K3222_FPS.getValue();
         } else {
-            dataFlits =
-                    Long.toString((long) data) + " "
-                            + STLConstants.K0748_FLITS.getValue();
+            dataFlits = Long.toString((long) data) + " "
+                    + STLConstants.K0748_FLITS.getValue();
         }
         return new TableDataDescription(dataBytes, dataFlits);
     }
@@ -636,7 +653,7 @@ public class PerformanceTableSection extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.ISectionController#getCards()
      */
     @Override
@@ -646,7 +663,7 @@ public class PerformanceTableSection extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.BaseSectionController#getSectionListener()
      */
     @Override

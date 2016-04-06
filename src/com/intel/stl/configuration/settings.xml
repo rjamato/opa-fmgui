@@ -8,6 +8,7 @@
 	<entry key="db.name">fmguidb</entry>
     <entry key="db.hsqldb.hsqldb.default_table_type">cached</entry>
     <entry key="db.hsqldb.hsqldb.result_max_memory_rows">1000</entry>
+    <entry key="db.hsqldb.hsqldb.log_size">50</entry>
 	<!-- Test plug in
 	<entry key="app.ui.plugin">com.intel.stl.main.DefaultGuiPlugin</entry>
 	-->

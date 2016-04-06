@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: PerformanceTableColumns.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.14  2016/02/16 22:16:06  jijunwan
+ *  Archive Log:    PR 132888 - Include Num Lanes Down in port counters display
+ *  Archive Log:
+ *  Archive Log:    - added Num Lanes Down
+ *  Archive Log:
  *  Archive Log:    Revision 1.13  2015/11/02 20:26:15  jijunwan
  *  Archive Log:    PR 131384 - Incorrect label name on port counter panel
  *  Archive Log:    - renamed constant RX_CUMULATIVE_DATA to RX_CUMULATIVE_DATA_MB, and TX_CUMULATIVE_DATA to TX_CUMULATIVE_DATA_MB
@@ -184,7 +189,8 @@ public enum PerformanceTableColumns {
     FM_CONFIG_ERRORS(STLConstants.K0737_FM_CONFIG_ERRRORS.getValue(),
             STLConstants.K3201_FM_CONFIG_ERR_DESCRIPTION.getValue()),
 
-    EXCESSIVE_BUFFER_OVERRUNS(STLConstants.K0719_EXCESS_BUFF_OVERRUNS.getValue(),
+    EXCESSIVE_BUFFER_OVERRUNS(
+            STLConstants.K0719_EXCESS_BUFF_OVERRUNS.getValue(),
             STLConstants.K3200_EXCESS_BUFF_OVERRUNS_DESCRIPTION.getValue()),
 
     SW_PORT_CONGESTION(STLConstants.K0835_SW_PORT_CONG.getValue(),
@@ -198,6 +204,9 @@ public enum PerformanceTableColumns {
 
     LINK_DOWNED(STLConstants.K0518_LINK_DOWN.getValue(),
             STLConstants.K3202_LINK_DOWN_DESCRIPTION.getValue()),
+
+    NUM_LANES_DOWN(STLConstants.K1655_NUM_LANES_DOWN.getValue(),
+            STLConstants.K3234_NUM_LANES_DOWN_DESCRIPTION.getValue()),
 
     UNCORRECTABLE_ERRORS(STLConstants.K0716_UNCORR_ERR.getValue(),
             STLConstants.K3232_UNCORR_ERR_DESCRIPTION.getValue());

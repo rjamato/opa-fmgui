@@ -35,11 +35,8 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.15.2.2  2016/01/22 16:34:28  jypak
+ *  Archive Log:    Revision 1.17  2016/01/22 16:27:50  jypak
  *  Archive Log:    PR 132382 - Update FMGUI and CLI Help document for PRQ. Updates for hiding hyperlinks.
- *  Archive Log:
- *  Archive Log:    Revision 1.15.2.1  2016/01/21 19:28:51  jypak
- *  Archive Log:    PR 132382 - Update FMGUI and CLI Help document for PRQ. Updated jars and console .hs file name changed in ConsoleView.
  *  Archive Log:
  *  Archive Log:    Revision 1.16  2016/01/21 16:30:32  jypak
  *  Archive Log:    PR 132382 - Update FMGUI and CLI Help document for PRQ. Updated jars and console .hs file name changed in ConsoleView.

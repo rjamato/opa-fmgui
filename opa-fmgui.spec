@@ -9,7 +9,7 @@
 Name:           opa-fmgui
 Version:        10.0.0.0.3
 Release:        1%{?dist}
-Summary:        Fabric Manager Graphical User Interface
+Summary:        Intel Omni-Path Architecture Fabric Manager Graphical User Interface
 Group:          Applications/System
 License:        BSD
 URL:            www.intel.com
@@ -54,7 +54,7 @@ Requires: jre >= 1.7
 %global __provides_exclude_from ^%{_javadir}/%{appfolder}/lib/[^(gritty)].*.jar$
 
 %description
-FMGUI is the Fabric Manager Graphical User Interface. It can be run by
+FMGUI is the Intel Omni-Path Architecture Fabric Manager Graphical User Interface. It can be run by
 invoking the Bash script fmgui.
 
 %prep
@@ -116,3 +116,5 @@ fi
 %changelog
 * Fri Apr 01 2016 Robert Amato <robert.amato@intel.com> - 10.0.0.0.3-1
 - Import fmgui for Fedora
+* Wed Apr 06 2016 Robert Amato <robert.amato@intel.com> - 10.0.0.0.3-2
+- Remove Intel branding

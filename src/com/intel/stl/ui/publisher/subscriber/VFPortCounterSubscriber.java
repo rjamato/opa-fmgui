@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: VFPortCounterSubscriber.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.12  2016/02/09 20:23:09  jijunwan
+ *  Archive Log:    PR 132575 - [PSC] Null pointer message in FM GUI
+ *  Archive Log:
+ *  Archive Log:    - some minor improvements
+ *  Archive Log:
  *  Archive Log:    Revision 1.11  2015/08/17 18:53:39  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -109,8 +114,8 @@ import com.intel.stl.ui.publisher.Task;
 
 public class VFPortCounterSubscriber extends Subscriber<VFPortCountersBean> {
 
-    private static Logger log = LoggerFactory
-            .getLogger(PortCounterSubscriber.class);
+    private static Logger log =
+            LoggerFactory.getLogger(PortCounterSubscriber.class);
 
     public VFPortCounterSubscriber(IRegisterTask taskScheduler,
             IPerformanceApi perfApi) {
@@ -120,12 +125,11 @@ public class VFPortCounterSubscriber extends Subscriber<VFPortCountersBean> {
     public synchronized Task<VFPortCountersBean> registerVFPortCounters(
             final String vfName, final int lid, final short portNum,
             ICallback<VFPortCountersBean> callback) {
-        Task<VFPortCountersBean> task =
-                new Task<VFPortCountersBean>(
-                        PAConstants.STL_PA_ATTRID_GET_VF_PORT_CTRS, vfName
-                                + ":" + lid + ":" + portNum,
-                        UILabels.STL40011_VFPORTCOUNTERS_TASK.getDescription(
-                                lid, portNum));
+        Task<VFPortCountersBean> task = new Task<VFPortCountersBean>(
+                PAConstants.STL_PA_ATTRID_GET_VF_PORT_CTRS,
+                vfName + ":" + lid + ":" + portNum,
+                UILabels.STL40011_VFPORTCOUNTERS_TASK.getDescription(lid,
+                        portNum));
         Callable<VFPortCountersBean> caller =
                 new Callable<VFPortCountersBean>() {
                     @Override
@@ -136,14 +140,12 @@ public class VFPortCounterSubscriber extends Subscriber<VFPortCountersBean> {
                     }
                 };
         try {
-            Task<VFPortCountersBean> submittedTask =
-                    taskScheduler
-                            .scheduleTask(taskList, task, callback, caller);
+            Task<VFPortCountersBean> submittedTask = taskScheduler
+                    .scheduleTask(taskList, task, callback, caller);
 
             return submittedTask;
         } catch (Exception e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             return null;
         }
     }
@@ -154,8 +156,7 @@ public class VFPortCounterSubscriber extends Subscriber<VFPortCountersBean> {
         try {
             taskScheduler.removeTask(taskList, task, callback);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -169,31 +170,30 @@ public class VFPortCounterSubscriber extends Subscriber<VFPortCountersBean> {
                 new BatchedCallback<VFPortCountersBean>(size, callback,
                         VFPortCountersBean.class);
         for (int i = 0; i < size; i++) {
-            Task<VFPortCountersBean> task =
-                    registerVFPortCounters(vfName, lids[i], portNums[i],
-                            bCallback.getCallback(i));
+            Task<VFPortCountersBean> task = registerVFPortCounters(vfName,
+                    lids[i], portNums[i], bCallback.getCallback(i));
             tasks.add(task);
         }
         return tasks;
     }
 
     /**
-     * 
+     *
      * Description: This method returns an array of PortCounterBeans for the
      * node specified by lid and the list ports.
-     * 
+     *
      * @param lid
      *            - lid for a specific node
-     * 
+     *
      * @param portNumList
      *            - list of port numbers associated with lid
-     * 
+     *
      * @param rateInSeconds
      *            - rate at which to invoke the callback
-     * 
+     *
      * @param callback
      *            - method to call
-     * 
+     *
      * @return - array of PortCounterBeans associated with specified node
      */
     public synchronized List<Task<VFPortCountersBean>> registerVFPortCounters(
@@ -205,9 +205,8 @@ public class VFPortCounterSubscriber extends Subscriber<VFPortCountersBean> {
                 new BatchedCallback<VFPortCountersBean>(portNumList.size(),
                         callback, VFPortCountersBean.class);
         for (int i = 0; i < portNumList.size(); i++) {
-            Task<VFPortCountersBean> task =
-                    registerVFPortCounters(vfName, lid, portNumList.get(i),
-                            bCallback.getCallback(i));
+            Task<VFPortCountersBean> task = registerVFPortCounters(vfName, lid,
+                    portNumList.get(i), bCallback.getCallback(i));
             tasks.add(task);
         }
         return tasks;
@@ -219,8 +218,7 @@ public class VFPortCounterSubscriber extends Subscriber<VFPortCountersBean> {
         try {
             taskScheduler.removeTask(taskList, tasks, callbacks);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -234,8 +232,8 @@ public class VFPortCounterSubscriber extends Subscriber<VFPortCountersBean> {
                         CallbackAdapter.asArrayCallbak(callback)) {
 
                     @Override
-                    protected VFPortCountersBean[] queryHistory(
-                            long[] imageIDs, int offset) {
+                    protected VFPortCountersBean[] queryHistory(long[] imageIDs,
+                            int offset) {
                         VFPortCountersBean portCounters =
                                 perfApi.getVFPortCountersHistory(vfName, lid,
                                         portNum, imageIDs[0], offset);
@@ -266,8 +264,8 @@ public class VFPortCounterSubscriber extends Subscriber<VFPortCountersBean> {
                         taskScheduler.getRefreshRate(), type, callback) {
 
                     @Override
-                    protected VFPortCountersBean[] queryHistory(
-                            long[] imageIDs, int offset) {
+                    protected VFPortCountersBean[] queryHistory(long[] imageIDs,
+                            int offset) {
                         VFPortCountersBean[] res =
                                 new VFPortCountersBean[portNumList.size()];
                         for (int i = 0; i < portNumList.size(); i++) {

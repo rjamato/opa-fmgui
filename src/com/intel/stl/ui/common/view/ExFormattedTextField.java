@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *  
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: ExFormattedTextFiled.java
@@ -35,6 +35,15 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.7  2016/03/02 18:27:31  jijunwan
+ *  Archive Log:    PR 133067 - Add a popup window that e-mail was sent successfully when "test" button is click
+ *  Archive Log:
+ *  Archive Log:    - changed to disable button after we click test button
+ *  Archive Log:    - changed to show "sending email..." message when we are sending out a test email
+ *  Archive Log:    - changed to show "Test message sent out, please check your email account." after email sent out
+ *  Archive Log:    - change to recover message to normal text when there is a user action
+ *  Archive Log:    - added undo/redo capability to email address text area
+ *  Archive Log:
  *  Archive Log:    Revision 1.6  2015/11/18 23:56:43  rjtierne
  *  Archive Log:    PR 130965 - ESM support on Log Viewer
  *  Archive Log:    - Override setEnabled() so extended formatted text fields could be disabled in a manner similar to the standard JTextField
@@ -70,7 +79,7 @@
  *  Archive Log:    - added SafeNumberField that will check value range and valid chars
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: jijunwan
  *
@@ -78,41 +87,28 @@
 
 package com.intel.stl.ui.common.view;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.Format;
 
-import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.InputVerifier;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
-import javax.swing.KeyStroke;
 import javax.swing.ToolTipManager;
 import javax.swing.border.Border;
-import javax.swing.event.UndoableEditEvent;
-import javax.swing.event.UndoableEditListener;
 import javax.swing.text.DefaultFormatter;
 import javax.swing.text.DefaultFormatterFactory;
-import javax.swing.undo.CannotRedoException;
-import javax.swing.undo.CannotUndoException;
-import javax.swing.undo.UndoManager;
 
 import com.intel.stl.ui.common.UIConstants;
+import com.intel.stl.ui.common.Util;
 
 /**
  * Extended JFormattedTextFiled that will show error hint on the TextField
  */
 public class ExFormattedTextField extends JFormattedTextField {
     private static final long serialVersionUID = 6265122315036017331L;
-
-    private static final String UNDO_ACTION = "UNDO";
-
-    private static final String REDO_ACTION = "REDO";
 
     private Border orgBorder;
 
@@ -122,7 +118,7 @@ public class ExFormattedTextField extends JFormattedTextField {
 
     /**
      * Description:
-     * 
+     *
      * @param formatter
      */
     public ExFormattedTextField(AbstractFormatter formatter) {
@@ -132,7 +128,7 @@ public class ExFormattedTextField extends JFormattedTextField {
 
     /**
      * Description:
-     * 
+     *
      * @param format
      */
     public ExFormattedTextField(Format format) {
@@ -168,8 +164,8 @@ public class ExFormattedTextField extends JFormattedTextField {
                     if (orgBorder == null) {
                         orgBorder = getBorder();
                     }
-                    setBorder(BorderFactory.createLineBorder(
-                            UIConstants.INTEL_RED, 2));
+                    setBorder(BorderFactory
+                            .createLineBorder(UIConstants.INTEL_RED, 2));
 
                     if (validationTooltip != null) {
                         if (orgTooltip == null) {
@@ -177,62 +173,16 @@ public class ExFormattedTextField extends JFormattedTextField {
                         }
                         setToolTipText(validationTooltip);
                         // show tooltip immediately
-                        ToolTipManager.sharedInstance().mouseMoved(
-                                new MouseEvent(ExFormattedTextField.this, 0, 0,
-                                        0, 0, 0, 0, false));
+                        ToolTipManager.sharedInstance()
+                                .mouseMoved(new MouseEvent(
+                                        ExFormattedTextField.this, 0, 0, 0, 0,
+                                        0, 0, false));
                     }
                 }
             }
         });
 
-        makeUndoable();
-    }
-
-    private void makeUndoable() {
-        final UndoManager undoMgr = new UndoManager();
-        getDocument().addUndoableEditListener(new UndoableEditListener() {
-            @Override
-            public void undoableEditHappened(UndoableEditEvent evt) {
-                undoMgr.addEdit(evt.getEdit());
-            }
-        });
-
-        getActionMap().put(UNDO_ACTION, new AbstractAction(UNDO_ACTION) {
-            private static final long serialVersionUID = 6916362113277049438L;
-
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                try {
-                    if (undoMgr.canUndo()) {
-                        undoMgr.undo();
-                    }
-                } catch (CannotUndoException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        getActionMap().put(REDO_ACTION, new AbstractAction(REDO_ACTION) {
-            private static final long serialVersionUID = 1905302135550403038L;
-
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                try {
-                    if (undoMgr.canRedo()) {
-                        undoMgr.redo();
-                    }
-                } catch (CannotRedoException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        // Create keyboard accelerators for undo/redo actions (Ctrl+Z/Ctrl+Y)
-        getInputMap()
-                .put(KeyStroke.getKeyStroke(KeyEvent.VK_Z,
-                        InputEvent.CTRL_DOWN_MASK), UNDO_ACTION);
-        getInputMap()
-                .put(KeyStroke.getKeyStroke(KeyEvent.VK_Y,
-                        InputEvent.CTRL_DOWN_MASK), REDO_ACTION);
+        Util.makeUndoable(this);
     }
 
     /**

@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.24  2016/01/28 18:03:16  jijunwan
+ *  Archive Log:    PR 132498 - Unit value missing from Y axis of HoQLife by VL table
+ *  Archive Log:
+ *  Archive Log:    - label adjustment
+ *  Archive Log:
  *  Archive Log:    Revision 1.23  2015/08/19 21:06:36  jijunwan
  *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
  *  Archive Log:    - adapt to latest FM code
@@ -153,7 +158,7 @@ public enum DeviceProperty implements IPropertyKey {
     GID_PREFIX(STLConstants.K0312_PORT_GID_PREFIX),
     GROUP_NAME(STLConstants.K1030_GROUP_NAME),
     HOQLIFE_LABEL(STLConstants.K0348_PORT_HOQLIFE_LABEL),
-    HOQLIFE(STLConstants.K1069_HOQLIFE),
+    HOQLIFE(STLConstants.K1069_HOQLIFE_BY_VL),
     UNI_DIAG_CODE(STLConstants.K0313_PORT_UNI_DIAG_CODE),
     IPCHASSIS_NAME(STLConstants.K0396_IPCHASSIS_NAME),
     IP_ADDR_IPV6(STLConstants.K0442_IPV6_ADDR),

@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -26,14 +26,24 @@
  */
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- * 
+ *
  *  Functional Group: Fabric Viewer Application
- * 
+ *
  *  File Name: UILabels.java
- * 
+ *
  *  Archive Source: $Source$
- * 
+ *
  *  Archive Log: $Log$
+ *  Archive Log: Revision 1.77  2016/03/03 17:06:29  jijunwan
+ *  Archive Log: PR 133087 - Writing VFs on multiplane are written in common section
+ *  Archive Log:
+ *  Archive Log: - improved login panel with note
+ *  Archive Log:
+ *  Archive Log: Revision 1.76  2016/02/16 19:54:50  jijunwan
+ *  Archive Log: PR 132863 - adjust counter displays to show in order of relative importance
+ *  Archive Log:
+ *  Archive Log: - improved to show tooltip text for counters billed on neighbor port
+ *  Archive Log:
  *  Archive Log: Revision 1.75  2015/12/03 14:56:28  jypak
  *  Archive Log: PR 131817 - FM GUI, the status Column to the right requires a header/title.
  *  Archive Log:
@@ -118,11 +128,11 @@
  *  Archive Log: - wrote a tool to check and insert file header
  *  Archive Log: - applied on backend files
  *  Archive Log:
- * 
+ *
  *  Overview:
- * 
+ *
  *  @author: Fernando Fernandez
- * 
+ *
  ******************************************************************************/
 
 package com.intel.stl.ui.common;
@@ -145,9 +155,9 @@ import com.intel.stl.api.IMessage;
  * component STL40001-STL40999: Messages related to the UI component Add ranges
  * as more components are added. Don't forget to add the actual message in the
  * messages.properties file.
- * 
+ *
  * @author Fernando Fernandez
- * 
+ *
  */
 public enum UILabels implements IMessage {
 
@@ -231,6 +241,7 @@ public enum UILabels implements IMessage {
     STL40011_VFPORTCOUNTERS_TASK(40011),
     STL40012_DEVICE_STATES(40012),
     STL40013_FATAL_FAILURE(40013),
+    STL40014_BILL_NEIGHBOR(40014),
 
     // RenameEventDialog
     STL50001_EVENT_VALID(50001),
@@ -376,6 +387,7 @@ public enum UILabels implements IMessage {
     STL50217_FILE_ACCESS_DENIED(50217),
     STL50218_EMPTY_LOG_FILE(50218),
     STL50219_ESM_SYSLOG_NOTE(50219),
+    STL50220_FM_CONFIG_NOTE(50220),
 
     // Event messages
     STL60001_TOPO_CHANGE(60001),
@@ -464,11 +476,11 @@ public enum UILabels implements IMessage {
 
     private static final String STL_MESSAGES_ENCODING = "UTF-8";
 
-    private static final Control STL_CONTROL = new UTFControl(
-            STL_MESSAGES_ENCODING);
+    private static final Control STL_CONTROL =
+            new UTFControl(STL_MESSAGES_ENCODING);
 
-    private static final ResourceBundle STL_MESSAGES = ResourceBundle
-            .getBundle(STL_MESSAGES_BUNDLE, STL_CONTROL);
+    private static final ResourceBundle STL_MESSAGES =
+            ResourceBundle.getBundle(STL_MESSAGES_BUNDLE, STL_CONTROL);
 
     private static Logger log = LoggerFactory.getLogger(UILabels.class);
 

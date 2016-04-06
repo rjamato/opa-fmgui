@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: MailManager.java
@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.11  2016/01/26 18:36:57  fernande
+ *  Archive Log:    PR 132387 - [Dell]: FMGUI Fails to Open Due to Database Lock. Changed the AppComponent interface so that component can provide feedback to the UI.
+ *  Archive Log:
  *  Archive Log:    Revision 1.10  2015/09/01 19:01:46  fisherma
  *  Archive Log:    PR 130111 - test button unavalable after entering SMTP information.  The fix is to allow to save properties regardless of their validity.
  *  Archive Log:
@@ -68,7 +71,7 @@
  *  Archive Log:    added Mail Manager
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: jijunwan
  *
@@ -77,6 +80,8 @@
 package com.intel.stl.api.configuration.impl;
 
 import static com.intel.stl.common.STLMessages.STL10019_MAIL_COMPONENT;
+import static com.intel.stl.common.STLMessages.STL10025_STARTING_COMPONENT;
+import static com.intel.stl.common.STLMessages.STL10026_STOPPING_COMPONENT;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -90,6 +95,7 @@ import javax.mail.MessagingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.intel.stl.api.StartupProgressObserver;
 import com.intel.stl.api.StringUtils;
 import com.intel.stl.api.configuration.AppInfo;
 import com.intel.stl.api.configuration.MailProperties;
@@ -107,6 +113,15 @@ import com.intel.stl.datamanager.DatabaseManager;
 
 public class MailManager implements AppComponent {
     private static Logger log = LoggerFactory.getLogger(MailManager.class);
+
+    private static final String MAIL_COMPONENT =
+            STL10019_MAIL_COMPONENT.getDescription();
+
+    private static final String PROGRESS_MESSAGE =
+            STL10025_STARTING_COMPONENT.getDescription(MAIL_COMPONENT);
+
+    private static final String SHUTDOWN_MESSAGE =
+            STL10026_STOPPING_COMPONENT.getDescription(MAIL_COMPONENT);
 
     // SMTP properties strings.
     private final String SMTP_FROM_ADDRESS = "smtp_from_address";
@@ -137,13 +152,16 @@ public class MailManager implements AppComponent {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.configuration.AppComponent#initialize(com.intel.stl.
      * configuration.AppSettings)
      */
     @Override
-    public void initialize(AppSettings settings)
-            throws AppConfigurationException {
+    public void initialize(AppSettings settings,
+            StartupProgressObserver observer) throws AppConfigurationException {
+        if (observer != null) {
+            observer.setProgress(PROGRESS_MESSAGE);
+        }
         initializeSmtpSettings();
         // For now, nothing else to do. In the future may improve to include
         // message type, such as plain text, html etc.
@@ -238,7 +256,10 @@ public class MailManager implements AppComponent {
     }
 
     @Override
-    public void shutdown() {
+    public void shutdown(StartupProgressObserver observer) {
+        if (observer != null) {
+            observer.setProgress(SHUTDOWN_MESSAGE);
+        }
         try {
             if (mailSender != null) {
                 mailSender.shutdown();
@@ -304,9 +325,8 @@ public class MailManager implements AppComponent {
                     mailProperties.setSmtpServer(serverName);
                 }
 
-                boolean enableEmailNotifications =
-                        Boolean.parseBoolean(smtpProperties
-                                .getProperty(SMTP_NOTIFICATIONS_ENABLED));
+                boolean enableEmailNotifications = Boolean.parseBoolean(
+                        smtpProperties.getProperty(SMTP_NOTIFICATIONS_ENABLED));
                 mailProperties
                         .setEmailNotificationsEnabled(enableEmailNotifications);
             }
@@ -319,8 +339,8 @@ public class MailManager implements AppComponent {
         smtpProperties.setProperty(SMTP_FROM_ADDRESS, properties.getFromAddr());
         smtpProperties.setProperty(SMTP_PORT,
                 new Integer(properties.getSmtpPort()).toString());
-        smtpProperties
-                .setProperty(SMTP_SERVER_NAME, properties.getSmtpServer());
+        smtpProperties.setProperty(SMTP_SERVER_NAME,
+                properties.getSmtpServer());
         smtpProperties.setProperty(SMTP_NOTIFICATIONS_ENABLED,
                 Boolean.toString(properties.getEmailNotificationsEnabled()));
 
@@ -373,7 +393,8 @@ public class MailManager implements AppComponent {
         }
     }
 
-    public void addEmailEventListener(IEmailEventListener<NoticeBean> listener) {
+    public void addEmailEventListener(
+            IEmailEventListener<NoticeBean> listener) {
         emailEventListeners.add(listener);
         synchronized (toSend) {
             if (!toSend.isEmpty()) {

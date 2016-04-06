@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -26,14 +26,45 @@
  */
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- * 
+ *
  *  Functional Group: Fabric Viewer Application
- * 
+ *
  *  File Name: STLConstants.java
- * 
+ *
  *  Archive Source: $Source$
- * 
+ *
  *  Archive Log: $Log$
+ *  Archive Log: Revision 1.157  2016/03/02 18:27:30  jijunwan
+ *  Archive Log: PR 133067 - Add a popup window that e-mail was sent successfully when "test" button is click
+ *  Archive Log:
+ *  Archive Log: - changed to disable button after we click test button
+ *  Archive Log: - changed to show "sending email..." message when we are sending out a test email
+ *  Archive Log: - changed to show "Test message sent out, please check your email account." after email sent out
+ *  Archive Log: - change to recover message to normal text when there is a user action
+ *  Archive Log: - added undo/redo capability to email address text area
+ *  Archive Log:
+ *  Archive Log: Revision 1.156  2016/02/16 22:16:09  jijunwan
+ *  Archive Log: PR 132888 - Include Num Lanes Down in port counters display
+ *  Archive Log:
+ *  Archive Log: - added Num Lanes Down
+ *  Archive Log:
+ *  Archive Log: Revision 1.155  2016/02/11 16:02:40  jijunwan
+ *  Archive Log: PR 132821 - confusion text on ports statistic
+ *  Archive Log:
+ *  Archive Log: - improved text
+ *  Archive Log:
+ *  Archive Log: Revision 1.154  2016/01/28 18:03:17  jijunwan
+ *  Archive Log: PR 132498 - Unit value missing from Y axis of HoQLife by VL table
+ *  Archive Log:
+ *  Archive Log: - label adjustment
+ *  Archive Log:
+ *  Archive Log: Revision 1.153  2016/01/28 17:51:58  jijunwan
+ *  Archive Log: PR 132498 - Unit value missing from Y axis of HoQLife by VL table
+ *  Archive Log:
+ *  Archive Log: - changed to display real HoQ values in ms on chart
+ *  Archive Log: - changed chart Y axis label to milliseconds
+ *  Archive Log: - changes chart tooltip to display value in us, ms or s
+ *  Archive Log:
  *  Archive Log: Revision 1.152  2015/12/03 20:12:46  jijunwan
  *  Archive Log: PR 130614 - Select All / Deselect All buttons
  *  Archive Log: - Added "select all" and "unselect all" buttons
@@ -150,11 +181,11 @@
  *  Archive Log: - wrote a tool to check and insert file header
  *  Archive Log: - applied on backend files
  *  Archive Log:
- * 
+ *
  *  Overview:
- * 
+ *
  *  @author: Fernando Fernandez
- * 
+ *
  ******************************************************************************/
 
 package com.intel.stl.ui.common;
@@ -169,7 +200,7 @@ import org.slf4j.LoggerFactory;
 
 /***
  * @author Fernando Fernandez
- * 
+ *
  */
 public enum STLConstants {
 
@@ -307,6 +338,16 @@ public enum STLConstants {
     K0127_PERCENT_OF_THRESHOLD(127),
 
     K0128_NODES_DISTR_SEVERITY(128),
+    K0129_MILLISECOND(129),
+    K0130_MS(130),
+    K0131_US(131),
+    K0132_S(132),
+    K0133_INFINITE(133),
+    K0134_HOQLIFE(134),
+    K0135_SW_PORT(135),
+    K0136_SW_PORTS(136),
+    K0137_HFI_PORT(137),
+    K0138_HFI_PORTS(138),
 
     K0200_PERFORMANCE(200),
     K0201_PERFORMANCE_DESCRIPTION(201),
@@ -953,7 +994,7 @@ public enum STLConstants {
     K1066_MTU_SERIES(1066),
     K1067_NUM_VL(1067),
     K1068_MTU(1068),
-    K1069_HOQLIFE(1069),
+    K1069_HOQLIFE_BY_VL(1069),
     K1070_VLSTALL_SERIES(1070),
     K1071_QSFP_CABLE_INFO(1071),
     K1072_CABLE_ID(1072),
@@ -1103,6 +1144,8 @@ public enum STLConstants {
     K1636_SEL_BUBBLE_ERRORS_HIGH(1636),
     K1637_SEL_SECURITY_ERRORS_HIGH(1637),
     K1638_SEL_ROUTING_ERRORS_HIGH(1638),
+
+    K1655_NUM_LANES_DOWN(1655),
 
     K1750_NO_SPECIFIED_REASON(1750),
     K1751_OFFDIS_DISCONNECTED(1751),
@@ -1308,6 +1351,8 @@ public enum STLConstants {
     K3231_MARK_FECN_DESCRIPTION(3231),
     K3232_UNCORR_ERR_DESCRIPTION(3232),
 
+    K3234_NUM_LANES_DOWN_DESCRIPTION(3234),
+
     K3300_BPS_DESCRIPTION(3300),
     K3301_KBPS_DESCRIPTION(3301),
     K3302_MBPS_DESCRIPTION(3302),
@@ -1339,6 +1384,8 @@ public enum STLConstants {
     K5014_EMAIL_HINT_TEXT(5014),
     K5015_EMAIL_TOOLTIP_HINT_TEXT(5015),
     K5016_EMAIL_TEST_BTN_TOOLTIP_TEXT(5015),
+    K5017_SENDING_EMAIL(5017),
+    K5018_EMAIL_SENT_OUT(5018),
 
     K99999_END_OF_CONSTANTS(99999);
 
@@ -1347,11 +1394,11 @@ public enum STLConstants {
 
     private static final String STL_CONSTANTS_ENCODING = "UTF-8";
 
-    private static final Control STL_CONTROL = new UTFControl(
-            STL_CONSTANTS_ENCODING);
+    private static final Control STL_CONTROL =
+            new UTFControl(STL_CONSTANTS_ENCODING);
 
-    private static final ResourceBundle STL_CONSTANTS = ResourceBundle
-            .getBundle(STL_CONSTANTS_BUNDLE, STL_CONTROL);
+    private static final ResourceBundle STL_CONSTANTS =
+            ResourceBundle.getBundle(STL_CONSTANTS_BUNDLE, STL_CONTROL);
 
     private static Logger log = LoggerFactory.getLogger(STLConstants.class);
 
@@ -1384,8 +1431,8 @@ public enum STLConstants {
 
     public String getValue(Object... arguments) {
         try {
-            return MessageFormat
-                    .format(STL_CONSTANTS.getString(key), arguments);
+            return MessageFormat.format(STL_CONSTANTS.getString(key),
+                    arguments);
         } catch (MissingResourceException mre) {
             String message = "Constant '" + key + "' not found!";
             log.error(message);

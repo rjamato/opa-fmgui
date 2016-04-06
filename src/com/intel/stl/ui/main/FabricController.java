@@ -570,9 +570,9 @@ import com.intel.stl.ui.network.TopologyPage;
 import com.intel.stl.ui.network.view.TopologyView;
 import com.intel.stl.ui.publisher.TaskScheduler;
 
-public class FabricController extends
-        AbstractController<FabricModel, FabricView, FabricController> implements
-        IFabricController, IPageListener, IEventSummaryBarListener,
+public class FabricController
+        extends AbstractController<FabricModel, FabricView, FabricController>
+        implements IFabricController, IPageListener, IEventSummaryBarListener,
         PropertyChangeListener {
     public static final String PROGRESS_AMOUNT_PROPERTY = "ProgressAmount";
 
@@ -605,8 +605,8 @@ public class FabricController extends
 
     private ITask backgroundTask;
 
-    private final List<ITask> pendingTasks = Collections
-            .synchronizedList(new ArrayList<ITask>());
+    private final List<ITask> pendingTasks =
+            Collections.synchronizedList(new ArrayList<ITask>());
 
     private final FVTreeManager builder;
 
@@ -759,7 +759,8 @@ public class FabricController extends
     }
 
     protected PerformancePage createPerformancePage() {
-        return new PerformancePage(new PerformanceTreeView(), eventBus, builder);
+        return new PerformancePage(new PerformanceTreeView(), eventBus,
+                builder);
     }
 
     protected TopologyPage createTopologyPage() {
@@ -773,9 +774,8 @@ public class FabricController extends
     }
 
     protected AdminPage createAdminPage() {
-        Window owner =
-                (mainFrame != null && (mainFrame instanceof Window)) ? (Window) mainFrame
-                        : null;
+        Window owner = (mainFrame != null && (mainFrame instanceof Window))
+                ? (Window) mainFrame : null;
         return new AdminPage(new AdminView((IFabricView) owner), eventBus);
     }
 
@@ -834,21 +834,19 @@ public class FabricController extends
                 new ArrayList<IContextAware>();
         foregroundContextPages.add(builder);
 
-        List<IContextAware> backgroundContextPages = new ArrayList<IContextAware>();
+        List<IContextAware> backgroundContextPages =
+                new ArrayList<IContextAware>();
         backgroundContextPages.addAll(pages);
         backgroundContextPages.add(eventSummaryBarPanelController);
         backgroundContextPages.add(eventTableController);
-        backgroundTotalWork =
-                builder.getContextSwitchWeight().getWeight()
-                        + eventSummaryBarPanelController
-                                .getContextSwitchWeight().getWeight()
-                        + eventTableController.getContextSwitchWeight()
-                                .getWeight();
+        backgroundTotalWork = builder.getContextSwitchWeight().getWeight()
+                + eventSummaryBarPanelController.getContextSwitchWeight()
+                        .getWeight()
+                + eventTableController.getContextSwitchWeight().getWeight();
         backgroundTotalWork += pageLoadWork;
         backgroundWork = 0.0;
-        backgroundTask =
-                new SubnetSwitchTask(model, context, foregroundContextPages,
-                        backgroundContextPages);
+        backgroundTask = new SubnetSwitchTask(model, context,
+                foregroundContextPages, backgroundContextPages);
         backgroundTask.addPropertyChangeListener(this);
         mainFrame.setTitle(STLConstants.K0001_FABRIC_VIEWER_TITLE.getValue());
         submitTask(backgroundTask);
@@ -871,21 +869,19 @@ public class FabricController extends
                 new ArrayList<IContextAware>();
         foregroundContextPages.add(builder);
 
-        List<IContextAware> backgroundContextPages = new ArrayList<IContextAware>();
+        List<IContextAware> backgroundContextPages =
+                new ArrayList<IContextAware>();
         backgroundContextPages.addAll(pages);
         backgroundContextPages.add(eventSummaryBarPanelController);
         backgroundContextPages.add(eventTableController);
-        backgroundTotalWork =
-                builder.getContextSwitchWeight().getWeight()
-                        + eventSummaryBarPanelController
-                                .getContextSwitchWeight().getWeight()
-                        + eventTableController.getContextSwitchWeight()
-                                .getWeight();
+        backgroundTotalWork = builder.getContextSwitchWeight().getWeight()
+                + eventSummaryBarPanelController.getContextSwitchWeight()
+                        .getWeight()
+                + eventTableController.getContextSwitchWeight().getWeight();
         backgroundTotalWork += pageLoadWork;
         backgroundWork = 0.0;
-        backgroundTask =
-                new SubnetSwitchTask(model, newContext, foregroundContextPages,
-                        backgroundContextPages);
+        backgroundTask = new SubnetSwitchTask(model, newContext,
+                foregroundContextPages, backgroundContextPages);
         backgroundTask.addPropertyChangeListener(this);
         mainFrame.setTitle(STLConstants.K0001_FABRIC_VIEWER_TITLE.getValue());
         submitTask(backgroundTask);
@@ -1344,8 +1340,8 @@ public class FabricController extends
                 return page;
             }
         }
-        throw new IllegalArgumentException("Couldn't find page with name '"
-                + name + "'");
+        throw new IllegalArgumentException(
+                "Couldn't find page with name '" + name + "'");
     }
 
     @Override
@@ -1425,8 +1421,8 @@ public class FabricController extends
         if (context != null && model.getCurrentSubnet() != null) {
             // Start a simulated failover
             SubnetDescription subnet = model.getCurrentSubnet();
-            context.getConfigurationApi().startSimulatedFailover(
-                    subnet.getName());
+            context.getConfigurationApi()
+                    .startSimulatedFailover(subnet.getName());
         }
     }
 
@@ -1499,6 +1495,14 @@ public class FabricController extends
     @Override
     public void onFailoverCompleted(SubnetEvent event) {
         Context context = getContext();
+        Context newContext = context == null ? null
+                : subnetMgr.getContext(context.getSubnetDescription());
+        if (newContext != null && context != newContext) {
+            // special case - failover from a new context
+            resetContext(newContext);
+            return;
+        }
+
         if (context != null) {
             context.removeFailoverProgressListener(this);
             TaskScheduler ts = context.getTaskScheduler();
