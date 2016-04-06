@@ -114,7 +114,5 @@ fi
 %license LICENSE
 
 %changelog
-* Fri Apr 01 2016 Robert Amato <robert.amato@intel.com> - 10.0.0.0.3-1
-- Import fmgui for Fedora
 * Wed Apr 06 2016 Robert Amato <robert.amato@intel.com> - 10.0.0.0.3-2
 - Remove Intel branding
