@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: ConnectivityTableModel.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.14  2016/02/16 22:16:06  jijunwan
+ *  Archive Log:    PR 132888 - Include Num Lanes Down in port counters display
+ *  Archive Log:
+ *  Archive Log:    - added Num Lanes Down
+ *  Archive Log:
  *  Archive Log:    Revision 1.13  2015/11/02 23:54:31  jijunwan
  *  Archive Log:    PR 131396 - Incorrect Connectivity Table for a VF port
  *  Archive Log:    - changed model to display N/A when a value is not avaiable
@@ -95,7 +100,8 @@ import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.monitor.ConnectivityTableData;
 import com.intel.stl.ui.monitor.ConnectivityTableData.PerformanceData;
 
-public class ConnectivityTableModel extends FVTableModel<ConnectivityTableData> {
+public class ConnectivityTableModel
+        extends FVTableModel<ConnectivityTableData> {
 
     /**
      * Serial Version UID
@@ -103,14 +109,14 @@ public class ConnectivityTableModel extends FVTableModel<ConnectivityTableData> 
     private static final long serialVersionUID = 8267890546744729698L;
 
     /**
-     * 
+     *
      * Description: Constructor for the ConnectivityTableModel class
-     * 
+     *
      * @param N
      *            /a
-     * 
+     *
      * @return ConnectivityTableModel
-     * 
+     *
      */
     public ConnectivityTableModel() {
         String[] columnNames =
@@ -123,12 +129,12 @@ public class ConnectivityTableModel extends FVTableModel<ConnectivityTableData> 
 
     /**
      * Description: Override getColumnName to set the column headings
-     * 
+     *
      * @param column
      *            - integer indicating the column number
-     * 
+     *
      * @return result - name of the column heading
-     * 
+     *
      */
     @Override
     public String getColumnName(int column) {
@@ -137,7 +143,7 @@ public class ConnectivityTableModel extends FVTableModel<ConnectivityTableData> 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.swing.table.TableModel#getValueAt(int, int)
      */
     @Override
@@ -183,15 +189,13 @@ public class ConnectivityTableModel extends FVTableModel<ConnectivityTableData> 
                     break;
 
                 case LINK_STATE:
-                    value =
-                            (nodeData.getLinkState() != null) ? nodeData
-                                    .getLinkState().toString() : "";
+                    value = (nodeData.getLinkState() != null)
+                            ? nodeData.getLinkState().toString() : "";
                     break;
 
                 case PHYSICAL_LINK_STATE:
-                    value =
-                            (nodeData.getPhysicalLinkState() != null) ? nodeData
-                                    .getPhysicalLinkState().toString() : "";
+                    value = (nodeData.getPhysicalLinkState() != null)
+                            ? nodeData.getPhysicalLinkState().toString() : "";
                     break;
 
                 case LINK_QUALITY:
@@ -270,6 +274,10 @@ public class ConnectivityTableModel extends FVTableModel<ConnectivityTableData> 
 
             case LINK_DOWNED:
                 value = perfData.getNumLinkDown();
+                break;
+
+            case NUM_LANES_DOWN:
+                value = perfData.getNumLanesDown();
                 break;
 
             case RX_ERRORS:
@@ -375,7 +383,7 @@ public class ConnectivityTableModel extends FVTableModel<ConnectivityTableData> 
 
     /**
      * Description:
-     * 
+     *
      */
     public void clear() {
         mEntryList.clear();
@@ -387,7 +395,7 @@ public class ConnectivityTableModel extends FVTableModel<ConnectivityTableData> 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.FVTableModel#isCellEditable(int, int)
      */
     @Override

@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: AppContextImpl.java
@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.49  2016/01/26 18:36:57  fernande
+ *  Archive Log:    PR 132387 - [Dell]: FMGUI Fails to Open Due to Database Lock. Changed the AppComponent interface so that component can provide feedback to the UI.
+ *  Archive Log:
  *  Archive Log:    Revision 1.48  2015/08/19 19:25:28  fernande
  *  Archive Log:    PR 128703 - Fail over doesn't work on A0 Fabric. FE Adapter not being shutdown during application shutdown
  *  Archive Log:
@@ -197,7 +200,7 @@
  *  Archive Log:    Changes to defer creation of APIs until a subnet is chosen
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: fernande
  *
@@ -206,6 +209,8 @@
 package com.intel.stl.api.configuration.impl;
 
 import static com.intel.stl.common.STLMessages.STL10020_APPCONTEXT_COMPONENT;
+import static com.intel.stl.common.STLMessages.STL10025_STARTING_COMPONENT;
+import static com.intel.stl.common.STLMessages.STL10026_STOPPING_COMPONENT;
 import static com.intel.stl.common.STLMessages.STL30022_SUBNET_NOT_FOUND;
 import static com.intel.stl.common.STLMessages.STL50008_SUBNET_CONNECTION_ERROR;
 
@@ -221,6 +226,7 @@ import org.slf4j.LoggerFactory;
 import com.intel.stl.api.AppContext;
 import com.intel.stl.api.ICertsAssistant;
 import com.intel.stl.api.ISecurityHandler;
+import com.intel.stl.api.StartupProgressObserver;
 import com.intel.stl.api.StringUtils;
 import com.intel.stl.api.SubnetContext;
 import com.intel.stl.api.configuration.ConfigurationException;
@@ -228,6 +234,8 @@ import com.intel.stl.api.configuration.IConfigurationApi;
 import com.intel.stl.api.subnet.SubnetDescription;
 import com.intel.stl.api.subnet.SubnetException;
 import com.intel.stl.configuration.AppComponent;
+import com.intel.stl.configuration.AppComponentRegistry;
+import com.intel.stl.configuration.AppConfig;
 import com.intel.stl.configuration.AppConfigurationException;
 import com.intel.stl.configuration.AppSettings;
 import com.intel.stl.configuration.AsyncProcessingService;
@@ -240,6 +248,15 @@ import com.intel.stl.fecdriver.session.ISession;
 
 public class AppContextImpl implements AppComponent, AppContext {
     private static Logger log = LoggerFactory.getLogger(AppContextImpl.class);
+
+    private static final String APPCONTEXT_COMPONENT =
+            STL10020_APPCONTEXT_COMPONENT.getDescription();
+
+    private static final String PROGRESS_MESSAGE =
+            STL10025_STARTING_COMPONENT.getDescription(APPCONTEXT_COMPONENT);
+
+    private static final String SHUTDOWN_MESSAGE =
+            STL10026_STOPPING_COMPONENT.getDescription(APPCONTEXT_COMPONENT);
 
     private final IAdapter adapter;
 
@@ -282,7 +299,7 @@ public class AppContextImpl implements AppComponent, AppContext {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.intel.stl.api.AppContext#regsiterCertsAssistant(com.intel.stl.api
      * .ICertsAssistant)
@@ -298,15 +315,18 @@ public class AppContextImpl implements AppComponent, AppContext {
     }
 
     @Override
-    public void initialize(AppSettings settings)
-            throws AppConfigurationException {
+    public void initialize(AppSettings settings,
+            StartupProgressObserver observer) throws AppConfigurationException {
+        if (observer != null) {
+            observer.setProgress(PROGRESS_MESSAGE);
+        }
         this.settings = settings;
         this.confApi = new ConfigurationApi(adapter, dbMgr, mailMgr, settings);
     }
 
     @Override
     public String getComponentDescription() {
-        return STL10020_APPCONTEXT_COMPONENT.getDescription();
+        return APPCONTEXT_COMPONENT;
     }
 
     @Override
@@ -380,7 +400,10 @@ public class AppContextImpl implements AppComponent, AppContext {
     }
 
     @Override
-    public void shutdown() {
+    public void shutdown(StartupProgressObserver observer) {
+        if (observer != null) {
+            observer.setProgress(SHUTDOWN_MESSAGE);
+        }
         processingService.shutdown();
         for (SubnetContext subnetCtx : subnetContexts.values()) {
             try {
@@ -388,6 +411,19 @@ public class AppContextImpl implements AppComponent, AppContext {
             } catch (Exception e) {
                 log.error("Error shutting down SubnetContext", e);
             }
+        }
+    }
+
+    @Override
+    public void shutdown() {
+        log.info("Starting application shutdown");
+        AppComponentRegistry registry = AppConfig.getAppComponentRegistry();
+        try {
+            registry.shutdown();
+        } finally {
+            log.info("Application component shutdown complete");
+            System.gc();
+            System.exit(0);
         }
     }
 
@@ -416,12 +452,12 @@ public class AppContextImpl implements AppComponent, AppContext {
         return subnet;
     }
 
-    protected synchronized SubnetDescription insertNewSubnet(String subnetName) {
+    protected synchronized SubnetDescription insertNewSubnet(
+            String subnetName) {
         SubnetDescription subnet = dbMgr.getSubnet(subnetName);
         if (subnet == null) {
-            ConfigurationException ce =
-                    new ConfigurationException(STL30022_SUBNET_NOT_FOUND,
-                            subnetName);
+            ConfigurationException ce = new ConfigurationException(
+                    STL30022_SUBNET_NOT_FOUND, subnetName);
             throw ce;
         }
         long subnetId = subnet.getSubnetId();
@@ -446,10 +482,9 @@ public class AppContextImpl implements AppComponent, AppContext {
             }
             return session;
         } catch (Exception e) {
-            ConfigurationException ce =
-                    new ConfigurationException(
-                            STL50008_SUBNET_CONNECTION_ERROR, e,
-                            subnet.getName(), StringUtils.getErrorMessage(e));
+            ConfigurationException ce = new ConfigurationException(
+                    STL50008_SUBNET_CONNECTION_ERROR, e, subnet.getName(),
+                    StringUtils.getErrorMessage(e));
             log.error(StringUtils.getErrorMessage(e), e);
             throw ce;
         }

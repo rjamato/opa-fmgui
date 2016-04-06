@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: ConnectivityTableController.java
@@ -35,6 +35,16 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.42  2016/02/16 22:16:04  jijunwan
+ *  Archive Log:    PR 132888 - Include Num Lanes Down in port counters display
+ *  Archive Log:
+ *  Archive Log:    - added Num Lanes Down
+ *  Archive Log:
+ *  Archive Log:    Revision 1.41  2016/02/09 20:23:08  jijunwan
+ *  Archive Log:    PR 132575 - [PSC] Null pointer message in FM GUI
+ *  Archive Log:
+ *  Archive Log:    - some minor improvements
+ *  Archive Log:
  *  Archive Log:    Revision 1.40  2015/11/02 23:53:21  jijunwan
  *  Archive Log:    PR 131396 - Incorrect Connectivity Table for a VF port
  *  Archive Log:    - improved ConnectivityTableController to support VF port
@@ -181,7 +191,7 @@
  *  Archive Log:    Had a separate ConnectivityTableControler, so we can reuse it
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: jijunwan
  *
@@ -191,6 +201,7 @@ package com.intel.stl.ui.monitor;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -234,8 +245,8 @@ import com.intel.stl.ui.publisher.subscriber.VFPortCounterSubscriber;
 
 public class ConnectivityTableController {
 
-    private final static Logger log = LoggerFactory
-            .getLogger(ConnectivityTableController.class);
+    private final static Logger log =
+            LoggerFactory.getLogger(ConnectivityTableController.class);
 
     private static final boolean TEST_SLOW_LINKS = false;
 
@@ -265,7 +276,7 @@ public class ConnectivityTableController {
 
     /**
      * Description:
-     * 
+     *
      * @param subnetApi
      */
     public ConnectivityTableController(ConnectivityTableModel model,
@@ -282,12 +293,10 @@ public class ConnectivityTableController {
         taskScheduler = context.getTaskScheduler();
 
         // Get the port counter subscriber from the task scheduler
-        portCounterSubscriber =
-                (PortCounterSubscriber) taskScheduler
-                        .getSubscriber(SubscriberType.PORT_COUNTER);
-        vfPortCounterSubscriber =
-                (VFPortCounterSubscriber) taskScheduler
-                        .getSubscriber(SubscriberType.VF_PORT_COUNTER);
+        portCounterSubscriber = (PortCounterSubscriber) taskScheduler
+                .getSubscriber(SubscriberType.PORT_COUNTER);
+        vfPortCounterSubscriber = (VFPortCounterSubscriber) taskScheduler
+                .getSubscriber(SubscriberType.VF_PORT_COUNTER);
 
         clear();
 
@@ -324,7 +333,7 @@ public class ConnectivityTableController {
 
                     /*
                      * (non-Javadoc)
-                     * 
+                     *
                      * @see
                      * com.intel.stl.ui.publisher.CallbackAdapter#onDone(java
                      * .lang.Object)
@@ -338,7 +347,19 @@ public class ConnectivityTableController {
 
                     /*
                      * (non-Javadoc)
-                     * 
+                     *
+                     * @see
+                     * com.intel.stl.ui.publisher.CallbackAdapter#onError(java.
+                     * lang.Throwable[])
+                     */
+                    @Override
+                    public void onError(Throwable... errors) {
+                        Util.showErrors(view, Arrays.asList(errors));
+                    }
+
+                    /*
+                     * (non-Javadoc)
+                     *
                      * @see
                      * com.intel.stl.ui.publisher.CallbackAdapter#onFinally()
                      */
@@ -373,9 +394,8 @@ public class ConnectivityTableController {
                     @Override
                     public List<ConnectivityTableData> call(
                             ICancelIndicator cancelIndicator) throws Exception {
-                        List<ConnectivityTableData> data =
-                                createPathTable(currentPaths, currentVFName,
-                                        cancelIndicator);
+                        List<ConnectivityTableData> data = createPathTable(
+                                currentPaths, currentVFName, cancelIndicator);
                         return data;
                     }
                 };
@@ -385,7 +405,7 @@ public class ConnectivityTableController {
 
                     /*
                      * (non-Javadoc)
-                     * 
+                     *
                      * @see
                      * com.intel.stl.ui.publisher.CallbackAdapter#onDone(java
                      * .lang.Object)
@@ -399,7 +419,7 @@ public class ConnectivityTableController {
 
                     /*
                      * (non-Javadoc)
-                     * 
+                     *
                      * @see
                      * com.intel.stl.ui.publisher.CallbackAdapter#onFinally()
                      */
@@ -414,9 +434,9 @@ public class ConnectivityTableController {
     }
 
     /**
-     * 
+     *
      * Description:
-     * 
+     *
      * @param lid
      *            - node lid
      * @param portList
@@ -427,7 +447,7 @@ public class ConnectivityTableController {
      */
     protected List<ConnectivityTableData> createTable(int lid, String vfName,
             ICancelIndicator indicator, short... portList)
-            throws SubnetException, SubnetDataNotFoundException {
+                    throws SubnetException, SubnetDataNotFoundException {
         // TODO: improve performance by querying all ports once!!
         NodeRecordBean nodeBean = null;
         try {
@@ -463,10 +483,9 @@ public class ConnectivityTableController {
             }
             // Add a partial record if the port is inactive
             if (!isActive) {
-                ConnectivityTableData nodeData =
-                        new ConnectivityTableData(nodeBean.getLid(), nodeBean
-                                .getNodeInfo().getNodeGUID(),
-                                nodeBean.getNodeType(), port, false);
+                ConnectivityTableData nodeData = new ConnectivityTableData(
+                        nodeBean.getLid(), nodeBean.getNodeInfo().getNodeGUID(),
+                        nodeBean.getNodeType(), port, false);
                 nodeData.clear();
                 nodeData.setNodeName(nodeBean.getNodeDesc());
                 nodeData.setLinkState(STLConstants.K0524_INACTIVE.getValue());
@@ -482,14 +501,13 @@ public class ConnectivityTableController {
                 // Add the data to the list
                 PortRecordBean portBean =
                         subnetApi.getPortByPortNum(lid, portNum);
-                ConnectivityTableData nodeData =
-                        createTableEntry(dataList.size(),
-                                linkBean.getFromLID(), vfName, portNum,
-                                portBean, linkBean, nodeBean, false);
+                ConnectivityTableData nodeData = createTableEntry(
+                        dataList.size(), linkBean.getFromLID(), vfName, portNum,
+                        portBean, linkBean, nodeBean, false);
                 if (nodeData != null) {
                     // Update the slow link state
-                    nodeData.setSlowLinkState(Utils.isSlowPort(portBean
-                            .getPortInfo()));
+                    nodeData.setSlowLinkState(
+                            Utils.isSlowPort(portBean.getPortInfo()));
                     dataList.add(nodeData);
                 }
 
@@ -498,17 +516,15 @@ public class ConnectivityTableController {
                 linkBean = subnetApi.getLinkByDestination(lid, portNum);
                 nbrNodeBean = subnetApi.getNode(linkBean.getFromLID());
                 portNum = linkBean.getFromPortIndex();
-                portBean =
-                        subnetApi.getPortByPortNum(linkBean.getFromLID(),
-                                portNum);
-                nodeData =
-                        createTableEntry(dataList.size(),
-                                linkBean.getFromLID(), vfName, portNum,
-                                portBean, linkBean, nbrNodeBean, true);
+                portBean = subnetApi.getPortByPortNum(linkBean.getFromLID(),
+                        portNum);
+                nodeData = createTableEntry(dataList.size(),
+                        linkBean.getFromLID(), vfName, portNum, portBean,
+                        linkBean, nbrNodeBean, true);
                 if (nodeData != null) {
                     // Update the slow link state
-                    nodeData.setSlowLinkState(Utils.isSlowPort(portBean
-                            .getPortInfo()));
+                    nodeData.setSlowLinkState(
+                            Utils.isSlowPort(portBean.getPortInfo()));
                     dataList.add(nodeData);
                 }
             } // else
@@ -518,9 +534,9 @@ public class ConnectivityTableController {
     }
 
     /**
-     * 
+     *
      * Description:
-     * 
+     *
      * @param lid
      *            - node lid
      * @param portList
@@ -531,8 +547,8 @@ public class ConnectivityTableController {
      */
     protected List<ConnectivityTableData> createPathTable(
             LinkedHashMap<GraphEdge, Short> portMap, String vfName,
-            ICancelIndicator indicator) throws SubnetException,
-            SubnetDataNotFoundException {
+            ICancelIndicator indicator)
+                    throws SubnetException, SubnetDataNotFoundException {
         List<ConnectivityTableData> res =
                 new ArrayList<ConnectivityTableData>();
         for (GraphEdge edge : portMap.keySet()) {
@@ -552,9 +568,9 @@ public class ConnectivityTableController {
     }
 
     /**
-     * 
+     *
      * Description
-     * 
+     *
      * @param lid
      * @param portNum
      *            - port number for a Switch, and local port number for a HFI
@@ -566,7 +582,8 @@ public class ConnectivityTableController {
     @SuppressWarnings("deprecation")
     private ConnectivityTableData createTableEntry(int index, int lid,
             String vfName, short portNum, PortRecordBean portBean,
-            LinkRecordBean linkBean, NodeRecordBean nodeBean, boolean isNeighbor) {
+            LinkRecordBean linkBean, NodeRecordBean nodeBean,
+            boolean isNeighbor) {
         ConnectivityTableData nodeData = null;
         if (nodeBean.getNodeType() == NodeType.HFI) {
             portNum = 1; // we use local port number for display
@@ -588,10 +605,9 @@ public class ConnectivityTableController {
         PortProperties portProperties =
                 new PortProperties(portBean, nodeBean, linkBean);
 
-        nodeData =
-                new ConnectivityTableData(nodeBean.getLid(), nodeBean
-                        .getNodeInfo().getNodeGUID(), nodeBean.getNodeType(),
-                        portNum, isNeighbor);
+        nodeData = new ConnectivityTableData(nodeBean.getLid(),
+                nodeBean.getNodeInfo().getNodeGUID(), nodeBean.getNodeType(),
+                portNum, isNeighbor);
         nodeData.clear();
 
         nodeData.setNodeName(nodeBean.getNodeDesc());
@@ -602,12 +618,14 @@ public class ConnectivityTableController {
         nodeData.setEnabledLinkWidth(portProperties.getLinkWidthEnabled());
         nodeData.setSupportedLinkWidth(portProperties.getLinkWidthSupported());
 
-        nodeData.setActiveLinkWidthDnGrdTx(portProperties.getLinkWidthDnGrdTx());
-        nodeData.setActiveLinkWidthDnGrdRx(portProperties.getLinkWidthDnGrdRx());
-        nodeData.setEnabledLinkWidthDnGrd(portProperties
-                .getLinkWidthDnGrdEnabled());
-        nodeData.setSupportedLinkWidthDnGrd(portProperties
-                .getLinkWidthDnGrdSupported());
+        nodeData.setActiveLinkWidthDnGrdTx(
+                portProperties.getLinkWidthDnGrdTx());
+        nodeData.setActiveLinkWidthDnGrdRx(
+                portProperties.getLinkWidthDnGrdRx());
+        nodeData.setEnabledLinkWidthDnGrd(
+                portProperties.getLinkWidthDnGrdEnabled());
+        nodeData.setSupportedLinkWidthDnGrd(
+                portProperties.getLinkWidthDnGrdSupported());
 
         nodeData.setActiveLinkSpeed(portProperties.getLinkSpeedActive());
         nodeData.setEnabledLinkSpeed(portProperties.getLinkSpeedEnabled());
@@ -621,9 +639,8 @@ public class ConnectivityTableController {
             schedule =
                     schedulePortPerformanceTask(index, nodeData, lid, portNum);
         } else {
-            schedule =
-                    scheduleVFPortPerformanceTask(index, nodeData, lid, vfName,
-                            portNum);
+            schedule = scheduleVFPortPerformanceTask(index, nodeData, lid,
+                    vfName, portNum);
         }
         schedule.refresh();
 
@@ -646,48 +663,49 @@ public class ConnectivityTableController {
                         final PerformanceData perfData = new PerformanceData();
                         perfData.setTxPackets(pcBean.getPortXmitPkts());
                         perfData.setRxPackets(pcBean.getPortRcvPkts());
-                        perfData.setNumLinkRecoveries(pcBean
-                                .getLinkErrorRecovery());
+                        perfData.setNumLinkRecoveries(
+                                pcBean.getLinkErrorRecovery());
                         perfData.setNumLinkDown(pcBean.getLinkDowned());
+                        perfData.setNumLanesDown(pcBean.getNumLanesDown());
                         perfData.setRxErrors(pcBean.getPortRcvErrors());
-                        perfData.setRxRemotePhysicalErrors(pcBean
-                                .getPortRcvRemotePhysicalErrors());
+                        perfData.setRxRemotePhysicalErrors(
+                                pcBean.getPortRcvRemotePhysicalErrors());
                         perfData.setTxDiscards(pcBean.getPortXmitDiscards());
-                        perfData.setLocalLinkIntegrityErrors(pcBean
-                                .getLocalLinkIntegrityErrors());
-                        perfData.setExcessiveBufferOverruns(pcBean
-                                .getExcessiveBufferOverruns());
-                        perfData.setSwitchRelayErrors(pcBean
-                                .getPortRcvSwitchRelayErrors());
-                        perfData.setTxConstraints(pcBean
-                                .getPortXmitConstraintErrors());
-                        perfData.setRxConstraints(pcBean
-                                .getPortRcvConstraintErrors());
+                        perfData.setLocalLinkIntegrityErrors(
+                                pcBean.getLocalLinkIntegrityErrors());
+                        perfData.setExcessiveBufferOverruns(
+                                pcBean.getExcessiveBufferOverruns());
+                        perfData.setSwitchRelayErrors(
+                                pcBean.getPortRcvSwitchRelayErrors());
+                        perfData.setTxConstraints(
+                                pcBean.getPortXmitConstraintErrors());
+                        perfData.setRxConstraints(
+                                pcBean.getPortRcvConstraintErrors());
                         // perfData.setVl15Dropped(???);
                         perfData.setPortRcvData(pcBean.getPortRcvData());
                         perfData.setPortXmitData(pcBean.getPortXmitData());
 
                         perfData.setFmConfigErrors(pcBean.getFmConfigErrors());
-                        perfData.setPortMulticastRcvPkts(pcBean
-                                .getPortMulticastRcvPkts());
+                        perfData.setPortMulticastRcvPkts(
+                                pcBean.getPortMulticastRcvPkts());
                         perfData.setPortRcvFECN(pcBean.getPortRcvFECN());
                         perfData.setPortRcvBECN(pcBean.getPortRcvBECN());
                         perfData.setPortRcvBubble(pcBean.getPortRcvBubble());
 
-                        perfData.setPortMulticastXmitPkts(pcBean
-                                .getPortMulticastXmitPkts());
+                        perfData.setPortMulticastXmitPkts(
+                                pcBean.getPortMulticastXmitPkts());
                         perfData.setPortXmitWait(pcBean.getPortXmitWait());
-                        perfData.setPortXmitTimeCong(pcBean
-                                .getPortXmitTimeCong());
-                        perfData.setPortXmitWastedBW(pcBean
-                                .getPortXmitWastedBW());
-                        perfData.setPortXmitWaitData(pcBean
-                                .getPortXmitWaitData());
+                        perfData.setPortXmitTimeCong(
+                                pcBean.getPortXmitTimeCong());
+                        perfData.setPortXmitWastedBW(
+                                pcBean.getPortXmitWastedBW());
+                        perfData.setPortXmitWaitData(
+                                pcBean.getPortXmitWaitData());
                         perfData.setPortMarkFECN(pcBean.getPortMarkFECN());
-                        perfData.setUncorrectableErrors(pcBean
-                                .getUncorrectableErrors());
-                        perfData.setSwPortCongestion(pcBean
-                                .getSwPortCongestion());
+                        perfData.setUncorrectableErrors(
+                                pcBean.getUncorrectableErrors());
+                        perfData.setSwPortCongestion(
+                                pcBean.getSwPortCongestion());
                         final byte linkQuality =
                                 pcBean.getLinkQualityIndicator();
                         Util.runInEDT(new Runnable() {
@@ -704,9 +722,8 @@ public class ConnectivityTableController {
                     }
                 };
 
-        Task<PortCountersBean> task =
-                portCounterSubscriber.registerPortCounters(lid, portNum,
-                        callback);
+        Task<PortCountersBean> task = portCounterSubscriber
+                .registerPortCounters(lid, portNum, callback);
         PortSchedule<PortCountersBean> ps =
                 new PortSchedule<PortCountersBean>(callback, task) {
                     @Override
@@ -755,20 +772,19 @@ public class ConnectivityTableController {
                         perfData.setPortRcvBubble(pcBean.getPortVFRcvBubble());
 
                         perfData.setPortXmitWait(pcBean.getPortVFXmitWait());
-                        perfData.setPortXmitTimeCong(pcBean
-                                .getPortVFXmitTimeCong());
-                        perfData.setPortXmitWastedBW(pcBean
-                                .getPortVFXmitWastedBW());
-                        perfData.setPortXmitWaitData(pcBean
-                                .getPortVFXmitWaitData());
+                        perfData.setPortXmitTimeCong(
+                                pcBean.getPortVFXmitTimeCong());
+                        perfData.setPortXmitWastedBW(
+                                pcBean.getPortVFXmitWastedBW());
+                        perfData.setPortXmitWaitData(
+                                pcBean.getPortVFXmitWaitData());
 
                         Util.runInEDT(new Runnable() {
                             @Override
                             public void run() {
                                 dataEntrty.setPerformanceData(perfData);
-                                dataEntrty
-                                        .setLinkQualityData(LinkQuality.UNKNOWN
-                                                .getValue());
+                                dataEntrty.setLinkQualityData(
+                                        LinkQuality.UNKNOWN.getValue());
                                 if (model.getRowCount() > 0
                                         && index < model.getRowCount()) {
                                     model.fireTableRowsUpdated(index, index);
@@ -778,17 +794,15 @@ public class ConnectivityTableController {
                     }
                 };
 
-        Task<VFPortCountersBean> task =
-                vfPortCounterSubscriber.registerVFPortCounters(vfName, lid,
-                        portNum, callback);
+        Task<VFPortCountersBean> task = vfPortCounterSubscriber
+                .registerVFPortCounters(vfName, lid, portNum, callback);
         PortSchedule<VFPortCountersBean> ps =
                 new PortSchedule<VFPortCountersBean>(callback, task) {
                     @Override
                     public void refresh() {
-                        VFPortCountersBean counters =
-                                taskScheduler
-                                        .getPerformanceApi()
-                                        .getVFPortCounters(vfName, lid, portNum);
+                        VFPortCountersBean counters = taskScheduler
+                                .getPerformanceApi()
+                                .getVFPortCounters(vfName, lid, portNum);
                         callback.onDone(counters);
                     }
 
@@ -859,7 +873,7 @@ public class ConnectivityTableController {
 
         /**
          * Description:
-         * 
+         *
          * @param callback
          * @param task
          */

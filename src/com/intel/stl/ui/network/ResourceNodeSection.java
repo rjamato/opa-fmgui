@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: ResourceDetailController.java
@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.13  2016/03/01 17:11:04  jijunwan
+ *  Archive Log:    PR 133064 - externally managed switch node description not updating
+ *  Archive Log:    - changed to always reset title even if we are showing the same node
+ *  Archive Log:
  *  Archive Log:    Revision 1.12  2015/08/17 18:54:00  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -156,8 +160,6 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 
-import net.engio.mbassy.bus.MBassador;
-
 import com.intel.stl.api.subnet.NodeType;
 import com.intel.stl.ui.common.ICardController;
 import com.intel.stl.ui.common.IProgressObserver;
@@ -183,6 +185,8 @@ import com.intel.stl.ui.monitor.view.CableInfoPopupView;
 import com.intel.stl.ui.monitor.view.ConnectivitySubpageView;
 import com.intel.stl.ui.network.view.ResourcePortView;
 import com.intel.stl.ui.network.view.ResourceSubpageView;
+
+import net.engio.mbassy.bus.MBassador;
 
 public class ResourceNodeSection extends ResourceSection<ResourceSubpageView>
         implements IPortSelectionListener, IPageListener {
@@ -213,7 +217,7 @@ public class ResourceNodeSection extends ResourceSection<ResourceSubpageView>
 
     /**
      * Description:
-     * 
+     *
      * @param view
      */
     public ResourceNodeSection(ResourceSubpageView view,
@@ -227,7 +231,7 @@ public class ResourceNodeSection extends ResourceSection<ResourceSubpageView>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.BaseSectionController#getHelpID()
      */
     @Override
@@ -258,7 +262,7 @@ public class ResourceNodeSection extends ResourceSection<ResourceSubpageView>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.intel.stl.ui.network.ResourceSection#setCurrentSubpage(java.lang.
      * String)
@@ -271,7 +275,7 @@ public class ResourceNodeSection extends ResourceSection<ResourceSubpageView>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.network.ResourceSection#getPreviousSubpage()
      */
     @Override
@@ -281,7 +285,7 @@ public class ResourceNodeSection extends ResourceSection<ResourceSubpageView>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.network.ResourceSection#getCurrentSubpage()
      */
     @Override
@@ -294,6 +298,9 @@ public class ResourceNodeSection extends ResourceSection<ResourceSubpageView>
             return;
         }
 
+        // Set the card title to the name of the node
+        view.setTitle(source.getName(), source.getType().getIcon());
+
         if (lastNode != null && lastNode.equals(node)) {
             IResourceNodeSubpageController currentSubpage =
                     getCurrentSubpage(source.getType());
@@ -305,9 +312,6 @@ public class ResourceNodeSection extends ResourceSection<ResourceSubpageView>
 
         lastNode = node;
         // connectivitySubpageController.setLastNode(source);
-
-        // Set the card title to the name of the node
-        view.setTitle(source.getName(), source.getType().getIcon());
 
         // Deregister tasks on all subpages
         for (IResourceNodeSubpageController page : mSubpages) {
@@ -333,7 +337,8 @@ public class ResourceNodeSection extends ResourceSection<ResourceSubpageView>
         }
     }
 
-    protected IResourceNodeSubpageController getCurrentSubpage(TreeNodeType type) {
+    protected IResourceNodeSubpageController getCurrentSubpage(
+            TreeNodeType type) {
         List<IResourceNodeSubpageController> subpages = getSubpagesByType(type);
         if (subpages != null) {
             String current = view.getCurrentSubpage();
@@ -448,8 +453,8 @@ public class ResourceNodeSection extends ResourceSection<ResourceSubpageView>
                             vis[col.getId()] = true;
                         }
                         for (int i = 0; i < vis.length; i++) {
-                            mTable.getColumnExt(all[i].getTitle()).setVisible(
-                                    vis[i]);
+                            mTable.getColumnExt(all[i].getTitle())
+                                    .setVisible(vis[i]);
                         }
                     }
                 };
@@ -458,7 +463,7 @@ public class ResourceNodeSection extends ResourceSection<ResourceSubpageView>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.BaseSectionController#getSectionListener()
      */
     @Override
@@ -468,7 +473,7 @@ public class ResourceNodeSection extends ResourceSection<ResourceSubpageView>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.monitor.IPortSelectionListener#onPortSelection(int)
      */
     @Override
@@ -477,7 +482,7 @@ public class ResourceNodeSection extends ResourceSection<ResourceSubpageView>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.monitor.IPortSelectionListener#onJumpToPort(int,
      * short, java.lang.String)
      */
@@ -499,7 +504,7 @@ public class ResourceNodeSection extends ResourceSection<ResourceSubpageView>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.ISectionController#getCards()
      */
     @Override

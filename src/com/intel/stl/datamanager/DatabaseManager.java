@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -26,14 +26,17 @@
  */
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- * 
+ *
  *  Functional Group: Fabric Viewer Application
- * 
+ *
  *  File Name: DatabaseManager.java
- * 
+ *
  *  Archive Source: $Source$
- * 
+ *
  *  Archive Log: $Log$
+ *  Archive Log: Revision 1.35  2016/01/26 18:40:57  fernande
+ *  Archive Log: PR 132387 - [Dell]: FMGUI Fails to Open Due to Database Lock. Changed the AppComponent interface so that component can provide feedback to the UI.
+ *  Archive Log:
  *  Archive Log: Revision 1.34  2015/08/17 18:49:14  jijunwan
  *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log: - change backend files' headers
@@ -46,11 +49,11 @@
  *  Archive Log: - wrote a tool to check and insert file header
  *  Archive Log: - applied on backend files
  *  Archive Log:
- * 
+ *
  *  Overview:
- * 
- *  @author: 
- * 
+ *
+ *  @author:
+ *
  ******************************************************************************/
 
 package com.intel.stl.datamanager;
@@ -119,7 +122,7 @@ public interface DatabaseManager {
 
     /**
      * Description: returns a node by its port GUID
-     * 
+     *
      * @param subnetName
      * @param portGuid
      * @return
@@ -134,14 +137,12 @@ public interface DatabaseManager {
 
     /**
      * Description: returns the node type distribution for the subnet
-     * 
+     *
      * @param subnetName
      * @return enumeration map of NodeType
      */
     EnumMap<NodeType, Integer> getNodeTypeDist(String subnetName)
             throws SubnetDataNotFoundException;
-
-    void close();
 
     LinkRecordBean getLinkBySource(String subnetName, int lid, short portNum)
             throws SubnetDataNotFoundException;
@@ -167,7 +168,7 @@ public interface DatabaseManager {
 
     List<GroupInfoBean> getGroupInfo(String subnetName, String groupName,
             long startTime, long stopTime)
-            throws PerformanceDataNotFoundException;
+                    throws PerformanceDataNotFoundException;
 
     List<GroupConfigRspBean> getGroupConfig(String subnetName, String groupName)
             throws PerformanceDataNotFoundException;

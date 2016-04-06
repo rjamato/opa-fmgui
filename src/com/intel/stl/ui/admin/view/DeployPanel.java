@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.3  2016/03/29 14:32:24  rjtierne
+ *  Archive Log:    PR 133384 - Cannot deploy new Device Groups/Virtual Fabrics changes after a success deployment
+ *  Archive Log:    - Set the state of the master SM to NONE before opening the DeployPanel so the task to deploy changes to the management node is executed.
+ *  Archive Log:
  *  Archive Log:    Revision 1.2  2015/08/17 18:53:52  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -325,6 +329,7 @@ public class DeployPanel extends JPanel {
     public void setSubnet(SubnetDescription subnet) {
         HostInfo hostInfo = subnet.getCurrentFE();
         masterSM.setHostInfo(hostInfo);
+        masterSM.setState(DeployState.NONE);
 
         standbySMsPanel.removeAll();
         List<HostInfo> fes = subnet.getFEList();

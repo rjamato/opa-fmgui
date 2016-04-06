@@ -364,7 +364,8 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
     protected final AtomicReference<IFabricController> lastViewer =
             new AtomicReference<IFabricController>(null);
 
-    public SubnetManager(AppContext appContext, ICertsAssistant certsAssistant) {
+    public SubnetManager(AppContext appContext,
+            ICertsAssistant certsAssistant) {
         this.appContext = appContext;
         this.certsAssistant = certsAssistant;
         GraphicsEnvironment ge = getLocalGraphicsEnvironment();
@@ -407,8 +408,8 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
             if (context != null) {
                 SubnetDescription ctxSubnet = context.getSubnetDescription();
                 if (ctxSubnet.getSubnetId() == subnet.getSubnetId()
-                        && !ctxSubnet.getName().equalsIgnoreCase(
-                                subnet.getName())) {
+                        && !ctxSubnet.getName()
+                                .equalsIgnoreCase(subnet.getName())) {
                     IFabricController controller = context.getController();
                     if (controller != null) {
                         controller.resetSubnet(subnet);
@@ -529,7 +530,8 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
      * synchronized
      */
     @Override
-    public void startSubnet(String subnetName) throws SubnetConnectionException {
+    public void startSubnet(String subnetName)
+            throws SubnetConnectionException {
         SubnetDescription subnet = getSubnet(subnetName);
         startSubnet(subnet);
     }
@@ -556,9 +558,8 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
     protected boolean hasRunningSubnetFrames() {
         Frame[] frames = Frame.getFrames();
         for (Frame frame : frames) {
-            if (frame.isVisible()
-                    && frame.getName().startsWith(
-                            STLConstants.K0001_FABRIC_VIEWER_TITLE.getValue())) {
+            if (frame.isVisible() && frame.getName().startsWith(
+                    STLConstants.K0001_FABRIC_VIEWER_TITLE.getValue())) {
                 return true;
             }
         }
@@ -567,8 +568,14 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
     }
 
     protected void shutdownApplication() {
-        System.gc();
-        System.exit(0);
+        startNewThread(new Runnable() {
+
+            @Override
+            public void run() {
+                appContext.shutdown();
+            }
+
+        });
     }
 
     /**
@@ -585,8 +592,8 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
 
     @Override
     public List<SubnetDescription> getSubnets() {
-        return Collections.unmodifiableList(new ArrayList<SubnetDescription>(
-                subnets.values()));
+        return Collections.unmodifiableList(
+                new ArrayList<SubnetDescription>(subnets.values()));
     }
 
     @Override
@@ -669,7 +676,8 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
     }
 
     @Override
-    public void showSetupWizard(String subnetName, IFabricController controller) {
+    public void showSetupWizard(String subnetName,
+            IFabricController controller) {
 
         IFabricView mainFrame = controller.getView();
         IWizardListener wizardController;
@@ -754,7 +762,8 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
         }
     }
 
-    private void removeHost(SubnetDescription subnet, boolean forceWindowClose) {
+    private void removeHost(SubnetDescription subnet,
+            boolean forceWindowClose) {
         IFabricController controller = null;
         Context context;
         synchronized (tablesLock) {
@@ -882,7 +891,6 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
      * we need to show the frame in its previous location.
      */
     private void saveFrameStates() {
-        IConfigurationApi confApi = appContext.getConfigurationApi();
         Properties subnetFrames = new Properties();
 
         AppInfo appInfo = appContext.getConfigurationApi().getAppInfo();
@@ -900,8 +908,7 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
                 frameLocation.put("width", frameBounds.width);
                 frameLocation.put("height", frameBounds.height);
                 frameLocation.put("state", frameMaximized);
-                appInfo.setProperty(
-                        subnetName + PROPERTIES_SUBNET_STATE_SUFFIX,
+                appInfo.setProperty(subnetName + PROPERTIES_SUBNET_STATE_SUFFIX,
                         frameLocation);
             }
         }
@@ -915,22 +922,18 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
         if (subnetFrames != null) {
             for (Object key : subnetFrames.keySet()) {
                 String subnetName = (String) key;
-                Properties frameProps =
-                        appProps.get(subnetName
-                                + PROPERTIES_SUBNET_STATE_SUFFIX);
+                Properties frameProps = appProps
+                        .get(subnetName + PROPERTIES_SUBNET_STATE_SUFFIX);
                 if (frameProps != null) {
                     try {
                         int x = Integer.parseInt(frameProps.getProperty("x"));
                         int y = Integer.parseInt(frameProps.getProperty("y"));
-                        int width =
-                                Integer.parseInt(frameProps
-                                        .getProperty("width"));
-                        int height =
-                                Integer.parseInt(frameProps
-                                        .getProperty("height"));
-                        boolean maximized =
-                                Boolean.parseBoolean(frameProps
-                                        .getProperty("state"));
+                        int width = Integer
+                                .parseInt(frameProps.getProperty("width"));
+                        int height = Integer
+                                .parseInt(frameProps.getProperty("height"));
+                        boolean maximized = Boolean
+                                .parseBoolean(frameProps.getProperty("state"));
                         Rectangle frameBounds =
                                 new Rectangle(x, y, width, height);
                         savedBounds.put(subnetName, frameBounds);
@@ -952,8 +955,8 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
         if (lastBounds == null) {
             int width =
                     (int) (screenBounds.width * DEFAULT_SCREEN_SIZE_PERCENTAGE);
-            int height =
-                    (int) (screenBounds.height * DEFAULT_SCREEN_SIZE_PERCENTAGE);
+            int height = (int) (screenBounds.height
+                    * DEFAULT_SCREEN_SIZE_PERCENTAGE);
             int x = screenBounds.x + ((screenBounds.width - width) / 2);
             int y = screenBounds.y + ((screenBounds.height - height) / 2);
             frameBounds = new Rectangle(x, y, width, height);
@@ -972,8 +975,8 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
                         + screenBounds.height) {
                     y = screenBounds.y;
                 }
-                frameBounds =
-                        new Rectangle(x, y, lastBounds.width, lastBounds.height);
+                frameBounds = new Rectangle(x, y, lastBounds.width,
+                        lastBounds.height);
             }
             lastBounds = frameBounds;
         }
@@ -1052,10 +1055,9 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
     private void restartViewer(final SubnetDescription subnet,
             final IFabricController controller, String existingHostId,
             String newHostId) {
-        RestartViewerTask restarter =
-                new RestartViewerTask(
-                        "<html>This fabric viewer will restart</html>", this,
-                        subnet, existingHostId, newHostId);
+        RestartViewerTask restarter = new RestartViewerTask(
+                "<html>This fabric viewer will restart</html>", this, subnet,
+                existingHostId, newHostId);
         controller.addPendingTask(restarter);
     }
 
@@ -1082,9 +1084,8 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
                 return subnet;
             }
         }
-        IllegalArgumentException iae =
-                new IllegalArgumentException(
-                        "Cannot find subnet with the name '" + subnetName + "'");
+        IllegalArgumentException iae = new IllegalArgumentException(
+                "Cannot find subnet with the name '" + subnetName + "'");
         throw iae;
     }
 
@@ -1100,7 +1101,8 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
      * 3) Start the FabricController; at this point, we store both the FabricController and the Context for general use
      *
      */
-    private class StartSubnetsTask extends SwingWorker<Void, SubnetDescription> {
+    private class StartSubnetsTask
+            extends SwingWorker<Void, SubnetDescription> {
 
         private final List<SubnetDescription> subnets;
 
@@ -1140,20 +1142,19 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
                             // FabricController (just in case doing so fails)
                             IFabricController tempController;
                             IFabricController lastController = lastViewer.get();
-                            if (lastController != null
-                                    && lastController.getCurrentContext() == null) {
+                            if (lastController != null && lastController
+                                    .getCurrentContext() == null) {
                                 if (lastViewer.compareAndSet(lastController,
                                         null)) {
                                     tempController = lastController;
                                 } else {
-                                    newController =
-                                            createFabricController(subnet
-                                                    .getName());
+                                    newController = createFabricController(
+                                            subnet.getName());
                                     tempController = newController;
                                 }
                             } else {
-                                newController =
-                                        createFabricController(subnet.getName());
+                                newController = createFabricController(
+                                        subnet.getName());
                                 tempController = newController;
                             }
                             // Now put them together so that there is no chance
@@ -1255,8 +1256,8 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
         }
     }
 
-    private class VerifySubnetsTask extends
-            SwingWorker<Void, SubnetDescription> {
+    private class VerifySubnetsTask
+            extends SwingWorker<Void, SubnetDescription> {
 
         private final SubnetDescription connectedSubnet;
 
@@ -1276,8 +1277,8 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
                     String currIp = currHost.getInetAddress().getHostAddress();
                     if (connIp.equals(currIp)
                             && hostInfo.getPort() == currHost.getPort()) {
-                        System.out.println("Connected subnet "
-                                + connectedSubnet + "(" + connIp
+                        System.out.println("Connected subnet " + connectedSubnet
+                                + "(" + connIp
                                 + ") connects to the same FE than subnet "
                                 + subnet + ")");
                     }
@@ -1302,9 +1303,8 @@ public class SubnetManager implements ISubnetManager, ISubnetEventListener {
             String subject =
                     UILabels.STL92001_TEST_EMAIL_SUBJECT.getDescription();
             String body = "";
-            List<String> recipientsList =
-                    Utils.concatenatedStringToList(recipients,
-                            UIConstants.MAIL_LIST_DELIMITER);
+            List<String> recipientsList = Utils.concatenatedStringToList(
+                    recipients, UIConstants.MAIL_LIST_DELIMITER);
             getConfigurationApi().submitMessage(subject, body, recipientsList);
         }
     }

@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: PortCounterSubscriber.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.13  2016/02/03 16:36:10  jijunwan
+ *  Archive Log:    PR 132702 - taskList in PortCountersSubscriber is potentially inacurate
+ *  Archive Log:
+ *  Archive Log:    - changed to be consistent with VFPortCounterSubscriber
+ *  Archive Log:
  *  Archive Log:    Revision 1.12  2015/08/17 18:53:39  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -89,6 +94,7 @@
  ******************************************************************************/
 package com.intel.stl.ui.publisher.subscriber;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -109,8 +115,8 @@ import com.intel.stl.ui.publisher.ICallback;
 import com.intel.stl.ui.publisher.Task;
 
 public class PortCounterSubscriber extends Subscriber<PortCountersBean> {
-    private static Logger log = LoggerFactory
-            .getLogger(PortCounterSubscriber.class);
+    private static Logger log =
+            LoggerFactory.getLogger(PortCounterSubscriber.class);
 
     private final static boolean DUMP_DATA = false;
 
@@ -120,29 +126,27 @@ public class PortCounterSubscriber extends Subscriber<PortCountersBean> {
     }
 
     /**
-     * 
+     *
      * <i>Description: Register to receive updates of a single port counter </i>
-     * 
+     *
      * @param lid
      *            local id for the port of interest
-     * 
+     *
      * @param portNum
      *            port number
-     * 
+     *
      * @param callback
      *            method to call once update is complete
-     * 
+     *
      * @return submittedTask task submitted to the task scheduler for processing
      */
     public synchronized Task<PortCountersBean> registerPortCounters(
             final int lid, final short portNum,
             ICallback<PortCountersBean> callback) {
-        Task<PortCountersBean> task =
-                new Task<PortCountersBean>(
-                        PAConstants.STL_PA_ATTRID_GET_PORT_CTRS, lid + ":"
-                                + portNum,
-                        UILabels.STL40010_PORTCOUNTERS_TASK.getDescription(lid,
-                                portNum));
+        Task<PortCountersBean> task = new Task<PortCountersBean>(
+                PAConstants.STL_PA_ATTRID_GET_PORT_CTRS, lid + ":" + portNum,
+                UILabels.STL40010_PORTCOUNTERS_TASK.getDescription(lid,
+                        portNum));
         Callable<PortCountersBean> caller = new Callable<PortCountersBean>() {
             @Override
             public PortCountersBean call() throws Exception {
@@ -156,9 +160,8 @@ public class PortCounterSubscriber extends Subscriber<PortCountersBean> {
             }
         };
         try {
-            Task<PortCountersBean> submittedTask =
-                    taskScheduler
-                            .scheduleTask(taskList, task, callback, caller);
+            Task<PortCountersBean> submittedTask = taskScheduler
+                    .scheduleTask(taskList, task, callback, caller);
             return submittedTask;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -167,18 +170,18 @@ public class PortCounterSubscriber extends Subscriber<PortCountersBean> {
     }
 
     /**
-     * 
+     *
      * <i>Description: De-register a task that receives updates of a single port
      * counter</i>
-     * 
+     *
      * @param task
      *            task to be cancelled
-     * 
+     *
      * @param callback
      *            callback to removed
      */
-    public synchronized void deregisterPortCounters(
-            Task<PortCountersBean> task, ICallback<PortCountersBean> callback) {
+    public synchronized void deregisterPortCounters(Task<PortCountersBean> task,
+            ICallback<PortCountersBean> callback) {
 
         try {
             taskScheduler.removeTask(taskList, task, callback);
@@ -188,33 +191,36 @@ public class PortCounterSubscriber extends Subscriber<PortCountersBean> {
     }
 
     /**
-     * 
-     * <i>Description: Register to receive updates of an array of port counters
-     * </i>
-     * 
+     *
+     * <i>Description: Register to receive updates of an array of port
+     * counters </i>
+     *
      * @param lids
      *            array of local ids for the port of interest
-     * 
+     *
      * @param portNums
      *            array of port number
-     * 
+     *
      * @param callbacks
      *            array of methods to call once update is complete
-     * 
+     *
      * @return submittedTask task submitted to the task scheduler for processing
      */
     public synchronized List<Task<PortCountersBean>> registerPortCountersArray(
             int[] lids, short[] portNums,
             ICallback<PortCountersBean[]> callbacks) {
-
+        List<Task<PortCountersBean>> tasks =
+                new ArrayList<Task<PortCountersBean>>();
         int size = lids.length;
         BatchedCallback<PortCountersBean> bCallback =
                 new BatchedCallback<PortCountersBean>(size, callbacks,
                         PortCountersBean.class);
         for (int i = 0; i < size; i++) {
-            registerPortCounters(lids[i], portNums[i], bCallback.getCallback(i));
+            Task<PortCountersBean> task = registerPortCounters(lids[i],
+                    portNums[i], bCallback.getCallback(i));
+            tasks.add(task);
         }
-        return taskList;
+        return tasks;
     }
 
     public synchronized void deregisterPortCountersArray(
@@ -228,48 +234,50 @@ public class PortCounterSubscriber extends Subscriber<PortCountersBean> {
     }
 
     /**
-     * 
+     *
      * Description: This method returns an array of PortCounterBeans for the
      * node specified by lid and the list ports.
-     * 
+     *
      * @param lid
      *            - lid for a specific node
-     * 
+     *
      * @param portNumList
      *            - list of port numbers associated with lid
-     * 
+     *
      * @param rateInSeconds
      *            - rate at which to invoke the callback
-     * 
+     *
      * @param callback
      *            - method to call
-     * 
+     *
      * @return - array of PortCounterBeans associated with specified node
      */
     public synchronized List<Task<PortCountersBean>> registerPortCounters(
             int lid, List<Short> portNumList,
             ICallback<PortCountersBean[]> callback) {
-
+        List<Task<PortCountersBean>> tasks =
+                new ArrayList<Task<PortCountersBean>>();
         BatchedCallback<PortCountersBean> bCallback =
                 new BatchedCallback<PortCountersBean>(portNumList.size(),
                         callback, PortCountersBean.class);
 
         log.info("portNumList.size() = " + portNumList.size());
         for (int i = 0; i < portNumList.size(); i++) {
-            registerPortCounters(lid, portNumList.get(i),
-                    bCallback.getCallback(i));
+            Task<PortCountersBean> task = registerPortCounters(lid,
+                    portNumList.get(i), bCallback.getCallback(i));
+            tasks.add(task);
         }
-        return taskList;
+        return tasks;
     }
 
     /**
-     * 
+     *
      * Description: Initiate Port Counters history with an offset calculated
      * with FV refresh rate and sweep interval. Usually, the refresh rate is
      * higher than sweep interval,so, we just want to do a sampling within a
      * refresh. We would like to return each history for each offset and UI just
      * update data set for JfreeChart.
-     * 
+     *
      * @param lid
      * @param portNum
      * @param maxDataPoints
@@ -302,9 +310,8 @@ public class PortCounterSubscriber extends Subscriber<PortCountersBean> {
 
                     @Override
                     protected ImageIdBean[] queryImageId() {
-                        PortCountersBean portCountersBean =
-                                perfApi.getPortCountersHistory(lid, portNum,
-                                        0L, -2);
+                        PortCountersBean portCountersBean = perfApi
+                                .getPortCountersHistory(lid, portNum, 0L, -2);
                         ImageIdBean imageIdBean = portCountersBean.getImageId();
 
                         return new ImageIdBean[] { imageIdBean };

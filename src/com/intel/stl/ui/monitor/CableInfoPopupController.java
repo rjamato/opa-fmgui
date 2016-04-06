@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: CableInfoController.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.6  2016/02/09 20:23:08  jijunwan
+ *  Archive Log:    PR 132575 - [PSC] Null pointer message in FM GUI
+ *  Archive Log:
+ *  Archive Log:    - some minor improvements
+ *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/08/19 21:06:37  jijunwan
  *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
  *  Archive Log:    - adapt to latest FM code
@@ -130,8 +135,8 @@ import com.intel.stl.ui.publisher.SingleTaskManager;
 
 public class CableInfoPopupController implements ICableInfoListener {
 
-    private final static Logger log = LoggerFactory
-            .getLogger(CableInfoPopupController.class);
+    private final static Logger log =
+            LoggerFactory.getLogger(CableInfoPopupController.class);
 
     private Context context;
 
@@ -165,8 +170,8 @@ public class CableInfoPopupController implements ICableInfoListener {
 
         // Update the simple property category
         PropertyCategory propCategory = new PropertyCategory();
-        propCategory.setResourceCategory(ResourceCategoryMap.CABLE_INFO
-                .getResourceCategory());
+        propCategory.setResourceCategory(
+                ResourceCategoryMap.CABLE_INFO.getResourceCategory());
         DevicePropertyCategory cat = new DevicePropertyCategory(propCategory);
 
         if (itemList == null) {
@@ -192,22 +197,22 @@ public class CableInfoPopupController implements ICableInfoListener {
             cat.addPropertyItem(new DevicePropertyItem(CABLE_MAXCASE_TEMP, NA));
             cat.addPropertyItem(new DevicePropertyItem(CABLE_CC_BASE, NA));
             cat.addPropertyItem(new DevicePropertyItem(CABLE_CC_BASE, NA));
-            cat.addPropertyItem(new DevicePropertyItem(
-                    CABLE_TX_INP_EQ_AUTO_ADP, NA));
-            cat.addPropertyItem(new DevicePropertyItem(
-                    CABLE_TX_INP_EQ_FIX_PROG, NA));
-            cat.addPropertyItem(new DevicePropertyItem(
-                    CABLE_RX_OUTP_EMPH_FIX_PROG, NA));
-            cat.addPropertyItem(new DevicePropertyItem(
-                    CABLE_RX_OUTP_AMPL_FIX_PROG, NA));
-            cat.addPropertyItem(new DevicePropertyItem(
-                    CABLE_TX_CDR_ON_OFF_CTRL, NA));
-            cat.addPropertyItem(new DevicePropertyItem(
-                    CABLE_RX_CDR_ON_OFF_CTRL, NA));
-            cat.addPropertyItem(new DevicePropertyItem(CABLE_MEM_PAGE02_PROV,
-                    NA));
-            cat.addPropertyItem(new DevicePropertyItem(CABLE_MEM_PAGE01_PROV,
-                    NA));
+            cat.addPropertyItem(
+                    new DevicePropertyItem(CABLE_TX_INP_EQ_AUTO_ADP, NA));
+            cat.addPropertyItem(
+                    new DevicePropertyItem(CABLE_TX_INP_EQ_FIX_PROG, NA));
+            cat.addPropertyItem(
+                    new DevicePropertyItem(CABLE_RX_OUTP_EMPH_FIX_PROG, NA));
+            cat.addPropertyItem(
+                    new DevicePropertyItem(CABLE_RX_OUTP_AMPL_FIX_PROG, NA));
+            cat.addPropertyItem(
+                    new DevicePropertyItem(CABLE_TX_CDR_ON_OFF_CTRL, NA));
+            cat.addPropertyItem(
+                    new DevicePropertyItem(CABLE_RX_CDR_ON_OFF_CTRL, NA));
+            cat.addPropertyItem(
+                    new DevicePropertyItem(CABLE_MEM_PAGE02_PROV, NA));
+            cat.addPropertyItem(
+                    new DevicePropertyItem(CABLE_MEM_PAGE01_PROV, NA));
             cat.addPropertyItem(new DevicePropertyItem(CABLE_VENDOR_SN, NA));
             cat.addPropertyItem(new DevicePropertyItem(CABLE_DATE_CODE, NA));
             cat.addPropertyItem(new DevicePropertyItem(CABLE_LOT_CODE, NA));
@@ -240,7 +245,7 @@ public class CableInfoPopupController implements ICableInfoListener {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.intel.stl.ui.monitor.ICableInfoListener#onCableInfoSelection(long,
      * short)
@@ -251,7 +256,8 @@ public class CableInfoPopupController implements ICableInfoListener {
 
         CancellableCall<Void> caller = new CancellableCall<Void>() {
             @Override
-            public Void call(ICancelIndicator cancelIndicator) throws Exception {
+            public Void call(ICancelIndicator cancelIndicator)
+                    throws Exception {
 
                 // Show popup with all values set to N/A
                 PropertySet<DevicePropertyGroup> cableInfoModel =
@@ -261,8 +267,8 @@ public class CableInfoPopupController implements ICableInfoListener {
                 CategoryProcessorContext categoryCtx =
                         new CategoryProcessorContext(lid, portNum, context);
                 PropertyCategory propCategory = new PropertyCategory();
-                propCategory.setResourceCategory(ResourceCategoryMap.CABLE_INFO
-                        .getResourceCategory());
+                propCategory.setResourceCategory(
+                        ResourceCategoryMap.CABLE_INFO.getResourceCategory());
                 category = new DevicePropertyCategory(propCategory);
 
                 cableInfoProcessor.process(categoryCtx, category);
@@ -274,7 +280,7 @@ public class CableInfoPopupController implements ICableInfoListener {
         ICallback<Void> callback = new CallbackAdapter<Void>() {
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see com.intel.stl.ui.publisher.CallbackAdapter#onDone(java .lang
              * .Object )
              */
@@ -290,7 +296,6 @@ public class CableInfoPopupController implements ICableInfoListener {
                     try {
                         Thread.sleep(500);
                     } catch (InterruptedException e) {
-                        log.error(e.getMessage());
                     }
 
                     view.updatePopup(cableInfoModel, true);

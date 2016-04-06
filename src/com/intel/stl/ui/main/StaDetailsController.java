@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: StaDetailsController.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.16  2016/02/11 16:02:41  jijunwan
+ *  Archive Log:    PR 132821 - confusion text on ports statistic
+ *  Archive Log:
+ *  Archive Log:    - improved text
+ *  Archive Log:
  *  Archive Log:    Revision 1.15  2015/08/17 18:53:38  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -87,7 +92,7 @@
  *  Archive Log:    introduced new summary section for "Home Page"
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: jijunwan
  *
@@ -113,9 +118,9 @@ import com.intel.stl.ui.model.NodeTypeViz;
 import com.intel.stl.ui.model.StateShortTypeViz;
 
 /**
- * per feedback we got, we do not show Router info here. we intentionally
- * change it on UI side rather than backend because we need to support it
- * again in the future
+ * per feedback we got, we do not show Router info here. we intentionally change
+ * it on UI side rather than backend because we need to support it again in the
+ * future
  */
 public class StaDetailsController {
     private final NodeTypeViz[] nodeTypes;
@@ -233,13 +238,17 @@ public class StaDetailsController {
                     typeDataset.setValue(nodeType.getName(), count);
 
                     String number = UIConstants.INTEGER.format(count);
-                    String label =
-                            count == 1 ? nodeType.getName() : nodeType
-                                    .getPluralName();
+                    String label = getTypeString(count, nodeType);
                     view.setTypeInfo(nodeType, number, label);
                 }
             }
         });
+    }
+
+    protected String getTypeString(long count, NodeTypeViz nodeType) {
+        String label =
+                count == 1 ? nodeType.getName() : nodeType.getPluralName();
+        return label;
     }
 
     protected void clearTimer() {

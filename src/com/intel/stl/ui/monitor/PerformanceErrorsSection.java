@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: PerformanceErrorsSection.java
@@ -35,6 +35,16 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.26  2016/02/16 22:16:05  jijunwan
+ *  Archive Log:    PR 132888 - Include Num Lanes Down in port counters display
+ *  Archive Log:
+ *  Archive Log:    - added Num Lanes Down
+ *  Archive Log:
+ *  Archive Log:    Revision 1.25  2016/02/16 19:25:04  jijunwan
+ *  Archive Log:    PR 132863 - adjust counter displays to show in order of relative importance
+ *  Archive Log:
+ *  Archive Log:    - adapted to the suggested order
+ *  Archive Log:
  *  Archive Log:    Revision 1.24  2015/11/02 20:26:13  jijunwan
  *  Archive Log:    PR 131384 - Incorrect label name on port counter panel
  *  Archive Log:    - renamed constant RX_CUMULATIVE_DATA to RX_CUMULATIVE_DATA_MB, and TX_CUMULATIVE_DATA to TX_CUMULATIVE_DATA_MB
@@ -81,7 +91,7 @@
  *  Archive Log:    Correct comment header
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: jypak
  *
@@ -91,8 +101,6 @@ package com.intel.stl.ui.monitor;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import net.engio.mbassy.bus.MBassador;
 
 import org.jfree.util.Log;
 
@@ -110,6 +118,8 @@ import com.intel.stl.ui.main.HelpAction;
 import com.intel.stl.ui.main.PerfErrorsCard;
 import com.intel.stl.ui.main.view.PerfErrorsItem;
 import com.intel.stl.ui.monitor.view.PerformanceErrorsSectionView;
+
+import net.engio.mbassy.bus.MBassador;
 
 public class PerformanceErrorsSection extends
         BaseSectionController<ISectionListener, PerformanceErrorsSectionView>
@@ -137,7 +147,7 @@ public class PerformanceErrorsSection extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.BaseSectionController#getHelpID()
      */
     @Override
@@ -151,115 +161,108 @@ public class PerformanceErrorsSection extends
         // We should be able to update the values but don't need to
         // unnecessarily update each item.
         initErrItemMap();
-        errorsCard =
-                new PerfErrorsCard(view.getErrorsCardView(), eventBus,
-                        errorMap.values());
+        errorsCard = new PerfErrorsCard(view.getErrorsCardView(), eventBus,
+                errorMap.values());
         errorsCard.setHelpID(HelpAction.getInstance().getReceiveCounters());
     }
 
     private void initOtherCard() {
         initOtherItemMap();
-        otherCard =
-                new PerfErrorsCard(view.getOtherCardView(), eventBus,
-                        otherMap.values());
+        otherCard = new PerfErrorsCard(view.getOtherCardView(), eventBus,
+                otherMap.values());
         otherCard.setHelpID(HelpAction.getInstance().getOtherCounters());
     }
 
     private void initErrItemMap() {
+        /////////////
         // Receive
+        /////////////
         errorMap.put(STLConstants.K0746_RECEIVE.getValue(), new PerfErrorsItem(
                 STLConstants.K0746_RECEIVE.getValue(), -1, true));
 
-        errorMap.put(
-                STLConstants.K0730_RX_CUMULATIVE_DATA.getValue(),
-                new PerfErrorsItem(STLConstants.K0730_RX_CUMULATIVE_DATA
-                        .getValue(), STLConstants.K0039_NOT_AVAILABLE
-                        .getValue(), false));
-
-        errorMap.put(
-                STLConstants.K0728_RX_CUMULATIVE_PACKETS.getValue(),
-                new PerfErrorsItem(STLConstants.K0728_RX_CUMULATIVE_PACKETS
-                        .getValue(), STLConstants.K0039_NOT_AVAILABLE
-                        .getValue(), false));
-
-        errorMap.put(
-                STLConstants.K0834_RX_MULTICAST_PACKETS.getValue(),
-                new PerfErrorsItem(STLConstants.K0834_RX_MULTICAST_PACKETS
-                        .getValue(), STLConstants.K0039_NOT_AVAILABLE
-                        .getValue(), false));
-
+        errorMap.put(STLConstants.K0730_RX_CUMULATIVE_DATA.getValue(),
+                new PerfErrorsItem(
+                        STLConstants.K0730_RX_CUMULATIVE_DATA.getValue(),
+                        STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
+        errorMap.put(STLConstants.K0728_RX_CUMULATIVE_PACKETS.getValue(),
+                new PerfErrorsItem(
+                        STLConstants.K0728_RX_CUMULATIVE_PACKETS.getValue(),
+                        STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
+        errorMap.put(STLConstants.K0834_RX_MULTICAST_PACKETS.getValue(),
+                new PerfErrorsItem(
+                        STLConstants.K0834_RX_MULTICAST_PACKETS.getValue(),
+                        STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
+        // Signal Integrity and Node/Link Stability
         errorMap.put(STLConstants.K0519_RX_ERRORS.getValue(),
                 new PerfErrorsItem(STLConstants.K0519_RX_ERRORS.getValue(),
                         STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
-
-        errorMap.put(
-                STLConstants.K0522_RX_PORT_CONSTRAINT.getValue(),
-                new PerfErrorsItem(STLConstants.K0522_RX_PORT_CONSTRAINT
-                        .getValue(), STLConstants.K0039_NOT_AVAILABLE
-                        .getValue(), true));
-        errorMap.put(STLConstants.K0717_REC_SW_REL_ERR.getValue(),
+        errorMap.put(STLConstants.K0520_RX_REMOTE_PHY_ERRORS.getValue(),
                 new PerfErrorsItem(
-                        STLConstants.K0717_REC_SW_REL_ERR.getValue(),
+                        STLConstants.K0520_RX_REMOTE_PHY_ERRORS.getValue(),
                         STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
-        errorMap.put(
-                STLConstants.K0520_RX_REMOTE_PHY_ERRORS.getValue(),
-                new PerfErrorsItem(STLConstants.K0520_RX_REMOTE_PHY_ERRORS
-                        .getValue(), STLConstants.K0039_NOT_AVAILABLE
-                        .getValue(), false));
-
-        errorMap.put(STLConstants.K0837_RX_FECN.getValue(), new PerfErrorsItem(
-                STLConstants.K0837_RX_FECN.getValue(),
-                STLConstants.K0039_NOT_AVAILABLE.getValue(), true));
-        errorMap.put(STLConstants.K0838_RX_BECN.getValue(), new PerfErrorsItem(
-                STLConstants.K0838_RX_BECN.getValue(),
-                STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
+        // Security
+        errorMap.put(STLConstants.K0522_RX_PORT_CONSTRAINT.getValue(),
+                new PerfErrorsItem(
+                        STLConstants.K0522_RX_PORT_CONSTRAINT.getValue(),
+                        STLConstants.K0039_NOT_AVAILABLE.getValue(), true));
+        // Routing or Down nodes still being sent to
+        errorMap.put(STLConstants.K0717_REC_SW_REL_ERR.getValue(),
+                new PerfErrorsItem(STLConstants.K0717_REC_SW_REL_ERR.getValue(),
+                        STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
+        // Congestion
+        errorMap.put(STLConstants.K0837_RX_FECN.getValue(),
+                new PerfErrorsItem(STLConstants.K0837_RX_FECN.getValue(),
+                        STLConstants.K0039_NOT_AVAILABLE.getValue(), true));
+        errorMap.put(STLConstants.K0838_RX_BECN.getValue(),
+                new PerfErrorsItem(STLConstants.K0838_RX_BECN.getValue(),
+                        STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
+        // Bubbles
         errorMap.put(STLConstants.K0842_RX_BUBBLE.getValue(),
                 new PerfErrorsItem(STLConstants.K0842_RX_BUBBLE.getValue(),
                         STLConstants.K0039_NOT_AVAILABLE.getValue(), true));
 
+        /////////////
         // Transmit
-        errorMap.put(STLConstants.K0745_TRANSMIT.getValue(),
-                new PerfErrorsItem(STLConstants.K0745_TRANSMIT.getValue(), -1,
-                        true));
-        errorMap.put(
-                STLConstants.K0732_TX_CUMULATIVE_DATA.getValue(),
-                new PerfErrorsItem(STLConstants.K0732_TX_CUMULATIVE_DATA
-                        .getValue(), STLConstants.K0039_NOT_AVAILABLE
-                        .getValue(), false));
-        errorMap.put(
-                STLConstants.K0734_TX_CUMULATIVE_PACKETS.getValue(),
-                new PerfErrorsItem(STLConstants.K0734_TX_CUMULATIVE_PACKETS
-                        .getValue(), STLConstants.K0039_NOT_AVAILABLE
-                        .getValue(), false));
+        /////////////
+        errorMap.put(STLConstants.K0745_TRANSMIT.getValue(), new PerfErrorsItem(
+                STLConstants.K0745_TRANSMIT.getValue(), -1, true));
 
-        errorMap.put(
-                STLConstants.K0833_TX_MULTICAST_PACKETS.getValue(),
-                new PerfErrorsItem(STLConstants.K0833_TX_MULTICAST_PACKETS
-                        .getValue(), STLConstants.K0039_NOT_AVAILABLE
-                        .getValue(), false));
+        errorMap.put(STLConstants.K0732_TX_CUMULATIVE_DATA.getValue(),
+                new PerfErrorsItem(
+                        STLConstants.K0732_TX_CUMULATIVE_DATA.getValue(),
+                        STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
+        errorMap.put(STLConstants.K0734_TX_CUMULATIVE_PACKETS.getValue(),
+                new PerfErrorsItem(
+                        STLConstants.K0734_TX_CUMULATIVE_PACKETS.getValue(),
+                        STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
+        errorMap.put(STLConstants.K0833_TX_MULTICAST_PACKETS.getValue(),
+                new PerfErrorsItem(
+                        STLConstants.K0833_TX_MULTICAST_PACKETS.getValue(),
+                        STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
 
+        // Security
+        errorMap.put(STLConstants.K0521_TX_PORT_CONSTRAINT.getValue(),
+                new PerfErrorsItem(
+                        STLConstants.K0521_TX_PORT_CONSTRAINT.getValue(),
+                        STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
+        // Routing or Down nodes still being sent to
         errorMap.put(STLConstants.K0714_TRAN_DISCARDS.getValue(),
                 new PerfErrorsItem(STLConstants.K0714_TRAN_DISCARDS.getValue(),
                         STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
-        errorMap.put(
-                STLConstants.K0521_TX_PORT_CONSTRAINT.getValue(),
-                new PerfErrorsItem(STLConstants.K0521_TX_PORT_CONSTRAINT
-                        .getValue(), STLConstants.K0039_NOT_AVAILABLE
-                        .getValue(), false));
-        errorMap.put(STLConstants.K0836_TX_WAIT.getValue(), new PerfErrorsItem(
-                STLConstants.K0836_TX_WAIT.getValue(),
-                STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
-
+        // Congestion
         errorMap.put(STLConstants.K0839_TX_TIME_CONG.getValue(),
                 new PerfErrorsItem(STLConstants.K0839_TX_TIME_CONG.getValue(),
                         STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
+        errorMap.put(STLConstants.K0836_TX_WAIT.getValue(),
+                new PerfErrorsItem(STLConstants.K0836_TX_WAIT.getValue(),
+                        STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
+        // Bubbles
         errorMap.put(STLConstants.K0840_TX_WASTED_BW.getValue(),
                 new PerfErrorsItem(STLConstants.K0840_TX_WASTED_BW.getValue(),
                         STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
         errorMap.put(STLConstants.K0841_TX_WAIT_DATA.getValue(),
                 new PerfErrorsItem(STLConstants.K0841_TX_WAIT_DATA.getValue(),
                         STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
-
     }
 
     private void insertIntoErrItemMap(PortCountersBean bean) {
@@ -267,8 +270,7 @@ public class PerformanceErrorsSection extends
         setConvertedValStr(errorMap,
                 STLConstants.K0730_RX_CUMULATIVE_DATA.getValue(),
                 bean.getPortRcvData());
-        setValStr(errorMap,
-                STLConstants.K0728_RX_CUMULATIVE_PACKETS.getValue(),
+        setValStr(errorMap, STLConstants.K0728_RX_CUMULATIVE_PACKETS.getValue(),
                 bean.getPortRcvPkts());
 
         setValStr(errorMap, STLConstants.K0834_RX_MULTICAST_PACKETS.getValue(),
@@ -296,8 +298,7 @@ public class PerformanceErrorsSection extends
         setConvertedValStr(errorMap,
                 STLConstants.K0732_TX_CUMULATIVE_DATA.getValue(),
                 bean.getPortXmitData());
-        setValStr(errorMap,
-                STLConstants.K0734_TX_CUMULATIVE_PACKETS.getValue(),
+        setValStr(errorMap, STLConstants.K0734_TX_CUMULATIVE_PACKETS.getValue(),
                 bean.getPortXmitPkts());
         setValStr(errorMap, STLConstants.K0833_TX_MULTICAST_PACKETS.getValue(),
                 bean.getPortMulticastXmitPkts());
@@ -321,8 +322,7 @@ public class PerformanceErrorsSection extends
         setConvertedValStr(errorMap,
                 STLConstants.K0730_RX_CUMULATIVE_DATA.getValue(),
                 bean.getPortVFRcvData());
-        setValStr(errorMap,
-                STLConstants.K0728_RX_CUMULATIVE_PACKETS.getValue(),
+        setValStr(errorMap, STLConstants.K0728_RX_CUMULATIVE_PACKETS.getValue(),
                 bean.getPortVFRcvPkts());
 
         setValStr(errorMap, STLConstants.K0837_RX_FECN.getValue(),
@@ -337,8 +337,7 @@ public class PerformanceErrorsSection extends
         setConvertedValStr(errorMap,
                 STLConstants.K0732_TX_CUMULATIVE_DATA.getValue(),
                 bean.getPortVFXmitData());
-        setValStr(errorMap,
-                STLConstants.K0734_TX_CUMULATIVE_PACKETS.getValue(),
+        setValStr(errorMap, STLConstants.K0734_TX_CUMULATIVE_PACKETS.getValue(),
                 bean.getPortVFXmitPkts());
         setValStr(errorMap, STLConstants.K0731_TX_DISCARDS.getValue(),
                 bean.getPortVFXmitDiscards());
@@ -355,43 +354,43 @@ public class PerformanceErrorsSection extends
     private void initOtherItemMap() {
         // Others
         otherMap.put(STLConstants.K0715_OTHER_COUNTERS.getValue(),
+                new PerfErrorsItem(STLConstants.K0715_OTHER_COUNTERS.getValue(),
+                        -1, true));
+        // Signal Integrity and Node/Link Stability
+        otherMap.put(STLConstants.K2068_LINK_QUALITY.getValue(),
+                new PerfErrorsItem(STLConstants.K2068_LINK_QUALITY.getValue(),
+                        STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
+        otherMap.put(STLConstants.K0716_UNCORR_ERR.getValue(),
+                new PerfErrorsItem(STLConstants.K0716_UNCORR_ERR.getValue(),
+                        STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
+        otherMap.put(STLConstants.K0518_LINK_DOWN.getValue(),
+                new PerfErrorsItem(STLConstants.K0518_LINK_DOWN.getValue(),
+                        STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
+        otherMap.put(STLConstants.K1655_NUM_LANES_DOWN.getValue(),
+                new PerfErrorsItem(STLConstants.K1655_NUM_LANES_DOWN.getValue(),
+                        STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
+        otherMap.put(STLConstants.K0719_EXCESS_BUFF_OVERRUNS.getValue(),
                 new PerfErrorsItem(
-                        STLConstants.K0715_OTHER_COUNTERS.getValue(), -1, true));
-        otherMap.put(
-                STLConstants.K0718_LOCAL_LINK_INTEG_ERR.getValue(),
-                new PerfErrorsItem(STLConstants.K0718_LOCAL_LINK_INTEG_ERR
-                        .getValue(), STLConstants.K0039_NOT_AVAILABLE
-                        .getValue(), false));
+                        STLConstants.K0719_EXCESS_BUFF_OVERRUNS.getValue(),
+                        STLConstants.K0039_NOT_AVAILABLE.getValue(), true));
         otherMap.put(STLConstants.K0720_FM_CONFIG_ERR.getValue(),
                 new PerfErrorsItem(STLConstants.K0720_FM_CONFIG_ERR.getValue(),
                         STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
-        otherMap.put(
-                STLConstants.K0719_EXCESS_BUFF_OVERRUNS.getValue(),
-                new PerfErrorsItem(STLConstants.K0719_EXCESS_BUFF_OVERRUNS
-                        .getValue(), STLConstants.K0039_NOT_AVAILABLE
-                        .getValue(), true));
+        otherMap.put(STLConstants.K0517_LINK_RECOVERIES.getValue(),
+                new PerfErrorsItem(
+                        STLConstants.K0517_LINK_RECOVERIES.getValue(),
+                        STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
+        otherMap.put(STLConstants.K0718_LOCAL_LINK_INTEG_ERR.getValue(),
+                new PerfErrorsItem(
+                        STLConstants.K0718_LOCAL_LINK_INTEG_ERR.getValue(),
+                        STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
+        // Congestion
         otherMap.put(STLConstants.K0835_SW_PORT_CONG.getValue(),
                 new PerfErrorsItem(STLConstants.K0835_SW_PORT_CONG.getValue(),
                         STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
         otherMap.put(STLConstants.K0843_MARK_FECN.getValue(),
                 new PerfErrorsItem(STLConstants.K0843_MARK_FECN.getValue(),
                         STLConstants.K0039_NOT_AVAILABLE.getValue(), true));
-        otherMap.put(
-                STLConstants.K0517_LINK_RECOVERIES.getValue(),
-                new PerfErrorsItem(STLConstants.K0517_LINK_RECOVERIES
-                        .getValue(), STLConstants.K0039_NOT_AVAILABLE
-                        .getValue(), false));
-        otherMap.put(STLConstants.K0518_LINK_DOWN.getValue(),
-                new PerfErrorsItem(STLConstants.K0518_LINK_DOWN.getValue(),
-                        STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
-
-        otherMap.put(STLConstants.K0716_UNCORR_ERR.getValue(),
-                new PerfErrorsItem(STLConstants.K0716_UNCORR_ERR.getValue(),
-                        STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
-        otherMap.put(STLConstants.K2068_LINK_QUALITY.getValue(),
-                new PerfErrorsItem(STLConstants.K2068_LINK_QUALITY.getValue(),
-                        STLConstants.K0039_NOT_AVAILABLE.getValue(), false));
-
     }
 
     private void insertIntoOtherItemMap(PortCountersBean bean) {
@@ -411,6 +410,8 @@ public class PerformanceErrorsSection extends
                 bean.getLinkErrorRecovery());
         setValStr(otherMap, STLConstants.K0518_LINK_DOWN.getValue(),
                 bean.getLinkDowned());
+        setValStr(otherMap, STLConstants.K1655_NUM_LANES_DOWN.getValue(),
+                bean.getNumLanesDown());
         setValStr(otherMap, STLConstants.K0716_UNCORR_ERR.getValue(),
                 bean.getUncorrectableErrors());
 
@@ -450,7 +451,7 @@ public class PerformanceErrorsSection extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.hpc.stl.ui.ISection#getCards()
      */
     @Override
@@ -480,7 +481,7 @@ public class PerformanceErrorsSection extends
 
     /**
      * Description:
-     * 
+     *
      * @param result
      */
     public void updateErrors(VFPortCountersBean result) {
@@ -506,7 +507,7 @@ public class PerformanceErrorsSection extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.BaseSectionController#getSectionListener()
      */
     @Override
@@ -516,7 +517,7 @@ public class PerformanceErrorsSection extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.BaseSectionController#clear()
      */
     @Override
@@ -529,10 +530,9 @@ public class PerformanceErrorsSection extends
 
     /*
      * (non-Javadoc)
-     * 
-     * @see
-     * com.intel.stl.ui.configuration.view.IPropertyListener#onShowBorder(boolean
-     * )
+     *
+     * @see com.intel.stl.ui.configuration.view.IPropertyListener#onShowBorder(
+     * boolean )
      */
     @Override
     public void onShowBorder(boolean isSelected) {
@@ -543,7 +543,7 @@ public class PerformanceErrorsSection extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.intel.stl.ui.configuration.view.IPropertyListener#onShowAlternation
      * (boolean)
@@ -561,7 +561,7 @@ public class PerformanceErrorsSection extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.intel.stl.ui.configuration.view.IPropertyListener#onDisplayChanged
      * (java.util.Map)

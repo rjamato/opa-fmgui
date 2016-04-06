@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 GenericName=Fabric Manager GUI
-Name=Fabric Manager GUI
+Name=Intel Omni-Path Architecture Fabric Manager Graphical User Interface
 Exec=/usr/bin/fmgui
 Icon=fmgui
 Terminal=false

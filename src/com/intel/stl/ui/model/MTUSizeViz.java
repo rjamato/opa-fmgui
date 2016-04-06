@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: MTUSizeViz.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.5  2016/01/27 21:50:52  jijunwan
+ *  Archive Log:    PR 132499 - MaxMTU field values needs to be updated to match support SM MTU values
+ *  Archive Log:
+ *  Archive Log:    - removed 256, 512 and 1024 as suggested
+ *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/08/17 18:53:46  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -50,7 +55,7 @@
  *  Archive Log:    Refactoring PropertyStrings into individual enums
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: fernande
  *
@@ -65,9 +70,10 @@ import com.intel.stl.ui.common.STLConstants;
 
 public enum MTUSizeViz {
     INVALID(MTUSize.INVALID, STLConstants.K0039_NOT_AVAILABLE.getValue()),
-    IB_MTU_256(MTUSize.IB_MTU_256, "256"),
-    IB_MTU_512(MTUSize.IB_MTU_512, "512"),
-    IB_MTU_1024(MTUSize.IB_MTU_1024, "1024"),
+    // remove the following as they are no longer supported by the SM
+    // IB_MTU_256(MTUSize.IB_MTU_256, "256"),
+    // IB_MTU_512(MTUSize.IB_MTU_512, "512"),
+    // IB_MTU_1024(MTUSize.IB_MTU_1024, "1024"),
     IB_MTU_2048(MTUSize.IB_MTU_2048, "2048"),
     IB_MTU_4096(MTUSize.IB_MTU_4096, "4096"),
     STL_MTU_8192(MTUSize.STL_MTU_8192, "8192"),
@@ -75,6 +81,7 @@ public enum MTUSizeViz {
 
     private final static EnumMap<MTUSize, String> mtuSizeMap =
             new EnumMap<MTUSize, String>(MTUSize.class);
+
     static {
         for (MTUSizeViz msv : MTUSizeViz.values()) {
             mtuSizeMap.put(msv.mtuSize, msv.value);

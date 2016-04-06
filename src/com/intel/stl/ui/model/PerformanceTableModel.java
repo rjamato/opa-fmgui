@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *  
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: PerformanceTableModel.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.16  2016/02/16 22:16:06  jijunwan
+ *  Archive Log:    PR 132888 - Include Num Lanes Down in port counters display
+ *  Archive Log:
+ *  Archive Log:    - added Num Lanes Down
+ *  Archive Log:
  *  Archive Log:    Revision 1.15  2015/08/17 18:53:46  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -110,11 +115,11 @@ public class PerformanceTableModel extends FVTableModel<PerformanceTableData> {
     private static final long serialVersionUID = 6716106545100111380L;
 
     /**
-     * 
+     *
      * Description: Constructor for the PerformanceTableModel class
-     * 
+     *
      * @return PerformanceTableModel
-     * 
+     *
      */
     public PerformanceTableModel() {
 
@@ -128,12 +133,12 @@ public class PerformanceTableModel extends FVTableModel<PerformanceTableData> {
 
     /**
      * Description: Override getColumnName to set the column headings
-     * 
+     *
      * @param column
      *            - integer indicating the column number
-     * 
+     *
      * @return result - name of the column heading
-     * 
+     *
      */
     @Override
     public String getColumnName(int column) {
@@ -143,19 +148,19 @@ public class PerformanceTableModel extends FVTableModel<PerformanceTableData> {
     /*
      * TODO: This would be useful if we decide to set renderers based on object
      * type placed in each cell.
-     * 
-     * 
+     *
+     *
      * public Class getColumnClass(int column){ Class clazz = Object.class;
-     * 
+     *
      * try { clazz = getValueAt(0, column).getClass(); } catch (Exception e){ //
      * nothing to do, proceed. }
-     * 
+     *
      * return clazz; }
      */
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see javax.swing.table.TableModel#getValueAt(int, int)
      */
     @Override
@@ -311,6 +316,11 @@ public class PerformanceTableModel extends FVTableModel<PerformanceTableData> {
                         value = num == -1 ? null : num;
                         break;
 
+                    case NUM_LANES_DOWN:
+                        num = portData.getNumLanesDown();
+                        value = num == -1 ? null : num;
+                        break;
+
                     case UNCORRECTABLE_ERRORS:
                         num = portData.getUncorrectableErrors();
                         value = num == -1 ? null : num;
@@ -335,7 +345,7 @@ public class PerformanceTableModel extends FVTableModel<PerformanceTableData> {
 
     /**
      * Description:
-     * 
+     *
      */
     public void clear() {
         mEntryList.clear();
@@ -347,7 +357,7 @@ public class PerformanceTableModel extends FVTableModel<PerformanceTableData> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.FVTableModel#isCellEditable(int, int)
      */
     @Override

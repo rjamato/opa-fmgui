@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *  
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: NoticeDAOImpl.java
@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.15  2016/01/21 21:00:49  fernande
+ *  Archive Log:    PR 132470 - Email not received when fabric event change is triggered. When a existing node record is being added to a topology, force the Hibernate proxy to read node record information from the database so that subsequent access does not require the proxy.
+ *  Archive Log:
  *  Archive Log:    Revision 1.14  2015/09/26 06:18:27  jijunwan
  *  Archive Log:    130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
  *  Archive Log:    - fix null pointer issue
@@ -55,7 +58,7 @@
  *  Archive Log:     - port numbers are now short
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: jypak
  *
@@ -138,8 +141,8 @@ public class NoticeDAOImpl extends BaseDAO implements NoticeDAO {
         TopologyRecord topology = subnet.getTopology();
         if (topology == null) {
             DatabaseException dbe =
-                    new DatabaseException(STL30025_TOPOLOGY_NOT_FOUND, subnet
-                            .getSubnetDescription().getName());
+                    new DatabaseException(STL30025_TOPOLOGY_NOT_FOUND,
+                            subnet.getSubnetDescription().getName());
             throw dbe;
         }
         /*-
@@ -150,13 +153,13 @@ public class NoticeDAOImpl extends BaseDAO implements NoticeDAO {
          *    * Check if the node is part of the current topology (a
          *      TopologyNodeRecord exists); if not, add it to the newTopoNodes set.
          *      Set the status of the node according to the TrapType in the notice.
-         *    * Convert the links retrieved from the FM into TopologyLinkRecords, 
+         *    * Convert the links retrieved from the FM into TopologyLinkRecords,
          *      resolving LIDs to GUIDs (since the FromLid or the ToLid must match
-         *      the LID of the notice, we only resolve the other one). Set the 
+         *      the LID of the notice, we only resolve the other one). Set the
          *      status of the link according to the TrapType in the notice
-         *    * Retrieve the TopologyLinkRecords currently in the database for the 
+         *    * Retrieve the TopologyLinkRecords currently in the database for the
          *      LID in the notice (we use the GUID of the node). For each link found,
-         *      we query the reverse link. Set the status of the link according to the 
+         *      we query the reverse link. Set the status of the link according to the
          *      TrapType in the notice
          *    * From the set of links retrieved from the FM, we remove those already
          *      in the database; the remaining links are added to the newLinks set
@@ -174,8 +177,8 @@ public class NoticeDAOImpl extends BaseDAO implements NoticeDAO {
                 new HashSet<TopologyNodeRecord>();
         Set<TopologyLinkRecord> currLinks = new HashSet<TopologyLinkRecord>();
 
-        prepareDatabaseData(topology, notices, newNodes, newTopoNodes,
-                newLinks, currTopoNodes, currLinks);
+        prepareDatabaseData(topology, notices, newNodes, newTopoNodes, newLinks,
+                currTopoNodes, currLinks);
 
         boolean topologyChanged =
                 (newTopoNodes.size() > 0 || newLinks.size() > 0);
@@ -192,7 +195,8 @@ public class NoticeDAOImpl extends BaseDAO implements NoticeDAO {
     }
 
     @Override
-    public List<NoticeBean> getNotices(SubnetRecord subnet, NoticeStatus status) {
+    public List<NoticeBean> getNotices(SubnetRecord subnet,
+            NoticeStatus status) {
         List<NoticeRecord> noticeRecords = readNoticeRecords(subnet, status);
 
         List<NoticeBean> noticeBeans = new ArrayList<NoticeBean>();
@@ -208,8 +212,8 @@ public class NoticeDAOImpl extends BaseDAO implements NoticeDAO {
     }
 
     @Override
-    public List<NoticeBean> getNotices(SubnetRecord subnet,
-            NoticeStatus status, NoticeStatus newStatus) {
+    public List<NoticeBean> getNotices(SubnetRecord subnet, NoticeStatus status,
+            NoticeStatus newStatus) {
         List<NoticeRecord> noticeRecords = readNoticeRecords(subnet, status);
 
         List<NoticeBean> noticeBeans = new ArrayList<NoticeBean>();
@@ -260,8 +264,8 @@ public class NoticeDAOImpl extends BaseDAO implements NoticeDAO {
     @Override
     public void updateNotice(SubnetRecord subnet, long noticeId,
             NoticeStatus noticeStatus) {
-        TypedQuery<NoticeRecord> query =
-                em.createNamedQuery("NoticeRecord.findById", NoticeRecord.class);
+        TypedQuery<NoticeRecord> query = em
+                .createNamedQuery("NoticeRecord.findById", NoticeRecord.class);
         query.setParameter("subnetId", subnet.getId());
         query.setParameter("id", noticeId);
 
@@ -315,6 +319,12 @@ public class NoticeDAOImpl extends BaseDAO implements NoticeDAO {
             id.setTopologyNode(nodeGUID);
             topoNode = em.find(TopologyNodeRecord.class, id);
             if (topoNode == null) {
+                // The following is done to force Hibernate to read the
+                // NodeRecord and the NodeRecordType; otherwise, subsequent
+                // attempts to access this information will fail with a
+                // LazyInitializationException
+                nodeRec.getNode();
+
                 topoNode = createTopologyNode(topology, nodeRec, lid);
                 newTopoNodes.add(topoNode);
                 topoNodeInSet = true;
@@ -352,7 +362,8 @@ public class NoticeDAOImpl extends BaseDAO implements NoticeDAO {
     }
 
     private void prepareLinkData(TopologyRecord topology, NoticeProcess notice,
-            Set<TopologyLinkRecord> newLinks, Set<TopologyLinkRecord> currLinks) {
+            Set<TopologyLinkRecord> newLinks,
+            Set<TopologyLinkRecord> currLinks) {
         Set<TopologyLinkRecord> dbLinks =
                 getTopologyLinkRecords(topology, notice);
         Set<TopologyLinkRecord> fmLinks = getLinkSet(topology, notice);
@@ -629,8 +640,8 @@ public class NoticeDAOImpl extends BaseDAO implements NoticeDAO {
         try {
             commitTransaction();
         } catch (Exception e) {
-            throwPersistDatabaseException(e, "NoticeRecord", noticeRec.getId()
-                    .getNoticeId());
+            throwPersistDatabaseException(e, "NoticeRecord",
+                    noticeRec.getId().getNoticeId());
         }
 
         return noticeRec;
@@ -638,9 +649,8 @@ public class NoticeDAOImpl extends BaseDAO implements NoticeDAO {
 
     private List<NoticeRecord> readNoticeRecords(SubnetRecord subnet,
             NoticeStatus status) {
-        TypedQuery<NoticeRecord> query =
-                em.createNamedQuery("NoticeRecord.findBySubnet",
-                        NoticeRecord.class);
+        TypedQuery<NoticeRecord> query = em.createNamedQuery(
+                "NoticeRecord.findBySubnet", NoticeRecord.class);
         query.setParameter("subnetId", subnet.getId());
         query.setParameter("noticeStatus", status);
         return query.getResultList();

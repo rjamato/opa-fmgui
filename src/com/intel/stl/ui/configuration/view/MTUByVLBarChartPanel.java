@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: MTUByVLChartPanel.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.5  2016/01/27 21:50:53  jijunwan
+ *  Archive Log:    PR 132499 - MaxMTU field values needs to be updated to match support SM MTU values
+ *  Archive Log:
+ *  Archive Log:    - removed 256, 512 and 1024 as suggested
+ *  Archive Log:
  *  Archive Log:    Revision 1.4  2015/08/17 18:54:17  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -42,8 +47,8 @@
  *  Archive Log:    Revision 1.3  2015/02/05 19:58:41  jijunwan
  *  Archive Log:    code cleanup
  *  Archive Log:
- *  
- *  Overview: 
+ *
+ *  Overview:
  *
  *  @author: jypak
  *
@@ -77,15 +82,16 @@ public class MTUByVLBarChartPanel extends DevicePropertyCategoryPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Dimension PREFERRED_CHART_SIZE = new Dimension(360,
-            240);
+    private static final Dimension PREFERRED_CHART_SIZE =
+            new Dimension(360, 240);
 
     private XYSeriesCollection dataset;
 
     private ChartPanel chartPanel;
 
     @Override
-    public void modelUpdateFailed(DevicePropertyCategory model, Throwable caught) {
+    public void modelUpdateFailed(DevicePropertyCategory model,
+            Throwable caught) {
     }
 
     @Override
@@ -101,15 +107,17 @@ public class MTUByVLBarChartPanel extends DevicePropertyCategoryPanel {
         for (MTUSize v : values) {
             double mtuSize = 0.0;
             switch (v) {
-                case IB_MTU_256:
-                    mtuSize = 256;
-                    break;
-                case IB_MTU_512:
-                    mtuSize = 512;
-                    break;
-                case IB_MTU_1024:
-                    mtuSize = 1024;
-                    break;
+                // remove the following as they are no longer supported by the
+                // SM
+                // case IB_MTU_256:
+                // mtuSize = 256;
+                // break;
+                // case IB_MTU_512:
+                // mtuSize = 512;
+                // break;
+                // case IB_MTU_1024:
+                // mtuSize = 1024;
+                // break;
                 case IB_MTU_2048:
                     mtuSize = 2048;
                     break;
@@ -137,10 +145,9 @@ public class MTUByVLBarChartPanel extends DevicePropertyCategoryPanel {
     public void initComponents() {
         dataset = new XYSeriesCollection();
 
-        JFreeChart chart =
-                ComponentFactory.createXYBarChart(
-                        K0342_PORT_VL_TITLE.getValue(), K1068_MTU.getValue(),
-                        dataset, (XYItemLabelGenerator) null);
+        JFreeChart chart = ComponentFactory.createXYBarChart(
+                K0342_PORT_VL_TITLE.getValue(), K1068_MTU.getValue(), dataset,
+                (XYItemLabelGenerator) null);
 
         XYPlot plot = chart.getXYPlot();
         plot.setDomainPannable(true);
@@ -154,7 +161,8 @@ public class MTUByVLBarChartPanel extends DevicePropertyCategoryPanel {
 
         renderer.setSeriesToolTipGenerator(0, new XYToolTipGenerator() {
             @Override
-            public String generateToolTip(XYDataset dataset, int arg1, int arg2) {
+            public String generateToolTip(XYDataset dataset, int arg1,
+                    int arg2) {
                 int vlNum = (int) dataset.getXValue(arg1, arg2);
                 int mtuCount = (int) dataset.getYValue(arg1, arg2);
                 return vlLabel + vlNum + mtuLabel + mtuCount + "</html>";

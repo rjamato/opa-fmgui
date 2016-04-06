@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: PerformanceTableView.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.24  2016/02/16 22:16:08  jijunwan
+ *  Archive Log:    PR 132888 - Include Num Lanes Down in port counters display
+ *  Archive Log:
+ *  Archive Log:    - added Num Lanes Down
+ *  Archive Log:
  *  Archive Log:    Revision 1.23  2015/08/17 18:54:25  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -185,7 +190,7 @@ public class PerformanceXTableView extends FVXTableView<PerformanceTableModel> {
 
     /**
      * Description: Constructor for the EventTableView class
-     * 
+     *
      * @param pController
      *            event table card
      */
@@ -197,7 +202,7 @@ public class PerformanceXTableView extends FVXTableView<PerformanceTableModel> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.hpc.stl.ui.tables.FVTableView#formatTable()
      */
     @Override
@@ -229,23 +234,27 @@ public class PerformanceXTableView extends FVXTableView<PerformanceTableModel> {
                     .setHeaderRenderer(headerRenderer);
             TableColumnExt col = mTable.getColumnExt(i);
 
-            if (PerformanceTableColumns.values()[i] == PerformanceTableColumns.RX_DATA
-                    || PerformanceTableColumns.values()[i] == PerformanceTableColumns.RX_DATA_RATE
-                    || PerformanceTableColumns.values()[i] == PerformanceTableColumns.TX_DATA
-                    || PerformanceTableColumns.values()[i] == PerformanceTableColumns.TX_DATA_RATE) {
+            if (PerformanceTableColumns
+                    .values()[i] == PerformanceTableColumns.RX_DATA
+                    || PerformanceTableColumns
+                            .values()[i] == PerformanceTableColumns.RX_DATA_RATE
+                    || PerformanceTableColumns
+                            .values()[i] == PerformanceTableColumns.TX_DATA
+                    || PerformanceTableColumns
+                            .values()[i] == PerformanceTableColumns.TX_DATA_RATE) {
                 col.setComparator(tableDataComparator);
                 col.setCellRenderer(new FVTableRenderer() {
                     private static final long serialVersionUID =
                             -3747347169291822762L;
 
                     @Override
-                    public Component getTableCellRendererComponent(
-                            JTable table, Object value, boolean isSelected,
-                            boolean hasFocus, int row, int column) {
+                    public Component getTableCellRendererComponent(JTable table,
+                            Object value, boolean isSelected, boolean hasFocus,
+                            int row, int column) {
                         JLabel renderer =
                                 (JLabel) super.getTableCellRendererComponent(
-                                        table, value, isSelected, hasFocus,
-                                        row, column);
+                                        table, value, isSelected, hasFocus, row,
+                                        column);
 
                         TableDataDescription data =
                                 (TableDataDescription) value;
@@ -258,7 +267,8 @@ public class PerformanceXTableView extends FVXTableView<PerformanceTableModel> {
                     }
                 });
 
-            } else if (PerformanceTableColumns.values()[i] != PerformanceTableColumns.LINK_QUALITY) {
+            } else if (PerformanceTableColumns
+                    .values()[i] != PerformanceTableColumns.LINK_QUALITY) {
                 col.setComparator(numberComparator);
                 // For all but LINK_QUALITY column use tableRenderer
                 col.setCellRenderer(tableRenderer);
@@ -275,9 +285,9 @@ public class PerformanceXTableView extends FVXTableView<PerformanceTableModel> {
                             -3747347169291822762L;
 
                     @Override
-                    public Component getTableCellRendererComponent(
-                            JTable table, Object value, boolean isSelected,
-                            boolean hasFocus, int row, int column) {
+                    public Component getTableCellRendererComponent(JTable table,
+                            Object value, boolean isSelected, boolean hasFocus,
+                            int row, int column) {
 
                         Component renderer =
                                 super.getTableCellRendererComponent(table,
@@ -286,15 +296,13 @@ public class PerformanceXTableView extends FVXTableView<PerformanceTableModel> {
 
                         renderer.setForeground(renderer.getBackground());
 
-                        setIcon(LinkQualityViz
-                                .getLinkQualityIcon(((Integer) value)
-                                        .byteValue()));
+                        setIcon(LinkQualityViz.getLinkQualityIcon(
+                                ((Integer) value).byteValue()));
 
                         setHorizontalAlignment(JLabel.CENTER);
 
-                        setToolTipText(LinkQualityViz
-                                .getLinkQualityDescription(((Integer) value)
-                                        .byteValue()));
+                        setToolTipText(LinkQualityViz.getLinkQualityDescription(
+                                ((Integer) value).byteValue()));
 
                         return this;
                     }
@@ -305,35 +313,35 @@ public class PerformanceXTableView extends FVXTableView<PerformanceTableModel> {
 
         // mTable.setDefaultRenderer(Object.class, tableRenderer);
 
-        PerformanceTableColumns[] toHide =
-                new PerformanceTableColumns[] {
-                        PerformanceTableColumns.EXCESSIVE_BUFFER_OVERRUNS,
-                        PerformanceTableColumns.FM_CONFIG_ERRORS,
-                        PerformanceTableColumns.RX_PACKETS,
-                        PerformanceTableColumns.RX_DATA,
-                        PerformanceTableColumns.RX_REMOTE_PHY_ERRORS,
-                        PerformanceTableColumns.RX_SWITCH_ERRORS,
-                        PerformanceTableColumns.TX_DISCARDS,
-                        PerformanceTableColumns.TX_PACKETS,
-                        PerformanceTableColumns.TX_DATA,
-                        PerformanceTableColumns.RX_MC_PACKETS,
-                        PerformanceTableColumns.RX_ERRORS,
-                        PerformanceTableColumns.RX_CONSTRAINT,
-                        PerformanceTableColumns.RX_FECN,
-                        PerformanceTableColumns.RX_BECN,
-                        PerformanceTableColumns.RX_BUBBLE,
-                        PerformanceTableColumns.TX_MC_PACKETS,
-                        PerformanceTableColumns.TX_CONSTRAINT,
-                        PerformanceTableColumns.TX_WAIT,
-                        PerformanceTableColumns.TX_TIME_CONG,
-                        PerformanceTableColumns.TX_WASTED_BW,
-                        PerformanceTableColumns.TX_WAIT_DATA,
-                        PerformanceTableColumns.LOCAL_LINK_INTEGRITY,
-                        PerformanceTableColumns.MARK_FECN,
-                        PerformanceTableColumns.LINK_ERROR_RECOVERIES,
-                        PerformanceTableColumns.LINK_DOWNED,
-                        PerformanceTableColumns.UNCORRECTABLE_ERRORS,
-                        PerformanceTableColumns.SW_PORT_CONGESTION
+        PerformanceTableColumns[] toHide = new PerformanceTableColumns[] {
+                PerformanceTableColumns.EXCESSIVE_BUFFER_OVERRUNS,
+                PerformanceTableColumns.FM_CONFIG_ERRORS,
+                PerformanceTableColumns.RX_PACKETS,
+                PerformanceTableColumns.RX_DATA,
+                PerformanceTableColumns.RX_REMOTE_PHY_ERRORS,
+                PerformanceTableColumns.RX_SWITCH_ERRORS,
+                PerformanceTableColumns.TX_DISCARDS,
+                PerformanceTableColumns.TX_PACKETS,
+                PerformanceTableColumns.TX_DATA,
+                PerformanceTableColumns.RX_MC_PACKETS,
+                PerformanceTableColumns.RX_ERRORS,
+                PerformanceTableColumns.RX_CONSTRAINT,
+                PerformanceTableColumns.RX_FECN,
+                PerformanceTableColumns.RX_BECN,
+                PerformanceTableColumns.RX_BUBBLE,
+                PerformanceTableColumns.TX_MC_PACKETS,
+                PerformanceTableColumns.TX_CONSTRAINT,
+                PerformanceTableColumns.TX_WAIT,
+                PerformanceTableColumns.TX_TIME_CONG,
+                PerformanceTableColumns.TX_WASTED_BW,
+                PerformanceTableColumns.TX_WAIT_DATA,
+                PerformanceTableColumns.LOCAL_LINK_INTEGRITY,
+                PerformanceTableColumns.MARK_FECN,
+                PerformanceTableColumns.LINK_ERROR_RECOVERIES,
+                PerformanceTableColumns.LINK_DOWNED,
+                PerformanceTableColumns.NUM_LANES_DOWN,
+                PerformanceTableColumns.UNCORRECTABLE_ERRORS,
+                PerformanceTableColumns.SW_PORT_CONGESTION
 
                 // PerformanceTableColumns.LINK_QUALITY,
                 // PerformanceTableColumns.RX_DELTA_PACKETS,
@@ -345,7 +353,7 @@ public class PerformanceXTableView extends FVXTableView<PerformanceTableModel> {
                 // PerformanceTableColumns.TX_DELTA_DATA,
                 // PerformanceTableColumns.TX_PACKETS,
                 // PerformanceTableColumns.TX_DATA
-                };
+        };
         for (PerformanceTableColumns col : toHide) {
             mTable.getColumnExt(col.getTitle()).setVisible(false);
         }
@@ -375,7 +383,7 @@ public class PerformanceXTableView extends FVXTableView<PerformanceTableModel> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.intel.stl.ui.common.view.FVXTableView#createTable(javax.swing.table
      * .TableModel)
@@ -455,10 +463,9 @@ public class PerformanceXTableView extends FVXTableView<PerformanceTableModel> {
 
             /*
              * (non-Javadoc)
-             * 
-             * @see
-             * java.awt.event.MouseAdapter#mouseClicked(java.awt.event.MouseEvent
-             * )
+             *
+             * @see java.awt.event.MouseAdapter#mouseClicked(java.awt.event.
+             * MouseEvent )
              */
             @Override
             public void mouseClicked(MouseEvent e) {

@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: HelpMainWindow.java
@@ -35,6 +35,12 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.6  2016/03/17 19:45:52  jijunwan
+ *  Archive Log:    PR 133329 - Icon update
+ *  Archive Log:
+ *  Archive Log:    - updated to the new icon
+ *  Archive Log:    - fixed one issue on help window icon
+ *  Archive Log:
  *  Archive Log:    Revision 1.5  2016/01/06 21:35:23  jijunwan
  *  Archive Log:    PR 132307 - Multiple Help Windows and exception on closing them
  *  Archive Log:    - changed to create JDialog as frame case
@@ -56,7 +62,7 @@
  *  Archive Log:    HelpMainWindow is created to override setActivationWindow method so that only a dialog with modality is created for whole application.
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: jypak
  *
@@ -76,7 +82,7 @@ public class HelpMainWindow extends WindowPresentation {
 
     /**
      * Description:
-     * 
+     *
      * @param hs
      */
     private HelpMainWindow(HelpSet hs) {
@@ -89,7 +95,15 @@ public class HelpMainWindow extends WindowPresentation {
 
     @Override
     public void setActivationWindow(Window window) {
-        if (window == null || window instanceof Frame) {
+        if (window == null) {
+            JDialog dialog = null;
+            Frame[] frames = Frame.getFrames();
+            if (frames != null && frames.length > 0) {
+                dialog = new JDialog(Frame.getFrames()[frames.length - 1],
+                        true);
+            }
+            super.setActivationWindow(dialog);
+        } else if (window instanceof Frame) {
             JDialog dialog = new JDialog((Frame) window, true);
             super.setActivationWindow(dialog);
         } else {

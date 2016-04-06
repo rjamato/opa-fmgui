@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: ResourceLinkSubpageCard.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.17  2016/02/16 22:16:07  jijunwan
+ *  Archive Log:    PR 132888 - Include Num Lanes Down in port counters display
+ *  Archive Log:
+ *  Archive Log:    - added Num Lanes Down
+ *  Archive Log:
  *  Archive Log:    Revision 1.16  2015/11/02 23:56:52  jijunwan
  *  Archive Log:    PR 131396 - Incorrect Connectivity Table for a VF port
  *  Archive Log:    - adapted to the new connectivity table controller to support VF port
@@ -168,7 +173,7 @@
  *  Archive Log:
  *
  *  Overview: Controller for the JCardView to display tabbed pages when links
- *  are selected on the topology graph 
+ *  are selected on the topology graph
  *
  *  @author: rjtierne
  *
@@ -214,9 +219,9 @@ import com.intel.stl.ui.monitor.view.ConnectivitySubpageView;
 import com.intel.stl.ui.network.view.ResourceLinkSubpageView;
 import com.intel.stl.ui.network.view.ResourceLinkView;
 
-public class ResourceLinkSection extends
-        ResourceSection<ResourceLinkSubpageView> implements
-        IPortSelectionListener, IPageListener {
+public class ResourceLinkSection
+        extends ResourceSection<ResourceLinkSubpageView>
+        implements IPortSelectionListener, IPageListener {
 
     /**
      * Subpages for the Topology page
@@ -242,7 +247,7 @@ public class ResourceLinkSection extends
 
     /**
      * Description:
-     * 
+     *
      * @param view
      */
     public ResourceLinkSection(ResourceLinkSubpageView view,
@@ -263,7 +268,7 @@ public class ResourceLinkSection extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.intel.stl.ui.network.ResourceSection#setCurrentSubpage(java.lang.
      * String)
@@ -276,7 +281,7 @@ public class ResourceLinkSection extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.network.ResourceSection#getPreviousSubpage()
      */
     @Override
@@ -286,7 +291,7 @@ public class ResourceLinkSection extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.network.ResourceSection#getCurrentSubpage()
      */
     @Override
@@ -337,9 +342,8 @@ public class ResourceLinkSection extends
             linkTableView.setPortSelectionListener(this);
 
             ResourceLinkView linkView = new ResourceLinkView();
-            ResourceLinkPage linkPage =
-                    new ResourceLinkPage(linkTableModel, linkTableView,
-                            linkView);
+            ResourceLinkPage linkPage = new ResourceLinkPage(linkTableModel,
+                    linkTableView, linkView);
             linkPage.setContext(context, null);
             linkPage.showLink(link, vfName);
 
@@ -365,10 +369,10 @@ public class ResourceLinkSection extends
                 res.add(edge);
             } else if (links.size() > 1) {
                 for (Entry<Integer, Integer> link : links.entrySet()) {
-                    res.add(new GraphEdge(edge.getFromLid(),
-                            edge.getFromType(), edge.getToLid(), edge
-                                    .getToType(), Collections.singletonMap(
-                                    link.getKey(), link.getValue())));
+                    res.add(new GraphEdge(edge.getFromLid(), edge.getFromType(),
+                            edge.getToLid(), edge.getToType(),
+                            Collections.singletonMap(link.getKey(),
+                                    link.getValue())));
                 }
             }
         }
@@ -416,9 +420,8 @@ public class ResourceLinkSection extends
             pathTableView.setPortSelectionListener(this);
 
             ResourceLinkView pathView = new ResourceLinkView();
-            ResourceLinkPage pathPage =
-                    new ResourceLinkPage(pathTableModel, pathTableView,
-                            pathView);
+            ResourceLinkPage pathPage = new ResourceLinkPage(pathTableModel,
+                    pathTableView, pathView);
 
             // Page needs context before table update
             pathPage.setContext(context, null);
@@ -472,7 +475,8 @@ public class ResourceLinkSection extends
     public synchronized void onPageChanged(String oldPageId, String newPageId) {
         if (undoHandler != null && !undoHandler.isInProgress()) {
             UndoableLinkSubpageSelection undoSel =
-                    new UndoableLinkSubpageSelection(view, oldPageId, newPageId);
+                    new UndoableLinkSubpageSelection(view, oldPageId,
+                            newPageId);
             undoHandler.addUndoAction(undoSel);
         }
         previousSubpageName = oldPageId;
@@ -515,8 +519,8 @@ public class ResourceLinkSection extends
                             vis[col.getId()] = true;
                         }
                         for (int i = 0; i < vis.length; i++) {
-                            mTable.getColumnExt(all[i].getTitle()).setVisible(
-                                    vis[i]);
+                            mTable.getColumnExt(all[i].getTitle())
+                                    .setVisible(vis[i]);
                         }
                     }
                 };
@@ -547,6 +551,7 @@ public class ResourceLinkSection extends
                                         // Hide these columns
                                         ConnectivityTableColumns.LINK_ERROR_RECOVERIES,
                                         ConnectivityTableColumns.LINK_DOWNED,
+                                        ConnectivityTableColumns.NUM_LANES_DOWN,
                                         ConnectivityTableColumns.NODE_GUID,
                                         ConnectivityTableColumns.PHYSICAL_LINK_STATE,
                                         ConnectivityTableColumns.ACTIVE_LINK_WIDTH,
@@ -581,8 +586,8 @@ public class ResourceLinkSection extends
                                         ConnectivityTableColumns.SW_PORT_CONGESTION };
 
                         for (ConnectivityTableColumns col : toHide) {
-                            mTable.getColumnExt(col.getTitle()).setVisible(
-                                    false);
+                            mTable.getColumnExt(col.getTitle())
+                                    .setVisible(false);
                         }
                     }
                 };
@@ -602,7 +607,7 @@ public class ResourceLinkSection extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.monitor.IPortSelectionListener#onPortSelection(int)
      */
     @Override
@@ -611,7 +616,7 @@ public class ResourceLinkSection extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.monitor.IPortSelectionListener#onJumpToPort(int,
      * short, java.lang.String)
      */
@@ -622,9 +627,8 @@ public class ResourceLinkSection extends
                     new PortsSelectedEvent(lid, portNum, this, destination);
 
             if (undoHandler != null && !undoHandler.isInProgress()) {
-                UndoableJumpEvent undoSel =
-                        new UndoableJumpEvent(eventBus, getOldSelectionEvent(),
-                                pse);
+                UndoableJumpEvent undoSel = new UndoableJumpEvent(eventBus,
+                        getOldSelectionEvent(), pse);
                 undoHandler.addUndoAction(undoSel);
             }
 
@@ -667,7 +671,7 @@ public class ResourceLinkSection extends
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.ISectionController#getCards()
      */
     @Override

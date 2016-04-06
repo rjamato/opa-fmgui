@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: EmptyPageController.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.30  2016/01/22 22:33:44  jijunwan
+ *  Archive Log:    PR 132481 - [Dell]: Admin -> Applications Tab. Cancel button does not work with eSM
+ *  Archive Log:    - improved to have accurate calculation on whether log in is busy
+ *  Archive Log:    - improved to do not clean or display error message if the login is already cancelled
+ *  Archive Log:
  *  Archive Log:    Revision 1.29  2015/10/19 22:30:10  jijunwan
  *  Archive Log:    PR 131091 - On an unsuccessful Failover, the Admin | Applications doesn't show the login window
  *  Archive Log:    - show login panel when not initialized properly with corresponding message
@@ -149,7 +154,7 @@
  *  Archive Log:    init version to support Application management
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: jijunwan
  *
@@ -181,6 +186,7 @@ import com.intel.stl.ui.admin.Item;
 import com.intel.stl.ui.admin.view.AbstractConfView;
 import com.intel.stl.ui.admin.view.AbstractEditorPanel;
 import com.intel.stl.ui.admin.view.ValidationDialog;
+import com.intel.stl.ui.common.ICancelIndicator;
 import com.intel.stl.ui.common.IPageController;
 import com.intel.stl.ui.common.IProgressObserver;
 import com.intel.stl.ui.common.PageWeight;
@@ -197,8 +203,8 @@ import com.jcraft.jsch.JSchException;
 public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
         implements IPageController, IConfListener, IItemListListener,
         IItemEditorListener {
-    private static final Logger log = LoggerFactory
-            .getLogger(ConfPageController.class);
+    private static final Logger log =
+            LoggerFactory.getLogger(ConfPageController.class);
 
     private final String name;
 
@@ -228,13 +234,13 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     private boolean restart;
 
-    private boolean isBusy;
+    private int busyCount;
 
     private Future<?> future;
 
     /**
      * Description:
-     * 
+     *
      * @param name
      * @param description
      * @param view
@@ -283,13 +289,14 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     protected abstract String getHelpID();
 
-    protected AbstractEditorController<T, E> creatEditorController(E editorPanel) {
+    protected AbstractEditorController<T, E> creatEditorController(
+            E editorPanel) {
         return new AbstractEditorController<T, E>(editorPanel);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.IContextAware#getName()
      */
     @Override
@@ -299,7 +306,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.intel.stl.ui.common.IContextAware#setContext(com.intel.stl.ui.main
      * .Context, com.intel.stl.ui.common.IProgressObserver)
@@ -319,7 +326,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.IContextAware#getContextSwitchWeight()
      */
     @Override
@@ -329,7 +336,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.IContextAware#getRefreshWeight()
      */
     @Override
@@ -339,7 +346,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.IPageController#getDescription()
      */
     @Override
@@ -349,7 +356,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.IPageController#getView()
      */
     @Override
@@ -359,7 +366,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.IPageController#getIcon()
      */
     @Override
@@ -382,7 +389,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
                     /*
                      * (non-Javadoc)
-                     * 
+                     *
                      * @see javax.swing.SwingWorker#done()
                      */
                     @Override
@@ -399,7 +406,8 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
                             // test empty items
                             // orgItems = new ArrayList<Item<T>>();
 
-                            view.removeItemListListener(ConfPageController.this);
+                            view.removeItemListListener(
+                                    ConfPageController.this);
                             workingItems.clear();
                             int first = -1;
                             for (int i = 0; i < orgItems.size(); i++) {
@@ -407,8 +415,8 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
                                 if (first == -1 && item.isEditable()) {
                                     first = i;
                                 }
-                                workingItems.addElement(getCopy(item,
-                                        ChangeState.NONE));
+                                workingItems.addElement(
+                                        getCopy(item, ChangeState.NONE));
                             }
                             view.addItemListListener(ConfPageController.this);
 
@@ -432,7 +440,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
                             e.printStackTrace();
                             Util.showError(view, e);
                         } finally {
-                            isBusy = false;
+                            busyCount -= 1;
                         }
                     }
 
@@ -444,16 +452,13 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     protected Item<T> getCopy(Item<T> item, ChangeState newState) {
         if (item != null) {
-            Item<T> newItem =
-                    new Item<T>(item.getId(), item.getName(),
-                            getCopy(item.getObj()), item.isEditable());
+            Item<T> newItem = new Item<T>(item.getId(), item.getName(),
+                    getCopy(item.getObj()), item.isEditable());
             newItem.setState(newState);
             return newItem;
         } else {
-            Item<T> newItem =
-                    new Item<T>(System.currentTimeMillis(),
-                            STLConstants.K0016_UNKNOWN.getValue(), createObj(),
-                            true);
+            Item<T> newItem = new Item<T>(System.currentTimeMillis(),
+                    STLConstants.K0016_UNKNOWN.getValue(), createObj(), true);
             newItem.setState(newState);
             return newItem;
         }
@@ -504,8 +509,8 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
                 }
             }
             // this shouldn't happen
-            throw new IllegalArgumentException("Couldn't find item with id="
-                    + id);
+            throw new IllegalArgumentException(
+                    "Couldn't find item with id=" + id);
         }
     }
 
@@ -572,7 +577,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.admin.IItemListListener#onSelect(java.lang.String)
      */
     @Override
@@ -606,7 +611,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.admin.IItemListListener#onAdd()
      */
     @Override
@@ -624,7 +629,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.admin.IItemListListener#onRemove(java.lang.String)
      */
     @Override
@@ -642,15 +647,14 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
         currentItem.setState(ChangeState.REMOVE);
         ValidationDialog vd =
-                new ValidationDialog(view,
-                        UILabels.STL81101_REMOVE_ITEM
-                                .getDescription(currentItem.getName())) {
+                new ValidationDialog(view, UILabels.STL81101_REMOVE_ITEM
+                        .getDescription(currentItem.getName())) {
                     private static final long serialVersionUID =
                             -8807399194554240022L;
 
                     /*
                      * (non-Javadoc)
-                     * 
+                     *
                      * @see com.intel.stl.ui.common.view.OptionDialog#onCancel()
                      */
                     @Override
@@ -661,7 +665,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
                     /*
                      * (non-Javadoc)
-                     * 
+                     *
                      * @see com.intel.stl.ui.common.view.OptionDialog#onOk()
                      */
                     @Override
@@ -709,7 +713,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see javax.swing.SwingWorker#done()
              */
             @Override
@@ -738,7 +742,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.intel.stl.ui.admin.IItemEditorListener#nameChange(java.lang.String)
      */
@@ -750,7 +754,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.admin.IItemEditorListener#onSave()
      */
     @Override
@@ -769,15 +773,14 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
         }
 
         ValidationDialog vd =
-                new ValidationDialog(view,
-                        UILabels.STL81100_SAVE_ITEM.getDescription(currentItem
-                                .getName())) {
+                new ValidationDialog(view, UILabels.STL81100_SAVE_ITEM
+                        .getDescription(currentItem.getName())) {
                     private static final long serialVersionUID =
                             -8807399194554240022L;
 
                     /*
                      * (non-Javadoc)
-                     * 
+                     *
                      * @see com.intel.stl.ui.common.view.OptionDialog#onCancel()
                      */
                     @Override
@@ -788,7 +791,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
                     /*
                      * (non-Javadoc)
-                     * 
+                     *
                      * @see com.intel.stl.ui.common.view.OptionDialog#onOk()
                      */
                     @Override
@@ -838,7 +841,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
             /*
              * (non-Javadoc)
-             * 
+             *
              * @see javax.swing.SwingWorker#done()
              */
             @Override
@@ -858,10 +861,10 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
     }
 
     /**
-     * 
+     *
      * <i>Description:</i> validate an item and put result in the
      * ValidationModel
-     * 
+     *
      * @param model
      *            the validation model to update
      * @param obj
@@ -872,7 +875,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     /**
      * <i>Description:</i>
-     * 
+     *
      * @param obj
      */
     protected abstract void saveItemObject(String oldName, T obj)
@@ -880,7 +883,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.admin.IItemEditorListener#onReset()
      */
     @Override
@@ -895,7 +898,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.admin.IConfListener#onApply(boolean)
      */
     @Override
@@ -943,7 +946,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.IPageController#cleanup()
      */
     @Override
@@ -952,7 +955,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.IPageController#onEnter()
      */
     @Override
@@ -981,8 +984,8 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
             // display and ask for log in info
             // Set host name and port number
             view.setLoginEnabled(true);
-            view.setHostNameField(mgtApi.getSubnetDescription().getCurrentFE()
-                    .getHost());
+            view.setHostNameField(
+                    mgtApi.getSubnetDescription().getCurrentFE().getHost());
             view.setUserNameField(mgtApi.getSubnetDescription().getCurrentFE()
                     .getSshUserName());
             view.showLoginCard(); // turn on login card
@@ -992,7 +995,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.IPageController#onExit()
      */
     @Override
@@ -1013,29 +1016,12 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     /*
      * (non-Javadoc)
-     * 
-     * @see com.intel.stl.ui.common.IPageController#onCancel()
-     */
-    @Override
-    public void onCancelLogin() {
-        if (future != null) {
-            future.cancel(true);
-        }
-
-        // Call ManagementApi to cancel fetching of the config file.
-        mgtApi.onCancelFetchConfig(mgtApi.getSubnetDescription());
-        view.showLoginCard();
-        view.clearLoginCard();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.IPageController#canExit()
      */
     @Override
     public boolean canExit() {
-        return !isBusy && deployCheck() && changeCheck();
+        return busyCount <= 0 && deployCheck() && changeCheck();
     }
 
     protected boolean deployCheck() {
@@ -1052,7 +1038,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.intel.stl.ui.common.IPageController#onRefresh(com.intel.stl.ui.common
      * .IProgressObserver)
@@ -1071,7 +1057,7 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.common.IPageController#clear()
      */
     @Override
@@ -1080,14 +1066,32 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
 
     /*
      * (non-Javadoc)
-     * 
+     *
+     * @see com.intel.stl.ui.common.IPageController#onCancel()
+     */
+    @Override
+    public synchronized void onCancelLogin() {
+        if (future != null) {
+            future.cancel(true);
+        }
+
+        // Call ManagementApi to cancel fetching of the config file.
+        busyCount -= 1;
+        mgtApi.onCancelFetchConfig(mgtApi.getSubnetDescription());
+        view.showLoginCard();
+        view.clearLoginCard();
+    }
+
+    /*
+     * (non-Javadoc)
+     *
      * @see
      * com.intel.stl.ui.admin.IConfListener#prepare(com.intel.stl.ui.console
      * .LoginBean)
      */
     @Override
-    public void prepare(LoginBean credentials) {
-        isBusy = true;
+    public synchronized void prepare(LoginBean credentials) {
+        busyCount += 1;
         int portNum = Integer.parseInt(credentials.getPortNum());
         mgtApi.getSubnetDescription().getCurrentFE().setSshPortNum(portNum);
         mgtApi.getSubnetDescription().getCurrentFE()
@@ -1100,34 +1104,69 @@ public abstract class ConfPageController<T, E extends AbstractEditorPanel<T>>
             future.cancel(true);
         }
 
+        final FutureCancelIndicator cancelIndicator =
+                new FutureCancelIndicator();
         Runnable task = new Runnable() {
             @Override
             public void run() {
                 try {
                     mgtApi.fetchConfigFile(password);
-                    if (mgtApi.isConfigReady()) {
+                    if (!cancelIndicator.isCancelled()
+                            && mgtApi.isConfigReady()) {
                         SwingWorker<ArrayList<Item<T>>, Void> worker =
                                 getInitWorker();
                         worker.execute();
                     }
                 } catch (JSchException e) {
-                    e.printStackTrace();
-                    view.showLoginCard();
-                    view.setMessage(UILabels.STL81111_LOGIN_ERROR
-                            .getDescription(StringUtils.getErrorMessage(e)));
+                    log.error("Failed to feaching conf file", e);
+                    // if canceled silent on error messages
+                    if (!cancelIndicator.isCancelled()) {
+                        view.showLoginCard();
+                        view.setMessage(
+                                UILabels.STL81111_LOGIN_ERROR.getDescription(
+                                        StringUtils.getErrorMessage(e)));
+                        busyCount -= 1;
+                    }
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    view.showLoginCard();
-                    view.setMessage(StringUtils.getErrorMessage(e));
+                    log.error("Failed to feaching conf file", e);
+                    // if canceled silent on error messages
+                    if (!cancelIndicator.isCancelled()) {
+                        view.showLoginCard();
+                        view.setMessage(StringUtils.getErrorMessage(e));
+                        busyCount -= 1;
+                    }
                 } finally {
-                    isBusy = false;
-                    view.clearLoginCard();
+                    if (!cancelIndicator.isCancelled()) {
+                        view.clearLoginCard();
+                    }
                 }
             }
         };
 
         future = taskScheduler.submitToBackground(task);
-
+        cancelIndicator.setFuture(future);
     }
 
+    class FutureCancelIndicator implements ICancelIndicator {
+        private Future<?> future;
+
+        /**
+         * @param future
+         *            the future to set
+         */
+        public void setFuture(Future<?> future) {
+            this.future = future;
+        }
+
+        /*
+         * (non-Javadoc)
+         *
+         * @see com.intel.stl.ui.common.ICancelIndicator#isCancelled()
+         */
+        @Override
+        public boolean isCancelled() {
+            return future != null && future.isCancelled();
+        }
+
+    }
 }

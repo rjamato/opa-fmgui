@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: CableInfoProcessor.java
@@ -35,6 +35,10 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.17  2016/04/01 11:34:33  jypak
+ *  Archive Log:    PR 130081 - Adapt FM GUI to use data structure STL_CABLE_INFO_FULL.
+ *  Archive Log:    Updated to process each 64 bytes in two cable data from FM through CableInfoStd. Populating CableInfoBean and interpretation to QSFP both are executed by CableInfoStd.
+ *  Archive Log:
  *  Archive Log:    Revision 1.16  2015/09/15 13:31:34  jypak
  *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
  *  Archive Log:    Incorporated the FM changes (PR 129390) as of 8/28/15. These changes are mainly from IbPrint/stl_sma.c revision 1.163.
@@ -89,9 +93,9 @@
  *  Archive Log:    Display 'N/A' for each attributes when not applicable.
  *  Archive Log:    For a switch port 0, display 'N/A' for each attributes.
  *  Archive Log:
- *  
- *  Overview: 
- *  
+ *
+ *  Overview:
+ *
  *  Reference: /All_EMB/IbPrint/stl_sma.c.1.103 for the QSFP interpretation.
  *
  *  @author: jypak
@@ -114,7 +118,6 @@ import static com.intel.stl.ui.model.DeviceProperty.CABLE_ID;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_MAXCASE_TEMP;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_MEM_PAGE01_PROV;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_MEM_PAGE02_PROV;
-import static com.intel.stl.ui.model.DeviceProperty.CABLE_NA;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_NOMINAL_BR;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_OM2_LEN;
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_OM3_LEN;
@@ -145,7 +148,6 @@ import com.intel.stl.api.subnet.ISubnetApi;
 import com.intel.stl.api.subnet.PortRecordBean;
 import com.intel.stl.api.subnet.PowerClassType;
 import com.intel.stl.ui.common.STLConstants;
-import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.model.CableTypeViz;
 import com.intel.stl.ui.model.CertifiedRateTypeViz;
 import com.intel.stl.ui.model.DevicePropertyCategory;
@@ -155,8 +157,6 @@ import com.intel.stl.ui.monitor.TreeNodeType;
 import com.intel.stl.ui.monitor.tree.FVResourceNode;
 
 public class CableInfoProcessor extends BaseCategoryProcessor {
-
-    private String dateCode;
 
     @Override
     public void process(ICategoryProcessorContext context,
@@ -172,9 +172,8 @@ public class CableInfoProcessor extends BaseCategoryProcessor {
             return;
         }
 
-        List<CableRecordBean> cableRecordBeans =
-                subnetApi.getCable(portBean.getEndPortLID(),
-                        portBean.getPortNum());
+        List<CableRecordBean> cableRecordBeans = subnetApi
+                .getCable(portBean.getEndPortLID(), portBean.getPortNum());
 
         // So far, FM only supports port type Standard (1)
         if (cableRecordBeans == null || cableRecordBeans.isEmpty()) {
@@ -240,15 +239,15 @@ public class CableInfoProcessor extends BaseCategoryProcessor {
         if (om4Len != null) {
             destination.setOm4Length(om4Len);
         }
-        Integer codeXmit = source.getCodeXmit();
-        if (codeXmit != null) {
-            destination.setCodeXmit(codeXmit);
+        Byte xmitTech = source.getXmitTech();
+        if (xmitTech != null) {
+            destination.setXmitTech(xmitTech);
         }
         String vendorName = source.getVendorName();
         if (vendorName != null) {
             destination.setVendorName(vendorName);
         }
-        byte[] vendorOui = source.getVendorOui();
+        Byte[] vendorOui = source.getVendorOui();
         if (vendorOui != null) {
             destination.setVendorOui(vendorOui);
         }
@@ -316,10 +315,6 @@ public class CableInfoProcessor extends BaseCategoryProcessor {
         if (date != null) {
             destination.setDate(date);
         }
-        String lotCode = source.getLotCode();
-        if (lotCode != null) {
-            destination.setLotCode(lotCode);
-        }
         Byte ccExt = source.getCcExt();
         if (ccExt != null) {
             destination.setCcExt(ccExt);
@@ -339,7 +334,8 @@ public class CableInfoProcessor extends BaseCategoryProcessor {
 
     }
 
-    public void getCableInfo(DevicePropertyCategory category, CableInfoBean bean) {
+    public void getCableInfo(DevicePropertyCategory category,
+            CableInfoBean bean) {
 
         String na = STLConstants.K0039_NOT_AVAILABLE.getValue();
         if (bean != null) {
@@ -364,22 +360,16 @@ public class CableInfoProcessor extends BaseCategoryProcessor {
 
             Boolean txCDRSupported = bean.getTxCDRSupported();
             if (txCDRSupported != null) {
-                addProperty(
-                        category,
-                        CABLE_TX_CDR_SUP,
-                        txCDRSupported ? K0385_TRUE.getValue() : K0386_FALSE
-                                .getValue());
+                addProperty(category, CABLE_TX_CDR_SUP, txCDRSupported
+                        ? K0385_TRUE.getValue() : K0386_FALSE.getValue());
             } else {
                 addProperty(category, CABLE_TX_CDR_SUP, na);
             }
 
             Boolean rxCDRSupported = bean.getTxCDRSupported();
             if (rxCDRSupported != null) {
-                addProperty(
-                        category,
-                        CABLE_RX_CDR_SUP,
-                        rxCDRSupported ? K0385_TRUE.getValue() : K0386_FALSE
-                                .getValue());
+                addProperty(category, CABLE_RX_CDR_SUP, rxCDRSupported
+                        ? K0385_TRUE.getValue() : K0386_FALSE.getValue());
             } else {
                 addProperty(category, CABLE_RX_CDR_SUP, na);
             }
@@ -396,9 +386,8 @@ public class CableInfoProcessor extends BaseCategoryProcessor {
                 Integer nominalBr =
                         bean.stlCableInfoBitRate(bitRateLow, bitRateHigh);
                 if (nominalBr != null) {
-                    addProperty(category, CABLE_NOMINAL_BR,
-                            nominalBr.toString() + " "
-                                    + STLConstants.K1152_CABLE_GB.getValue());
+                    addProperty(category, CABLE_NOMINAL_BR, nominalBr.toString()
+                            + " " + STLConstants.K1152_CABLE_GB.getValue());
                 } else {
                     addProperty(category, CABLE_NOMINAL_BR, na);
                 }
@@ -407,18 +396,16 @@ public class CableInfoProcessor extends BaseCategoryProcessor {
             }
             Integer om2Length = bean.getOm2Length();
             if (om2Length != null) {
-                addProperty(category, CABLE_OM2_LEN,
-                        Integer.toString(om2Length) + " "
-                                + STLConstants.K1154_CABLE_M.getValue());
+                addProperty(category, CABLE_OM2_LEN, Integer.toString(om2Length)
+                        + " " + STLConstants.K1154_CABLE_M.getValue());
             } else {
                 addProperty(category, CABLE_OM2_LEN, na);
             }
 
             Integer om3Length = bean.getOm3Length();
             if (om3Length != null) {
-                addProperty(category, CABLE_OM3_LEN,
-                        Integer.toString(om3Length) + " "
-                                + STLConstants.K1154_CABLE_M.getValue());
+                addProperty(category, CABLE_OM3_LEN, Integer.toString(om3Length)
+                        + " " + STLConstants.K1154_CABLE_M.getValue());
             } else {
                 addProperty(category, CABLE_OM3_LEN, na);
             }
@@ -432,15 +419,14 @@ public class CableInfoProcessor extends BaseCategoryProcessor {
                 addProperty(category, CABLE_COPPER_LEN, na);
             }
 
-            Integer codeXmit = bean.getCodeXmit();
+            Byte xmitTech = bean.getXmitTech();
             Byte codeConnector = bean.getConnector();
-            if (codeXmit != null && codeConnector != null) {
+            if (xmitTech != null && codeConnector != null) {
                 try {
                     {
-                        CableTypeViz cableType =
-                                CableTypeViz.getCableTypeVizFor(bean
-                                        .stlCableInfoCableType(codeXmit,
-                                                codeConnector));
+                        CableTypeViz cableType = CableTypeViz
+                                .getCableTypeVizFor(bean.stlCableInfoCableType(
+                                        xmitTech.intValue(), codeConnector));
                         if (cableType != null) {
                             addProperty(category, CABLE_DEVICE_TECH,
                                     cableType.getName());
@@ -461,7 +447,7 @@ public class CableInfoProcessor extends BaseCategoryProcessor {
             } else {
                 addProperty(category, CABLE_VENDOR_NAME, na);
             }
-            byte[] vendorOui = bean.getVendorOui();
+            Byte[] vendorOui = bean.getVendorOui();
             if (vendorOui != null) {
                 StringBuilder sb = new StringBuilder(vendorOui.length * 2);
                 sb.append("0x");
@@ -622,15 +608,9 @@ public class CableInfoProcessor extends BaseCategoryProcessor {
             } else {
                 addProperty(category, CABLE_VENDOR_SN, na);
             }
-            Date date = bean.getDateCodeAsDate();
-            String lotCode = bean.getLotCode();
-            if (date != null) {
-                String dateStr = Util.getYYMMDD().format(date);
-                if (dateStr != null) {
-                    dateCode = dateStr;
-                    addProperty(category, CABLE_DATE_CODE, dateCode + "-"
-                            + lotCode);
-                }
+            String dateCode = bean.getDateCode();
+            if (dateCode != null) {
+                addProperty(category, CABLE_DATE_CODE, "20" + dateCode);
             } else {
                 String beanDateCode = bean.getDateCode();
                 if (beanDateCode != null) {
@@ -639,7 +619,7 @@ public class CableInfoProcessor extends BaseCategoryProcessor {
                     dateCode = na;
 
                 }
-                addProperty(category, CABLE_DATE_CODE, dateCode + "-" + lotCode);
+                addProperty(category, CABLE_DATE_CODE, dateCode);
             }
 
             Byte ccExt = bean.getCcExt();
@@ -669,21 +649,15 @@ public class CableInfoProcessor extends BaseCategoryProcessor {
             CertifiedRateType certDataRate = bean.getCertDataRate();
             if (certDataRate != null) {
                 try {
-                    addProperty(
-                            category,
-                            CABLE_CERT_DATA_RATE,
-                            CertifiedRateTypeViz.getCertifiedRateTypeVizFor(
-                                    certDataRate).getName());
+                    addProperty(category, CABLE_CERT_DATA_RATE,
+                            CertifiedRateTypeViz
+                                    .getCertifiedRateTypeVizFor(certDataRate)
+                                    .getName());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else {
                 addProperty(category, CABLE_CERT_DATA_RATE, na);
-            }
-
-            String notApplicableData = bean.getNotApplicableData();
-            if (notApplicableData != null) {
-                addProperty(category, CABLE_NA, notApplicableData);
             }
 
         } else {

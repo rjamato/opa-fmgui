@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: GraphSelectiobTask.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.32  2016/03/02 22:06:51  jijunwan
+ *  Archive Log:    PR 133071 - Topology shown different than what is in the outline when STF06 is rebooted
+ *  Archive Log:
+ *  Archive Log:    - change to update full topology arch model when we do refresh
+ *  Archive Log:
  *  Archive Log:    Revision 1.31  2015/09/20 23:40:40  jijunwan
  *  Archive Log:    PR 130523 - Performance Event window reports negative when nodes are rebooted
  *  Archive Log:    - fixed null pointer issue
@@ -142,7 +147,7 @@
  *  Archive Log:    new implementation on topology control that uses double models to avoid synchronization issues on model and view
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: jijunwan
  *
@@ -159,8 +164,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javax.swing.SwingUtilities;
-
-import net.engio.mbassy.bus.MBassador;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -195,9 +198,11 @@ import com.intel.stl.ui.publisher.CancellableCall;
 import com.intel.stl.ui.publisher.ICallback;
 import com.intel.stl.ui.publisher.SingleTaskManager;
 
+import net.engio.mbassy.bus.MBassador;
+
 public class TopologyGraphController implements ITopologyListener {
-    private static final Logger log = LoggerFactory
-            .getLogger(TopologyGraphController.class);
+    private static final Logger log =
+            LoggerFactory.getLogger(TopologyGraphController.class);
 
     private static final boolean DEBUG = true;
 
@@ -231,7 +236,7 @@ public class TopologyGraphController implements ITopologyListener {
 
     /**
      * Description:
-     * 
+     *
      * @param parent
      */
     public TopologyGraphController(TopologyTreeController parent,
@@ -269,9 +274,8 @@ public class TopologyGraphController implements ITopologyListener {
             links = subnetApi.getLinks(false);
         } catch (Exception e) {
             e.printStackTrace();
-            RuntimeException rte =
-                    new RuntimeException("Could not retrieve nodes and links.",
-                            e);
+            RuntimeException rte = new RuntimeException(
+                    "Could not retrieve nodes and links.", e);
             throw rte;
         }
         if (nodes == null || links == null) {
@@ -329,21 +333,20 @@ public class TopologyGraphController implements ITopologyListener {
             graphView.setGraph(fullGraph);
             updateCtrl = new TopologyUpdateController(fullGraph, graphView);
         }
-        RefreshGraphTask task =
-                new RefreshGraphTask(this, null, null, defaultLayout, observer) {
-                    @Override
-                    public void onSuccess(ICancelIndicator indicator,
-                            TopGraph graph) {
-                        updateCtrl.setGraph(graph);
-                        super.onSuccess(indicator, graph);
-                        if (callback != null) {
-                            callback.onDone(null);
-                        } else {
-                            onSelectionChange(lastGraphSelection, null,
-                                    lastResourceSelection);
-                        }
-                    }
-                };
+        RefreshGraphTask task = new RefreshGraphTask(this, null, null,
+                defaultLayout, observer) {
+            @Override
+            public void onSuccess(ICancelIndicator indicator, TopGraph graph) {
+                updateCtrl.setGraph(graph);
+                super.onSuccess(indicator, graph);
+                if (callback != null) {
+                    callback.onDone(null);
+                } else {
+                    onSelectionChange(lastGraphSelection, null,
+                            lastResourceSelection);
+                }
+            }
+        };
         updateCtrl.update(task);
     }
 
@@ -383,6 +386,14 @@ public class TopologyGraphController implements ITopologyListener {
     }
 
     /**
+     * @param fullTopTreeModel
+     *            the fullTopTreeModel to set
+     */
+    public void setFullTopTreeModel(TopologyTreeModel fullTopTreeModel) {
+        this.fullTopTreeModel = fullTopTreeModel;
+    }
+
+    /**
      * @return the topTreeModel
      */
     public TopologyTreeModel getTopTreeModel() {
@@ -415,7 +426,8 @@ public class TopologyGraphController implements ITopologyListener {
     protected void processTreeGroups(final FVResourceNode[] groups) {
         CancellableCall<GraphCells> caller = new CancellableCall<GraphCells>() {
             @Override
-            public GraphCells call(ICancelIndicator indicator) throws Exception {
+            public GraphCells call(ICancelIndicator indicator)
+                    throws Exception {
                 GraphCells current = new GraphCells();
                 for (FVResourceNode group : groups) {
                     for (FVResourceNode node : group.getChildren()) {
@@ -444,7 +456,8 @@ public class TopologyGraphController implements ITopologyListener {
     protected void processTreeNodes(final FVResourceNode[] nodes) {
         CancellableCall<GraphCells> caller = new CancellableCall<GraphCells>() {
             @Override
-            public GraphCells call(ICancelIndicator indicator) throws Exception {
+            public GraphCells call(ICancelIndicator indicator)
+                    throws Exception {
                 GraphCells current = new GraphCells();
                 for (FVResourceNode node : nodes) {
                     if (indicator.isCancelled()) {
@@ -471,7 +484,8 @@ public class TopologyGraphController implements ITopologyListener {
     protected void processTreePorts(final FVResourceNode[] nodes) {
         CancellableCall<GraphCells> caller = new CancellableCall<GraphCells>() {
             @Override
-            public GraphCells call(ICancelIndicator indicator) throws Exception {
+            public GraphCells call(ICancelIndicator indicator)
+                    throws Exception {
                 GraphCells current = new GraphCells();
 
                 // in a graph we only have one edge between two vertex, so we
@@ -508,17 +522,15 @@ public class TopologyGraphController implements ITopologyListener {
                                 }
                                 GraphEdge tmp =
                                         new GraphEdge(lid,
-                                                TreeNodeType
-                                                        .getNodeTypeCode(type),
+                                                TreeNodeType.getNodeTypeCode(
+                                                        type),
                                                 toNode.getLid(),
                                                 toNode.getType(), linkPorts);
-                                GraphEdge edge =
-                                        edges.get(new Point(lid, toNode
-                                                .getLid()));
+                                GraphEdge edge = edges
+                                        .get(new Point(lid, toNode.getLid()));
                                 if (edge == null) {
-                                    edge =
-                                            edges.get(new Point(
-                                                    toNode.getLid(), lid));
+                                    edge = edges.get(
+                                            new Point(toNode.getLid(), lid));
                                     if (edge != null) {
                                         // ensure its links are reversed as well
                                         tmp = tmp.normalize();
@@ -554,14 +566,15 @@ public class TopologyGraphController implements ITopologyListener {
         taskMgr.submit(caller, callback);
     }
 
-    protected void setLayout(final LayoutType type, final IModelChange preChange) {
+    protected void setLayout(final LayoutType type,
+            final IModelChange preChange) {
         LayoutTask updateTask = new LayoutTask(this, type, preChange);
         updateCtrl.update(updateTask);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.network.ITopologyListener#onUndo()
      */
     @Override
@@ -578,7 +591,7 @@ public class TopologyGraphController implements ITopologyListener {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.network.ITopologyListener#onRedo()
      */
     @Override
@@ -595,7 +608,7 @@ public class TopologyGraphController implements ITopologyListener {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.network.ITopologyListener#onReset()
      */
     @Override
@@ -606,7 +619,7 @@ public class TopologyGraphController implements ITopologyListener {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.network.ITopologyListener#onLayoutTypeChange(int)
      */
     @Override
@@ -619,7 +632,7 @@ public class TopologyGraphController implements ITopologyListener {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.network.ITopologyListener#onExpandAll()
      */
     @Override
@@ -639,7 +652,7 @@ public class TopologyGraphController implements ITopologyListener {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.network.ITopologyListener#onCollapseAll()
      */
     @Override
@@ -658,8 +671,8 @@ public class TopologyGraphController implements ITopologyListener {
     }
 
     @Override
-    public void onSelectionChange(final GraphCells current,
-            final Object source, FVResourceNode[] selecedResources) {
+    public void onSelectionChange(final GraphCells current, final Object source,
+            FVResourceNode[] selecedResources) {
         if (DEBUG) {
             System.out.println("Current " + Arrays.toString(selecedResources)
                     + " " + current + " " + Thread.currentThread());
@@ -677,21 +690,19 @@ public class TopologyGraphController implements ITopologyListener {
             List<FVResourceNode> resources = new ArrayList<FVResourceNode>();
             if (current.hasNodes()) {
                 for (GraphNode node : current.getNodes()) {
-                    FVResourceNode resource =
-                            new FVResourceNode(Integer.toString(node.getLid()),
-                                    node.isEndNode() ? TreeNodeType.HFI
-                                            : TreeNodeType.SWITCH,
-                                    node.getLid());
+                    FVResourceNode resource = new FVResourceNode(
+                            Integer.toString(node.getLid()), node.isEndNode()
+                                    ? TreeNodeType.HFI : TreeNodeType.SWITCH,
+                            node.getLid());
                     resources.add(resource);
                 }
             } else if (current.hasEdges()) {
                 for (GraphEdge edge : current.getEdges()) {
                     Map<Integer, Integer> links = edge.getLinks();
                     int portNum = links.keySet().iterator().next();
-                    FVResourceNode resource =
-                            new FVResourceNode(edge.getFromLid() + ":"
-                                    + portNum, TreeNodeType.ACTIVE_PORT,
-                                    portNum);
+                    FVResourceNode resource = new FVResourceNode(
+                            edge.getFromLid() + ":" + portNum,
+                            TreeNodeType.ACTIVE_PORT, portNum);
                     resources.add(resource);
                 }
             }
@@ -699,8 +710,8 @@ public class TopologyGraphController implements ITopologyListener {
         }
 
         final FVResourceNode firstResource =
-                (selecedResources == null || selecedResources.length == 0) ? null
-                        : selecedResources[0];
+                (selecedResources == null || selecedResources.length == 0)
+                        ? null : selecedResources[0];
         final FVResourceNode[] resourceSelection = selecedResources;
 
         SwingUtilities.invokeLater(new Runnable() {
@@ -713,7 +724,8 @@ public class TopologyGraphController implements ITopologyListener {
                 if (tmpNodes != null) {
                     for (GraphNode tmpNode : tmpNodes) {
                         if (tmpNode != null) {
-                            nodes.add(updateCtrl.getGraphNode(tmpNode.getLid()));
+                            nodes.add(
+                                    updateCtrl.getGraphNode(tmpNode.getLid()));
                         }
                     }
                 }
@@ -818,7 +830,7 @@ public class TopologyGraphController implements ITopologyListener {
 
     /**
      * <i>Description:</i>
-     * 
+     *
      * @param subpageName
      */
     public void setCurrentSubpage(String subpageName) {

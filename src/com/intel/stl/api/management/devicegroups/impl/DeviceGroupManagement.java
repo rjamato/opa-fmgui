@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: DeviceGroupManagement.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.8  2016/01/27 21:22:32  jijunwan
+ *  Archive Log:    PR 132500 - Unable to rename Virtual Fabrics and Device groups Names once saved
+ *  Archive Log:
+ *  Archive Log:    - changed to ignore the reported exception and log it as warning because it's expected behavior
+ *  Archive Log:
  *  Archive Log:    Revision 1.7  2015/10/26 20:19:08  jijunwan
  *  Archive Log:    PR 131169 - Unable to delete Device Groups created within the opafm.xml file
  *  Archive Log:    - introduced ChangeManager to maintain changes
@@ -70,7 +75,7 @@
  *  Archive Log:    put all constants used in xml file to XMLConstants
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: jijunwan
  *
@@ -119,8 +124,8 @@ import com.intel.stl.api.management.devicegroups.IDeviceGroupManagement;
 import com.intel.stl.common.STLMessages;
 
 public class DeviceGroupManagement implements IDeviceGroupManagement {
-    private final static Logger log = LoggerFactory
-            .getLogger(DeviceGroupManagement.class);
+    private final static Logger log =
+            LoggerFactory.getLogger(DeviceGroupManagement.class);
 
     private final static Set<String> RESERVED = new HashSet<String>() {
         private static final long serialVersionUID = -8507198541424973196L;
@@ -144,7 +149,7 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
 
     /**
      * Description:
-     * 
+     *
      * @param confHelp
      */
     public DeviceGroupManagement(FMConfHelper confHelp) {
@@ -154,7 +159,7 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.api.management.devicegroups.IDeviceGroupManagement#
      * getReservedDeviceGroups()
      */
@@ -165,7 +170,7 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.api.management.devicegroup.IDeviceGroupManagement#
      * getDeviceGroups()
      */
@@ -186,7 +191,7 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.api.management.devicegroup.IDeviceGroupManagement#
      * getDeviceGroup(java.lang.String)
      */
@@ -198,14 +203,14 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
             DeviceGroups groups = unmarshal(confFile);
             return groups.getGroup(name);
         } catch (Exception e) {
-            throw createDeviceGroupException(STLMessages.STL63016_GET_DG_ERR,
-                    e, name, confHelp.getHost(), StringUtils.getErrorMessage(e));
+            throw createDeviceGroupException(STLMessages.STL63016_GET_DG_ERR, e,
+                    name, confHelp.getHost(), StringUtils.getErrorMessage(e));
         }
     }
 
     /**
      * <i>Description:</i>
-     * 
+     *
      * @param confFile
      * @return
      */
@@ -232,7 +237,7 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.api.management.devicegroup.IDeviceGroupManagement#
      * addDeviceGroup(com.intel.stl.api.management.devicegroup.DeviceGroup)
      */
@@ -247,8 +252,8 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
             log.info("Added application " + group);
             changeMgr.addChange(group.getName());
         } catch (Exception e) {
-            throw createDeviceGroupException(STLMessages.STL63012_ADD_DG_ERR,
-                    e, group.getName(), confHelp.getHost(),
+            throw createDeviceGroupException(STLMessages.STL63012_ADD_DG_ERR, e,
+                    group.getName(), confHelp.getHost(),
                     StringUtils.getErrorMessage(e));
         }
     }
@@ -271,8 +276,8 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
         Node groupsNode = doc.getElementsByTagName(DEVICE_GROUPS).item(0);
         Node matchedGroup = getGroupByName(groupsNode, group.getName());
         if (matchedGroup != null) {
-            throw new IllegalArgumentException("Device Group '"
-                    + group.getName() + "' alreday exist!");
+            throw new IllegalArgumentException(
+                    "Device Group '" + group.getName() + "' alreday exist!");
         }
 
         // append app to Applications node
@@ -284,7 +289,7 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.api.management.devicegroup.IDeviceGroupManagement#
      * removeDeviceGroup(java.lang.String)
      */
@@ -298,9 +303,9 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
             log.info("Removed application '" + name + "'");
             changeMgr.addChange(name);
         } catch (Exception e) {
-            throw createDeviceGroupException(
-                    STLMessages.STL63013_REMOVE_DG_ERR, e, name,
-                    confHelp.getHost(), StringUtils.getErrorMessage(e));
+            throw createDeviceGroupException(STLMessages.STL63013_REMOVE_DG_ERR,
+                    e, name, confHelp.getHost(),
+                    StringUtils.getErrorMessage(e));
         }
     }
 
@@ -320,21 +325,21 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
             // save back to xml file
             XMLUtils.writeDoc(doc, dstXml);
         } else {
-            throw new IllegalArgumentException("Couldn't find Device Group '"
-                    + name + "'");
+            // this can happen when we create a new one and then rename it
+            log.warn("Couldn't find Device Group '" + name + "'");
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.api.management.devicegroup.IDeviceGroupManagement#
      * updateDeviceGroup(java.lang.String,
      * com.intel.stl.api.management.devicegroup.DeviceGroup)
      */
     @Override
-    public synchronized void updateDeviceGroup(String oldName, DeviceGroup group)
-            throws DeviceGroupException {
+    public synchronized void updateDeviceGroup(String oldName,
+            DeviceGroup group) throws DeviceGroupException {
         try {
             File confFile = confHelp.getConfFile();
             if (!oldName.equals(group.getName())) {
@@ -348,15 +353,15 @@ public class DeviceGroupManagement implements IDeviceGroupManagement {
             changeMgr.addChange(oldName);
             changeMgr.addChange(group.getName());
         } catch (Exception e) {
-            throw createDeviceGroupException(
-                    STLMessages.STL63014_UPDATE_DG_ERR, e, group.getName(),
-                    confHelp.getHost(), StringUtils.getErrorMessage(e));
+            throw createDeviceGroupException(STLMessages.STL63014_UPDATE_DG_ERR,
+                    e, group.getName(), confHelp.getHost(),
+                    StringUtils.getErrorMessage(e));
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.api.management.devicegroup.IDeviceGroupManagement#
      * addOrUpdateDeviceGroup(java.lang.String,
      * com.intel.stl.api.management.devicegroup.DeviceGroup)

@@ -4,11 +4,11 @@ Created-By: 1.7.0_71-b14 (Oracle Corporation)
 Application-Name: Intel Fabric Manager GUI 10.0
 Implementation-Title: Intel Fabric Manager GUI
 Implementation-Vendor: Intel Corporation
-Implementation-Version: 10.0.0
+Implementation-Version: 10.1.0
 Schema-Version: 36
-Intel-OPAFM-Version: 10.0.0.0.691
-Intel-Build-Id: 10_0_0_0_691
-Intel-Build-Date: 2016-01-26 22:42:31
+Intel-OPAFM-Version: 10.1.0.0.77
+Intel-Build-Id: 10_1_0_0_77
+Intel-Build-Date: 2016-04-05 09:59:45
 Main-Class: com.intel.stl.main.FMGuiApp
 Class-Path: . lib/antlr.jar 
  lib/dom4j.jar 
@@ -50,17 +50,17 @@ Class-Path: . lib/antlr.jar
 
 Name: com/intel/stl/
 Implementation-Vendor: Intel Corporation
-Implementation-Title: Intel Fabric Manager GUI Core
-Implementation-Version: 10.0.0
+Implementation-Title: Intel Omni-Path Architecture Fabric Manager Graphical User interface Core
+Implementation-Version: 10.1.0
 Specification-Vendor: Intel Corporation
 Specification-Title: com.intel.stl
-Specification-Version: 10.0.0
+Specification-Version: 10.1.0
 
 Name: com/intel/stl/ui/
 Implementation-Vendor: Intel Corporation
-Implementation-Title: Intel Fabric Manager GUI GUI
-Implementation-Version: 10.0.0
+Implementation-Title: Intel Omni-Path Architecture Fabric Manager Graphical User Interface GUI
+Implementation-Version: 10.1.0
 Specification-Vendor: Intel Corporation
 Specification-Title: com.intel.stl.ui
-Specification-Version: 10.0.0
+Specification-Version: 10.1.0
 

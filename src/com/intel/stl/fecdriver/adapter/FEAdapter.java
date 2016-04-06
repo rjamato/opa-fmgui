@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: FEAdapter.java
@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.10  2016/01/26 18:46:06  fernande
+ *  Archive Log:    PR 132387 - [Dell]: FMGUI Fails to Open Due to Database Lock. Changed the AppComponent interface so that component can provide feedback to the UI.
+ *  Archive Log:
  *  Archive Log:    Revision 1.9  2015/08/27 19:31:55  fernande
  *  Archive Log:    PR 128703 - Fail over doesn't work on A0 Fabric. Adding setting to specify the failover timeout
  *  Archive Log:
@@ -64,7 +67,7 @@
  *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: fernande
  *
@@ -72,7 +75,9 @@
 
 package com.intel.stl.fecdriver.adapter;
 
-import static com.intel.stl.common.STLMessages.STL10026_FE_ADAPTER;
+import static com.intel.stl.common.STLMessages.STL10025_STARTING_COMPONENT;
+import static com.intel.stl.common.STLMessages.STL10026_STOPPING_COMPONENT;
+import static com.intel.stl.common.STLMessages.STL10027_FE_ADAPTER;
 import static com.intel.stl.configuration.AppSettings.APP_FAILOVER_TIMEOUT;
 import static com.intel.stl.configuration.AppSettings.APP_NET_DEBUG;
 
@@ -95,6 +100,7 @@ import org.slf4j.LoggerFactory;
 import com.intel.stl.api.CertsDescription;
 import com.intel.stl.api.ICertsAssistant;
 import com.intel.stl.api.ISecurityHandler;
+import com.intel.stl.api.StartupProgressObserver;
 import com.intel.stl.api.Utils;
 import com.intel.stl.api.failure.BaseFailureEvaluator;
 import com.intel.stl.api.failure.FailureManager;
@@ -123,6 +129,15 @@ import com.intel.stl.fecdriver.session.ISession;
 public class FEAdapter implements AppComponent, IAdapter, IFailoverHelper {
     private static Logger log = LoggerFactory.getLogger(FEAdapter.class);
 
+    private static final String ADAPTER_COMPONENT =
+            STL10027_FE_ADAPTER.getDescription();
+
+    private static final String PROGRESS_MESSAGE =
+            STL10025_STARTING_COMPONENT.getDescription(ADAPTER_COMPONENT);
+
+    private static final String SHUTDOWN_MESSAGE =
+            STL10026_STOPPING_COMPONENT.getDescription(ADAPTER_COMPONENT);
+
     private final ConcurrentHashMap<SubnetDescription, IRequestDispatcher> cachedDispatchers =
             new ConcurrentHashMap<SubnetDescription, IRequestDispatcher>();
 
@@ -137,7 +152,7 @@ public class FEAdapter implements AppComponent, IAdapter, IFailoverHelper {
     private final Map<String, TrustManagerFactory> cachedTrustFactories =
             new HashMap<String, TrustManagerFactory>();
 
-    private AtomicReference<ITempRequestDispatcher> tempreqDispatcher =
+    private final AtomicReference<ITempRequestDispatcher> tempreqDispatcher =
             new AtomicReference<ITempRequestDispatcher>();
 
     private final IFailureManagement failureMgr;
@@ -148,7 +163,8 @@ public class FEAdapter implements AppComponent, IAdapter, IFailoverHelper {
 
     private final SerialProcessingService procService;
 
-    public FEAdapter(DatabaseManager dbMgr, SerialProcessingService procService) {
+    public FEAdapter(DatabaseManager dbMgr,
+            SerialProcessingService procService) {
         this.dbMgr = dbMgr;
         this.procService = procService;
         failureEvaluator = new BaseFailureEvaluator();
@@ -160,11 +176,13 @@ public class FEAdapter implements AppComponent, IAdapter, IFailoverHelper {
     }
 
     @Override
-    public void initialize(AppSettings settings)
-            throws AppConfigurationException {
-        String foTimeoutStr =
-                settings.getConfigOption(APP_FAILOVER_TIMEOUT,
-                        SM_FAILOVER_TIMEOUT);
+    public void initialize(AppSettings settings,
+            StartupProgressObserver observer) throws AppConfigurationException {
+        if (observer != null) {
+            observer.setProgress(PROGRESS_MESSAGE);
+        }
+        String foTimeoutStr = settings.getConfigOption(APP_FAILOVER_TIMEOUT,
+                SM_FAILOVER_TIMEOUT);
         try {
             this.failoverTimeout = (Integer.parseInt(foTimeoutStr)) * 1000;
         } catch (NumberFormatException e) {
@@ -214,9 +232,8 @@ public class FEAdapter implements AppComponent, IAdapter, IFailoverHelper {
                 Utils.createKeyManagerFactory(keyFile, certs.getKeyStorePwd());
         cachedKeyFactories.put(keyFile, kmf);
         String trustFile = certs.getTrustStoreFile();
-        TrustManagerFactory tmf =
-                Utils.createTrustManagerFactory(trustFile,
-                        certs.getTrustStorePwd());
+        TrustManagerFactory tmf = Utils.createTrustManagerFactory(trustFile,
+                certs.getTrustStorePwd());
         cachedTrustFactories.put(trustFile, tmf);
         return Utils.createSSLEngine(host, port, kmf, tmf);
     }
@@ -287,7 +304,10 @@ public class FEAdapter implements AppComponent, IAdapter, IFailoverHelper {
     }
 
     @Override
-    public void shutdown() {
+    public void shutdown(StartupProgressObserver observer) {
+        if (observer != null) {
+            observer.setProgress(SHUTDOWN_MESSAGE);
+        }
         try {
             ITempRequestDispatcher tmpDispatcher = tempreqDispatcher.get();
             if (tmpDispatcher != null) {
@@ -336,7 +356,7 @@ public class FEAdapter implements AppComponent, IAdapter, IFailoverHelper {
 
     @Override
     public String getComponentDescription() {
-        return STL10026_FE_ADAPTER.getDescription();
+        return ADAPTER_COMPONENT;
     }
 
     @Override

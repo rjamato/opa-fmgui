@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -26,14 +26,19 @@
  */
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- * 
+ *
  *  Functional Group: Fabric Viewer Application
- * 
+ *
  *  File Name: SAHelper.java
- * 
+ *
  *  Archive Source: $Source$
- * 
+ *
  *  Archive Log: $Log$
+ *  Archive Log: Revision 1.13  2016/02/09 20:23:17  jijunwan
+ *  Archive Log: PR 132575 - [PSC] Null pointer message in FM GUI
+ *  Archive Log:
+ *  Archive Log: - some minor improvements
+ *  Archive Log:
  *  Archive Log: Revision 1.12  2015/09/26 06:17:57  jijunwan
  *  Archive Log: 130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
  *  Archive Log: - added more log info
@@ -50,11 +55,11 @@
  *  Archive Log: - wrote a tool to check and insert file header
  *  Archive Log: - applied on backend files
  *  Archive Log:
- * 
+ *
  *  Overview:
- * 
+ *
  *  @author: jijunwan
- * 
+ *
  ******************************************************************************/
 package com.intel.stl.api.subnet.impl;
 
@@ -107,7 +112,7 @@ import com.intel.stl.fecdriver.messages.command.sa.FVCmdGetVLArb;
 
 /**
  * @author jijunwan
- * 
+ *
  */
 public class SAHelper extends FEHelper {
     private final static Logger log = LoggerFactory.getLogger(SAHelper.class);
@@ -119,7 +124,7 @@ public class SAHelper extends FEHelper {
     public List<NodeRecordBean> getNodes() throws Exception {
         FVCmdGetNodes cmd = new FVCmdGetNodes();
         List<NodeRecordBean> res = statement.execute(cmd);
-        log.info("Get " + res.size() + " nodes from FE");
+        log.info("Get " + (res == null ? 0 : res.size()) + " nodes from FE");
         return res;
     }
 
@@ -136,7 +141,7 @@ public class SAHelper extends FEHelper {
     public List<LinkRecordBean> getLinks() throws Exception {
         FVCmdGetLink cmd = new FVCmdGetLink();
         List<LinkRecordBean> res = statement.execute(cmd);
-        log.info("Get " + res.size() + " links from FE");
+        log.info("Get " + (res == null ? 0 : res.size()) + " links from FE");
         return res;
     }
 
@@ -148,7 +153,7 @@ public class SAHelper extends FEHelper {
     public List<PortRecordBean> getPorts() throws Exception {
         FVCmdGetPortInfo cmd = new FVCmdGetPortInfo();
         List<PortRecordBean> res = statement.execute(cmd);
-        log.info("Get " + res.size() + " ports from FE");
+        log.info("Get " + (res == null ? 0 : res.size()) + " ports from FE");
         return res;
     }
 

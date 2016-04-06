@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: FabricPlugin.java
@@ -35,6 +35,9 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.41  2016/01/26 19:06:01  fernande
+ *  Archive Log:    PR 132387 - [Dell]: FMGUI Fails to Open Due to Database Lock. Changes to display a splash screen on application shutdown
+ *  Archive Log:
  *  Archive Log:    Revision 1.40  2015/11/19 00:41:30  rjtierne
  *  Archive Log:    PR 130965 - ESM support on Log Viewer
  *  Archive Log:    - Set HelpAction.DYNAMIC_SIZE to true so the Help window is resized when FMGUI runs.
@@ -162,7 +165,7 @@
  *  Archive Log:    Initial version
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: fernande
  *
@@ -190,10 +193,10 @@ import com.intel.stl.ui.main.view.CertsPanel;
 import com.intel.stl.ui.main.view.SplashScreen;
 
 public class FabricPlugin extends FMGuiPlugin {
-    private final static Logger log = LoggerFactory
-            .getLogger(FMGuiPlugin.class);
+    private final static Logger log =
+            LoggerFactory.getLogger(FMGuiPlugin.class);
 
-    SplashScreen splashScreen;
+    private SplashScreen splashScreen;
 
     private ICertsAssistant certsAssistant;
 
@@ -201,21 +204,19 @@ public class FabricPlugin extends FMGuiPlugin {
 
     private final List<Throwable> errors = new ArrayList<Throwable>();
 
-    private boolean splashShowing = false;
-
     @Override
     public void init(AppContext appContext) {
         CertsPanel certsPanel = new CertsPanel();
-        certsAssistant =
-                new CertsAssistant(certsPanel, appContext.getConfigurationApi());
+        certsAssistant = new CertsAssistant(certsPanel,
+                appContext.getConfigurationApi());
         appContext.registerCertsAssistant(certsAssistant);
         super.init(appContext);
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             if (System.getProperty("os.name").equals("Linux")) {
-                UIManager.setLookAndFeel(UIManager
-                        .getCrossPlatformLookAndFeelClassName());
+                UIManager.setLookAndFeel(
+                        UIManager.getCrossPlatformLookAndFeelClassName());
             }
             UIManager.put("SplitPaneDivider.draggingColor",
                     UIConstants.INTEL_LIGHT_GRAY);
@@ -231,7 +232,6 @@ public class FabricPlugin extends FMGuiPlugin {
             e.printStackTrace();
         }
         splashScreen = new SplashScreen();
-        splashShowing = true;
         splashScreen.showScreen();
     }
 
@@ -245,7 +245,6 @@ public class FabricPlugin extends FMGuiPlugin {
             errors.add(e);
             e.printStackTrace();
         }
-        splashShowing = false;
         // Up to this point, the plugin handles errors. Now the SubnetManager
         // should handle errors and route them to the proper frame
         if (errors.isEmpty()) {
@@ -266,7 +265,17 @@ public class FabricPlugin extends FMGuiPlugin {
     }
 
     @Override
-    public void showProgress(String message, int progress) {
+    public void setProgress(int progress) {
+        splashScreen.setProgress(progress);
+    }
+
+    @Override
+    public void setProgress(String message) {
+        splashScreen.setProgress(message);
+    }
+
+    @Override
+    public void setProgress(String message, int progress) {
         splashScreen.setProgress(message, progress);
     }
 
@@ -275,7 +284,7 @@ public class FabricPlugin extends FMGuiPlugin {
         for (Throwable e : errors) {
             e.printStackTrace();
         }
-        if (splashShowing) {
+        if (!splashScreen.isClosed()) {
             splashScreen.toBack();
         }
         DialogFactory.showModalErrorDialog(null, errors);
@@ -286,10 +295,12 @@ public class FabricPlugin extends FMGuiPlugin {
         Util.runInEDT(new Runnable() {
             @Override
             public void run() {
-                if (splashShowing) {
+                if (!splashScreen.isClosed()) {
                     splashScreen.close();
-                    splashShowing = false;
                 }
+                splashScreen = new SplashScreen();
+                splashScreen.setShutdownImage();
+                splashScreen.showScreen();
                 if (subnetMgr != null) {
                     try {
                         subnetMgr.cleanup();

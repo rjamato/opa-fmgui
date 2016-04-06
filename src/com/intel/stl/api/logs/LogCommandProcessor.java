@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: LogCommandProcessor.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.6  2016/02/09 20:23:16  jijunwan
+ *  Archive Log:    PR 132575 - [PSC] Null pointer message in FM GUI
+ *  Archive Log:
+ *  Archive Log:    - some minor improvements
+ *  Archive Log:
  *  Archive Log:    Revision 1.5  2015/11/18 23:49:25  rjtierne
  *  Archive Log:    PR 130965 - ESM support on Log Viewer
  *  Archive Log:    - Refactored code to remove blocking command queue, and provide a cancellable task (LogCommandTask) to the service exec.
@@ -57,8 +62,8 @@
  *  Archive Log:    This is the first version of the Log Viewer which displays select lines of text from the remote SM log file. Updates include searchable raw text from file, user-defined number of lines to display, refreshing end of file, and paging. This PR is now closed and further updates can be found by referencing PR 130011 - "Enhance SM Log Viewer to include Standard and Advanced requirements".
  *  Archive Log:
  *
- *  Overview: Single thread task to send commands to the remote SSH server, 
- *  wait for the responses, and send them to the listeners   
+ *  Overview: Single thread task to send commands to the remote SSH server,
+ *  wait for the responses, and send them to the listeners
  *
  *  @author: rjtierne
  *
@@ -87,8 +92,8 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
 
 public class LogCommandProcessor {
-    private static Logger log = LoggerFactory
-            .getLogger(LogCommandProcessor.class);
+    private static Logger log =
+            LoggerFactory.getLogger(LogCommandProcessor.class);
 
     private final boolean DEBUG = false;
 
@@ -147,9 +152,8 @@ public class LogCommandProcessor {
         boolean initialized = false;
 
         execChannel = jschSession.getExecChannel();
-        inputBuffer =
-                new BufferedReader(new InputStreamReader(
-                        execChannel.getInputStream()));
+        inputBuffer = new BufferedReader(
+                new InputStreamReader(execChannel.getInputStream()));
         execChannel.setErrStream(System.err);
 
         // Wait for the channel to be initialized
@@ -191,13 +195,14 @@ public class LogCommandProcessor {
 
             // Wait for either the end of the data, data to be available on the
             // input stream, or the timeout to expire
-            while (!(ready = inputBuffer.ready()) && (currentTime < expireTime)) {
+            while (!(ready = inputBuffer.ready())
+                    && (currentTime < expireTime)) {
                 Thread.sleep(200);
                 currentTime = System.currentTimeMillis();
             }
         } catch (InterruptedException e) {
         } catch (IOException e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), e);
         }
 
         if (DEBUG) {
@@ -211,9 +216,8 @@ public class LogCommandProcessor {
 
     public void executeCommand(LogMessageType msgType, String cmd) {
         try {
-            future =
-                    service.submit(new LogCommandTask(new LogCommand(msgType,
-                            cmd)));
+            future = service
+                    .submit(new LogCommandTask(new LogCommand(msgType, cmd)));
 
             // Process the result
             if ((future != null) && !future.isCancelled()) {
@@ -224,9 +228,7 @@ public class LogCommandProcessor {
                     // If the 'ls' command failed when checking for the log
                     // file, then we must be connected directly to an
                     // ESM - which should never be done!
-                    if (response
-                            .getEntries()
-                            .get(0)
+                    if (response.getEntries().get(0)
                             .equals(STLMessages.STL50014_ESM_COMMAND_NOT_FOUND
                                     .getDescription())) {
                         responseListener.onResponseError(
@@ -262,7 +264,7 @@ public class LogCommandProcessor {
                 }
             }
         } catch (InterruptedException | ExecutionException e) {
-            log.error(e.getCause().getMessage());
+            log.error(e.getCause().getMessage(), e);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -313,7 +315,7 @@ public class LogCommandProcessor {
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see java.util.concurrent.Callable#call()
          */
         @Override
@@ -370,7 +372,7 @@ public class LogCommandProcessor {
                     }
                 }
             } catch (JSchException e) {
-                log.error(e.getMessage());
+                log.error(e.getMessage(), e);
                 shutdown();
             }
 

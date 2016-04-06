@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -26,14 +26,26 @@
  */
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- * 
+ *
  *  Functional Group: Fabric Viewer Application
- * 
+ *
  *  File Name: HoQLifeBarChartPanel.java
- * 
+ *
  *  Archive Source: $Source$
- * 
+ *
  *  Archive Log: $Log$
+ *  Archive Log: Revision 1.6  2016/01/28 18:03:18  jijunwan
+ *  Archive Log: PR 132498 - Unit value missing from Y axis of HoQLife by VL table
+ *  Archive Log:
+ *  Archive Log: - label adjustment
+ *  Archive Log:
+ *  Archive Log: Revision 1.5  2016/01/28 17:51:59  jijunwan
+ *  Archive Log: PR 132498 - Unit value missing from Y axis of HoQLife by VL table
+ *  Archive Log:
+ *  Archive Log: - changed to display real HoQ values in ms on chart
+ *  Archive Log: - changed chart Y axis label to milliseconds
+ *  Archive Log: - changes chart tooltip to display value in us, ms or s
+ *  Archive Log:
  *  Archive Log: Revision 1.4  2015/08/17 18:54:17  jijunwan
  *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log: - changed frontend files' headers
@@ -43,16 +55,17 @@
  *  Archive Log: - wrote a tool to check and insert file header
  *  Archive Log: - applied on backend files
  *  Archive Log:
- * 
+ *
  *  Overview:
- * 
+ *
  *  @author: jypak
- * 
+ *
  ******************************************************************************/
 package com.intel.stl.ui.configuration.view;
 
+import static com.intel.stl.ui.common.STLConstants.K0129_MILLISECOND;
+import static com.intel.stl.ui.common.STLConstants.K0134_HOQLIFE;
 import static com.intel.stl.ui.common.STLConstants.K0342_PORT_VL_TITLE;
-import static com.intel.stl.ui.common.STLConstants.K1069_HOQLIFE;
 import static com.intel.stl.ui.model.DeviceProperty.HOQLIFE;
 import static com.intel.stl.ui.model.DeviceProperty.NUM_VL;
 
@@ -70,21 +83,23 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import com.intel.stl.ui.common.view.ComponentFactory;
+import com.intel.stl.ui.configuration.HoQLifeProcessor;
 import com.intel.stl.ui.model.DevicePropertyCategory;
 
 public class HoQLifeBarChartPanel extends DevicePropertyCategoryPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Dimension PREFERRED_CHART_SIZE = new Dimension(360,
-            240);
+    private static final Dimension PREFERRED_CHART_SIZE =
+            new Dimension(360, 240);
 
     private XYSeriesCollection dataset;
 
     private ChartPanel chartPanel;
 
     @Override
-    public void modelUpdateFailed(DevicePropertyCategory model, Throwable caught) {
+    public void modelUpdateFailed(DevicePropertyCategory model,
+            Throwable caught) {
     }
 
     @Override
@@ -97,7 +112,6 @@ public class HoQLifeBarChartPanel extends DevicePropertyCategoryPanel {
 
         int x = 0;
         for (double v : values) {
-
             xyseries.add(x++, v);
         }
         dataset.addSeries(xyseries);
@@ -109,17 +123,15 @@ public class HoQLifeBarChartPanel extends DevicePropertyCategoryPanel {
     public void initComponents() {
         dataset = new XYSeriesCollection();
 
-        JFreeChart chart =
-                ComponentFactory.createXYBarChart(
-                        K0342_PORT_VL_TITLE.getValue(),
-                        K1069_HOQLIFE.getValue(), dataset,
-                        (XYItemLabelGenerator) null);
+        JFreeChart chart = ComponentFactory.createXYBarChart(
+                K0342_PORT_VL_TITLE.getValue(), K0129_MILLISECOND.getValue(),
+                dataset, (XYItemLabelGenerator) null);
 
         XYPlot plot = chart.getXYPlot();
         plot.setDomainPannable(true);
         plot.setRangePannable(true);
         final String vlLabel = "<html>" + K0342_PORT_VL_TITLE.getValue() + ": ";
-        final String hoqLabel = "<br>" + K1069_HOQLIFE.getValue() + ": ";
+        final String hoqLabel = "<br>" + K0134_HOQLIFE.getValue() + ": ";
 
         XYBarRenderer renderer = (XYBarRenderer) plot.getRenderer();
         renderer.setBarAlignmentFactor(0);
@@ -127,14 +139,14 @@ public class HoQLifeBarChartPanel extends DevicePropertyCategoryPanel {
 
         renderer.setSeriesToolTipGenerator(0, new XYToolTipGenerator() {
             @Override
-            public String generateToolTip(XYDataset dataset, int arg1, int arg2) {
+            public String generateToolTip(XYDataset dataset, int arg1,
+                    int arg2) {
                 int vlNum = (int) dataset.getXValue(arg1, arg2);
-                int hoqCount = (int) dataset.getYValue(arg1, arg2);
-                return vlLabel + vlNum + hoqLabel + hoqCount + "</html>";
+                double hoqLife = dataset.getYValue(arg1, arg2);
+                String hoqString = HoQLifeProcessor.getHoqLifeString(hoqLife);
+                return vlLabel + vlNum + hoqLabel + hoqString + "</html>";
             }
         });
-        NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
-        yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         NumberAxis xAxis = (NumberAxis) plot.getDomainAxis();
         xAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
         chartPanel = new ChartPanel(chart);

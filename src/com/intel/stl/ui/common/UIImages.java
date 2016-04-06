@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: UIImages.java
@@ -35,6 +35,24 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.63  2016/03/17 19:45:54  jijunwan
+ *  Archive Log:    PR 133329 - Icon update
+ *  Archive Log:
+ *  Archive Log:    - updated to the new icon
+ *  Archive Log:    - fixed one issue on help window icon
+ *  Archive Log:
+ *  Archive Log:    Revision 1.62  2016/03/02 18:27:30  jijunwan
+ *  Archive Log:    PR 133067 - Add a popup window that e-mail was sent successfully when "test" button is click
+ *  Archive Log:
+ *  Archive Log:    - changed to disable button after we click test button
+ *  Archive Log:    - changed to show "sending email..." message when we are sending out a test email
+ *  Archive Log:    - changed to show "Test message sent out, please check your email account." after email sent out
+ *  Archive Log:    - change to recover message to normal text when there is a user action
+ *  Archive Log:    - added undo/redo capability to email address text area
+ *  Archive Log:
+ *  Archive Log:    Revision 1.61  2016/01/26 19:05:06  fernande
+ *  Archive Log:    PR 132387 - [Dell]: FMGUI Fails to Open Due to Database Lock. Added image for splash screen on shutdown
+ *  Archive Log:
  *  Archive Log:    Revision 1.60  2015/11/18 23:56:14  rjtierne
  *  Archive Log:    PR 130965 - ESM support on Log Viewer
  *  Archive Log:    - Added new INVISIBLE_ICON to serve as a placeholder for RUNNING icon when not visible
@@ -228,7 +246,7 @@
  *  Archive Log:    Initial version
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: fernande
  *
@@ -245,11 +263,10 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 public enum UIImages {
-    LOGO_BK("intel_logo_1024x768.png"),
-    LOGO_128("intel_logo_128x128.png"),
-    LOGO_64("intel_logo_64x64.png"),
-    LOGO_32("intel_logo_32x32.png"),
-    LOGO_24("intel_logo_24x24.png"),
+    LOGO_128("FMGUI_128x128.png"),
+    LOGO_64("FMGUI_64x64.png"),
+    LOGO_32("FMGUI_32x32.png"),
+    LOGO_24("FMGUI_24x24.png"),
     HELP_ICON("help_16x16.png"), // Images used in the Swing plugin
     HFI_ICON("18x18-host.png"),
     HFI_GROUP_ICON("systemImage_16x16.png"),
@@ -271,7 +288,8 @@ public enum UIImages {
     WARNING2_ICON("warning2_16x16.png"),
     NORMAL_ICON("normal_16x16.png"),
     OPTIONS_NOTSELECTED_ICON("options_notselected_16x16.png"),
-    SPLASH_IMAGE("intel_fmgui_splash.png"),
+    SPLASH_IMAGE("fmgui_splash.png"),
+    SHUTDOWN_IMAGE("fmgui_shutdown.png"),
     BAR_ICON("bar_16x16.png"),
     PIE_ICON("pie_16x16.png"),
     SETTING_ICON("setting_16x16.png"),
@@ -337,6 +355,7 @@ public enum UIImages {
     X_MARK("x_mark_16x16.png"),
     DASH("dash_16x16.png"),
     PLAY("play_16x16.png"),
+    PLAY_GRAY("play_gray_16x16.png"),
     STOP("stop_16x16.png"),
     STOP_RED("stop_red_16x16.png"),
     MOVE("move_16x16.png"),

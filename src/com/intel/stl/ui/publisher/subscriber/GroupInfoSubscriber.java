@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: GroupInfoSubscriber.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.12  2016/02/09 20:23:09  jijunwan
+ *  Archive Log:    PR 132575 - [PSC] Null pointer message in FM GUI
+ *  Archive Log:
+ *  Archive Log:    - some minor improvements
+ *  Archive Log:
  *  Archive Log:    Revision 1.11  2015/08/17 18:53:39  jijunwan
  *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
  *  Archive Log:    - changed frontend files' headers
@@ -105,8 +110,8 @@ import com.intel.stl.ui.publisher.Task;
 public class GroupInfoSubscriber extends Subscriber<GroupInfoBean> {
     private final static boolean DUMP_DATA = false;
 
-    private static Logger log = LoggerFactory
-            .getLogger(GroupInfoSubscriber.class);
+    private static Logger log =
+            LoggerFactory.getLogger(GroupInfoSubscriber.class);
 
     public GroupInfoSubscriber(IRegisterTask taskScheduler,
             IPerformanceApi perfApi) {
@@ -115,10 +120,9 @@ public class GroupInfoSubscriber extends Subscriber<GroupInfoBean> {
 
     public synchronized Task<GroupInfoBean> registerGroupInfo(
             final String group, ICallback<GroupInfoBean> callback) {
-        Task<GroupInfoBean> task =
-                new Task<GroupInfoBean>(PAConstants.STL_PA_ATTRID_GET_GRP_INFO,
-                        group,
-                        UILabels.STL40008_GROUPINFO_TASK.getDescription(group));
+        Task<GroupInfoBean> task = new Task<GroupInfoBean>(
+                PAConstants.STL_PA_ATTRID_GET_GRP_INFO, group,
+                UILabels.STL40008_GROUPINFO_TASK.getDescription(group));
         Callable<GroupInfoBean> caller = new Callable<GroupInfoBean>() {
             @Override
             public GroupInfoBean call() throws Exception {
@@ -132,9 +136,8 @@ public class GroupInfoSubscriber extends Subscriber<GroupInfoBean> {
         try {
             // Task<GroupInfoBean> res =
             // registerTask(groupInfoTasks, task, callback, caller);
-            Task<GroupInfoBean> submittedTask =
-                    taskScheduler
-                            .scheduleTask(taskList, task, callback, caller);
+            Task<GroupInfoBean> submittedTask = taskScheduler
+                    .scheduleTask(taskList, task, callback, caller);
 
             return submittedTask;
         } catch (Exception e) {
@@ -172,8 +175,7 @@ public class GroupInfoSubscriber extends Subscriber<GroupInfoBean> {
         try {
             taskScheduler.removeTask(taskList, tasks, callbacks);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -189,9 +191,8 @@ public class GroupInfoSubscriber extends Subscriber<GroupInfoBean> {
                             int offset) {
                         GroupInfoBean[] res = new GroupInfoBean[groups.length];
                         for (int i = 0; i < groups.length; i++) {
-                            GroupInfoBean gib =
-                                    perfApi.getGroupInfoHistory(groups[i],
-                                            imageIDs[i], offset);
+                            GroupInfoBean gib = perfApi.getGroupInfoHistory(
+                                    groups[i], imageIDs[i], offset);
                             if (gib != null) {
                                 res[i] = gib;
                                 if (DUMP_DATA) {
@@ -212,9 +213,8 @@ public class GroupInfoSubscriber extends Subscriber<GroupInfoBean> {
                         ImageIdBean[] imageIdBeans =
                                 new ImageIdBean[groups.length];
                         for (int i = 0; i < groups.length; i++) {
-                            GroupInfoBean groupInfoBean =
-                                    perfApi.getGroupInfoHistory(groups[i], 0L,
-                                            -2);
+                            GroupInfoBean groupInfoBean = perfApi
+                                    .getGroupInfoHistory(groups[i], 0L, -2);
                             ImageIdBean imageIdBean =
                                     groupInfoBean.getImageId();
 

@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: ConnectivityTableData.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.14  2016/02/16 22:16:05  jijunwan
+ *  Archive Log:    PR 132888 - Include Num Lanes Down in port counters display
+ *  Archive Log:
+ *  Archive Log:    - added Num Lanes Down
+ *  Archive Log:
  *  Archive Log:    Revision 1.13  2015/11/02 23:54:33  jijunwan
  *  Archive Log:    PR 131396 - Incorrect Connectivity Table for a VF port
  *  Archive Log:    - changed model to display N/A when a value is not avaiable
@@ -156,7 +161,7 @@ public class ConnectivityTableData implements Serializable {
 
     /**
      * Description:
-     * 
+     *
      */
     public ConnectivityTableData(int nodeLid, long nodeGuidValue,
             NodeType nodeType, short portNumValue, boolean isNeighbor) {
@@ -170,9 +175,8 @@ public class ConnectivityTableData implements Serializable {
 
         nodeGUID = StringUtils.longHexString(nodeGuidValue);
         if (isNeighbor) {
-            portNumber =
-                    Integer.toString(portNumValue) + " ("
-                            + STLConstants.K0525_NEIGHBOR.getValue() + ")";
+            portNumber = Integer.toString(portNumValue) + " ("
+                    + STLConstants.K0525_NEIGHBOR.getValue() + ")";
         } else {
             portNumber = Integer.toString(portNumValue);
         }
@@ -247,7 +251,7 @@ public class ConnectivityTableData implements Serializable {
     }
 
     /**
-     * 
+     *
      * @return the cableInfo
      */
     public String getCableInfo() {
@@ -255,7 +259,7 @@ public class ConnectivityTableData implements Serializable {
     }
 
     /**
-     * 
+     *
      * @param cableInfo
      *            - the cableInfo to set
      */
@@ -484,22 +488,22 @@ public class ConnectivityTableData implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result =
-                prime * result + (int) (nodeGuidValue ^ (nodeGuidValue >>> 32));
+        result = prime * result
+                + (int) (nodeGuidValue ^ (nodeGuidValue >>> 32));
         result = prime * result + portNumValue;
         return result;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -541,6 +545,8 @@ public class ConnectivityTableData implements Serializable {
         private Long numLinkRecoveries; // TODO Don't know where to get this
 
         private Long numLinkDown;
+
+        private Byte numLanesDown;
 
         private Long rxErrors;
 
@@ -689,6 +695,21 @@ public class ConnectivityTableData implements Serializable {
          */
         public void setNumLinkDown(Long numLinkDown) {
             this.numLinkDown = numLinkDown;
+        }
+
+        /**
+         * @return the numLanesDown
+         */
+        public Byte getNumLanesDown() {
+            return numLanesDown;
+        }
+
+        /**
+         * @param numLanesDown
+         *            the numLanesDown to set
+         */
+        public void setNumLanesDown(Byte numLanesDown) {
+            this.numLanesDown = numLanesDown;
         }
 
         /**

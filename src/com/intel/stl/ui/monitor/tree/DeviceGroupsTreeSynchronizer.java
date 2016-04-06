@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: DeviceGroupTreeUpdater.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.12  2016/02/09 20:23:10  jijunwan
+ *  Archive Log:    PR 132575 - [PSC] Null pointer message in FM GUI
+ *  Archive Log:
+ *  Archive Log:    - some minor improvements
+ *  Archive Log:
  *  Archive Log:    Revision 1.11  2015/10/23 19:07:57  jijunwan
  *  Archive Log:    PR 129357 - Be able to hide inactive ports
  *  Archive Log:    - revert back to the old version without visible node support
@@ -71,7 +76,7 @@
  *  Archive Log:    tree update based on merge sort algorithm
  *  Archive Log:
  *
- *  Overview: 
+ *  Overview:
  *
  *  @author: jijunwan
  *
@@ -128,7 +133,7 @@ public class DeviceGroupsTreeSynchronizer extends TreeSynchronizer<String> {
 
     /**
      * Description:
-     * 
+     *
      * @param nodeComparator
      * @param subnetApi
      * @param deviceTypesTree
@@ -144,9 +149,11 @@ public class DeviceGroupsTreeSynchronizer extends TreeSynchronizer<String> {
 
     protected void initData() {
         List<GroupListBean> groupList = perfApi.getGroupList();
-        groups = new LinkedHashMap<String, Integer>();
-        for (int i = 0; i < groupList.size(); i++) {
-            groups.put(groupList.get(i).getGroupName(), i);
+        if (groupList != null) {
+            groups = new LinkedHashMap<String, Integer>();
+            for (int i = 0; i < groupList.size(); i++) {
+                groups.put(groupList.get(i).getGroupName(), i);
+            }
         }
 
         nodeMap = new HashMap<Integer, FVResourceNode>();
@@ -165,7 +172,7 @@ public class DeviceGroupsTreeSynchronizer extends TreeSynchronizer<String> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.intel.stl.ui.monitor.tree.FastTreeUpater#compare(com.intel.stl.ui
      * .monitor.FVResourceNode, java.lang.Object)
@@ -178,7 +185,7 @@ public class DeviceGroupsTreeSynchronizer extends TreeSynchronizer<String> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.intel.stl.ui.monitor.tree.TreeUpater#createNode(java.lang.Object)
      */
@@ -188,14 +195,14 @@ public class DeviceGroupsTreeSynchronizer extends TreeSynchronizer<String> {
         if (id != null) {
             return TreeNodeFactory.createGroupNode(key, id);
         } else {
-            throw new IllegalArgumentException("Couldn't find Device Group '"
-                    + key + "'");
+            throw new IllegalArgumentException(
+                    "Couldn't find Device Group '" + key + "'");
         }
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.intel.stl.ui.monitor.tree.TreeUpater#addNode(int,
      * com.intel.stl.ui.monitor.FVResourceNode,
      * com.intel.stl.ui.monitor.FVTreeModel)
@@ -213,7 +220,7 @@ public class DeviceGroupsTreeSynchronizer extends TreeSynchronizer<String> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.intel.stl.ui.monitor.tree.TreeUpater#updateNode(com.intel.stl.ui.
      * monitor.FVResourceNode, com.intel.stl.ui.monitor.FVResourceNode,
@@ -258,8 +265,8 @@ public class DeviceGroupsTreeSynchronizer extends TreeSynchronizer<String> {
             }
             if (monitors != null) {
                 for (ITreeMonitor monitor : monitors) {
-                    monitor.fireTreeNodesRemoved(this,
-                            node.getPath().getPath(), childIndex, children);
+                    monitor.fireTreeNodesRemoved(this, node.getPath().getPath(),
+                            childIndex, children);
                 }
             }
         }

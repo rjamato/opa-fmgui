@@ -1,9 +1,9 @@
 /**
  * Copyright (c) 2015, Intel Corporation
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
  *     * Neither the name of Intel Corporation nor the names of its contributors
  *       may be used to endorse or promote products derived from this software
  *       without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,7 +27,7 @@
 
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- *	
+ *
  *  Functional Group: Fabric Viewer Application
  *
  *  File Name: PerfErrorsCardView.java
@@ -35,6 +35,11 @@
  *  Archive Source: $Source$
  *
  *  Archive Log:    $Log$
+ *  Archive Log:    Revision 1.18  2016/02/16 19:54:51  jijunwan
+ *  Archive Log:    PR 132863 - adjust counter displays to show in order of relative importance
+ *  Archive Log:
+ *  Archive Log:    - improved to show tooltip text for counters billed on neighbor port
+ *  Archive Log:
  *  Archive Log:    Revision 1.17  2015/10/22 18:42:44  fisherma
  *  Archive Log:    Fixing deadlock.  Changed a call to a thread safe revalidate().
  *  Archive Log:
@@ -60,7 +65,7 @@
  *  Archive Log:    Revision 1.11  2015/02/25 13:57:42  jypak
  *  Archive Log:    Correct comment header
  *  Archive Log:
- *  
+ *
  *  Overview: Performance page's performance subpage errors section.
  *
  *  @author: jypak
@@ -88,6 +93,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import com.intel.stl.ui.common.UIConstants;
+import com.intel.stl.ui.common.UILabels;
 import com.intel.stl.ui.common.view.ComponentFactory;
 import com.intel.stl.ui.common.view.ICardListener;
 import com.intel.stl.ui.common.view.JCardView;
@@ -165,9 +171,8 @@ public class PerfErrorsCardView extends JCardView<ICardListener> {
         ParallelGroup[] row = new ParallelGroup[itemsPerColumn];
 
         for (int i = 0; i < itemsPerColumn; i++) {
-            row[i] =
-                    groupLayout
-                            .createParallelGroup(GroupLayout.Alignment.BASELINE);
+            row[i] = groupLayout
+                    .createParallelGroup(GroupLayout.Alignment.BASELINE);
             vGroup.addGroup(row[i]);
         }
 
@@ -176,12 +181,10 @@ public class PerfErrorsCardView extends JCardView<ICardListener> {
         int itemCt = 0;
 
         for (int i = 0; i < numCols; i++) {
-            ParallelGroup keyCol =
-                    groupLayout
-                            .createParallelGroup(GroupLayout.Alignment.LEADING);
-            ParallelGroup valCol =
-                    groupLayout
-                            .createParallelGroup(GroupLayout.Alignment.LEADING);
+            ParallelGroup keyCol = groupLayout
+                    .createParallelGroup(GroupLayout.Alignment.LEADING);
+            ParallelGroup valCol = groupLayout
+                    .createParallelGroup(GroupLayout.Alignment.LEADING);
             hGroup.addGap(15);
             hGroup.addGroup(keyCol);
             hGroup.addGroup(valCol);
@@ -199,6 +202,10 @@ public class PerfErrorsCardView extends JCardView<ICardListener> {
                             keyStr += "*";
                         }
                         key = createKey(keyStr, j);
+                        if (vItem.isFromNeighbor()) {
+                            key.setToolTipText(UILabels.STL40014_BILL_NEIGHBOR
+                                    .getDescription());
+                        }
                         value = createValue(vItem.getValStr(), j);
                     }
                     keys.add(key);
