@@ -25,73 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: LoggingConfigController.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3  2015/08/17 18:54:26  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/06/26 13:38:13  rjtierne
- *  Archive Log:    PR 128975 - Can not setup application log
- *  Archive Log:    - During initialization, retrieve the root log level from the root logger in LoggingConfiguration
- *  Archive Log:    - Before saving logging configuration, store the root log level in the LoggerConfig
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/06/10 19:24:07  rjtierne
- *  Archive Log:    PR 128975 - Can not setup application log
- *  Archive Log:    Moved from the wizards package to the new logger package with updates to accommodate
- *  Archive Log:    changes to the LoggingConfiguration in the back end
- *  Archive Log:    - LoggingWizardController renamed to LoggingConfigController
- *  Archive Log:    - LoggingWizardView renamed to LoggingConfigView
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/04/02 13:33:00  jypak
- *  Archive Log:    Klockwork: Front End Critical Without Unit Test. 47 open issues fixed. All of them are for null checks.
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/03/31 17:48:30  rjtierne
- *  Archive Log:    Added/Implemented setConnectable()
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/02/20 21:14:35  rjtierne
- *  Archive Log:    Multinet Wizard: Kept logging wizard up to date with its interface, but will be moved to the configuration menu later.
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/02/13 21:32:00  rjtierne
- *  Archive Log:    Multinet Wizard
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/02/06 15:12:17  fernande
- *  Archive Log:    Changes so that the Setup Wizard depends on the Subnet Manager for all subnet-related operations
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/01/20 19:13:24  rjtierne
- *  Archive Log:    Changed onApply() to return a boolean to indicate success/failure
- *  Archive Log:    Fixed document listener to detect changes in user entries
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/01/11 21:48:21  jijunwan
- *  Archive Log:    setup wizard improvements
- *  Archive Log:    1) look and feel adjustment
- *  Archive Log:    2) secure FE support
- *  Archive Log:    3) apply wizard on current subnet
- *  Archive Log:    4) message display based on message type rather than directly specifying UI resources
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/12/23 18:34:25  rjtierne
- *  Archive Log:    New logic to make first-run wizards retain information when switching between wizards
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/12/19 18:51:51  rjtierne
- *  Archive Log:    Initialize appender map & view. Updated onApply to pass logger selections through the input validator
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/12/10 21:31:09  rjtierne
- *  Archive Log:    New Setup Wizard based on framework
- *  Archive Log:
- *
- *  Overview: Controller for the Logging Wizard
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.logger.config;
 
 import java.util.ArrayList;
@@ -108,6 +41,9 @@ import com.intel.stl.ui.main.ISubnetManager;
 import com.intel.stl.ui.main.view.FVMainFrame;
 import com.intel.stl.ui.wizards.impl.WizardValidationException;
 
+/**
+ * Controller for the Logging Wizard
+ */
 public class LoggingConfigController implements ILoggingControl {
 
     private static LoggingConfigController instance;

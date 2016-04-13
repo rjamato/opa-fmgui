@@ -25,126 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: SubnetController.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.28  2015/11/09 20:45:33  fernande
- *  Archive Log:    PR130231 - Cannot delete subnet from Wizard if subnet name is "Unknown Subnet". Some refactoring to decouple tasks from main wizard controller
- *  Archive Log:
- *  Archive Log:    Revision 1.27  2015/08/17 18:54:04  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.26  2015/07/17 20:48:25  jijunwan
- *  Archive Log:    PR 129594 - Apply new input verification on setup wizard
- *  Archive Log:    - introduced isEditValid to allow us check whether we have valid edit
- *  Archive Log:
- *  Archive Log:    Revision 1.25  2015/05/11 12:37:06  rjtierne
- *  Archive Log:    PR 128585 - Fix errors found by Klocwork and FindBugs
- *  Archive Log:    In constructor, added null pointer protection to view since invocation of this
- *  Archive Log:    class flagged potential null error when SubnetWizardView is created
- *  Archive Log:
- *  Archive Log:    Revision 1.24  2015/04/29 19:14:16  rjtierne
- *  Archive Log:    Handle case in validateUserEntry() to not update the model if a connection test is being
- *  Archive Log:    peformed.
- *  Archive Log:
- *  Archive Log:    Revision 1.23  2015/04/03 14:43:11  rjtierne
- *  Archive Log:    Removed print statement
- *  Archive Log:
- *  Archive Log:    Revision 1.22  2015/03/31 17:48:32  rjtierne
- *  Archive Log:    Added/Implemented setConnectable()
- *  Archive Log:
- *  Archive Log:    Revision 1.21  2015/03/30 15:12:09  rjtierne
- *  Archive Log:    - Changed subnet wizard tab name to "Hosts"
- *  Archive Log:    - Created new subnet to test based on host info in connectActionPerformed()
- *  Archive Log:    - Passing new subnet to tryToConnect() in connectActionPerformed()
- *  Archive Log:    - Setting connection status in subnet wizard view using backup host name
- *  Archive Log:    - No longer setting primary master in updateModel
- *  Archive Log:
- *  Archive Log:    Revision 1.20  2015/03/25 17:56:27  rjtierne
- *  Archive Log:    Clear subnet key factories in CertAssistant in connectActionPerformed() test
- *  Archive Log:
- *  Archive Log:    Revision 1.19  2015/03/20 21:06:46  rjtierne
- *  Archive Log:    - Modified validateUserEntry() to validate all backup hosts
- *  Archive Log:    - During subnet test, don't update the subnet view
- *  Archive Log:
- *  Archive Log:    Revision 1.18  2015/03/16 17:46:17  fernande
- *  Archive Log:    STLConnection lifecycle support. STLConnections can now be reused and temporary connections are not cached and their socket is closed after they are logically closed. Changed SubnetDescription in support of failover to have a list of HostInfo objects instead of just info for one host.
- *  Archive Log:
- *  Archive Log:    Revision 1.17  2015/03/11 15:24:53  rjtierne
- *  Archive Log:    Multinet Wizard: In method connectActionPerformed() call local validateUserEntry() to verify entries and throw
- *  Archive Log:    WizardValidationException if necessary.
- *  Archive Log:
- *  Archive Log:    Revision 1.16  2015/02/27 15:34:33  rjtierne
- *  Archive Log:    Fixed preferences model/view sync issue when creating new subnet
- *  Archive Log:
- *  Archive Log:    Revision 1.15  2015/02/25 17:59:37  rjtierne
- *  Archive Log:    Updated subnetModel with the user's selection for auto-connect
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2015/02/20 21:13:27  rjtierne
- *  Archive Log:    Multinet Wizard: New instalment of the multinet wizard targeting synchronization of all sub-wizard data with selected subnet
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2015/02/13 21:31:58  rjtierne
- *  Archive Log:    Multinet Wizard
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/02/09 21:57:17  jijunwan
- *  Archive Log:    put tasks on SwingWorker so we do not query DB or FE on EDT
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/02/06 17:36:56  fernande
- *  Archive Log:    Fixed UserSettings not being saved off to the database in the SetupWizard
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/02/06 15:12:54  fernande
- *  Archive Log:    Changes so that the Setup Wizard depends on the Subnet Manager for all subnet-related operations
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/02/02 20:38:26  fernande
- *  Archive Log:    Fixing the SetupWizard so that it can define new subnets. Fixed also StackOverflowError exception when switching subnets.
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/01/30 20:28:59  fernande
- *  Archive Log:    Initial changes to support multiple fabric viewers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/01/21 21:21:20  rjtierne
- *  Archive Log:    Supplying preferences wizard with sweep interval through Context
- *  Archive Log:    for comparison with refresh rate supplied by user input. Also providing
- *  Archive Log:    task scheduler to preferences wizard so user supplied refresh rate can
- *  Archive Log:    be updated.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/01/20 19:13:14  rjtierne
- *  Archive Log:    Changed onApply() to return a boolean to indicate success/failure
- *  Archive Log:    Removed requirement to test connection before adding it to the DB
- *  Archive Log:    Apply button is no longer greyed out
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/01/11 21:48:15  jijunwan
- *  Archive Log:    setup wizard improvements
- *  Archive Log:    1) look and feel adjustment
- *  Archive Log:    2) secure FE support
- *  Archive Log:    3) apply wizard on current subnet
- *  Archive Log:    4) message display based on message type rather than directly specifying UI resources
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/12/23 18:34:42  rjtierne
- *  Archive Log:    Added setDirty() method
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/12/19 18:54:46  rjtierne
- *  Archive Log:    Disable the Apply button on startup so the user is forced to attempt subnet connection before proceeding.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/12/11 20:01:12  rjtierne
- *  Archive Log:    Removed the disabling of Next/Apply buttons to make Wizard functional again
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/12/10 21:31:02  rjtierne
- *  Archive Log:    New Setup Wizard based on framework
- *  Archive Log:
- *
- *  Overview: Controller for the Subnet Wizard
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.wizards.impl.subnet;
 
 import java.util.ArrayList;
@@ -178,6 +58,9 @@ import com.intel.stl.ui.wizards.model.subnet.SubnetModel;
 import com.intel.stl.ui.wizards.view.subnet.HostInfoPanel;
 import com.intel.stl.ui.wizards.view.subnet.SubnetWizardView;
 
+/**
+ * Controller for the Subnet Wizard
+ */
 public class SubnetWizardController implements IMultinetWizardTask,
         ISubnetControl, IModelChangeListener<IWizardModel> {
 

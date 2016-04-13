@@ -24,41 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- * 
- *  Functional Group: Fabric Viewer Application
- * 
- *  File Name: AppSettings.java
- * 
- *  Archive Source: $Source$
- * 
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.16  2015/09/02 15:56:04  fernande
- *  Archive Log: PR 130220 - FM GUI "about" window displays unmatched version and build #. Passing the OPA FM version thru the manifest.
- *  Archive Log:
- *  Archive Log: Revision 1.15  2015/08/27 19:30:56  fernande
- *  Archive Log: PR 128703 - Fail over doesn't work on A0 Fabric. Adding setting to specify the failover timeout
- *  Archive Log:
- *  Archive Log: Revision 1.14  2015/08/17 18:48:40  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - change backend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.13  2015/07/09 18:51:49  fernande
- *  Archive Log: PR 129447 - Database size increases a lot over a short period of time. Added method to expose application settings in the settings.xml file to higher levels in the app
- *  Archive Log:
- *  Archive Log: Revision 1.12  2015/06/10 19:36:34  jijunwan
- *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- * 
- *  Overview:
- * 
- *  @author: Fernando Fernandez
- * 
- ******************************************************************************/
-
 package com.intel.stl.configuration;
 
 import java.util.Properties;
@@ -67,8 +32,6 @@ import java.util.Set;
 import com.intel.stl.common.STLMessages;
 
 /**
- * @author Fernando Fernandez
- * 
  */
 public class AppSettings {
 

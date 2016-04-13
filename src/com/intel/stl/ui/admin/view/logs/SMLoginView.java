@@ -25,33 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: SMLoginView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2  2015/12/03 16:57:51  rjtierne
- *  Archive Log:    PR 131864 - Klocwork issue on logview
- *  Archive Log:    - In method SMLoginView#enableForm(), null protected all UI widgets before attempting to access component methods.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/11/18 23:55:26  rjtierne
- *  Archive Log:    PR 130965 - ESM support on Log Viewer
- *  Archive Log:    - Initial Version
- *  Archive Log:    - Extended LoginPanel to include:
- *  Archive Log:      1. A configuration panel with radio buttons for auto/custom configuration
- *  Archive Log:      2. A note explaining how to get help with the ESM Syslog
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.admin.view.logs;
 
 import java.awt.BorderLayout;

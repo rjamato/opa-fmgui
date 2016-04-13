@@ -24,39 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- * 
- *  Functional Group: Fabric Viewer Application
- * 
- *  File Name: SC2VLTMTCacheImpl.java
- * 
- *  Archive Source: $Source$
- * 
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.7  2015/10/07 11:39:58  jypak
- *  Archive Log: PR 130608 - Changes made to SC2VL mapping is not reflected in FM GUI's SC2SL Mapping Table.
- *  Archive Log: Klocwork issues fixed.
- *  Archive Log:
- *  Archive Log: Revision 1.6  2015/10/01 17:37:10  jypak
- *  Archive Log: PR 130608 - Changes made to SC2VL mapping is not reflected in FM GUI's SC2SL Mapping Table.
- *  Archive Log: Each cache's refreshCache method is implemented to remove relevant cahce.
- *  Archive Log:
- *  Archive Log: Revision 1.5  2015/08/17 18:48:53  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - change backend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.4  2015/06/10 19:36:39  jijunwan
- *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- * 
- *  Overview:
- * 
- *  @author: jypak
- * 
- ******************************************************************************/
 package com.intel.stl.api.subnet.impl;
 
 import java.util.ArrayList;

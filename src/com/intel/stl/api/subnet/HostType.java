@@ -25,26 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: HostType.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1  2015/10/01 21:27:36  fernande
- *  Archive Log:    PR130409 - [Dell]: FMGUI Admin Console login fails when switch is configured without username and password. Added HostType to HostInfo bean
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.api.subnet;
 
 public enum HostType {

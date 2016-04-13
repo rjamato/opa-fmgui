@@ -25,27 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: StatementClosedException.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1  2015/12/17 22:38:28  jijunwan
- *  Archive Log:    PR 131988 - Failover as I switch networks results in ERROR - Statement is closed to be dispalyed
- *  Archive Log:    - changed code to be silent on StatementClose on UI side
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.api;
 
 public class StatementClosedException extends RuntimeException {

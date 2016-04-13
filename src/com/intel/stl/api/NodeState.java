@@ -25,28 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: NodeState.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1  2015/09/08 15:58:50  jijunwan
- *  Archive Log:    PR 130326 - Performance enhancement on "large" fabric
- *  Archive Log:    - apply the SimpleCache on port cache
- *  Archive Log:    - split port cache to cache active ports (NodeState) and port info separately
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.api;
 
 import java.util.BitSet;

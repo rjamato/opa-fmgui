@@ -25,72 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ResourceLinkSubpageView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.13  2015/08/17 18:54:15  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/08/05 04:09:30  jijunwan
- *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
- *  Archive Log:    - applied undo mechanism on Topology Page
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/05/12 17:42:44  rjtierne
- *  Archive Log:    PR 128624 - Klocwork and FindBugs fixes for UI
- *  Archive Log:    Provide null pointer protection to getCurrentSubpage() before attempting to dereference it.
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/04/03 21:06:29  jijunwan
- *  Archive Log:    Introduced canExit to IPageController, and canPageChange to IPageListener to allow us do some checking before we switch to another page. Fixed the following bugs
- *  Archive Log:    1) when we refresh, do not show login dialog if Admin is not the current page
- *  Archive Log:    2) confirm abandon if we switch from admin page to other pages and there is changes on the Admin page
- *  Archive Log:    3) confirm abandon in Admin page if we switch between Application, DeviceGroup and VirtualFabric
- *  Archive Log:    4) added null check to handle special cases
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/02/20 21:11:34  jijunwan
- *  Archive Log:    PR 127179 - Information of Links tabs under "More" in Topology tab does not provide nice readability
- *  Archive Log:     - added tool tip text
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/02/05 19:09:21  jijunwan
- *  Archive Log:    fixed a issue reported by klocwork that is actually not a problem
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/10/24 20:12:06  jijunwan
- *  Archive Log:    Limited number of tabs to 5 and put other items on a "drop down" menu
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/10/23 16:00:06  jijunwan
- *  Archive Log:    changed topology information display to use device property panels, and JSectionView
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/08/26 15:15:35  jijunwan
- *  Archive Log:    added refresh function to all pages
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/07/23 18:14:50  rjtierne
- *  Archive Log:    Added protection to only select tab if tabs exist
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/07/23 18:03:13  rjtierne
- *  Archive Log:    Moved tab state change listener to EDT
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/18 13:42:40  rjtierne
- *  Archive Log:    Added a new ResourceLinkTabView to the tabs on the Link/Path
- *  Archive Log:    tabbed pane to house 2 stacked labels for the to/from nodes on
- *  Archive Log:    a link or path
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/10 14:29:14  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: JCardView to display tabbed pages when links are selected on
- *  the topology graph 
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.network.view;
 
 import java.awt.BorderLayout;
@@ -136,6 +70,10 @@ import com.intel.stl.ui.common.view.JSectionView;
 import com.intel.stl.ui.main.view.IPageListener;
 import com.intel.stl.ui.network.ResourceLinkPage;
 
+/**
+ * JCardView to display tabbed pages when links are selected on the topology
+ * graph
+ */
 public class ResourceLinkSubpageView extends JSectionView<ISectionListener>
         implements ChangeListener {
 

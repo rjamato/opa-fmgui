@@ -25,31 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: TimeDrivenProgressObserver.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2  2015/08/17 18:54:12  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/07/23 11:49:11  jypak
- *  Archive Log:    PR 129645 - Tree search enhancement.
- *  Archive Log:    Search progress bar, running icon and cancel capability are added.
- *  Archive Log:
- *
- *  Overview: Observer to publish progress by publishInterval or if the task is completed. 
- *            Also publish note asynchronously through SwingWorker#publish.
- *
- *  @author: jypak
- *
- ******************************************************************************/
 package com.intel.stl.ui.common;
 
 import static com.intel.stl.ui.main.FabricController.PROGRESS_AMOUNT_PROPERTY;
@@ -57,6 +32,10 @@ import static com.intel.stl.ui.main.FabricController.PROGRESS_NOTE_PROPERTY;
 
 import java.beans.PropertyChangeSupport;
 
+/**
+ * Observer to publish progress by publishInterval or if the task is completed.
+ * Also publish note asynchronously through SwingWorker#publish.
+ */
 public class TimeDrivenProgressObserver {
 
     private final PropertyChangeSupport support;

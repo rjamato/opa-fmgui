@@ -25,45 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: IPortSelectionListener.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/17 18:53:40  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/08/05 04:04:47  jijunwan
- *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
- *  Archive Log:    - applied undo mechanism on Performance Page
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/04 21:44:17  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/18 21:36:50  jijunwan
- *  Archive Log:    fixed a issue that incorrectly use portNum for rowIndex
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/18 21:03:28  jijunwan
- *  Archive Log:    Added link (jump to) capability to Connectivity tables and PortSummary table
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/28 22:21:58  jijunwan
- *  Archive Log:    added port preview to performance subpage
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.monitor;
 
 

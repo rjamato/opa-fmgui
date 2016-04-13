@@ -25,105 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ResourceCard.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.23  2015/11/02 23:56:52  jijunwan
- *  Archive Log:    PR 131396 - Incorrect Connectivity Table for a VF port
- *  Archive Log:    - adapted to the new connectivity table controller to support VF port
- *  Archive Log:
- *  Archive Log:    Revision 1.22  2015/08/17 18:54:00  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.21  2015/08/07 14:57:55  jypak
- *  Archive Log:    PR 129397 -gaps in cableinfo output and handling.
- *  Archive Log:    Updates on the formats of the cableinfo output and also new enums were defined for different output values.
- *  Archive Log:
- *  Archive Log:    Revision 1.20  2015/08/06 17:26:23  jijunwan
- *  Archive Log:    PR 129825 - Topology summary doesn't catch down graded ports
- *  Archive Log:    - improved to display "abnormal" ports
- *  Archive Log:    - added undo navigation support
- *  Archive Log:
- *  Archive Log:    Revision 1.19  2015/08/05 04:09:31  jijunwan
- *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
- *  Archive Log:    - applied undo mechanism on Topology Page
- *  Archive Log:
- *  Archive Log:    Revision 1.18  2015/02/18 19:32:02  jijunwan
- *  Archive Log:    PR 127102 - Overall summary of Switches under Topology page does not report correct number of switch ports
- *  Archive Log:     - improved the calculation to count both internal and external ports
- *  Archive Log:
- *  Archive Log:    Revision 1.17  2014/11/05 16:37:14  jijunwan
- *  Archive Log:    renamed ResoureLinkCard to ResourceLinkSection since it a section now
- *  Archive Log:
- *  Archive Log:    Revision 1.16  2014/10/23 16:00:04  jijunwan
- *  Archive Log:    changed topology information display to use device property panels, and JSectionView
- *  Archive Log:
- *  Archive Log:    Revision 1.15  2014/10/22 02:21:26  jijunwan
- *  Archive Log:    1) moved update tasks into task package
- *  Archive Log:    2) added topology summary panel
- *  Archive Log:    3) improved models to be able to calculate ports distribution, nodes not in fat tree etc.
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2014/10/09 12:37:03  fernande
- *  Archive Log:    Adding IContextAware interface to generalize context operations (setContext) and changes to the IProgressObserver interface
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2014/09/18 21:03:25  jijunwan
- *  Archive Log:    Added link (jump to) capability to Connectivity tables and PortSummary table
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2014/09/15 15:24:29  jijunwan
- *  Archive Log:    changed AppEventBus to 3rd party lib mbassador
- *  Archive Log:    some code reformat
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2014/08/26 15:15:19  jijunwan
- *  Archive Log:    added refresh function to all pages
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2014/08/05 22:11:06  jijunwan
- *  Archive Log:    changed text Path to Route
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2014/08/05 17:59:45  jijunwan
- *  Archive Log:    ensure we update UI on EDT, changed to use SingleTaskManager to manager concurrent UI update tasks
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2014/08/05 13:46:23  jijunwan
- *  Archive Log:    new implementation on topology control that uses double models to avoid synchronization issues on model and view
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/07/22 20:09:31  rjtierne
- *  Archive Log:    Implemented showPath() interface methods
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/07/18 13:39:41  rjtierne
- *  Archive Log:    Added a new pathSubpageCard to the list of possible Controllers for
- *  Archive Log:    the network resource views
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/07/11 19:29:01  fernande
- *  Archive Log:    Adding EventBus and linking UI elements to the Performance tab
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/07/10 21:22:09  rjtierne
- *  Archive Log:    Implemented method showPath()
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/07/10 15:42:36  rjtierne
- *  Archive Log:    Added new interface method setDescription()
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/10 14:34:16  rjtierne
- *  Archive Log:    Added new linkSubpageCard to display a new JCardView when links are
- *  Archive Log:    selected from the topology graph
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/08 20:19:44  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Top level controller for providing swappable JCards on the
- *  topology page depending on whether or not a component has been selected
- *  on the graph
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.network;
 
 import java.awt.Component;
@@ -149,6 +50,10 @@ import com.intel.stl.ui.network.view.ResourceLinkSubpageView;
 import com.intel.stl.ui.network.view.ResourceSubpageView;
 import com.intel.stl.ui.network.view.ResourceView;
 
+/**
+ * Top level controller for providing swappable JCards on the topology page
+ * depending on whether or not a component has been selected on the graph
+ */
 public class ResourceController {
 
     private final ResourceView view;

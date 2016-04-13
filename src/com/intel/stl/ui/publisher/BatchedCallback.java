@@ -25,56 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: BatchedCallBak.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.9  2015/08/17 18:54:09  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/04/09 22:53:03  jijunwan
- *  Archive Log:    improved BatchedCallback to support refreshing data
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/02/02 15:24:21  rjtierne
- *  Archive Log:    Made getCallback() public so it can be used by subscribers
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/12/11 18:49:26  fernande
- *  Archive Log:    Switch from log4j to slf4j+logback
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/08/15 21:47:12  jijunwan
- *  Archive Log:    included class name in log output
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/08/12 21:05:06  jijunwan
- *  Archive Log:    1) added description to task
- *  Archive Log:    2) applied failure management to TaskScheduler
- *  Archive Log:    3) some code auto-reformat
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/06/23 04:54:37  jijunwan
- *  Archive Log:    improved batched tasks to ignore incomplete data. This is useful when data refresh time interval is smaller than data processing time. When this happens, we selectively ignore some data, so we can automatically adapt to current system's limit.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/30 19:47:55  jijunwan
- *  Archive Log:    batched schedule to call multiple tasks and then process all results together
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/30 17:34:47  jijunwan
- *  Archive Log:    rename *CallBack to *Callback
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/30 17:29:23  jijunwan
- *  Archive Log:    rename ApiBroker to TaskScheduler; added pooled backgorund services to TaskScheduler so we can use it to run background tasks; improved to support schedule batched task and callbacks
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.publisher;
 
 import java.lang.reflect.Array;

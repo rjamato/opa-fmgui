@@ -25,37 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: DuplicateNameException.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3  2015/08/17 18:49:02  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/03/10 22:41:43  jijunwan
- *  Archive Log:    improved to show progress while we log into a host
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/05 17:30:37  jijunwan
- *  Archive Log:    init version to support Application management
- *  Archive Log:    1) read/write opafm.xml from/to host with backup file support
- *  Archive Log:    2) Application parser
- *  Archive Log:    3) Add/remove and update Application
- *  Archive Log:    4) unique name, reference conflication check
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.api.management;
 
 import com.intel.stl.api.FMException;

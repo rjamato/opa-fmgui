@@ -25,50 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: TreeNodeFactory.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8  2015/10/23 19:11:19  jijunwan
- *  Archive Log:    PR 129357 - Be able to hide inactive ports
- *  Archive Log:    - fixed typo in code
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/08/17 18:54:19  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/06/22 13:11:52  jypak
- *  Archive Log:    PR 128980 - Be able to search devices by name or lid.
- *  Archive Log:    New feature added to enable search devices by name, lid or node guid. The search results are displayed as a tree and when a result node from the tree is selected, original tree is expanded and the corresponding node is highlighted.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/02/05 21:21:44  jijunwan
- *  Archive Log:    fixed NPE issues found by klocwork
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/10/22 01:37:31  jijunwan
- *  Archive Log:    use plura name for a tree node's name
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/03 18:10:26  jijunwan
- *  Archive Log:    new Tree Updaters
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/02 19:24:28  jijunwan
- *  Archive Log:    renamed FVTreeBuilder to tree.FVTreeManager, moved FVResourceNode and FVTreeModel  to package tree
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/09/02 19:02:59  jijunwan
- *  Archive Log:    tree update based on merge sort algorithm
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.monitor.tree;
 
 import java.util.Comparator;

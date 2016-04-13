@@ -25,60 +25,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: LoginBean.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.9  2015/08/17 18:54:27  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/07/28 18:29:15  fisherma
- *  Archive Log:    PR 129219 - Admin page login dialog improvement
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/05/27 14:34:38  rjtierne
- *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
- *  Archive Log:    Stemming from a security problem with JPasswordField(), all password related
- *  Archive Log:    Strings have been changed to char[]
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/10/28 22:19:47  rjtierne
- *  Archive Log:    Added copy constructor
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/09/23 19:47:00  rjtierne
- *  Archive Log:    Integration of Gritty for Java Console
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/09/09 20:03:28  rjtierne
- *  Archive Log:    Added default login bean to console dialog to reduce typing
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/05 21:56:28  jijunwan
- *  Archive Log:    L&F adjustment on Console Views
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/04 21:05:06  rjtierne
- *  Archive Log:    Added password and portNum fields
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/22 19:53:57  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Java bean containing the information related to a single SSH
- *  console connection
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.console;
 
 import com.jcraft.jsch.Session;
 
 /**
- * @author rjtierne
- * 
+ *
+ * Java bean containing the information related to a single SSH console
+ * connection
  */
 public class LoginBean {
 

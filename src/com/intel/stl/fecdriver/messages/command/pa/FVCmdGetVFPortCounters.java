@@ -24,35 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- * 
- *  Functional Group: Fabric Viewer Application
- * 
- *  File Name: FVCmdGetVFPortCounters.java
- * 
- *  Archive Source: $Source$
- * 
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.6  2015/09/17 11:52:51  jypak
- *  Archive Log: PR 129516- vfSID as described in spec not implemented in gen 1 fm or tools
- *  Archive Log: Removed all vfSID related code.
- *  Archive Log:
- *  Archive Log: Revision 1.5  2015/08/17 18:49:11  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - change backend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.4  2015/06/10 19:36:32  jijunwan
- *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- * 
- *  Overview:
- * 
- *  @author: jijunwan
- * 
- ******************************************************************************/
 package com.intel.stl.fecdriver.messages.command.pa;
 
 import com.intel.stl.api.performance.PAConstants;
@@ -65,8 +36,6 @@ import com.intel.stl.fecdriver.messages.command.InputArgument;
 import com.intel.stl.fecdriver.messages.response.pa.FVRspGetVFPortCounters;
 
 /**
- * @author jijunwan
- * 
  */
 public class FVCmdGetVFPortCounters extends
         PACommand<VFPortCounters, VFPortCountersBean> implements

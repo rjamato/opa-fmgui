@@ -25,47 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PortConfigBean.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:48:41  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/04 21:37:53  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/08/12 20:07:44  jijunwan
- *  Archive Log:    1) renamed HexUtils to StringUtils
- *  Archive Log:    2) added a method to StringUtils to get error message for an exception
- *  Archive Log:    3) changed all code to call StringUtils to get error message
- *  Archive Log:    4) some extra ode format change
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/06/03 20:49:31  jijunwan
- *  Archive Log:    added VF related PA attributes: GetVFList, GetVFInfo, GetVFConfig, GetVFPortCounters and GetVFFocusPorts
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/12 19:23:05  fernande
- *  Archive Log:    Initial version
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/01 21:37:06  jijunwan
- *  Archive Log:    Added PA attributes GroupConfig
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.api.performance;
 
 import java.io.Serializable;

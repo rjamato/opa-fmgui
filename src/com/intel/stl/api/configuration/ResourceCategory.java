@@ -25,59 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ResourceCategory.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.10  2015/08/17 18:48:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/02/06 00:27:01  jijunwan
- *  Archive Log:    added neighbor link down reason to match FM 325
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/01/21 22:51:00  jijunwan
- *  Archive Log:    improved to throw exception when we encounter unsupported value. This will help us identify problems when it happens.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/01/11 20:47:24  jijunwan
- *  Archive Log:    updated to the latest FM as of 01/05/2015.
- *  Archive Log:    adapt to changes introduced on FM side.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/01/05 19:25:05  jypak
- *  Archive Log:    Link Down Error Log updates
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/12/31 17:41:17  jypak
- *  Archive Log:    1. CableInfo updates (Moved the QSFP interpretation logic to backend etc.)
- *  Archive Log:    2. SC2SL updates.
- *  Archive Log:    3. SC2VLt updates.
- *  Archive Log:    4. SC3VLnt updates.
- *  Archive Log:    Some of the SubnetApi, CachedSubnetApi updates should be undone when the FE supports cable info, SC2SL, SC2VLt, SC2VLnt.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/12/18 16:25:41  jypak
- *  Archive Log:    Cable Info updates.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/11/19 07:13:41  jypak
- *  Archive Log:    HoQLife, VL Stall Count : property bar chart panel updates
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/11/13 00:36:58  jypak
- *  Archive Log:    MTU by VL bar chart panel updates.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/09/29 18:53:56  fernande
- *  Archive Log:    Changing UserSettings to support Properties Display options
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.api.configuration;
 
 import static com.intel.stl.api.configuration.ResourceType.HFI;

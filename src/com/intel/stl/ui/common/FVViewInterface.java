@@ -25,39 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: FVViewInterface.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3  2015/08/17 18:54:12  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/01/11 21:24:07  jijunwan
- *  Archive Log:    generic table view with table model
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/12 19:46:33  fernande
- *  Archive Log:    Initial version
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/04 19:31:30  rjtierne
- *  Archive Log:    Removed formatTable method from the interface. This method is now abstract and is implemented by the extending class.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/03/28 15:11:03  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Public interface for a table class.
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common;
 
 import javax.swing.table.TableModel;

@@ -25,125 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ConsoleTerminalView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.27  2015/11/11 13:26:28  robertja
- *  Archive Log:    PR 130278 - Store console tab help pane state on a per-tab basis so that help info is restored when focus returns to a tab.
- *  Archive Log:
- *  Archive Log:    Revision 1.26  2015/09/08 21:21:58  jijunwan
- *  Archive Log:    PR 130329 - Windows FM GUI - Admin tab - Console sidetab - need space between login buttons
- *  Archive Log:    - adjusted insets to increase space between buttons
- *  Archive Log:
- *  Archive Log:    Revision 1.25  2015/08/17 18:54:14  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.24  2015/06/25 11:55:06  jypak
- *  Archive Log:    PR 129073 - Add help action for Admin Page.
- *  Archive Log:    The help action is added to App, DG, VF,Console page and Console terminal. For now, a help ID and a content are being used as a place holder for each page. Once we get the help contents delivered by technical writer team, the HelpAction will be updated with correct help ID.
- *  Archive Log:
- *  Archive Log:    Revision 1.23  2015/05/27 21:53:03  rjtierne
- *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
- *  Archive Log:    - Implementing renamed IConsoleLoginListener instead of IDocumentListener
- *  Archive Log:
- *  Archive Log:    Revision 1.22  2015/05/27 14:35:40  rjtierne
- *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
- *  Archive Log:    - View restructured to correct problem with console locks
- *  Archive Log:    - Tab listener passed in to constructor
- *  Archive Log:    - Implemented IDocumentListener to give the ConsoleLoginView the ability to
- *  Archive Log:    update the controls in this view
- *  Archive Log:
- *  Archive Log:    Revision 1.21  2015/05/12 17:40:48  rjtierne
- *  Archive Log:    PR 128624 - Klocwork and FindBugs fixes for UI
- *  Archive Log:    - Assigned value to "owner" in constructor since it was never assigned a value and
- *  Archive Log:    passed to showConfigDialog() in getPassword().
- *  Archive Log:    - No need to check boxCommand for NULL since it was already dereferenced before
- *  Archive Log:
- *  Archive Log:    Revision 1.20  2015/05/01 21:29:17  jijunwan
- *  Archive Log:    changed to directly show exception(s)
- *  Archive Log:
- *  Archive Log:    Revision 1.19  2015/04/28 22:09:04  jijunwan
- *  Archive Log:    removed title argument from #showErrorMessage
- *  Archive Log:
- *  Archive Log:    Revision 1.18  2015/04/10 14:07:10  rjtierne
- *  Archive Log:    PR 126675 - User cannot execute commands on duplicate Console numbers beyond 10 consoles.
- *  Archive Log:    In method commandSendAction(), verified that # channels doesn't exceed 10 before creating
- *  Archive Log:    a new one.
- *  Archive Log:
- *  Archive Log:    Revision 1.17  2015/04/09 21:14:19  rjtierne
- *  Archive Log:    126675 - User cannot execute commands on duplicate Console numbers beyond 10 consoles.
- *  Archive Log:    In method commandSendAction(), verified that # channels doesn't exceed 10 before creating
- *  Archive Log:    a new one.
- *  Archive Log:
- *  Archive Log:    Revision 1.16  2015/03/05 17:34:32  jijunwan
- *  Archive Log:    new constants and constant name change
- *  Archive Log:
- *  Archive Log:    Revision 1.15  2014/10/29 21:42:01  rjtierne
- *  Archive Log:    Provide null pointer protection for command combo box
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2014/10/28 22:19:29  rjtierne
- *  Archive Log:    Added setter to toggle enable on command field
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2014/10/24 14:37:00  rjtierne
- *  Archive Log:    Moved view enable logic out of btnLock action listener and replaced with display
- *  Archive Log:    of login dialog and invocation of new method toggleLock()
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2014/10/22 15:42:43  rjtierne
- *  Archive Log:    Added null pointer protection to call to updateSelection()
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2014/10/21 14:05:14  rjtierne
- *  Archive Log:    Moved view components out of controller and into view. Referencing the
- *  Archive Log:    main window to center dialogs
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2014/10/17 19:59:17  rjtierne
- *  Archive Log:    Force help system to navigate to "Report Types" after -o option is typed
- *  Archive Log:    for iba_report
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2014/10/17 19:35:10  rjtierne
- *  Archive Log:    Calling parser to process user input to navigate help system. Remove
- *  Archive Log:    command filter so all commands will pass
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2014/10/13 14:56:46  rjtierne
- *  Archive Log:    Remove redundant key listener
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/10/01 19:53:03  rjtierne
- *  Archive Log:    Add auto complete to combo box.  Display error dialog if illegal attempt is made to send illegal command
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/09/23 19:47:01  rjtierne
- *  Archive Log:    Integration of Gritty for Java Console
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/09/09 20:48:44  rjtierne
- *  Archive Log:    Make the command field the focus when a console terminal appears
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/09/09 20:04:36  rjtierne
- *  Archive Log:    Don't update current console tab if command is executed on a new tab
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/09 18:23:12  jijunwan
- *  Archive Log:    disabled command combobox
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/05 21:56:32  jijunwan
- *  Archive Log:    L&F adjustment on Console Views
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/22 19:53:59  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: View for the overall console subpage containing:
- *      1. Info panel with Host, Port, and User
- *      2. Command panel with command field and current/new radio buttons
- *      3. SSH console into selected remote system
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.console.view;
 
 import java.awt.BorderLayout;
@@ -186,6 +67,11 @@ import com.intel.stl.ui.console.ITabListener;
 import com.intel.stl.ui.console.LoginBean;
 import com.intel.stl.ui.main.view.IFabricView;
 
+/**
+ * View for the overall console subpage containing: 1. Info panel with Host,
+ * Port, and User 2. Command panel with command field and current/new radio
+ * buttons 3. SSH console into selected remote system
+ */
 public class ConsoleTerminalView extends JPanel implements
         IConsoleLoginListener {
 

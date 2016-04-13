@@ -25,105 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: FailoverManager.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.29  2015/08/27 19:36:27  fernande
- *  Archive Log:    PR 128703 - Fail over doesn't work on A0 Fabric. Adding setting to specify the failover timeout
- *  Archive Log:
- *  Archive Log:    Revision 1.28  2015/08/17 18:49:07  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.27  2015/05/28 12:06:08  robertja
- *  Archive Log:    PR128703 Return correct subnet ID when fail-over completes.
- *  Archive Log:
- *  Archive Log:    Revision 1.26  2015/05/26 15:40:06  fernande
- *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
- *  Archive Log:
- *  Archive Log:    Revision 1.25  2015/05/26 14:48:34  robertja
- *  Archive Log:    PR128703 - Fix check for fail-over in progress.  Also, suppress command response errors during fail-over.
- *  Archive Log:
- *  Archive Log:    Revision 1.24  2015/05/18 14:45:10  robertja
- *  Archive Log:    PR128586 Updates for unit-testing after code review.
- *  Archive Log:
- *  Archive Log:    Revision 1.23  2015/05/08 18:28:39  robertja
- *  Archive Log:    Further code clean-up for fail-over.  Added shutdown of working FailoverManagers on application close.
- *  Archive Log:
- *  Archive Log:    Revision 1.22  2015/05/08 15:04:31  robertja
- *  Archive Log:    Removed debug code.
- *  Archive Log:
- *  Archive Log:    Revision 1.21  2015/05/08 13:03:11  robertja
- *  Archive Log:    Updated after code review.
- *  Archive Log:
- *  Archive Log:    Revision 1.20  2015/05/05 18:33:55  robertja
- *  Archive Log:    Refactored version of FailoverManager.  Converted to singleton and restructured for maintainability.
- *  Archive Log:
- *  Archive Log:    Revision 1.19  2015/04/29 17:30:57  robertja
- *  Archive Log:    Add debug code for "SM unavailable" testing.
- *  Archive Log:
- *  Archive Log:    Revision 1.18  2015/04/23 14:49:20  robertja
- *  Archive Log:    Add PAQuery to fail-over criteria to insure we have a working PM.
- *  Archive Log:
- *  Archive Log:    Revision 1.17  2015/04/21 15:30:54  robertja
- *  Archive Log:    Update fail-over progress bar.
- *  Archive Log:
- *  Archive Log:    Revision 1.16  2015/04/17 12:48:55  robertja
- *  Archive Log:    Fixed critical Klocwork issue where NIO SocketChannel was not closed on exit.
- *  Archive Log:
- *  Archive Log:    Revision 1.15  2015/04/10 13:16:51  robertja
- *  Archive Log:    Added wait after connection refused.
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2015/04/09 18:28:26  robertja
- *  Archive Log:    Handle case where single available FE/SM connectivity is lost briefly.
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2015/04/07 17:16:12  robertja
- *  Archive Log:    Change to STL Connection tryConnect to avoid polluting the cache with temporary connections.  Also, don't register SocketChannel for connection events if the host address cannot be resolved.
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/04/06 11:04:55  jypak
- *  Archive Log:    Klockwork: Back End Critical Without Unit Test. Open issues fixed.
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/04/03 18:42:17  robertja
- *  Archive Log:    Restore methods accidently deleted.
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/04/03 18:37:34  robertja
- *  Archive Log:    Get list of SM's from initial connection to verify fail-over to the correct subnet.
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/03/31 16:16:24  fernande
- *  Archive Log:    Failover support. Adding interfaces and implementations to display in the UI the failover progress.
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/03/26 15:03:18  robertja
- *  Archive Log:    Check for connection null before clean-up.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/03/26 14:59:42  robertja
- *  Archive Log:    Move clean-up of STLConnection to finally block.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/03/25 21:47:24  jijunwan
- *  Archive Log:    changed fail-over message id to another number
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/03/25 17:40:38  robertja
- *  Archive Log:    Add constructor to support JUnit tests.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/03/24 18:43:11  robertja
- *  Archive Log:    Add logging and SM fail-over exception.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/03/23 15:19:23  robertja
- *  Archive Log:    Correct file header for CVS.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: robertja
- *
- ******************************************************************************/
-
 package com.intel.stl.fecdriver.impl;
 
 import java.io.IOException;
@@ -156,8 +57,6 @@ import com.intel.stl.fecdriver.IFailoverProgressListener;
 import com.intel.stl.fecdriver.dispatcher.SMFailoverException;
 
 /**
- * @author robertja
- * 
  */
 public class FailoverManager implements IFailoverManager {
 

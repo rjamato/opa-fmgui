@@ -25,87 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: EventWizardController.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.19  2015/11/09 20:43:44  fernande
- *  Archive Log:    PR130231 - Cannot delete subnet from Wizard if subnet name is "Unknown Subnet". Fixed bug where reset would not work in the events step.
- *  Archive Log:
- *  Archive Log:    Revision 1.18  2015/08/17 18:54:42  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.17  2015/08/11 20:35:11  jijunwan
- *  Archive Log:    PR 129935 - Need proper default value for user preference
- *  Archive Log:    - set default notice severity for each event type
- *  Archive Log:    - use default notice severity from event type as the init value for event table
- *  Archive Log:
- *  Archive Log:    Revision 1.16  2015/07/17 20:48:23  jijunwan
- *  Archive Log:    PR 129594 - Apply new input verification on setup wizard
- *  Archive Log:    - introduced isEditValid to allow us check whether we have valid edit
- *  Archive Log:
- *  Archive Log:    Revision 1.15  2015/04/21 21:17:39  rjtierne
- *  Archive Log:    - In onReset(), initialized the current subnet in MultinetWizardController so the
- *  Archive Log:    correct user settings can be retrieved.
- *  Archive Log:    - In setDirty(), call the setDirty() method in the MultinetWizardController to
- *  Archive Log:    set the Apply and Reset button enables in its view.
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2015/04/02 13:32:59  jypak
- *  Archive Log:    Klockwork: Front End Critical Without Unit Test. 47 open issues fixed. All of them are for null checks.
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2015/03/31 17:48:29  rjtierne
- *  Archive Log:    Added/Implemented setConnectable()
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/03/20 21:06:11  rjtierne
- *  Archive Log:    Added protection in updateModel() to only attempt to access modelRulesList if size > 0
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/02/27 15:34:29  rjtierne
- *  Archive Log:    Fixed preferences model/view sync issue when creating new subnet
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/02/26 22:51:30  rjtierne
- *  Archive Log:    Update the eventsModel when onModelChange() is called
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/02/23 15:06:17  rjtierne
- *  Archive Log:    In method init() update userSettings with the default table if a
- *  Archive Log:    new wizard configuration is in progress
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/02/20 21:13:25  rjtierne
- *  Archive Log:    Multinet Wizard: New instalment of the multinet wizard targeting synchronization of all sub-wizard data with selected subnet
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/02/13 21:31:57  rjtierne
- *  Archive Log:    Multinet Wizard
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/01/30 20:28:41  fernande
- *  Archive Log:    Initial changes to support multiple fabric viewers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/01/20 19:11:39  rjtierne
- *  Archive Log:    Changed onApply() to return a boolean to indicate success/failure
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/12/23 18:34:23  rjtierne
- *  Archive Log:    New logic to make first-run wizards retain information when switching between wizards
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/12/19 18:52:43  rjtierne
- *  Archive Log:    Minor update to doInteractiveAction() when changing wizards
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/12/11 20:01:10  rjtierne
- *  Archive Log:    Removed the disabling of Next/Apply buttons to make Wizard functional again
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/12/10 21:31:08  rjtierne
- *  Archive Log:    New Setup Wizard based on framework
- *  Archive Log:
- *
- *  Overview: Controller for the Event Wizard
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.wizards.impl.event;
 
 import java.util.ArrayList;
@@ -129,6 +48,9 @@ import com.intel.stl.ui.wizards.model.event.EventRulesTableModel;
 import com.intel.stl.ui.wizards.model.event.EventsModel;
 import com.intel.stl.ui.wizards.view.event.EventWizardView;
 
+/**
+ * Controller for the Event Wizard
+ */
 public class EventWizardController implements IMultinetWizardTask,
         IEventControl, IModelChangeListener<IWizardModel> {
 

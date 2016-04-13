@@ -24,92 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- * 
- *  Functional Group: Fabric Viewer Application
- * 
- *  File Name: ComponentFactory.java
- * 
- *  Archive Source: $Source$
- * 
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.51  2015/09/14 16:06:59  jijunwan
- *  Archive Log: PR 130229 - The text component of all editable combo boxes should provide validation of the input
- *  Archive Log: - apply FormattedComboBoxEditor on ComponentFactory and PreferenceWizard
- *  Archive Log:
- *  Archive Log: Revision 1.50  2015/08/18 14:28:33  jijunwan
- *  Archive Log: PR 130033 - Fix critical issues found by Klocwork or FindBugs
- *  Archive Log: - DateFormat is not thread safe. Changed to create new DateFormat to avoid sharing it among different threads
- *  Archive Log:
- *  Archive Log: Revision 1.49  2015/08/17 18:53:36  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - changed frontend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.48  2015/08/17 14:22:37  rjtierne
- *  Archive Log: PR 128979 - SM Log display
- *  Archive Log: This is the first version of the Log Viewer which displays select lines of text from the remote SM log file. Updates include searchable raw text from file, user-defined number of lines to display, refreshing end of file, and paging. This PR is now closed and further updates can be found by referencing PR 130011 - "Enhance SM Log Viewer to include Standard and Advanced requirements".
- *  Archive Log:
- *  Archive Log: Revision 1.47  2015/08/11 14:36:50  jijunwan
- *  Archive Log: PR 129917 - No update on event statistics
- *  Archive Log: - Apply event subscriber on HealthHistoryCard. It will update either by event or period updating.
- *  Archive Log: - Improved Health Trend chart to draw current data shape
- *  Archive Log: - Improved Health Trend view to show current value immediately
- *  Archive Log:
- *  Archive Log: Revision 1.46  2015/07/28 18:29:12  fisherma
- *  Archive Log: PR 129219 - Admin page login dialog improvement
- *  Archive Log:
- *  Archive Log: Revision 1.45  2015/07/17 21:20:57  jijunwan
- *  Archive Log: PR 129528 - input validation improvement
- *  Archive Log: - improved CompomentFactory to create text field based on argument allowEmpty
- *  Archive Log: - apply it on Log preference and subnet name on Setup Wizard to forbid empty string
- *  Archive Log: - apply it on key file location on Setup Wizard to allow empty string
- *  Archive Log:
- *  Archive Log: Revision 1.44  2015/07/17 20:32:15  jijunwan
- *  Archive Log: PR 129528 - input validation improvement
- *  Archive Log: - change default number format to "###", so we need to support character ','
- *  Archive Log:
- *  Archive Log: Revision 1.43  2015/07/16 21:22:53  jijunwan
- *  Archive Log: PR 129528 - input validation improvement
- *  Archive Log: - extended SafeTextField to apply rules in name check
- *  Archive Log: - moved valid chars to UIConstants
- *  Archive Log: - made FieldPair more generic and flexible
- *  Archive Log:
- *  Archive Log: Revision 1.42  2015/07/13 19:30:57  jijunwan
- *  Archive Log: PR 129528 - input validation improvement
- *  Archive Log: - In interactive console, the port number must be in range (0, 65535) and the password cannot be empty.
- *  Archive Log:
- *  Archive Log: Revision 1.41  2015/07/13 18:37:24  jijunwan
- *  Archive Log: PR 129528 - input validation improvement
- *  Archive Log: - updated generic classes to use the new text field
- *  Archive Log:
- *  Archive Log: Revision 1.40  2015/06/29 15:05:45  jypak
- *  Archive Log: PR 129284 - Incorrect QSFP field name.
- *  Archive Log: Field name fix has been implemented. Also, introduced a conversion to Date object to add flexibility to display date code.
- *  Archive Log:
- *  Archive Log: Revision 1.39  2015/06/25 22:23:54  jijunwan
- *  Archive Log: PR 129216 - The labels on a TopN chart may occupy too much space
- *  Archive Log: -  change parameter to set the maximum label width to be half of the chart
- *  Archive Log:
- *  Archive Log: Revision 1.38  2015/06/25 20:51:59  jijunwan
- *  Archive Log: Bug 126755 - Pin Board functionality is not working in FV
- *  Archive Log: - improved to display title annotation properly the chart is very narrow
- *  Archive Log:
- *  Archive Log: Revision 1.37  2015/06/22 13:11:51  jypak
- *  Archive Log: PR 128980 - Be able to search devices by name or lid.
- *  Archive Log: New feature added to enable search devices by name, lid or node guid. The search results are displayed as a tree and when a result node from the tree is selected, original tree is expanded and the corresponding node is highlighted.
- *  Archive Log:
- *  Archive Log: Revision 1.36  2015/06/10 19:58:51  jijunwan
- *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- * 
- *  Overview:
- * 
- *  @author: jijunwan
- * 
- ******************************************************************************/
 package com.intel.stl.ui.common.view;
 
 import java.awt.BasicStroke;
@@ -204,8 +118,6 @@ import com.intel.stl.ui.common.view.SafeTextField.SafeStringFormatter;
 import com.intel.stl.ui.model.NodeTypeViz;
 
 /**
- * @author jijunwan
- * 
  */
 public class ComponentFactory {
     /**

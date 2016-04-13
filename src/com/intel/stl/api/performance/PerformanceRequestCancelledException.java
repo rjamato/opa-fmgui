@@ -25,30 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PerformanceRequestCancelledException.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2  2015/08/17 18:48:41  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/07/31 21:03:16  fernande
- *  Archive Log:    PR 129631 - Ports table sometimes not getting performance related data. Changed FVResponse to throw a RequestCancelledException so that the UI gets notified when a request was cancelled by a user actions.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.api.performance;
 
 import static com.intel.stl.common.STLMessages.STL60008_REQUEST_CANCELLED_BY_USER;

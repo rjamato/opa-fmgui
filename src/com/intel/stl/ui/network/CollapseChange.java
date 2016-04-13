@@ -26,33 +26,6 @@
  */
 
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: mxCollapseChange.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2  2015/08/17 18:54:00  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/06/23 04:56:56  jijunwan
- *  Archive Log:    new topology code to support interactions with a topology graph
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/06/17 16:55:41  jijunwan
- *  Archive Log:    pan and zoom at current mouse point; shift+mouse drag to move nodes on screen; right control to clear selections; undoable node collapse and expand
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.network;
 
 import com.intel.stl.ui.model.GraphNode;

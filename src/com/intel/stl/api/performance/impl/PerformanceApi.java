@@ -25,88 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PerformanceApi.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.45  2016/01/26 19:52:43  fernande
- *  Archive Log:    PR 132387 - [Dell]: FMGUI Fails to Open Due to Database Lock. Extended the purge frequency from 1 day to 15 days
- *  Archive Log:
- *  Archive Log:    Revision 1.44  2015/12/17 21:51:09  jijunwan
- *  Archive Log:    PR 132124 - Newly created VF not displayed after reboot of SM
- *  Archive Log:    - improved the arch to do cache reset
- *  Archive Log:
- *  Archive Log:    Revision 1.43  2015/12/17 21:07:32  jijunwan
- *  Archive Log:    PR 132124 - Newly created VF not displayed after reboot of SM
- *  Archive Log:    - added code to clear vf and dg list cache
- *  Archive Log:
- *  Archive Log:    Revision 1.42  2015/08/17 18:49:03  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.41  2015/08/10 17:04:46  robertja
- *  Archive Log:    PR128974 - Email notification functionality.
- *  Archive Log:
- *  Archive Log:    Revision 1.40  2015/07/31 21:04:21  fernande
- *  Archive Log:    PR 129631 - Ports table sometimes not getting performance related data. Translating a RequestCancelledException into a special PerformanceRequestCancelledException for UI consumption.
- *  Archive Log:
- *  Archive Log:    Revision 1.39  2015/07/30 13:15:07  fernande
- *  Archive Log:    PR 129437 - ImageInfo save issue. The code now update a previously saved ImageInfo record.
- *  Archive Log:
- *  Archive Log:    Revision 1.38  2015/07/10 20:44:35  fernande
- *  Archive Log:    PR 129522 - Notice is not written to database due to topology not found. Moved FE Helpers to the session object and changed the order of initialization for the SubnetContext.
- *  Archive Log:
- *  Archive Log:    Revision 1.37  2015/07/09 18:50:29  fernande
- *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Added GroupInfoPurgeTask; it deletes GroupInfo records older that a retention time (default is 15 days) and with a certain frequency (default is daily). These values can be changed in the settings.xml file.
- *  Archive Log:
- *  Archive Log:    Revision 1.36  2015/05/26 15:34:45  fernande
- *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
- *  Archive Log:
- *  Archive Log:    Revision 1.35  2015/04/17 16:41:38  jypak
- *  Archive Log:    Fix for this intermittent problem for PA short term history : For the group info trend charts, when a different short term history time scope(1h, 2h, 6h, 24h) is selected for like ten times, the time domain axis displays years (1970, 1980...) and chart doesn't update correctly. The fix is to return null for the history data bean in performance API when the image data for the bean is returned as null.  The image data was null because the FE request of the data was cancelled before any response was processed. Because this error occurs only when the request was cancelled, we can just return null history data to avoid adding '0' time stamp to group info chart. Same safeguard code lines were added for VFInfo/PortCounter/VFPortCounter history. The port counter history doesn't seem to have this intermittent problem for single port history query but multi port history request can have same problem in the future.
- *  Archive Log:
- *  Archive Log:    Revision 1.34  2015/04/09 03:29:24  jijunwan
- *  Archive Log:    updated to match FM 390
- *  Archive Log:
- *  Archive Log:    Revision 1.33  2015/03/02 15:28:05  jypak
- *  Archive Log:    History query has been done with current live image ID '0' which isn't correct. Updates here are:
- *  Archive Log:    1. Get the image ID from current image.
- *  Archive Log:    2. History queries are done with this image ID.
- *  Archive Log:
- *  Archive Log:    Revision 1.32  2015/02/23 22:24:36  jijunwan
- *  Archive Log:    added GroupConfCache
- *  Archive Log:
- *  Archive Log:    Revision 1.31  2015/02/12 19:31:26  jijunwan
- *  Archive Log:    1) improvement on get imagestamp from image info
- *  Archive Log:    2) fixed an mistake on group info history query
- *  Archive Log:
- *  Archive Log:    Revision 1.30  2015/02/10 21:26:02  jypak
- *  Archive Log:    1. Introduced SwingWorker for history query initialization for progress status updates.
- *  Archive Log:    2. Fixed the list of future for history query in TaskScheduler. Now it can have all the Future entries created.
- *  Archive Log:    3. When selecting history type, just cancel the history query not sheduled query.
- *  Archive Log:    4. The refresh rate is now from user settings not from the config api.
- *  Archive Log:
- *  Archive Log:    Revision 1.29  2015/02/09 21:29:58  jijunwan
- *  Archive Log:    added clean up to APIs that intend to close STLConections
- *  Archive Log:
- *  Archive Log:    Revision 1.28  2015/02/04 21:38:00  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *
- *  Overview:
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.api.performance.impl;
 
 import static com.intel.stl.api.configuration.AppInfo.PROPERTIES_DATABASE;
@@ -170,8 +88,6 @@ import com.intel.stl.datamanager.DatabaseManager;
 import com.intel.stl.fecdriver.session.RequestCancelledByUserException;
 
 /**
- * @author jijunwan
- *
  */
 public class PerformanceApi implements IPerformanceApi {
 

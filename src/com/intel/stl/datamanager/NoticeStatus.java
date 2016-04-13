@@ -25,40 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: NoticeStatus.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4  2015/08/17 18:49:14  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/10/24 18:50:22  fernande
- *  Archive Log:    Initial batch of fixes for notice processing. Notice updates not working yet but need a stable environment for Bob.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/18 14:18:34  jypak
- *  Archive Log:    1. When  shutdown notice manager, remove it from the listener list of the STLConnection so that the blocking queue doesn't fill up.
- *  Archive Log:    2. Removed unncessary print out statements.
- *  Archive Log:    3. Port cache now has null check for memory cache.
- *  Archive Log:    4. For FE errors, still process the notice and set the NoticeStatus to FEERROR.
- *  Archive Log:    5. Junit updates for NoticeStatus.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/27 17:04:20  fernande
- *  Archive Log:    Database changes to add Notice and ImageInfo tables to the schema database
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.datamanager;
 
 /**

@@ -25,45 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PreferencesModel.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7  2015/08/17 18:54:50  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/08/12 19:28:12  fisherma
- *  Archive Log:    Store/retrieve SMTP settings in/from SECTION_PREFERENCE properties.  Cleanup unused interface.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/08/11 20:35:56  jijunwan
- *  Archive Log:    PR 129935 - Need proper default value for user preference
- *  Archive Log:    - set default time window to 60 sec
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/08/10 17:55:47  robertja
- *  Archive Log:    PR 128974 - Email notification functionality.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/02/23 15:06:54  rjtierne
- *  Archive Log:    Replaced hard coded string constants with STLConstants
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/02/20 21:15:16  rjtierne
- *  Archive Log:    Multinet Wizard: Data models for all wizards for data storage and display
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/02/13 21:29:16  rjtierne
- *  Archive Log:    Multinet Wizard: Initial Version
- *  Archive Log:
- *
- *  Overview: Model to store the preferences wizard settings
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.wizards.model.preferences;
 
 import static com.intel.stl.api.configuration.UserSettings.PROPERTY_MAIL_RECIPIENTS;
@@ -79,6 +40,9 @@ import java.util.Properties;
 
 import com.intel.stl.ui.common.STLConstants;
 
+/**
+ * Model to store the preferences wizard settings
+ */
 public class PreferencesModel {
 
     private Map<String, Properties> preferencesMap =

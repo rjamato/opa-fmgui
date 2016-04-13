@@ -25,39 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: VFPortCountersBean.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.9  2015/09/17 11:51:42  jypak
- *  Archive Log:    PR 129516- vfSID as described in spec not implemented in gen 1 fm or tools
- *  Archive Log:    Removed all vfSID related code.
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/08/17 18:48:41  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/02/12 19:30:00  jijunwan
- *  Archive Log:    introduced interface ITimestamped, and all timimg attributes implemented it, so we can easily know which attribute is associated with timestamp
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/02/04 21:37:53  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.api.performance;
 
 import java.io.Serializable;
@@ -68,8 +35,6 @@ import com.intel.stl.api.StringUtils;
 import com.intel.stl.api.Utils;
 
 /**
- * @author jijunwan
- * 
  */
 public class VFPortCountersBean implements ITimestamped, Serializable {
     private static final long serialVersionUID = 1L;

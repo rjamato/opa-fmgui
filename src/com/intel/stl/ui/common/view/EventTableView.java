@@ -25,66 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: EventTableView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.9  2015/08/18 14:28:33  jijunwan
- *  Archive Log:    PR 130033 - Fix critical issues found by Klocwork or FindBugs
- *  Archive Log:    - DateFormat is not thread safe. Changed to create new DateFormat to avoid sharing it among different threads
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/08/17 18:53:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/07/21 21:51:45  jijunwan
- *  Archive Log:    PR 129633 - Incorrect date sort on event table
- *  Archive Log:    - changed table model to use date as value, and the cell renderer uses string to display date
- *  Archive Log:    - changed date format to include am/pm
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/04/02 13:32:58  jypak
- *  Archive Log:    Klockwork: Front End Critical Without Unit Test. 47 open issues fixed. All of them are for null checks.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/05/28 17:25:41  jijunwan
- *  Archive Log:    color severity on event table, by default sort event table by time, by default show event table on home page, show text for enums
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/05/08 19:25:43  jijunwan
- *  Archive Log:    MVC refactory
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/04/23 18:29:16  rjtierne
- *  Archive Log:    Removed main panel and added UI components
- *  Archive Log:    to "this" panel
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/16 16:20:48  jijunwan
- *  Archive Log:    minor refactory
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/12 19:47:19  fernande
- *  Archive Log:    Initial version
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/04/09 21:01:52  rjtierne
- *  Archive Log:    Super class FVTableView is no longer extended from
- *  Archive Log:    JCard so renamed getMainComponent() to initComponents() and constructor set the model and
- *  Archive Log:    formats the table
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/08 17:32:57  jijunwan
- *  Archive Log:    introduced new summary section for "Home Page"
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/04 19:20:28  rjtierne
- *  Archive Log:    Concrete table view class previously named FVTableView.  The FVTableView is now an abstract class that this extends from.
- *  Archive Log:
- *
- *  Overview: UI view for the event table; extends abstract class FVTableView
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common.view;
 
 import java.awt.Component;
@@ -113,6 +53,9 @@ import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.model.EventTypeViz;
 import com.intel.stl.ui.model.NoticeSeverityViz;
 
+/**
+ * UI view for the event table; extends abstract class FVTableView
+ */
 public class EventTableView extends FVTableView {
 
     /**

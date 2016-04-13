@@ -25,49 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: VirtualLaneProcessor.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/17 18:53:50  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/02/04 21:44:14  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/01/23 20:15:17  jijunwan
- *  Archive Log:    PR 126673 - "Unsupported VL Cap(0X08)" for all Switch ports other than Switch port 0
- *  Archive Log:    STL is using VL Cap as a number rather than an enum. Removed VL Cap related IB enum, and represent Cap as as a byte number
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/01/11 19:26:45  jijunwan
- *  Archive Log:    PR 126421 - VL Flow Control Disable Mask not implemented on WFR HFI
- *  Archive Log:    display n/a for HFI and Switch port 0
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/10/22 01:47:47  jijunwan
- *  Archive Log:    renamed
- *  Archive Log:    PropertyPageCategory to DevicePropertyCategory,
- *  Archive Log:    PropertyItem to DevicePropertyItem,
- *  Archive Log:    PropertyPageGroup to DevicePropertyGroup
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/10/13 21:06:15  fernande
- *  Archive Log:    Changed GetDevicePropertiesTask to be driven by the PropertiesDisplayOptions in UserSettings instead of hard coded
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.configuration;
 
 import static com.intel.stl.ui.common.STLConstants.K0387_UNKNOWN;

@@ -25,63 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: DefaultCertsAssistant.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.11  2015/08/17 18:48:51  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/05/29 20:33:35  fernande
- *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Second wave of changes: the application can be switched between the old adapter and the new; moved out several initialization pieces out of objects constructor to allow subnet initialization with a UI in place; improved generics definitions for FV commands.
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/05/26 15:32:38  fernande
- *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/04/06 21:12:01  fernande
- *  Archive Log:    Improving the handling of connection errors
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/04/03 16:16:04  fernande
- *  Archive Log:    Added getSSLEngine to the interface and moved SSLEngine creation to the BaseCertsAssistant
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/03/24 15:45:36  fernande
- *  Archive Log:    Fix to properly return the KeyManagerFactory and the TrustManagerFactory
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/03/24 15:07:49  fernande
- *  Archive Log:    Changes to cache KeyManagerFactories and TrustManagerFactories to avoid requests for password.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/03/19 21:37:37  fernande
- *  Archive Log:    Fix to change the default action to OK instead of Cancel
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/03/19 16:52:43  fernande
- *  Archive Log:    Fix for the UI CertsAssistant which needs the SubnetDescription.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/03/16 17:33:34  fernande
- *  Archive Log:    STLConnection lifecycle support. STLConnections can now be reused and temporary connections are not cached and their socket is closed after they are logically closed. Changed SubnetDescription in support of failover to have a list of HostInfo objects instead of just info for one host.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/01/11 20:56:32  jijunwan
- *  Archive Log:    support secure FE:
- *  Archive Log:    1) added secured STL Connection to communicate with FE
- *  Archive Log:    2) added cert assistant interface that supports certs conf, persistence and password prompt
- *  Archive Log:    3) added default cert assistant
- *  Archive Log:    4) improved Subnet conf to support secure FE
- *  Archive Log:
- *  Archive Log:    NOTE: the secured connection requires Java 1.7
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.api;
 
 import java.util.ArrayList;

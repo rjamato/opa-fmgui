@@ -25,34 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: FabricViewer
- *
- *  File Name: SummarySection.java
- *
- *  Archive Source: $Source$
- * 
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.10  2015/09/25 20:51:38  fernande
- *  Archive Log: PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
- *  Archive Log:
- *  Archive Log: Revision 1.9  2015/08/17 18:53:38  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - changed frontend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.8  2015/06/10 21:07:17  jijunwan
- *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs
- *  Archive Log: - manual correction on files that our tool cannot  identify
- *  Archive Log:
- * 
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.main;
 
 import java.util.Date;
@@ -71,8 +43,6 @@ import com.intel.stl.ui.model.NodeScore;
 import com.intel.stl.ui.model.TimedScore;
 
 /**
- * @author jijunwan
- * 
  */
 public class SummarySectionOld extends
         BaseSectionController<ISectionListener, SummarySectionViewOld> {

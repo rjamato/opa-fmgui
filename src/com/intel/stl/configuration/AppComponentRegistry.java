@@ -24,66 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: AppComponentRegistry.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.54  2016/01/28 21:05:32  fernande
- *  Archive Log: PR 132387 - [Dell]: FMGUI Fails to Open Due to Database Lock. Fix for Klocwork issue
- *  Archive Log:
- *  Archive Log: Revision 1.53  2016/01/26 18:40:12  fernande
- *  Archive Log: PR 132387 - [Dell]: FMGUI Fails to Open Due to Database Lock. Added a StartupProgressObserver who would listen to startup/shutdown progress update messages to upate the UI.
- *  Archive Log:
- *  Archive Log: Revision 1.52  2015/12/03 19:53:36  fernande
- *  Archive Log: PR 131863 - Klocwork Issue on AppComponentRegistry. Added finally to close input stream.
- *  Archive Log:
- *  Archive Log: Revision 1.51  2015/11/18 21:08:38  fernande
- *  Archive Log: PR127008 - Allow a user delete DB files during uninstallation. Added code to invoke a script the first time the application is invoked.
- *  Archive Log:
- *  Archive Log: Revision 1.50  2015/09/02 15:55:49  fernande
- *  Archive Log: PR 130220 - FM GUI "about" window displays unmatched version and build #. Passing the OPA FM version thru the manifest.
- *  Archive Log:
- *  Archive Log: Revision 1.49  2015/09/01 15:32:40  fernande
- *  Archive Log: PR 130220 - FM GUI "about" window displays unmatched version and build #. Changed the default app version to 10.
- *  Archive Log:
- *  Archive Log: Revision 1.48  2015/08/19 19:26:45  fernande
- *  Archive Log: PR 128703 - Fail over doesn't work on A0 Fabric. Adding shutdown method to AppComponent interface for application shutdown.
- *  Archive Log:
- *  Archive Log: Revision 1.47  2015/08/17 18:48:40  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - change backend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.46  2015/08/17 14:22:56  rjtierne
- *  Archive Log: PR 128979 - SM Log display
- *  Archive Log: This is the first version of the Log Viewer which displays select lines of text from the remote SM log file. Updates include searchable raw text from file, user-defined number of lines to display, refreshing end of file, and paging. This PR is now closed and further updates can be found by referencing PR 130011 - "Enhance SM Log Viewer to include Standard and Advanced requirements".
- *  Archive Log:
- *  Archive Log: Revision 1.45  2015/08/10 17:04:49  robertja
- *  Archive Log: PR128974 - Email notification functionality.
- *  Archive Log:
- *  Archive Log: Revision 1.44  2015/07/09 18:51:49  fernande
- *  Archive Log: PR 129447 - Database size increases a lot over a short period of time. Added method to expose application settings in the settings.xml file to higher levels in the app
- *  Archive Log:
- *  Archive Log: Revision 1.43  2015/06/17 15:35:28  fisherma
- *  Archive Log: PR129220 - partial fix for the login changes.
- *  Archive Log:
- *  Archive Log: Revision 1.42  2015/06/10 19:36:34  jijunwan
- *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- *
- *  Overview:
- *
- *  @author: Fernando Fernandez
- *
- ******************************************************************************/
-
 package com.intel.stl.configuration;
 
 import static com.intel.stl.common.STLMessages.STL10001_SETTINGS_FILE_FORMAT_INVALID;
@@ -153,8 +93,6 @@ import com.intel.stl.fecdriver.impl.STLAdapter;
 import com.intel.stl.fecdriver.network.ssh.impl.JSchSessionFactory;
 
 /**
- * @author Fernando Fernandez
- *
  */
 public class AppComponentRegistry {
 

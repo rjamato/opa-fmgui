@@ -25,35 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: SubnetModel.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4  2015/08/17 18:54:55  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/03/16 17:46:33  fernande
- *  Archive Log:    STLConnection lifecycle support. STLConnections can now be reused and temporary connections are not cached and their socket is closed after they are logically closed. Changed SubnetDescription in support of failover to have a list of HostInfo objects instead of just info for one host.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/02/20 21:15:14  rjtierne
- *  Archive Log:    Multinet Wizard: Data models for all wizards for data storage and display
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/02/13 21:29:14  rjtierne
- *  Archive Log:    Multinet Wizard: Initial Version
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.wizards.model.subnet;
 
 import com.intel.stl.api.CertsDescription;

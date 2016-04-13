@@ -25,71 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ConsoleSubpageView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.15  2015/11/11 13:26:28  robertja
- *  Archive Log:    PR 130278 - Store console tab help pane state on a per-tab basis so that help info is restored when focus returns to a tab.
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2015/08/17 18:54:14  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2015/06/25 11:55:06  jypak
- *  Archive Log:    PR 129073 - Add help action for Admin Page.
- *  Archive Log:    The help action is added to App, DG, VF,Console page and Console terminal. For now, a help ID and a content are being used as a place holder for each page. Once we get the help contents delivered by technical writer team, the HelpAction will be updated with correct help ID.
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/05/27 14:35:27  rjtierne
- *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
- *  Archive Log:    Removed loginDialogView
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/04/09 21:13:41  rjtierne
- *  Archive Log:    Made method closeConsole() synchronized to fix synchronization problem with
- *  Archive Log:    closing consoles too fast
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/04/02 13:33:06  jypak
- *  Archive Log:    Klockwork: Front End Critical Without Unit Test. 47 open issues fixed. All of them are for null checks.
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2014/10/07 19:54:59  rjtierne
- *  Archive Log:    In createPersonalizeTab() using equals() method instead of "==" for String comparison
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2014/10/01 19:50:14  rjtierne
- *  Archive Log:    To close console, call removeConsole() with console id, not tab number
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/09/23 19:47:01  rjtierne
- *  Archive Log:    Integration of Gritty for Java Console
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/09/09 20:48:44  rjtierne
- *  Archive Log:    Make the command field the focus when a console terminal appears
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/09/09 20:03:27  rjtierne
- *  Archive Log:    Added default login bean to console dialog to reduce typing
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/09/09 18:23:39  jijunwan
- *  Archive Log:    only show command on tab
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/09 14:20:54  rjtierne
- *  Archive Log:    Restructured code to accommodate new console login dialog
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/05 21:56:32  jijunwan
- *  Archive Log:    L&F adjustment on Console Views
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/22 19:53:59  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: View to hold the tabbed pane for the console subpages
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.console.view;
 
 import java.awt.BorderLayout;
@@ -119,6 +54,9 @@ import com.intel.stl.ui.console.IConsoleListener;
 import com.intel.stl.ui.console.ITabListener;
 import com.intel.stl.ui.console.LoginBean;
 
+/**
+ * View to hold the tabbed pane for the console subpages
+ */
 public class ConsoleSubpageView extends JPanel implements ITabListener {
 
     private static final long serialVersionUID = -5831289826804475532L;

@@ -24,76 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- * 
- *  Functional Group: Fabric Viewer Application
- * 
- *  File Name: UIConstants.java
- * 
- *  Archive Source: $Source$
- * 
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.25  2015/11/18 23:58:08  rjtierne
- *  Archive Log: PR 131021 - Message box adjustment
- *  Archive Log: - Removed DIALOG_TEXT_FONT_SIZE
- *  Archive Log:
- *  Archive Log: Revision 1.24  2015/11/16 17:40:03  fisherma
- *  Archive Log: PR 131021 - Message box adjustment.  Updated size of the text area to be show in the error/message dialogs.  Updated font size to a constant so that it would show up similarly across platforms.  Show newly added text in the visible part of the viewport for text area.
- *  Archive Log:
- *  Archive Log: Revision 1.23  2015/10/06 15:53:50  rjtierne
- *  Archive Log: PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
- *  Archive Log: - Fixed Typo
- *  Archive Log:
- *  Archive Log: Revision 1.22  2015/09/25 13:57:49  rjtierne
- *  Archive Log: PR 130011 - Enhance SM Log Viewer to include Standard and Advanced requirements
- *  Archive Log: - Fixed typo
- *  Archive Log:
- *  Archive Log: Revision 1.21  2015/08/18 14:28:35  jijunwan
- *  Archive Log: PR 130033 - Fix critical issues found by Klocwork or FindBugs
- *  Archive Log: - DateFormat is not thread safe. Changed to create new DateFormat to avoid sharing it among different threads
- *  Archive Log:
- *  Archive Log: Revision 1.20  2015/08/17 18:54:12  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - changed frontend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.19  2015/08/10 17:31:01  robertja
- *  Archive Log: PR 128974 - Email notification functionality.
- *  Archive Log:
- *  Archive Log: Revision 1.18  2015/07/21 21:51:44  jijunwan
- *  Archive Log: PR 129633 - Incorrect date sort on event table
- *  Archive Log: - changed table model to use date as value, and the cell renderer uses string to display date
- *  Archive Log: - changed date format to include am/pm
- *  Archive Log:
- *  Archive Log: Revision 1.17  2015/07/17 20:32:14  jijunwan
- *  Archive Log: PR 129528 - input validation improvement
- *  Archive Log: - change default number format to "###", so we need to support character ','
- *  Archive Log:
- *  Archive Log: Revision 1.16  2015/07/16 21:22:52  jijunwan
- *  Archive Log: PR 129528 - input validation improvement
- *  Archive Log: - extended SafeTextField to apply rules in name check
- *  Archive Log: - moved valid chars to UIConstants
- *  Archive Log: - made FieldPair more generic and flexible
- *  Archive Log:
- *  Archive Log: Revision 1.15  2015/07/13 16:22:42  jijunwan
- *  Archive Log: PR 129528 - input validation improvement
- *  Archive Log: - new resources
- *  Archive Log:
- *  Archive Log: Revision 1.14  2015/06/29 15:05:43  jypak
- *  Archive Log: PR 129284 - Incorrect QSFP field name.
- *  Archive Log: Field name fix has been implemented. Also, introduced a conversion to Date object to add flexibility to display date code.
- *  Archive Log:
- *  Archive Log: Revision 1.13  2015/06/10 19:58:58  jijunwan
- *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- * 
- *  Overview:
- * 
- *  @author: jijunwan
- * 
- ******************************************************************************/
 package com.intel.stl.ui.common;
 
 import java.awt.BasicStroke;
@@ -104,8 +34,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 /**
- * @author jijunwan
- * 
  */
 public interface UIConstants {
     int UPDATE_TIME = 500; // ms

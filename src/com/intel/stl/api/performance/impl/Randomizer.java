@@ -25,55 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: Randomizer.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.9  2015/08/17 18:49:03  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/07/02 20:23:21  fernande
- *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Moving Blobs to the database; arrays are now being saved to the database as collection tables.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/06/25 21:04:03  jijunwan
- *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
- *  Archive Log:    - improvement on data randomization that ensure an attribute at the same time point get the same data where
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/04/09 03:29:24  jijunwan
- *  Archive Log:    updated to match FM 390
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/02/04 21:38:00  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/01/11 21:02:42  jijunwan
- *  Archive Log:    minor change - reduced randomization range on image info
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/08/15 21:38:07  jijunwan
- *  Archive Log:    1) implemented the new GroupConfig and FocusPorts queries that use separated req and rsp data structure
- *  Archive Log:    2) adapter our drive and db code to the new data structure
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/17 18:54:23  jijunwan
- *  Archive Log:    minor improvement on random performance generation
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/16 21:36:56  jijunwan
- *  Archive Log:    added randomizer to fully support all error counters
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.api.performance.impl;
 
 import java.awt.Point;

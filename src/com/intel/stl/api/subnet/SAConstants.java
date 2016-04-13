@@ -25,42 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ICertDialog.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.11  2015/09/18 18:13:09  fernande
- *  Archive Log:    PR 130080 - Support FABRIC_INFO_RECORD. Added support in the FE Adapter for use in fabric health score improvement.
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/08/19 22:26:35  jijunwan
- *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
- *  Archive Log:    - correction on OM length calculation
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/08/17 18:48:38  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/08/07 14:57:53  jypak
- *  Archive Log:    PR 129397 -gaps in cableinfo output and handling.
- *  Archive Log:    Updates on the formats of the cableinfo output and also new enums were defined for different output values.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/06/28 17:51:35  tmrimmer
- *  Archive Log:    PR 129390 - correct opainfo handling of cableinfo for down port without QSFP
- *  Archive Log:    PR 129390 - improve cableinfo internals and defines
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.api.subnet;
 
 public interface SAConstants {
@@ -222,11 +186,9 @@ public interface SAConstants {
     byte SUBN_ADM_GETTABLE_RESP = (byte) 0x92;
 
     byte SUBN_ADM_GETTRACETABLE = (byte) 0x13; /* optional */
-
     byte SUBN_ADM_GETMULTI = (byte) 0x14; /* optional */
 
     byte SUBN_ADM_GETMULTI_RESP = (byte) 0x94; /* optional */
-
     byte SUBN_ADM_DELETE = (byte) 0x15;
 
     byte SUBN_ADM_DELETE_RESP = (byte) 0x95;
@@ -248,7 +210,6 @@ public interface SAConstants {
      * --------------------------------------------------------------------------
      * Path Record - describes path between 2 end nodes in the fabric
      */
-
     /* ComponentMask bits */
     /*
      * CA13-6: The component mask bits for ServiceID8MSB and ServiceID56LSB

@@ -25,46 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: FVTableView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4  2015/08/17 18:53:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/04/08 19:43:18  rjtierne
- *  Archive Log:    Corrected warning due to generic usage
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/23 18:26:54  rjtierne
- *  Archive Log:    Remove main panel and added UI components
- *  Archive Log:    to "this" panel
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/12 19:47:19  fernande
- *  Archive Log:    Initial version
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/04/09 21:03:54  rjtierne
- *  Archive Log:    This abstract class is now extending from JPanel instead of JCard
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/04/04 19:29:12  rjtierne
- *  Archive Log:    Class is now abstract and extends JCard instead of JPanel
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/03/28 15:09:56  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: The FVTableView class implements the view for a table
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common.view;
 
 import java.awt.Component;

@@ -25,43 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ConversionPatternHelpDialog.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2  2015/08/17 18:54:34  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/06/10 19:24:06  rjtierne
- *  Archive Log:    PR 128975 - Can not setup application log
- *  Archive Log:    Moved from the wizards package to the new logger package with updates to accommodate
- *  Archive Log:    changes to the LoggingConfiguration in the back end
- *  Archive Log:    - LoggingWizardController renamed to LoggingConfigController
- *  Archive Log:    - LoggingWizardView renamed to LoggingConfigView
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/12/19 19:42:30  rjtierne
- *  Archive Log:    Disabled text field and OK button until non-apache solution is designed
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/12/11 18:49:46  fernande
- *  Archive Log:    Switch from log4j to slf4j+logback
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/12/10 21:31:06  rjtierne
- *  Archive Log:    New Setup Wizard based on framework
- *  Archive Log:
- *
- *  Overview: Dialog for help in setting up conversion pattern on the 
- *  Logging Wizard
- *
- *  @author: jpak, rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.logger.config.view;
 
 import java.awt.BorderLayout;

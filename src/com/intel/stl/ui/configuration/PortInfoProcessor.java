@@ -25,59 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PortInfoProcessor.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.10  2015/08/17 18:53:50  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/04/10 14:23:04  jijunwan
- *  Archive Log:    PR 127495 - Add LED indicator bit to STL_PORT_STATES
- *  Archive Log:    -- display LED Enabled in port properties
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/02/05 23:38:02  jijunwan
- *  Archive Log:    updated link down reason to match FM 325
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/02/02 16:27:19  jijunwan
- *  Archive Log:    matched FM 320 (stl_sm.h v1.26) - added linkInitReason
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/01/27 19:19:53  jijunwan
- *  Archive Log:    updated PortInfo to match FM 314 (stl_sm.h v1.125)
- *  Archive Log:      - removed downDefaultState
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/01/15 21:44:38  jijunwan
- *  Archive Log:    updated to FM Build 298 that removed PortUnsleepState from STL_PORT_STATES
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/01/15 19:21:30  jijunwan
- *  Archive Log:    updated to FM Build 298 that removed PortUnsleepState from STL_PORT_STATES
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/01/13 18:22:37  jijunwan
- *  Archive Log:    support UniversalDiagCode and VendorDiagCode
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/10/22 01:47:47  jijunwan
- *  Archive Log:    renamed
- *  Archive Log:    PropertyPageCategory to DevicePropertyCategory,
- *  Archive Log:    PropertyItem to DevicePropertyItem,
- *  Archive Log:    PropertyPageGroup to DevicePropertyGroup
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/10/13 21:05:30  fernande
- *  Archive Log:    Changed GetDevicePropertiesTask to be driven by the PropertiesDisplayOptions in UserSettings instead of hard coded
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.configuration;
 
 import static com.intel.stl.ui.common.STLConstants.K0385_TRUE;

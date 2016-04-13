@@ -25,37 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- * I N T E L C O R P O R A T I O N
- * 
- * Functional Group: Fabric Viewer Application
- * 
- * File Name: FVCommand.java
- * 
- * Archive Source: $Source$
- * 
- * Archive Log: $Log$
- * Archive Log: Revision 1.10  2015/08/17 18:49:05  jijunwan
- * Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- * Archive Log: - change backend files' headers
- * Archive Log:
- * Archive Log: Revision 1.9  2015/06/12 16:23:40  fernande
- * Archive Log: PR 129034 Support secure FE. Removing comments refering to legacy code
- * Archive Log:
- * Archive Log: Revision 1.8  2015/06/08 16:07:26  fernande
- * Archive Log: PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Stabilizing the new FEAdapter code. Adding connectionInProgress flag to avoid timeouts during connections that require a password (SSL) and restore the timeout after the connection is established.
- * Archive Log:
- * Archive Log: Revision 1.7  2015/06/05 19:10:15  jijunwan
- * Archive Log: PR 129096 - Some old files have no copyright text
- * Archive Log: - added Intel copyright text
- * Archive Log:
- * 
- * Overview:
- * 
- * @author: jijunwan
- * 
- ******************************************************************************/
-
 package com.intel.stl.fecdriver.messages.command;
 
 import java.util.List;

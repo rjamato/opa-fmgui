@@ -25,74 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ConnectivityTableModel.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.14  2016/02/16 22:16:06  jijunwan
- *  Archive Log:    PR 132888 - Include Num Lanes Down in port counters display
- *  Archive Log:
- *  Archive Log:    - added Num Lanes Down
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2015/11/02 23:54:31  jijunwan
- *  Archive Log:    PR 131396 - Incorrect Connectivity Table for a VF port
- *  Archive Log:    - changed model to display N/A when a value is not avaiable
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/08/17 18:53:46  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/08/04 23:00:32  jijunwan
- *  Archive Log:    PR 129821 - connectivity table has no Link Width Down Grade data
- *  Archive Log:    - added related data to data table
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/07/17 15:39:59  rjtierne
- *  Archive Log:    PR 129547 - Need to add Node type and lid to the Connectivity
- *  Archive Log:    Added two new switch cases to getValueAt() to support the retrieval of node lid
- *  Archive Log:    and type values
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/07/13 21:56:17  rjtierne
- *  Archive Log:    PR 129355 - Ability to click on cables to get cable info
- *  Archive Log:    - Added case CABLE_INFO in method getValueAt() to return the cable info
- *  Archive Log:    - Changed DEVICE_NAME to NODE_NAME to match string value of enumeration
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/06/01 15:01:22  jypak
- *  Archive Log:    PR 128823 - Improve performance tables to include all portcounters fields.
- *  Archive Log:    All port counters fields added to performance table and connectivity table.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/04/08 19:44:35  rjtierne
- *  Archive Log:    Removed SYMBOL_ERRORS, TX_32BIT_WORDS, RX_32BIT_WORDS, and VL_15_DROPPED
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/02/26 20:07:39  fisherma
- *  Archive Log:    Changes to display Link Quality data to port's Performance tab and switch/port configuration table.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/01/11 21:51:42  jijunwan
- *  Archive Log:    added method to detect whether the model is empty or not
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/12/10 20:52:23  rjtierne
- *  Archive Log:    Support for new Setup Wizard
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/10/02 21:37:54  jijunwan
- *  Archive Log:    fixed issues found by FindBugs
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/08/05 17:57:07  jijunwan
- *  Archive Log:    fixed issues on ConnectivityTable to update performance data properly
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/06/12 21:31:44  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Model for the Connectivity Table
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.model;
 
 import com.intel.stl.ui.common.FVTableModel;
@@ -100,6 +32,9 @@ import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.monitor.ConnectivityTableData;
 import com.intel.stl.ui.monitor.ConnectivityTableData.PerformanceData;
 
+/**
+ * Model for the Connectivity Table
+ */
 public class ConnectivityTableModel
         extends FVTableModel<ConnectivityTableData> {
 

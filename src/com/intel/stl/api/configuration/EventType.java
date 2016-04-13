@@ -25,47 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: EventType.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/17 18:48:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/08/11 20:35:13  jijunwan
- *  Archive Log:    PR 129935 - Need proper default value for user preference
- *  Archive Log:    - set default notice severity for each event type
- *  Archive Log:    - use default notice severity from event type as the init value for event table
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/01/21 22:51:00  jijunwan
- *  Archive Log:    improved to throw exception when we encounter unsupported value. This will help us identify problems when it happens.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/12/11 18:31:04  fernande
- *  Archive Log:    Switch from log4j to slf4j+logback
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/12/10 20:32:41  rjtierne
- *  Archive Log:    Support for saving EventRules to UserSettings
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/06 15:16:31  jijunwan
- *  Archive Log:    moved EventType from notice to configuration since it's used form event configuration
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/30 16:06:32  fernande
- *  Archive Log:    Initial version
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.api.configuration;
 
 import java.util.HashMap;

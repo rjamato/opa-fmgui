@@ -25,102 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ResourceAllPage.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.10  2015/08/18 14:29:41  jijunwan
- *  Archive Log:    PR 130033 - Fix critical issues found by Klocwork or FindBugs
- *  Archive Log:    - fixed null pointer issue
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/08/17 18:54:00  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/08/06 17:26:23  jijunwan
- *  Archive Log:    PR 129825 - Topology summary doesn't catch down graded ports
- *  Archive Log:    - improved to display "abnormal" ports
- *  Archive Log:    - added undo navigation support
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/08/05 04:09:31  jijunwan
- *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
- *  Archive Log:    - applied undo mechanism on Topology Page
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/06/09 18:37:25  jijunwan
- *  Archive Log:    PR 129069 - Incorrect Help action
- *  Archive Log:    - moved help action from view to controller
- *  Archive Log:    - only enable help button when we have HelpID
- *  Archive Log:    - fixed incorrect HelpIDs
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/03/10 18:43:14  jypak
- *  Archive Log:    JavaHelp System introduced to enable online help.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/18 19:32:02  jijunwan
- *  Archive Log:    PR 127102 - Overall summary of Switches under Topology page does not report correct number of switch ports
- *  Archive Log:     - improved the calculation to count both internal and external ports
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/11/17 17:14:27  jijunwan
- *  Archive Log:    improved to support initializing property display style
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/10/23 16:00:04  jijunwan
- *  Archive Log:    changed topology information display to use device property panels, and JSectionView
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/10/22 02:21:26  jijunwan
- *  Archive Log:    1) moved update tasks into task package
- *  Archive Log:    2) added topology summary panel
- *  Archive Log:    3) improved models to be able to calculate ports distribution, nodes not in fat tree etc.
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2014/09/15 15:24:29  jijunwan
- *  Archive Log:    changed AppEventBus to 3rd party lib mbassador
- *  Archive Log:    some code reformat
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2014/08/26 15:15:19  jijunwan
- *  Archive Log:    added refresh function to all pages
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2014/08/12 21:06:53  jijunwan
- *  Archive Log:    add null check
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2014/08/05 17:59:45  jijunwan
- *  Archive Log:    ensure we update UI on EDT, changed to use SingleTaskManager to manager concurrent UI update tasks
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2014/07/22 20:09:31  rjtierne
- *  Archive Log:    Implemented showPath() interface methods
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/07/18 13:39:16  rjtierne
- *  Archive Log:    Changed prototype for showPath() to accept a list of nodes to match the interface
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/07/11 19:29:01  fernande
- *  Archive Log:    Adding EventBus and linking UI elements to the Performance tab
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/07/10 21:21:31  rjtierne
- *  Archive Log:    Added newly required interface methods
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/07/10 15:42:24  rjtierne
- *  Archive Log:    Added new interface method setDescription()
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/07/10 14:32:23  rjtierne
- *  Archive Log:    Added new interface methods
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/09 18:48:16  jijunwan
- *  Archive Log:    updated PortInfoRecord, SMInfo to the latest data structure
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/08 20:19:44  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Card controller for the main overview topology JCard displayed
- *  when no components have been selected on the topology graph  
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.network;
 
 import java.util.Map;
@@ -153,6 +57,10 @@ import com.intel.stl.ui.publisher.CancellableCall;
 import com.intel.stl.ui.publisher.ICallback;
 import com.intel.stl.ui.publisher.SingleTaskManager;
 
+/**
+ * Card controller for the main overview topology JCard displayed when no
+ * components have been selected on the topology graph
+ */
 public class ResourceAllSection extends ResourceSection<ResourceAllView>
         implements IPropertyListener {
     private final String SUBNET_SUMMARY = STLConstants.K2063_OVERALL_SUMMARY

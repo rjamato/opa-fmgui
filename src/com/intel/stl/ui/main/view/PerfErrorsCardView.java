@@ -25,53 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PerfErrorsCardView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.18  2016/02/16 19:54:51  jijunwan
- *  Archive Log:    PR 132863 - adjust counter displays to show in order of relative importance
- *  Archive Log:
- *  Archive Log:    - improved to show tooltip text for counters billed on neighbor port
- *  Archive Log:
- *  Archive Log:    Revision 1.17  2015/10/22 18:42:44  fisherma
- *  Archive Log:    Fixing deadlock.  Changed a call to a thread safe revalidate().
- *  Archive Log:
- *  Archive Log:    Revision 1.16  2015/08/17 18:54:02  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.15  2015/04/14 21:17:09  rjtierne
- *  Archive Log:    PR 128036 - SendFECN is tabulated as a neighbor error, refine recvFECN tabulation.
- *  Archive Log:    Updated initializeErrorsItems() to place an asterisk(*) next to each port counter
- *  Archive Log:    label associated with data that originates at the neighboring port
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2015/04/14 21:10:41  rjtierne
- *  Archive Log:    Updated initializeErrorsItems() to place an asterisk(*) next to each port counter
- *  Archive Log:    label associated with data that originates at the neighboring port
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2015/04/10 18:20:53  jypak
- *  Archive Log:    Fall back to previous way of displaying received/transmitted data in performance page(chart section, table section, counter (error) section).
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/04/07 14:38:28  jypak
- *  Archive Log:    PR 126998 - Received/Transmitted data counters for Device Node and Device ports should show in MB rather than Flits. Fixed by converting units to Byte/KB/MB/GB. Also, tool tips were added to show the units for each value.
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/02/25 13:57:42  jypak
- *  Archive Log:    Correct comment header
- *  Archive Log:
- *
- *  Overview: Performance page's performance subpage errors section.
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.main.view;
 
 import static java.awt.Font.PLAIN;
@@ -99,6 +52,9 @@ import com.intel.stl.ui.common.view.ICardListener;
 import com.intel.stl.ui.common.view.JCardView;
 import com.intel.stl.ui.configuration.view.PropertyVizStyle;
 
+/**
+ * Performance page's performance subpage errors section.
+ */
 public class PerfErrorsCardView extends JCardView<ICardListener> {
 
     private static final long serialVersionUID = 2L;

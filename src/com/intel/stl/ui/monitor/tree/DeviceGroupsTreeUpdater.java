@@ -25,55 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PartialDeviceGroupTreeUpdater.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.10  2015/10/23 19:07:57  jijunwan
- *  Archive Log:    PR 129357 - Be able to hide inactive ports
- *  Archive Log:    - revert back to the old version without visible node support
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/09/30 13:26:45  fisherma
- *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/08/17 18:54:19  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/04/09 03:33:41  jijunwan
- *  Archive Log:    updated to match FM 390
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/12/11 18:46:13  fernande
- *  Archive Log:    Switch from log4j to slf4j+logback
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/10/14 11:32:08  jypak
- *  Archive Log:    UI updates for notices.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/09/05 15:43:36  fernande
- *  Archive Log:    Changed DatabaseException into an unchecked exception. Then change error handling in the Datamanager so that certain FMExceptions (checked exceptions) bubble up to the API layer. Higher layers can then decide how to handle those exceptions. Any other Hibernate/HSQLDb/DAO exceptions are signaled as a DatabaseException (unchecked) to layers above the Datamanager.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/03 18:10:26  jijunwan
- *  Archive Log:    new Tree Updaters
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/02 19:24:28  jijunwan
- *  Archive Log:    renamed FVTreeBuilder to tree.FVTreeManager, moved FVResourceNode and FVTreeModel  to package tree
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/09/02 19:02:59  jijunwan
- *  Archive Log:    tree update based on merge sort algorithm
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.monitor.tree;
 
 import java.util.Collections;

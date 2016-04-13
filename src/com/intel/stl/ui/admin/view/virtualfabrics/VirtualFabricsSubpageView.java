@@ -25,40 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: VirtualFabricsSubpageView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4  2015/10/21 15:06:57  jijunwan
- *  Archive Log:    PR 131077 - Virtual Fabrics list does not reflect enabled status per item in "list tile" of admin window
- *  Archive Log:    - Extended VF to use its own renderer for item panel
- *  Archive Log:    - Extended VF to update item panel when there is a change on enabled check box
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/08/17 18:54:01  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/03/30 14:25:37  jijunwan
- *  Archive Log:    1) introduced IRendererModel to create renderer only we nee
- *  Archive Log:    2) removed #getName from IAttrRenderer to provide more flexibilities and let IRendererModel to take care which attribute should use which renderer, how to init it properly
- *  Archive Log:    3) improved to support repeatable and non-repeatable attributes. For non-repeatable attributes, we only can add once
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/27 15:47:46  jijunwan
- *  Archive Log:    first version of VirtualFabric UI
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.admin.view.virtualfabrics;
 
 import java.awt.Component;

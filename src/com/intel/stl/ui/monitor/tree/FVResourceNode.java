@@ -25,103 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: FVResourceNode.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.11  2015/11/02 20:08:50  jijunwan
- *  Archive Log:    PR 131377 - Port information when selecting between HFI nodes doesn't get updated under Topology tab
- *  Archive Log:    - improved node comparison to compare the whole path and the root need to be the same instance
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/10/23 19:13:37  jijunwan
- *  Archive Log:    PR 129357 - Be able to hide inactive ports
- *  Archive Log:    - revert back to the old version without visible node support
- *  Archive Log:    - added method filter to create a new tree based on given filter
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/09/30 13:26:45  fisherma
- *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/08/17 18:54:19  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/08/11 14:38:22  jijunwan
- *  Archive Log:    PR 129917 - No update on event statistics
- *  Archive Log:    - Apply event subscriber on the event card on Performance page
- *  Archive Log:    - fixed the blink chart issue
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/07/15 19:05:39  fernande
- *  Archive Log:    PR 129199 - Checking copyright test as part of the build step. Fixed year appearing in copyright notice
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/07/13 19:45:08  jijunwan
- *  Archive Log:    PR 128980 - Be able to search devices by name or lid
- *  Archive Log:    - changed to use hex string for GUID match
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/06/22 13:11:52  jypak
- *  Archive Log:    PR 128980 - Be able to search devices by name or lid.
- *  Archive Log:    New feature added to enable search devices by name, lid or node guid. The search results are displayed as a tree and when a result node from the tree is selected, original tree is expanded and the corresponding node is highlighted.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/10/09 21:29:04  jijunwan
- *  Archive Log:    Added two helper methods: #isNode and #isPort
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/03 20:38:44  jijunwan
- *  Archive Log:    minor improvement on tree synchronizer
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/09/02 19:24:28  jijunwan
- *  Archive Log:    renamed FVTreeBuilder to tree.FVTreeManager, moved FVResourceNode and FVTreeModel  to package tree
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2014/09/02 19:01:24  jijunwan
- *  Archive Log:    forced to assign id for a node, use id and name for hash code calculation
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2014/08/26 14:27:05  jijunwan
- *  Archive Log:    improved to be able to insert or remove a child
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2014/08/05 13:39:10  jijunwan
- *  Archive Log:    added #isTypeMatched to provide flexibility on node type comparison
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2014/07/03 22:16:04  jijunwan
- *  Archive Log:    minor change - added a helper method to return path for a node
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/06/05 17:34:10  jijunwan
- *  Archive Log:    added vFabric into Tree View
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/05/09 21:00:43  jijunwan
- *  Archive Log:    added property; fixed remembering last subpage issue; fixed position problem on IntelTabbedPane
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/04/29 16:44:17  jijunwan
- *  Archive Log:    use the new NameSorter in resource tree
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/04/28 23:23:19  rjtierne
- *  Archive Log:    Added TitleRecord for storing title names with
- *  Archive Log:    prefix, center, and suffix for sorting
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/04/23 19:54:06  rjtierne
- *  Archive Log:    Added setType()
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/23 13:45:37  jijunwan
- *  Archive Log:    improvement on TreeView
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/22 20:47:24  rjtierne
- *  Archive Log:    Relocated from common.view to monitor package
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/17 22:15:49  jijunwan
- *  Archive Log:    device type and device group tree build
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/17 14:37:12  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: The class provides an implementation of the TreeNode interface
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.monitor.tree;
 
 import java.io.PrintStream;
@@ -137,8 +40,8 @@ import com.intel.stl.api.StringUtils;
 import com.intel.stl.ui.monitor.TreeNodeType;
 
 /**
- * @author tierney
- * 
+ *
+ * The class provides an implementation of the TreeNode interface
  */
 public class FVResourceNode implements TreeNode {
 

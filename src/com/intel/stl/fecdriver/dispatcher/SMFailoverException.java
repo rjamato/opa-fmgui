@@ -26,33 +26,6 @@
  */
 
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: SMFailoverException.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1  2015/08/27 19:35:15  fernande
- *  Archive Log:    PR 128703 - Fail over doesn't work on A0 Fabric. Fixes for several issues found during testing
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/08/17 18:49:07  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/24 18:40:47  robertja
- *  Archive Log:    Add exception for SM fail-over.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: robertja
- *
- ******************************************************************************/
-
 package com.intel.stl.fecdriver.dispatcher;
 
 import com.intel.stl.api.FMRuntimeException;

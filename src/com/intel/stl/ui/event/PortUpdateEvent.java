@@ -25,42 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PortUpdateEvent.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:53:45  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/04 21:44:15  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/11/05 23:00:26  jijunwan
- *  Archive Log:    improved UI update event to batch mode so we can efficiently process multiple notices
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/15 15:24:35  jijunwan
- *  Archive Log:    changed AppEventBus to 3rd party lib mbassador
- *  Archive Log:    some code reformat
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/26 15:07:16  jijunwan
- *  Archive Log:    events for notice update
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.event;
 
 import java.util.Arrays;

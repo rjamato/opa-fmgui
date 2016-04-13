@@ -25,45 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: NoticeDAOImpl.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.15  2016/01/21 21:00:49  fernande
- *  Archive Log:    PR 132470 - Email not received when fabric event change is triggered. When a existing node record is being added to a topology, force the Hibernate proxy to read node record information from the database so that subsequent access does not require the proxy.
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2015/09/26 06:18:27  jijunwan
- *  Archive Log:    130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
- *  Archive Log:    - fix null pointer issue
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2015/08/17 18:49:34  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/02/23 22:34:48  jijunwan
- *  Archive Log:    improved to create revised link for GID_NOW_IN_SERVICE notice
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/02/06 15:04:47  fernande
- *  Archive Log:    Database modifications to use a long as the id for a SubnetDescription and to support users per subnet.
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/02/04 21:37:58  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *
- *  Overview:
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.dbengine.impl;
 
 import static com.intel.stl.common.STLMessages.STL30013_ERROR_SAVING_ENTITY;

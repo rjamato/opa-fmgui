@@ -25,39 +25,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: LoggerConfig.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3  2015/08/17 18:48:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/06/26 13:36:56  rjtierne
- *  Archive Log:    PR 128975 - Can not setup application log
- *  Archive Log:    Override toString() to provide a better description of class attributes during debug.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/06/10 19:13:59  rjtierne
- *  Archive Log:    PR 128975 - Can not setup application log
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Bean to hold a logger name and its level
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.api.configuration;
 
 import java.io.Serializable;
 
+/**
+ * Bean to hold a logger name and its level
+ */
 public class LoggerConfig implements Serializable {
 
     private static final long serialVersionUID = -6482356522346140482L;

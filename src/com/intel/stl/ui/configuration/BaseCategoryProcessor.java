@@ -25,46 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: BaseCategoryProcessor.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/17 18:53:50  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/07/21 20:47:05  jijunwan
- *  Archive Log:    PR 129619 - Support IPv4 address for SA
- *  Archive Log:    - change to return n/a is address is all zeros
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/01/11 21:33:35  jijunwan
- *  Archive Log:    support ipv4 and ipv6 and creating links for ip addresses
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/10/22 01:47:47  jijunwan
- *  Archive Log:    renamed
- *  Archive Log:    PropertyPageCategory to DevicePropertyCategory,
- *  Archive Log:    PropertyItem to DevicePropertyItem,
- *  Archive Log:    PropertyPageGroup to DevicePropertyGroup
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/10/21 16:33:59  fernande
- *  Archive Log:    Customization of Properties display (Show Options/Apply Options)
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/10/13 21:04:11  fernande
- *  Archive Log:    Changed GetDevicePropertiesTask to be driven by the PropertiesDisplayOptions in UserSettings instead of hard coded
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.configuration;
 
 import static com.intel.stl.ui.common.STLConstants.K0383_NA;

@@ -25,46 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: NavigationPanel.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/10/15 18:19:23  jijunwan
- *  Archive Log:    PR 130289 - Admin Page icons are not working efficiently
- *  Archive Log:    - changed to use mouseReleased
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/08/17 18:53:52  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/08/17 17:46:44  jijunwan
- *  Archive Log:    PR 128973 - Deploy FM conf changes on all SMs
- *  Archive Log:    - improved AdminPage to support adding separator between tabs
- *  Archive Log:    - improved to use canExit to decide weather is able to switch to another tab or page
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/04/03 21:06:23  jijunwan
- *  Archive Log:    Introduced canExit to IPageController, and canPageChange to IPageListener to allow us do some checking before we switch to another page. Fixed the following bugs
- *  Archive Log:    1) when we refresh, do not show login dialog if Admin is not the current page
- *  Archive Log:    2) confirm abandon if we switch from admin page to other pages and there is changes on the Admin page
- *  Archive Log:    3) confirm abandon in Admin page if we switch between Application, DeviceGroup and VirtualFabric
- *  Archive Log:    4) added null check to handle special cases
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/05 17:38:18  jijunwan
- *  Archive Log:    init version to support Application management
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.admin.view;
 
 import java.awt.Dimension;

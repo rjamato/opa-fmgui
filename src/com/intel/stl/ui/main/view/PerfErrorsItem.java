@@ -25,43 +25,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PerfErrorsItem.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8  2015/08/17 18:54:02  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/04/14 21:12:10  rjtierne
- *  Archive Log:    PR 128036 - SendFECN is tabulated as a neighbor error, refine recvFECN tabulation.
- *  Archive Log:    Added new class attribute fromNeighbor to indicate whether the associated performance
- *  Archive Log:    error item originates at a neighboring port
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/04/10 18:20:53  jypak
- *  Archive Log:    Fall back to previous way of displaying received/transmitted data in performance page(chart section, table section, counter (error) section).
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/04/07 14:38:28  jypak
- *  Archive Log:    PR 126998 - Received/Transmitted data counters for Device Node and Device ports should show in MB rather than Flits. Fixed by converting units to Byte/KB/MB/GB. Also, tool tips were added to show the units for each value.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/25 13:57:42  jypak
- *  Archive Log:    Correct comment header
- *  Archive Log:
- *  
- *  Overview: Performance Errors Item
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.main.view;
 
+/**
+ * Performance Errors Item
+ */
 public class PerfErrorsItem {
 
     private String keyStr;

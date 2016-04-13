@@ -25,52 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ResourceAllView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8  2015/08/17 18:54:15  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/02/05 19:09:21  jijunwan
- *  Archive Log:    fixed a issue reported by klocwork that is actually not a problem
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/11/17 17:14:26  jijunwan
- *  Archive Log:    improved to support initializing property display style
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/10/22 02:21:27  jijunwan
- *  Archive Log:    1) moved update tasks into task package
- *  Archive Log:    2) added topology summary panel
- *  Archive Log:    3) improved models to be able to calculate ports distribution, nodes not in fat tree etc.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/07/24 19:14:08  rjtierne
- *  Archive Log:    Set visibility in showAll()
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/07/23 18:02:59  rjtierne
- *  Archive Log:    Removed call to setVisible() in showAll()
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/18 19:24:37  rjtierne
- *  Archive Log:    Removed Link page when node selected from topology page.
- *  Archive Log:    Added Link Statistics panel to the Node page.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/08 20:19:43  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: View for the main overview topology JCard displayed
- *  when no components have been selected on the topology graph   
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.network.view;
 
 import java.awt.Component;
@@ -85,6 +39,10 @@ import com.intel.stl.ui.configuration.view.IPropertyListener;
 import com.intel.stl.ui.configuration.view.PropertiesPanel;
 import com.intel.stl.ui.model.PropertySet;
 
+/**
+ * View for the main overview topology JCard displayed when no components have
+ * been selected on the topology graph
+ */
 public class ResourceAllView extends JSectionView<ISectionListener> {
     private static final long serialVersionUID = 5395968067795486597L;
 

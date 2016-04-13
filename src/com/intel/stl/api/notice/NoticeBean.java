@@ -25,51 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: NoticeBean.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/09/10 15:28:05  fernande
- *  Archive Log:    PR 129940 - Persisted notices have no time stamp data. Added timestamp to NoticeBean
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/08/17 18:48:43  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/10/24 18:47:34  fernande
- *  Archive Log:    Initial batch of fixes for notice processing. Notice updates not working yet but need a stable environment for Bob.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/08/22 21:37:44  fernande
- *  Archive Log:    Adding support for saving notices and imageinfos to the database
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/08/12 20:07:42  jijunwan
- *  Archive Log:    1) renamed HexUtils to StringUtils
- *  Archive Log:    2) added a method to StringUtils to get error message for an exception
- *  Archive Log:    3) changed all code to call StringUtils to get error message
- *  Archive Log:    4) some extra ode format change
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/06 15:14:03  jijunwan
- *  Archive Log:    notice and trap implementation
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/16 16:16:47  jijunwan
- *  Archive Log:    moved sharable class to com.intel.stl.api
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/16 15:07:33  jijunwan
- *  Archive Log:    added support to FE notice
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.api.notice;
 
 import java.io.Serializable;

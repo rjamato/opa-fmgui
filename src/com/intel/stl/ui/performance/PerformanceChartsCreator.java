@@ -25,69 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PerformanceChartsCreator.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.11  2015/08/17 18:53:49  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/08/10 17:06:27  jypak
- *  Archive Log:    PR 129919 - Change name from signal integrity to integrity.
- *  Archive Log:    STLConstants and class names are changed.
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/08/10 13:49:00  robertja
- *  Archive Log:    PR 129358 - PR 129556 - Refine congestion chart labeling.
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/06/30 22:31:42  jijunwan
- *  Archive Log:    PR 129215 - Need short chart name to support pin capability
- *  Archive Log:    - use short name as pin card title
- *  Archive Log:    - improved pin argument to include full name and provide data source description
- *  Archive Log:    - fixed improper full name issues on trend charts
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/03/27 15:48:34  jijunwan
- *  Archive Log:    changed K0072_SECURITY_ERROR to K0072_SECURITY
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/02/17 23:22:18  jijunwan
- *  Archive Log:    PR 127106 - Suggest to use same bucket range for Group Err Summary as shown in "opatop" command to plot performance graphs in FV
- *  Archive Log:     - changed error histogram chart to bar chart to show the new data ranges: 0-25%, 25-50%, 50-75%, 75-100% and 100+%
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/01/20 21:19:52  jijunwan
- *  Archive Log:    Bug 126612 - "Num of ports" which represent y-axis in Histogram should use only Whole numbers for plotting graph
- *  Archive Log:    changed range axis to use IntegerTickUnits.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/01/11 21:38:26  jijunwan
- *  Archive Log:    added bubble error charts on UI
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/10/02 22:16:59  jijunwan
- *  Archive Log:    fixed string comparison issues
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/22 18:39:44  jijunwan
- *  Archive Log:    moved IChartCreator to common package
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/16 21:38:05  jijunwan
- *  Archive Log:    added 3 type error counters
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/16 15:19:32  jijunwan
- *  Archive Log:    applied new performance framework and performance group viz to support bandwidth, packet rate, congestion and integrity data
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/09 14:17:16  jijunwan
- *  Archive Log:    moved JFreeChart to view side, controller side only take care dataset
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.performance;
 
 import org.jfree.chart.JFreeChart;

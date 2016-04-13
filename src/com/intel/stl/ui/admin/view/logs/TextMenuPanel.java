@@ -25,26 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: TextMenuPanel.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1  2015/09/25 13:54:51  rjtierne
- *  Archive Log:    PR 130011 - Enhance SM Log Viewer to include Standard and Advanced requirements
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: JPanel to hold the popup menu and listen for mouse events
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.admin.view.logs;
 
 import java.awt.Component;
@@ -74,6 +54,9 @@ import com.intel.stl.ui.common.view.TextMenuItem;
 import com.intel.stl.ui.common.view.TextPopupUtil;
 import com.intel.stl.ui.common.view.TextPopupUtil.ITextMenuAction;
 
+/**
+ * JPanel to hold the popup menu and listen for mouse events
+ */
 public class TextMenuPanel extends JPanel implements MouseListener {
 
     private static final long serialVersionUID = 3208426280088071528L;

@@ -25,127 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: Context.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.53  2015/12/17 21:51:11  jijunwan
- *  Archive Log:    PR 132124 - Newly created VF not displayed after reboot of SM
- *  Archive Log:    - improved the arch to do cache reset
- *  Archive Log:
- *  Archive Log:    Revision 1.52  2015/09/25 20:52:27  fernande
- *  Archive Log:    PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
- *  Archive Log:
- *  Archive Log:    Revision 1.51  2015/08/31 22:26:33  jijunwan
- *  Archive Log:    PR 130197 - Calculated fabric health above 100% when entire fabric is rebooted
- *  Archive Log:    - changed to only use information from ImageInfo for calculation
- *  Archive Log:
- *  Archive Log:    Revision 1.50  2015/08/17 18:53:38  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.49  2015/08/17 14:22:42  rjtierne
- *  Archive Log:    PR 128979 - SM Log display
- *  Archive Log:    This is the first version of the Log Viewer which displays select lines of text from the remote SM log file. Updates include searchable raw text from file, user-defined number of lines to display, refreshing end of file, and paging. This PR is now closed and further updates can be found by referencing PR 130011 - "Enhance SM Log Viewer to include Standard and Advanced requirements".
- *  Archive Log:
- *  Archive Log:    Revision 1.48  2015/08/11 14:11:09  jijunwan
- *  Archive Log:    PR 129917 - No update on event statistics
- *  Archive Log:    - Added a new subscriber to allow periodically getting state summary
- *  Archive Log:
- *  Archive Log:    Revision 1.47  2015/08/10 17:30:41  robertja
- *  Archive Log:    PR 128974 - Email notification functionality.
- *  Archive Log:
- *  Archive Log:    Revision 1.46  2015/07/30 19:34:18  fernande
- *  Archive Log:    PR 129592 - removing a subnet a user is monitoring cause internal DB exception. Added flag to SubnetContext indicating the subnet has been deleted. If the flag is set, no saving of subnet information occurs.
- *  Archive Log:
- *  Archive Log:    Revision 1.44  2015/07/09 17:58:40  jijunwan
- *  Archive Log:    PR 129509 - Shall refresh UI after failover completed
- *  Archive Log:    - reset ManagementApi after failover completed
- *  Archive Log:    - refresh UI after failover completed
- *  Archive Log:    - updated comments
- *  Archive Log:
- *  Archive Log:    Revision 1.43  2015/06/30 17:50:13  fisherma
- *  Archive Log:    PR 129220 - Improvement on secure FE login.
- *  Archive Log:
- *  Archive Log:    Revision 1.42  2015/06/17 15:40:27  fisherma
- *  Archive Log:    PR129220 - partial fix for the login changes.
- *  Archive Log:
- *  Archive Log:    Revision 1.41  2015/06/08 16:12:35  fernande
- *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Stabilizing the new FEAdapter code. Changed to use the Performance API instead of the ConfigurationApi since Context is already running with a SubnetRequestDispatcher and shouldn't use a temporary session
- *  Archive Log:
- *  Archive Log:    Revision 1.40  2015/05/29 20:43:46  fernande
- *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Second wave of changes: the application can be switched between the old adapter and the new; moved out several initialization pieces out of objects constructor to allow subnet initialization with a UI in place; improved generics definitions for FV commands.
- *  Archive Log:
- *  Archive Log:    Revision 1.39  2015/05/22 13:53:52  robertja
- *  Archive Log:    PR128703 Resume performance data tasks after completion of fail-over.
- *  Archive Log:
- *  Archive Log:    Revision 1.38  2015/05/11 12:35:06  rjtierne
- *  Archive Log:    Removed printed stack trace for ConfigurationException in method close().
- *  Archive Log:    This error is ignored since the only time it happens is when a subnet is
- *  Archive Log:    deleted while running, which is an acceptable condition. The error is now
- *  Archive Log:    logged only when a SubnetDataNotFoundException occurs.
- *  Archive Log:
- *  Archive Log:    Revision 1.37  2015/04/29 19:13:51  rjtierne
- *  Archive Log:    When saving a subnet to the database in method close(), run on the EDT to prevent
- *  Archive Log:    collision with deletion of the subnet when running in a window.
- *  Archive Log:
- *  Archive Log:    Revision 1.36  2015/04/28 22:13:18  jijunwan
- *  Archive Log:    1) introduced component owner to Context, so when we have errors in data collection, preparation etc, we now there the error dialog should go
- *  Archive Log:    2) improved TaskScheduler to show error message on proper frame
- *  Archive Log:
- *  Archive Log:    Revision 1.35  2015/04/21 21:19:20  fernande
- *  Archive Log:    PR 127653 - FM GUI errors after connection loss. TaskScheduler is shut down when a connection is lost to stop generating requests until failover is complete. At that point, it is restarted.
- *  Archive Log:
- *  Archive Log:    Revision 1.34  2015/04/20 15:59:47  fernande
- *  Archive Log:    Fix for NPE when failover occurs when a subnet is being started and the TaskScheduler has not been initialized yet.
- *  Archive Log:
- *  Archive Log:    Revision 1.33  2015/04/15 18:51:16  fernande
- *  Archive Log:    Improved handling of TimeoutExceptions during failover: TaskScheduler is shutdown during failover and timeouts during failover do not trigger an additional failover process. Refresh functionality has been fixed
- *  Archive Log:
- *  Archive Log:    Revision 1.32  2015/04/08 15:20:39  fernande
- *  Archive Log:    Changes to allow for failover to work when the current (initial) FE is not available.
- *  Archive Log:
- *  Archive Log:    Revision 1.31  2015/04/06 21:20:28  fernande
- *  Archive Log:    Context adds itself as a SubnetEventListener to be notified by the SubnetContext of issues with the subnet. In particular, when failover fails, the TaskScheduler is shutdown as well as the SubnetContext.
- *  Archive Log:
- *  Archive Log:    Revision 1.30  2015/04/02 13:32:54  jypak
- *  Archive Log:    Klockwork: Front End Critical Without Unit Test. 47 open issues fixed. All of them are for null checks.
- *  Archive Log:
- *  Archive Log:    Revision 1.29  2015/03/31 16:21:47  fernande
- *  Archive Log:    Failover support. Adding interfaces and implementations to display in the UI the failover progress.
- *  Archive Log:
- *  Archive Log:    Revision 1.28  2015/03/30 18:34:40  jypak
- *  Archive Log:    Introduce a UserSettingsProcessor to handle different use cases for user settings via Setup Wizard.
- *  Archive Log:
- *  Archive Log:    Revision 1.27  2015/03/27 20:50:03  fernande
- *  Archive Log:    Adding support for failover
- *  Archive Log:
- *  Archive Log:    Revision 1.26  2015/03/26 12:04:56  jypak
- *  Archive Log:    Updates for passing correct refresh rate to task scheduler. When the subnet is connected, compare the sweep interval from the subnet and the refresh rate provided by user.
- *  Archive Log:
- *  Archive Log:    Revision 1.25  2015/03/26 11:10:02  jypak
- *  Archive Log:    PR 126613 Event (State) Severity based on user configuration via setup wizard.
- *  Archive Log:    -The Notice Api retrieves the latest user configuration for the severity through the UserSettings and set the severity when the EventDescription is generated.
- *  Archive Log:    -The Event Calculator clear out event description contents before posting new ones based on new notices with the severities configured by user.
- *  Archive Log:
- *  Archive Log:    Revision 1.24  2015/03/25 11:53:20  jypak
- *  Archive Log:    Header comments changed
- *  Archive Log:
- *  Archive Log:    Revision 1.23  2015/03/25 11:52:27  jypak
- *  Archive Log:    Header comments changed
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
 package com.intel.stl.ui.main;
 
 import java.awt.Component;
@@ -195,8 +74,6 @@ import com.intel.stl.ui.publisher.TaskScheduler;
 import com.intel.stl.ui.publisher.UserSettingsProcessor;
 
 /**
- * @author jijunwan
- * 
  */
 public class Context implements ISubnetEventListener, IConnectionAssistant {
     private static final Logger log = LoggerFactory.getLogger(Context.class);

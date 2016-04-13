@@ -25,44 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: (LinkDownReasonViz.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/10/07 15:24:19  jypak
- *  Archive Log:    PR 130564 - Information missing from device information, but is reported by FF.
- *  Archive Log:    Changed from 'N/A' to 'None'.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/08/17 18:53:46  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/05 23:38:00  jijunwan
- *  Archive Log:    updated link down reason to match FM 325
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/02/02 16:27:17  jijunwan
- *  Archive Log:    matched FM 320 (stl_sm.h v1.26) - added linkInitReason
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/01/11 18:02:04  jijunwan
- *  Archive Log:    PR 126417 - Explore expansion and refinement of LinkDownReason codes
- *  Archive Log:    updated to the latest version stl_sm.h v1.115
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/18 21:31:22  fernande
- *  Archive Log:    Adding more properties for display
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.model;
 
 import static com.intel.stl.ui.common.STLConstants.K0016_UNKNOWN;

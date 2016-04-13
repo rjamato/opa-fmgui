@@ -24,44 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- * 
- *  Functional Group: Fabric Viewer Application
- * 
- *  File Name: HealthHistoryView.java
- * 
- *  Archive Source: $Source$
- * 
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.13  2015/09/25 20:52:55  fernande
- *  Archive Log: PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
- *  Archive Log:
- *  Archive Log: Revision 1.12  2015/08/17 18:54:02  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - changed frontend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.11  2015/08/11 14:36:53  jijunwan
- *  Archive Log: PR 129917 - No update on event statistics
- *  Archive Log: - Apply event subscriber on HealthHistoryCard. It will update either by event or period updating.
- *  Archive Log: - Improved Health Trend chart to draw current data shape
- *  Archive Log: - Improved Health Trend view to show current value immediately
- *  Archive Log:
- *  Archive Log: Revision 1.10  2015/06/25 20:24:57  jijunwan
- *  Archive Log: Bug 126755 - Pin Board functionality is not working in FV
- *  Archive Log: - applied pin framework on fabric viewer and simple 'static' cards
- *  Archive Log:
- *  Archive Log: Revision 1.9  2015/06/10 19:58:57  jijunwan
- *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- * 
- *  Overview:
- * 
- *  @author: jijunwan
- * 
- ******************************************************************************/
 package com.intel.stl.ui.main.view;
 
 import java.awt.Color;
@@ -95,8 +57,6 @@ import com.intel.stl.ui.common.view.ICardListener;
 import com.intel.stl.ui.common.view.JCardView;
 
 /**
- * @author jijunwan
- * 
  */
 public class HealthHistoryView extends JCardView<ICardListener> {
     private static final long serialVersionUID = -7089992232091159132L;

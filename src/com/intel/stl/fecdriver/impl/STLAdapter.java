@@ -25,99 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: STLAdapter.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.50  2015/08/27 19:36:27  fernande
- *  Archive Log:    PR 128703 - Fail over doesn't work on A0 Fabric. Adding setting to specify the failover timeout
- *  Archive Log:
- *  Archive Log:    Revision 1.49  2015/08/18 21:08:53  fernande
- *  Archive Log:    PR 128703 - Fail over doesn't work on A0 Fabric. Added check for a minimum number of connections available during failover
- *  Archive Log:
- *  Archive Log:    Revision 1.48  2015/08/17 18:49:07  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.47  2015/06/10 20:39:37  fernande
- *  Archive Log:    PR 129034 Support secure FE. Removed println statements and leftovers from debugging.
- *  Archive Log:
- *  Archive Log:    Revision 1.46  2015/05/28 12:06:08  robertja
- *  Archive Log:    PR128703 Return correct subnet ID when fail-over completes.
- *  Archive Log:
- *  Archive Log:    Revision 1.45  2015/05/26 20:02:51  fernande
- *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Fix for integration test
- *  Archive Log:
- *  Archive Log:    Revision 1.44  2015/05/26 15:40:06  fernande
- *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
- *  Archive Log:
- *  Archive Log:    Revision 1.43  2015/05/18 14:45:10  robertja
- *  Archive Log:    PR128586 Updates for unit-testing after code review.
- *  Archive Log:
- *  Archive Log:    Revision 1.42  2015/05/08 18:28:39  robertja
- *  Archive Log:    Further code clean-up for fail-over.  Added shutdown of working FailoverManagers on application close.
- *  Archive Log:
- *  Archive Log:    Revision 1.41  2015/05/08 15:05:39  robertja
- *  Archive Log:    Allow fail-over on multiple subnets simultaneously.
- *  Archive Log:
- *  Archive Log:    Revision 1.40  2015/05/08 13:01:51  robertja
- *  Archive Log:    Clean up fail-over debug.
- *  Archive Log:
- *  Archive Log:    Revision 1.39  2015/05/05 18:39:33  robertja
- *  Archive Log:    Converted FailoverManager to singleton.
- *  Archive Log:
- *  Archive Log:    Revision 1.38  2015/04/29 17:31:58  robertja
- *  Archive Log:    Add debug code for "SM unavailable" testing.
- *  Archive Log:
- *  Archive Log:    Revision 1.37  2015/04/22 16:57:48  fernande
- *  Archive Log:    Fix for Klocwork issues
- *  Archive Log:
- *  Archive Log:    Revision 1.36  2015/04/20 12:29:45  robertja
- *  Archive Log:    Revert to original FailoverManager for testing.
- *  Archive Log:
- *  Archive Log:    Revision 1.35  2015/04/17 13:37:08  fernande
- *  Archive Log:    Fixing NPE issue from Klockwork
- *  Archive Log:
- *  Archive Log:    Revision 1.34  2015/04/16 21:12:30  fernande
- *  Archive Log:    Fixes for Klocwork: moved SocketChannel creation to STLConnection, where the logic to close it is.
- *  Archive Log:
- *  Archive Log:    Revision 1.33  2015/04/16 17:35:54  fernande
- *  Archive Log:    Fixing a synchronization issue where close will deadlock with resetChannels during failover
- *  Archive Log:
- *  Archive Log:    Revision 1.32  2015/04/15 18:44:12  fernande
- *  Archive Log:    Improved handling of TimeoutExceptions during failover: TaskScheduler is shutdown during failover and timeouts during failover do not trigger an additional failover process.
- *  Archive Log:
- *  Archive Log:    Revision 1.31  2015/04/10 20:11:52  fernande
- *  Archive Log:    Added check to make sure the current FE index is within the limits of the list of FE
- *  Archive Log:
- *  Archive Log:    Revision 1.30  2015/04/09 22:49:21  jijunwan
- *  Archive Log:    a new FailoverManager based on the old one
- *  Archive Log:
- *  Archive Log:    Revision 1.29  2015/04/08 20:31:24  fernande
- *  Archive Log:    Adding support for Timeout exception going to failover processing.
- *  Archive Log:
- *  Archive Log:    Revision 1.28  2015/04/08 15:17:33  fernande
- *  Archive Log:    Changes to allow for failover to work when the current (initial) FE is not available.
- *  Archive Log:
- *  Archive Log:    Revision 1.27  2015/04/06 21:16:51  fernande
- *  Archive Log:    Improving the handling of connection errors.
- *  Archive Log:
- *  Archive Log:    Revision 1.26  2015/04/06 11:04:55  jypak
- *  Archive Log:    Klockwork: Back End Critical Without Unit Test. Open issues fixed.
- *  Archive Log:
-
- *
- *  Overview: A simple pool strategy here. Should improve it later.
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
 package com.intel.stl.fecdriver.impl;
 
 import java.io.IOException;
@@ -176,6 +83,9 @@ import com.intel.stl.fecdriver.adapter.ISMEventListener;
 import com.intel.stl.fecdriver.dispatcher.IConnectionEventListener;
 import com.intel.stl.fecdriver.session.ISession;
 
+/**
+ * A simple pool strategy here. Should improve it later.
+ */
 public class STLAdapter implements FEResourceAdapter,
         IApplicationEventListener, IFailoverHelper, IAdapter {
     public final static String WORKER_THREAD_NAME = "fec-thread";

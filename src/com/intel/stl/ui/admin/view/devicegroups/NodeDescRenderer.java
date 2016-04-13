@@ -25,39 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: NodeDescRenderer.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4  2015/08/17 18:54:22  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/07/14 17:02:40  jijunwan
- *  Archive Log:    PR 129541 - Should forbid save or deploy when there is invalid edit on management panel
- *  Archive Log:    - Introduce isEditValid for attribute renders
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/03/30 14:25:38  jijunwan
- *  Archive Log:    1) introduced IRendererModel to create renderer only we nee
- *  Archive Log:    2) removed #getName from IAttrRenderer to provide more flexibilities and let IRendererModel to take care which attribute should use which renderer, how to init it properly
- *  Archive Log:    3) improved to support repeatable and non-repeatable attributes. For non-repeatable attributes, we only can add once
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/24 17:46:09  jijunwan
- *  Archive Log:    init version of DeviceGroup editor
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.admin.view.devicegroups;
 
 import com.intel.stl.api.management.devicegroups.NodeDesc;

@@ -24,54 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: DatabaseManagerImpl.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.51  2016/01/26 18:41:35  fernande
- *  Archive Log: PR 132387 - [Dell]: FMGUI Fails to Open Due to Database Lock. Changed the AppComponent interface so that component can provide feedback to the UI.
- *  Archive Log:
- *  Archive Log: Revision 1.50  2015/12/16 14:26:04  jijunwan
- *  Archive Log: PR 132071 - Error on initial CLI launch of FM GUI in RHEL 7.1
- *  Archive Log: - fixed Klocwork issue
- *  Archive Log:
- *  Archive Log: Revision 1.49  2015/09/02 15:56:22  fernande
- *  Archive Log: PR 130220 - FM GUI "about" window displays unmatched version and build #. Passing the OPA FM version thru the manifest.
- *  Archive Log:
- *  Archive Log: Revision 1.48  2015/08/19 19:27:16  fernande
- *  Archive Log: PR 128703 - Fail over doesn't work on A0 Fabric. Adding shutdown method to AppComponent interface for application shutdown.
- *  Archive Log:
- *  Archive Log: Revision 1.47  2015/08/18 21:04:27  fernande
- *  Archive Log: PR 128703 - Fail over doesn't work on A0 Fabric. Fixed schema update because FE list is not copied over to new database
- *  Archive Log:
- *  Archive Log: Revision 1.46  2015/08/17 18:49:00  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - change backend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.45  2015/08/10 17:04:53  robertja
- *  Archive Log: PR128974 - Email notification functionality.
- *  Archive Log:
- *  Archive Log: Revision 1.44  2015/07/09 18:53:33  fernande
- *  Archive Log: PR 129447 - Database size increases a lot over a short period of time. Added purge function to delete GroupInfo records older than a specified timestamp
- *  Archive Log:
- *  Archive Log: Revision 1.43  2015/06/10 19:36:53  jijunwan
- *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- *
- *  Overview:
- *
- *  @author:
- *
- ******************************************************************************/
-
 package com.intel.stl.datamanager.impl;
 
 import static com.intel.stl.api.subnet.NodeType.HFI;

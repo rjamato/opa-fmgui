@@ -24,81 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: CableInfoRecord.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.18  2016/04/01 11:34:32  jypak
- *  Archive Log:    PR 130081 - Adapt FM GUI to use data structure STL_CABLE_INFO_FULL.
- *  Archive Log:    Updated to process each 64 bytes in two cable data from FM through CableInfoStd. Populating CableInfoBean and interpretation to QSFP both are executed by CableInfoStd.
- *  Archive Log:
- *  Archive Log:    Revision 1.17  2015/09/16 14:37:12  jypak
- *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
- *  Archive Log:    For code consistency, added case statements for removed offset back.
- *  Archive Log:
- *  Archive Log:    Revision 1.16  2015/09/15 13:31:30  jypak
- *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
- *  Archive Log:    Incorporated the FM changes (PR 129390) as of 8/28/15. These changes are mainly from IbPrint/stl_sma.c revision 1.163.
- *  Archive Log:
- *  Archive Log:    Revision 1.15  2015/08/19 22:26:34  jijunwan
- *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
- *  Archive Log:    - correction on OM length calculation
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2015/08/19 21:02:54  jijunwan
- *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
- *  Archive Log:    - adapt to latest FM code
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2015/08/19 18:08:29  jypak
- *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
- *  Archive Log:    Updates for ID and OpticalWaveLength.
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/08/17 18:48:48  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/08/07 16:13:16  jypak
- *  Archive Log:    PR 129397 -gaps in cableinfo output and handling.
- *  Archive Log:    Updates on the formats of the cableinfo output and also new enums were defined for different output values.
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/08/07 14:57:52  jypak
- *  Archive Log:    PR 129397 -gaps in cableinfo output and handling.
- *  Archive Log:    Updates on the formats of the cableinfo output and also new enums were defined for different output values.
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/06/29 15:05:41  jypak
- *  Archive Log:    PR 129284 - Incorrect QSFP field name.
- *  Archive Log:    Field name fix has been implemented. Also, introduced a conversion to Date object to add flexibility to display date code.
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/05/01 20:52:38  jijunwan
- *  Archive Log:    fixed minor errors
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/04/29 18:21:08  jijunwan
- *  Archive Log:    removed workaround code
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/04/29 14:01:09  jypak
- *  Archive Log:    Updates to display unknown data in the address not interpretable in the QSFP port encoding based on the SFF-8636.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/04/28 15:47:43  jypak
- *  Archive Log:    Changes related to FM updates for the Cable Info processing.
- *  Archive Log:
- *
- *  Overview:
- *
- *  Reference: /All_EMB/IbPrint/stl_sma.c.1.159 for the QSFP interpretation.
- *             /All_EMB/IbAccess/Common/Inc/stl_helper.h.1.74
- *             /All_EMB/IbAccess/Common/Inc/stl_sm.h.1.149
- *             ftp://ftp.seagate.com/sff/SFF-8436.PDF
- *
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.fecdriver.messages.adapter.sa;
 
 import com.intel.stl.api.subnet.CableInfoBean;
@@ -154,8 +79,11 @@ import com.intel.stl.fecdriver.messages.adapter.SimpleDatagram;
  * } PACK_SUFFIX STL_CABLE_INFO;
  * </pre>
  *
- * @author jypak
  *
+ * Reference: /All_EMB/IbPrint/stl_sma.c.1.159 for the QSFP interpretation.
+ * /All_EMB/IbAccess/Common/Inc/stl_helper.h.1.74
+ * /All_EMB/IbAccess/Common/Inc/stl_sm.h.1.149
+ * ftp://ftp.seagate.com/sff/SFF-8436.PDF
  */
 public class CableInfoRecord extends SimpleDatagram<CableRecordBean> {
 

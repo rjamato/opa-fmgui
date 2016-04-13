@@ -25,44 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: FabricViewer
- *
- *  File Name: WorstNodesCard.java
- *
- *  Archive Source: $Source$
- * 
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.15  2015/08/17 18:53:38  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - changed frontend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.14  2015/08/05 02:47:02  jijunwan
- *  Archive Log: PR 129359 - Need navigation feature to navigate within FM GUI
- *  Archive Log: - introduced UndoHandler to manage undo/redo
- *  Archive Log: - added undo/redo to main frame
- *  Archive Log: - improved FabricController to support undoHandler and undo action on page selection
- *  Archive Log: - improved FabricController to support the new page name based IPageListener
- *  Archive Log:
- *  Archive Log: Revision 1.13  2015/06/25 20:24:56  jijunwan
- *  Archive Log: Bug 126755 - Pin Board functionality is not working in FV
- *  Archive Log: - applied pin framework on fabric viewer and simple 'static' cards
- *  Archive Log:
- *  Archive Log: Revision 1.12  2015/06/09 18:37:27  jijunwan
- *  Archive Log: PR 129069 - Incorrect Help action
- *  Archive Log: - moved help action from view to controller
- *  Archive Log: - only enable help button when we have HelpID
- *  Archive Log: - fixed incorrect HelpIDs
- *  Archive Log:
- * 
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.main;
 
 import java.util.Properties;
@@ -84,8 +46,6 @@ import com.intel.stl.ui.main.view.WorstNodesView;
 import com.intel.stl.ui.model.NodeScore;
 
 /**
- * @author jijunwan
- * 
  */
 public class WorstNodesCard extends
         PinnableCardController<IWorstNodesListener, WorstNodesView> implements

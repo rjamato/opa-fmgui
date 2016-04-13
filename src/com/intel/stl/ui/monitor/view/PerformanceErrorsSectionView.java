@@ -48,35 +48,9 @@ import com.intel.stl.ui.common.view.JSectionView;
 import com.intel.stl.ui.configuration.view.IPropertyListener;
 import com.intel.stl.ui.main.view.PerfErrorsCardView;
 
-/*******************************************************************************
- * I N T E L C O R P O R A T I O N
- * 
- * Functional Group: Fabric Viewer Application
- * 
- * File Name: PerfErrorsItem.java
- * 
- * Archive Source: $Source:
- * /cvs/vendor/intel/fmgui/client/src/main/java/com/intel
- * /stl/ui/monitor/view/PerformanceErrorsSectionView.java,v $
- * 
- * Archive Log: $Log$
- * Archive Log: Revision 1.9  2015/11/02 17:35:59  jijunwan
- * Archive Log: PR 131378 - Toolbars should be locked in place
- * Archive Log: - set toolbar floatable to false
- * Archive Log: Archive Log:
- * Revision 1.8 2015/08/17 18:54:24 jijunwan Archive Log: PR 129983 - Need to
- * change file header's copyright text to BSD license txt Archive Log: - changed
- * frontend files' headers Archive Log: Archive Log: Revision 1.7 2015/04/01
- * 21:24:44 jijunwan Archive Log: adjustment on layout Archive Log: Archive Log:
- * Revision 1.6 2015/02/25 13:57:41 jypak Archive Log: Correct comment header
- * Archive Log:
- * 
- * Overview: Performance Errors Item
- * 
- * @author: jypak
- * 
- ******************************************************************************/
-
+/**
+ * Performance Errors Item
+ */
 public class PerformanceErrorsSectionView extends
         JSectionView<ISectionListener> {
     private static final long serialVersionUID = 317632809509908254L;

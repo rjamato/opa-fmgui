@@ -25,72 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PSStatsDetailsController.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7  2015/08/17 18:53:41  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/02/04 21:44:17  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/10/23 16:33:18  jijunwan
- *  Archive Log:    minor change on timers - intend to improve timer behavior so the action will be cancelled event if it's already in EDT queue
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/10/22 16:40:15  jijunwan
- *  Archive Log:    separated other ports viz for the ports not in a subnet
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/08/05 18:39:02  jijunwan
- *  Archive Log:    renamed FI to HFI
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/21 16:28:38  jijunwan
- *  Archive Log:    integer format adjustment
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/21 13:48:17  jijunwan
- *  Archive Log:    added # internal, external ports on performance page
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/07/08 14:24:07  jijunwan
- *  Archive Log:    minor change - rename caXXX to fiXXX
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/07/08 14:07:05  jijunwan
- *  Archive Log:    removed route from state chart per feedback we got
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/06/26 20:29:34  jijunwan
- *  Archive Log:    clear UI when we switch context
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/06/05 18:32:49  jijunwan
- *  Archive Log:    changed Channel Adapter to Fabric Interface
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/05/29 14:25:06  jijunwan
- *  Archive Log:    jfreechart dataset is not thread safe, put all dataset related operation into EDT, so they will synchronize
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/05/09 20:53:33  rjtierne
- *  Archive Log:    Removed failed and skipped datasets
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/09 19:19:34  rjtierne
- *  Archive Log:    Renamed from PerfSummaryStatsDetailsController and completely
- *  Archive Log:    changed after MVC Refactoring
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/08 21:11:02  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Controller for the statistics detail view on the Performance
- *  Summary subpage
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.monitor;
 
 import java.awt.Color;
@@ -113,6 +47,8 @@ import com.intel.stl.ui.monitor.view.PSNodesDetailsPanel;
  * per feedback we got, we do not show Router info here. we intentionally
  * change it on UI side rather than backend because we may need to support it
  * again in the future
+ *
+ * Controller for the statistics detail view on the Performance Summary subpage
  */
 public class PSNodesDetailsController {
     private final String name;

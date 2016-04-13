@@ -26,30 +26,6 @@
  */
 
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: CredentialsGlassPanel.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2  2015/08/17 18:54:02  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/06/30 17:50:10  fisherma
- *  Archive Log:    PR 129220 - Improvement on secure FE login.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fisherma
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.main.view;
 
 import java.awt.BorderLayout;

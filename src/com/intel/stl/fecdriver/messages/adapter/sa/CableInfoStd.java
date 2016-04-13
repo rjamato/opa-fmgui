@@ -25,31 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: CableInfoStd.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2  2016/04/04 10:34:54  jypak
- *  Archive Log:    PR 130081 - Adapt FM GUI to use data structure STL_CABLE_INFO_FULL.
- *  Archive Log:    Updated stl_sm.h version to 1.157.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2016/04/01 11:34:32  jypak
- *  Archive Log:    PR 130081 - Adapt FM GUI to use data structure STL_CABLE_INFO_FULL.
- *  Archive Log:    Updated to process each 64 bytes in two cable data from FM through CableInfoStd. Populating CableInfoBean and interpretation to QSFP both are executed by CableInfoStd.
- *  Archive Log:
- *
- *  Overview: A class to define the structure STL_CABLE_INFO_STD from IbAccess/Common/Inc/stl_sm.h
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.fecdriver.messages.adapter.sa;
 
 import com.intel.stl.api.subnet.CableInfoBean;
@@ -160,8 +135,10 @@ import com.intel.stl.fecdriver.messages.adapter.SimpleDatagram;
  * } PACK_SUFFIX STL_CABLE_INFO_STD;
  * </pre>
  *
- **/
-
+ *
+ * A class to define the structure STL_CABLE_INFO_STD from
+ * IbAccess/Common/Inc/stl_sm.h
+ */
 public class CableInfoStd extends SimpleDatagram<CableInfoBean> {
 
     public CableInfoStd() {

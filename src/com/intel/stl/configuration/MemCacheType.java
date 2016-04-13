@@ -25,46 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: CacheType.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/17 18:48:40  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/02/23 22:24:35  jijunwan
- *  Archive Log:    added GroupConfCache
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/12/31 17:41:16  jypak
- *  Archive Log:    1. CableInfo updates (Moved the QSFP interpretation logic to backend etc.)
- *  Archive Log:    2. SC2SL updates.
- *  Archive Log:    3. SC2VLt updates.
- *  Archive Log:    4. SC3VLnt updates.
- *  Archive Log:    Some of the SubnetApi, CachedSubnetApi updates should be undone when the FE supports cable info, SC2SL, SC2VLt, SC2VLnt.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/12/18 16:25:40  jypak
- *  Archive Log:    Cable Info updates.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/18 20:48:50  fernande
- *  Archive Log:    Enabling GroupInfo saving after fixing issues in the application
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/09/17 16:44:03  fernande
- *  Archive Log:    Refactored CacheManager to load caches according to what's defined in enums MemCacheType and DBCacheType, to make it more dynamic and more extensible. Changed code so that Exception caught during refreshCache is converted into a RuntimeException and it's rethrown every time getCachedObject is invoked. This to reflect that the caller has not much to do with the original error.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.configuration;
 
 import com.intel.stl.api.performance.impl.GroupCacheImpl;

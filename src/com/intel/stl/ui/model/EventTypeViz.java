@@ -25,42 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: EventTypeViz.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/17 18:53:46  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/01/15 19:08:15  rjtierne
- *  Archive Log:    Abbreviated "CONNECTION" enumeration names to better fit in the event wizard window
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/01/13 18:59:54  rjtierne
- *  Archive Log:    Corrected FE_CONNECTION_ESTABLISH enum which contained wrong string
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/07/29 13:49:57  fernande
- *  Archive Log:    Added missing values from the API enum
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/05/28 17:25:42  jijunwan
- *  Archive Log:    color severity on event table, by default sort event table by time, by default show event table on home page, show text for enums
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/07 20:03:57  fernande
- *  Archive Log:    Changes to save Subnets and EventRules to the database
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.model;
 
 import static com.intel.stl.ui.common.STLConstants.K03006_FE_CONN_EST;

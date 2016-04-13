@@ -25,53 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: DeviceGroupStatistics.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7  2015/08/17 18:53:46  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/02/23 22:47:30  jijunwan
- *  Archive Log:    added method #toString to help debug
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/02/04 21:44:16  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/10/22 16:40:17  jijunwan
- *  Archive Log:    separated other ports viz for the ports not in a subnet
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/10/15 22:00:21  jijunwan
- *  Archive Log:    display other ports on UI
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/21 13:48:18  jijunwan
- *  Archive Log:    added # internal, external ports on performance page
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/06/05 17:31:13  jijunwan
- *  Archive Log:    renamed DeviceGroupStatistics to DevicesStatistics since we are using it for vFabric as well
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/05/15 22:35:43  rjtierne
- *  Archive Log:    Removed method calculateNumPorts()
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/15 18:23:02  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.model;
 
 import java.util.EnumMap;

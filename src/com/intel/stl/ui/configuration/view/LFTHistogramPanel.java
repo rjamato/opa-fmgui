@@ -25,45 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: LFTHistogramPanel.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/17 18:54:17  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/10/22 02:08:13  jijunwan
- *  Archive Log:    renamed
- *  Archive Log:    PropertyPageCategory to DevicePropertyCategory,
- *  Archive Log:    PropertyItem to DevicePropertyItem,
- *  Archive Log:    PropertyPageGroup to DevicePropertyGroup
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/10/13 21:06:47  fernande
- *  Archive Log:    Changed GetDevicePropertiesTask to be driven by the PropertiesDisplayOptions in UserSettings instead of hard coded
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/10/09 13:04:36  fernande
- *  Archive Log:    Adding IContextAware interface to generalize setting up Context
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/08/26 20:49:14  jijunwan
- *  Archive Log:    improved to support switches with different number of ports
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/14 17:37:51  fernande
- *  Archive Log:    Closing the gap on device properties being displayed.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.configuration.view;
 
 import static com.intel.stl.ui.common.STLConstants.K0390_NUM_LIDS;

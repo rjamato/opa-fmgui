@@ -25,83 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: CableInfoProcessor.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.17  2016/04/01 11:34:33  jypak
- *  Archive Log:    PR 130081 - Adapt FM GUI to use data structure STL_CABLE_INFO_FULL.
- *  Archive Log:    Updated to process each 64 bytes in two cable data from FM through CableInfoStd. Populating CableInfoBean and interpretation to QSFP both are executed by CableInfoStd.
- *  Archive Log:
- *  Archive Log:    Revision 1.16  2015/09/15 13:31:34  jypak
- *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
- *  Archive Log:    Incorporated the FM changes (PR 129390) as of 8/28/15. These changes are mainly from IbPrint/stl_sma.c revision 1.163.
- *  Archive Log:
- *  Archive Log:    Revision 1.15  2015/08/19 22:27:13  jijunwan
- *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
- *  Archive Log:    - adapt to integer OM length
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2015/08/19 21:06:35  jijunwan
- *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
- *  Archive Log:    - adapt to latest FM code
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2015/08/19 18:08:31  jypak
- *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
- *  Archive Log:    Updates for ID and OpticalWaveLength.
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/08/18 14:28:32  jijunwan
- *  Archive Log:    PR 130033 - Fix critical issues found by Klocwork or FindBugs
- *  Archive Log:    - DateFormat is not thread safe. Changed to create new DateFormat to avoid sharing it among different threads
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/08/17 21:44:01  jijunwan
- *  Archive Log:    PR 129397 -gaps in cableinfo output and handling.
- *  Archive Log:    - fixed a typo
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/08/17 18:53:50  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/08/07 14:57:57  jypak
- *  Archive Log:    PR 129397 -gaps in cableinfo output and handling.
- *  Archive Log:    Updates on the formats of the cableinfo output and also new enums were defined for different output values.
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/07/20 16:33:53  jypak
- *  Archive Log:    PR 129284 - Incorrect QSFP field name.
- *  Archive Log:    Avoid adding 'N/A' date code and also 'Invalid' by setting the property only when processing the 2nd bean.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/06/30 14:36:53  jypak
- *  Archive Log:    PR 129284 - Incorrect QSFP field name.
- *  Archive Log:    For date code, if invalid data, set the property field value as 'Invalid' and if both data code string and Date object are null, set the field value as 'N/A'.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/06/29 15:05:44  jypak
- *  Archive Log:    PR 129284 - Incorrect QSFP field name.
- *  Archive Log:    Field name fix has been implemented. Also, introduced a conversion to Date object to add flexibility to display date code.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/04/29 14:01:06  jypak
- *  Archive Log:    Updates to display unknown data in the address not interpretable in the QSFP port encoding based on the SFF-8636.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/04/28 15:50:10  jypak
- *  Archive Log:    Display byte data in hex form like FFT does. Updated to use Byte class rather than primitive type byte to differentiate between valid data and 'no data'. The cable data are spread across two record entries, so, 'no data' for a field in CableInfoBean means that the data for the field is in the other record. Also, since we need to handle unsigned values, we cannot use NaN as -1.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/04/21 17:57:30  jypak
- *  Archive Log:    Display 'N/A' for each attributes when not applicable.
- *  Archive Log:    For a switch port 0, display 'N/A' for each attributes.
- *  Archive Log:
- *
- *  Overview:
- *
- *  Reference: /All_EMB/IbPrint/stl_sma.c.1.103 for the QSFP interpretation.
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.configuration;
 
 import static com.intel.stl.ui.common.STLConstants.K0385_TRUE;
@@ -156,6 +79,9 @@ import com.intel.stl.ui.model.PowerClassTypeViz;
 import com.intel.stl.ui.monitor.TreeNodeType;
 import com.intel.stl.ui.monitor.tree.FVResourceNode;
 
+/**
+ * Reference: /All_EMB/IbPrint/stl_sma.c.1.103 for the QSFP interpretation.
+ */
 public class CableInfoProcessor extends BaseCategoryProcessor {
 
     @Override

@@ -24,40 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- * 
- *  Functional Group: Fabric Viewer Application
- * 
- *  File Name: ConfigurationApi.java
- * 
- *  Archive Source: $Source$
- * 
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.52  2015/08/17 18:48:56  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - change backend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.51  2015/08/14 19:46:32  fisherma
- *  Archive Log: Allow user to disable email notifications by leaving the SMTP server name field empty.
- *  Archive Log:
- *  Archive Log: Revision 1.50  2015/08/10 17:04:52  robertja
- *  Archive Log: PR128974 - Email notification functionality.
- *  Archive Log:
- *  Archive Log: Revision 1.49  2015/07/09 18:47:04  fernande
- *  Archive Log: PR 129447 - Database size increases a lot over a short period of time. Added method to expose application settings in the settings.xml file to higher levels in the app
- *  Archive Log:
- *  Archive Log: Revision 1.48  2015/06/10 19:36:46  jijunwan
- *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- * 
- *  Overview:
- * 
- *  @author: jijunwan
- * 
- ******************************************************************************/
 package com.intel.stl.api.configuration.impl;
 
 import static com.intel.stl.common.AppDataUtils.FM_GUI_DIR;
@@ -116,8 +82,6 @@ import com.intel.stl.fecdriver.messages.response.FVResponse;
 import com.intel.stl.fecdriver.session.ISession;
 
 /**
- * @author jijunwan
- * 
  */
 public class ConfigurationApi implements IConfigurationApi {
 

@@ -25,42 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: NoticeSeverity.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/17 18:48:43  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/12/11 18:32:35  fernande
- *  Archive Log:    Switch from log4j to slf4j+logback
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/12/10 20:32:43  rjtierne
- *  Archive Log:    Support for saving EventRules to UserSettings
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/05/06 15:14:03  jijunwan
- *  Archive Log:    notice and trap implementation
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/30 16:07:05  fernande
- *  Archive Log:    Changed to use in EventRule
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/12 19:22:31  fernande
- *  Archive Log:    Initial version
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.api.notice;
 
 import java.util.HashMap;

@@ -25,47 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: DistributionBarController.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/17 18:54:12  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/02/05 19:41:29  jijunwan
- *  Archive Log:    fixed NPE issues found by klocwork
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/04 21:44:22  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/05/08 19:25:40  jijunwan
- *  Archive Log:    MVC refactory
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/30 17:30:06  jijunwan
- *  Archive Log:    use Util.runInEDT
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/12 19:46:33  fernande
- *  Archive Log:    Initial version
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/01 20:40:18  jijunwan
- *  Archive Log:    introduced card. And refactoried to apply MVC patterns on UI widgets.
- *  Archive Log:
- *
- *  Overview: The controller for JDistributionBar
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common;
 
 import java.awt.Color;
@@ -75,6 +34,9 @@ import javax.swing.ImageIcon;
 
 import com.intel.stl.ui.common.view.DistributionBarPanel;
 
+/**
+ * The controller for JDistributionBar
+ */
 public class DistributionBarController {
     private final String[] items;
 

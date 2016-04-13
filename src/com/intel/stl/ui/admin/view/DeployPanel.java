@@ -25,35 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: DeployPanel.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3  2016/03/29 14:32:24  rjtierne
- *  Archive Log:    PR 133384 - Cannot deploy new Device Groups/Virtual Fabrics changes after a success deployment
- *  Archive Log:    - Set the state of the master SM to NONE before opening the DeployPanel so the task to deploy changes to the management node is executed.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/08/17 18:53:52  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/08/17 17:37:06  jijunwan
- *  Archive Log:    PR 128973 - Deploy FM conf changes on all SMs
- *  Archive Log:    - introduced deploy panel, controller and listener
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.admin.view;
 
 import java.awt.Dimension;

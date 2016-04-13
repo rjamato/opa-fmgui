@@ -25,54 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PerformanceSubpageView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8  2015/08/17 18:54:25  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/10/09 21:24:50  jijunwan
- *  Archive Log:    improvement on TreeNodeType:
- *  Archive Log:    1) Added icon to TreeNodeType
- *  Archive Log:    2) Rename PORT to ACTIVE_PORT
- *  Archive Log:    3) Removed NODE
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/06/24 20:23:48  rjtierne
- *  Archive Log:    Changed HCA to HFI
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/05/28 22:21:57  jijunwan
- *  Archive Log:    added port preview to performance subpage
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/05/21 14:49:33  rjtierne
- *  Archive Log:    Refactored subpage to accommodate Performance Port
- *  Archive Log:    and Node views on a card layout
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/05/19 15:19:05  rjtierne
- *  Archive Log:    Removed txtLabel
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/05/01 17:53:33  jypak
- *  Archive Log:    Performance page performance subpage graph section implemented.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/01 16:14:58  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: This is the view for the performance subpage.  It serves as a wrapper
- *  for swapping out the Performance "Node" and "Port" views on a CardLayout
- *  depending on whether a node or port is selected. 
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.monitor.view;
 
 import java.awt.CardLayout;
@@ -83,6 +35,11 @@ import javax.swing.JPanel;
 import com.intel.stl.ui.common.IPerfSubpageController;
 import com.intel.stl.ui.monitor.TreeNodeType;
 
+/**
+ * This is the view for the performance subpage.  It serves as a wrapper for
+ * swapping out the Performance "Node" and "Port" views on a CardLayout
+ * depending on whether a node or port is selected.
+ */
 public class PerformanceSubpageView extends JPanel {
 
     /**

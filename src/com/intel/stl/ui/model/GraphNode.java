@@ -25,59 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: GraphNode.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.11  2015/08/17 18:53:46  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/08/06 21:34:44  jijunwan
- *  Archive Log:    PR 129860 - Incorrect count of other ports on Topology summary
- *  Archive Log:    - Counted on number of nodes by mistake. Fixed to count on port.
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/02/05 22:43:48  jijunwan
- *  Archive Log:    improved to handle graph selection
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/02/05 19:10:51  jijunwan
- *  Archive Log:    fixed NPE issues found by klocwork
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/10/22 02:05:17  jijunwan
- *  Archive Log:    made property model more general
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/08/05 18:39:04  jijunwan
- *  Archive Log:    renamed FI to HFI
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/08/05 13:46:24  jijunwan
- *  Archive Log:    new implementation on topology control that uses double models to avoid synchronization issues on model and view
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/07/03 22:13:47  jijunwan
- *  Archive Log:    1) added normalization to GraphEdge, so we can identify the same edges represented in different directions
- *  Archive Log:    2) added helper method to the neighbor of a port
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/06/23 04:56:57  jijunwan
- *  Archive Log:    new topology code to support interactions with a topology graph
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/06/05 18:32:51  jijunwan
- *  Archive Log:    changed Channel Adapter to Fabric Interface
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/23 19:47:55  jijunwan
- *  Archive Log:    init version of topology page
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.model;
 
 import java.io.PrintStream;

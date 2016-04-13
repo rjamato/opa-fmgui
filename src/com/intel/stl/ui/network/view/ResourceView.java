@@ -25,56 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ResourceCardView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.9  2015/08/17 18:54:15  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/08/05 04:09:30  jijunwan
- *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
- *  Archive Log:    - applied undo mechanism on Topology Page
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/11/05 16:37:15  jijunwan
- *  Archive Log:    renamed ResoureLinkCard to ResourceLinkSection since it a section now
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/10/23 16:00:06  jijunwan
- *  Archive Log:    changed topology information display to use device property panels, and JSectionView
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/10/22 02:21:27  jijunwan
- *  Archive Log:    1) moved update tasks into task package
- *  Archive Log:    2) added topology summary panel
- *  Archive Log:    3) improved models to be able to calculate ports distribution, nodes not in fat tree etc.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/08/26 15:15:35  jijunwan
- *  Archive Log:    added refresh function to all pages
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/07/18 13:43:43  rjtierne
- *  Archive Log:    Added the Path view to the card map
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/10 14:40:35  rjtierne
- *  Archive Log:    Added new LinkSubpageCard/View when to be displayed when links
- *  Archive Log:    are selected from the topology graph
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/08 20:19:43  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Top level view under the topology page to house the swappable
- *  overview panel and subpage views
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.network.view;
 
 import java.awt.CardLayout;
@@ -85,6 +35,10 @@ import javax.swing.JPanel;
 import com.intel.stl.ui.network.ResourceScopeType;
 import com.intel.stl.ui.network.ResourceSection;
 
+/**
+ * Top level view under the topology page to house the swappable overview panel
+ * and subpage views
+ */
 public class ResourceView extends JPanel {
 
     /**

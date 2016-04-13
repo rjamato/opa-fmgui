@@ -25,61 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: VirtualFabricEditorPanel.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.9  2015/10/21 15:06:57  jijunwan
- *  Archive Log:    PR 131077 - Virtual Fabrics list does not reflect enabled status per item in "list tile" of admin window
- *  Archive Log:    - Extended VF to use its own renderer for item panel
- *  Archive Log:    - Extended VF to update item panel when there is a change on enabled check box
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/08/17 18:54:01  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/08/04 18:06:13  jijunwan
- *  Archive Log:    PR 129812 - Continuous "abandon changes" message when a virtual fabric is removed
- *  Archive Log:    - removed code that reset App names and DG names.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/07/14 17:06:03  jijunwan
- *  Archive Log:    PR 129541 - Should forbid save or deploy when there is invalid edit on management panel
- *  Archive Log:    - throw InvalidEditException when there is invalid edit
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/05/14 17:19:46  jijunwan
- *  Archive Log:    PR 128697 - Handle empty list of items
- *  Archive Log:    - Added code to handle null item
- *  Archive Log:    - Added code to clean panel when it gets a null item
- *  Archive Log:    - Enable/disable buttons properly when we get an empty item list or null item
- *  Archive Log:    - Improved to handle item selection when the index is invalid, such as -1
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/04/06 11:14:12  jypak
- *  Archive Log:    Klockwork: Front End Critical Without Unit Test. Open issues fixed.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/04/03 14:28:20  jijunwan
- *  Archive Log:    added title border
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/03/30 14:25:37  jijunwan
- *  Archive Log:    1) introduced IRendererModel to create renderer only we nee
- *  Archive Log:    2) removed #getName from IAttrRenderer to provide more flexibilities and let IRendererModel to take care which attribute should use which renderer, how to init it properly
- *  Archive Log:    3) improved to support repeatable and non-repeatable attributes. For non-repeatable attributes, we only can add once
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/27 15:47:46  jijunwan
- *  Archive Log:    first version of VirtualFabric UI
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.admin.view.virtualfabrics;
 
 import java.awt.BorderLayout;

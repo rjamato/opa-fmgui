@@ -25,34 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- * I N T E L C O R P O R A T I O N
- * 
- * Functional Group: Fabric Viewer Application
- * 
- * File Name: STLStatement.java
- * 
- * Archive Source: $Source$
- * 
- * Archive Log: $Log$
- * Archive Log: Revision 1.17  2015/08/17 18:49:07  jijunwan
- * Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- * Archive Log: - change backend files' headers
- * Archive Log:
- * Archive Log: Revision 1.16  2015/06/10 20:39:37  fernande
- * Archive Log: PR 129034 Support secure FE. Removed println statements and leftovers from debugging.
- * Archive Log:
- * Archive Log: Revision 1.15  2015/06/05 19:10:18  jijunwan
- * Archive Log: PR 129096 - Some old files have no copyright text
- * Archive Log: - added Intel copyright text
- * Archive Log:
- * 
- * Overview:
- * 
- * @author: jijunwan
- * 
- ******************************************************************************/
-
 package com.intel.stl.fecdriver.impl;
 
 import java.io.IOException;

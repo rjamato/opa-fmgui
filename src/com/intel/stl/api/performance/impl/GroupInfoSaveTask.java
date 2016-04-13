@@ -25,39 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: GroupInfoSaveTask.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:49:03  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/09/18 20:47:56  fernande
- *  Archive Log:    Enabling GroupInfo saving after fixing issues in the application
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/15 22:01:58  fernande
- *  Archive Log:    Disabling save to database: foreign key not existing for special groups. Need to generate special records for those special groups at startup
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/15 21:18:09  fernande
- *  Archive Log:    Adding unit test for PerformanceApi and fixes for some issues found.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/09/12 19:56:07  fernande
- *  Archive Log:    We now save ImageInfo and GroupInfo to the database. As they are retrieved by the UI, they are buffered and then saved at certain thresholds.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.api.performance.impl;
 
 import java.util.ArrayList;

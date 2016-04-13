@@ -25,39 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PSInfoSectionView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4  2015/08/17 18:54:25  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/02/05 19:11:39  jijunwan
- *  Archive Log:    code cleanup
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/05/19 22:12:29  jijunwan
- *  Archive Log:    look and feel adjustment on performance page
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/09 19:26:31  rjtierne
- *  Archive Log:    Renamed from PerfSummaryInfoSectionView and completely
- *  Archive Log:    changed after MVC Refactoring
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/08 21:11:03  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: View for the info section on the Performance Summary subpage
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.monitor.view;
 
 import java.awt.BorderLayout;
@@ -69,6 +36,9 @@ import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.view.ISectionListener;
 import com.intel.stl.ui.common.view.JSectionView;
 
+/**
+ * View for the info section on the Performance Summary subpage
+ */
 public class PSInfoSectionView extends JSectionView<ISectionListener> {
 
     private static final long serialVersionUID = 7004235726509918990L;

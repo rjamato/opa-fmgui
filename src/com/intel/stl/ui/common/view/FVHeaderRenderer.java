@@ -25,46 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: FVHeaderRenderer.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4  2015/08/17 18:53:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/03/10 22:46:39  jijunwan
- *  Archive Log:    added tooltip
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/06/09 19:09:45  rjtierne
- *  Archive Log:    Added new constructor to accept JXTable
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/16 16:20:48  jijunwan
- *  Archive Log:    minor refactory
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/12 19:46:33  fernande
- *  Archive Log:    Initial version
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/04 19:23:20  rjtierne
- *  Archive Log:    Added call to constructor to set opaque to true.  Changed the
- *  Archive Log:    background and foreground of the heading columns.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/03/28 15:09:07  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Enhances the appearance of the table headers through cell rendering
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common.view;
 
 import java.awt.Component;
@@ -78,6 +38,9 @@ import org.jdesktop.swingx.JXTable;
 
 import com.intel.stl.ui.common.UIConstants;
 
+/**
+ * Enhances the appearance of the table headers through cell rendering
+ */
 public class FVHeaderRenderer extends DefaultTableCellRenderer {
 
     /**

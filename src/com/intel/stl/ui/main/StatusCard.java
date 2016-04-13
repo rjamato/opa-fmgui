@@ -25,45 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: FabricViewer
- *
- *  File Name: NodeStatesCard.java
- *
- *  Archive Source: $Source$
- * 
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.10  2015/08/17 18:53:38  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - changed frontend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.9  2015/07/17 20:25:04  jijunwan
- *  Archive Log: PR 129593 - empty health pin card
- *  Archive Log: - set card size based on original view size
- *  Archive Log:
- *  Archive Log: Revision 1.8  2015/06/26 22:36:17  jijunwan
- *  Archive Log: PR 126755 - Pin Board functionality is not working in FV
- *  Archive Log: - set new created status view to proper size, so the pin card view has desired size as well
- *  Archive Log:
- *  Archive Log: Revision 1.7  2015/06/25 20:24:56  jijunwan
- *  Archive Log: Bug 126755 - Pin Board functionality is not working in FV
- *  Archive Log: - applied pin framework on fabric viewer and simple 'static' cards
- *  Archive Log:
- *  Archive Log: Revision 1.6  2015/06/09 18:37:27  jijunwan
- *  Archive Log: PR 129069 - Incorrect Help action
- *  Archive Log: - moved help action from view to controller
- *  Archive Log: - only enable help button when we have HelpID
- *  Archive Log: - fixed incorrect HelpIDs
- *  Archive Log:
- * 
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.main;
 
 import java.util.EnumMap;
@@ -81,8 +42,6 @@ import com.intel.stl.ui.main.view.StatusView;
 import com.intel.stl.ui.model.ChartStyle;
 
 /**
- * @author jijunwan
- * 
  */
 public class StatusCard extends
         PinnableCardController<IChartStyleListener, StatusView> implements

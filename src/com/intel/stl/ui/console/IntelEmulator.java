@@ -25,42 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: IntelEmulator.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/17 18:54:27  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/10/13 14:55:01  rjtierne
- *  Archive Log:    Remove command filtering to allow all commands pass to remote system
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/10/07 19:55:13  rjtierne
- *  Archive Log:    Added filter to ensure only fast fabric commands are sent to remote host
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/10/01 20:24:55  rjtierne
- *  Archive Log:    Off-by-one error in sendBytes()
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/10/01 19:48:03  rjtierne
- *  Archive Log:    Overriding Emulator sendBytes() to provide filtering for security
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/09/23 19:46:16  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: The IntelEmulator extends the Gritty Emulator class to provide 
- *  filtering of commands entered at a console  
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.console;
 
 import java.awt.Dimension;
@@ -71,6 +35,10 @@ import com.wittams.gritty.RequestOrigin;
 import com.wittams.gritty.TerminalWriter;
 import com.wittams.gritty.TtyChannel;
 
+/**
+ * The IntelEmulator extends the Gritty Emulator class to provide filtering of
+ * commands entered at a console
+ */
 public class IntelEmulator extends Emulator {
 
     private final TerminalWriter tw;

@@ -25,45 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: DatabaseMigrationHelper.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/12/16 14:26:03  jijunwan
- *  Archive Log:    PR 132071 - Error on initial CLI launch of FM GUI in RHEL 7.1
- *  Archive Log:    - fixed Klocwork issue
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/12/15 20:50:21  jijunwan
- *  Archive Log:    PR 132071 - Error on initial CLI launch of FM GUI in RHEL 7.1
- *  Archive Log:    - added code to check table exist to avoid querying a unexisted table.
- *  Archive Log:    - removed warning on FE_CONNECTION related notices because they are expected
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/08/18 21:04:41  fernande
- *  Archive Log:    PR 128703 - Fail over doesn't work on A0 Fabric. Fixed schema update because FE list is not copied over to new database
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/08/17 18:49:00  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/03/16 17:38:14  fernande
- *  Archive Log:    STLConnection lifecycle support. STLConnections can now be reused and temporary connections are not cached and their socket is closed after they are logically closed. Changed SubnetDescription in support of failover to have a list of HostInfo objects instead of just info for one host.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/02/17 19:40:52  fernande
- *  Archive Log:    Changed database migration logic invoked during a schema upgrade to save UserSettings together with Subnets
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.datamanager.impl;
 
 import java.sql.Connection;

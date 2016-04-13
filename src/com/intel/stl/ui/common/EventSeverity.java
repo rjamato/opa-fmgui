@@ -26,33 +26,6 @@
  */
 
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: EventSeverity.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2  2015/08/17 18:54:12  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/12 19:46:33  fernande
- *  Archive Log:    Initial version
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/03/28 15:02:25  rjtierne
- *  Archive Log:    Enumeration describing the severity level of events messages; i.e. INFORMATIONAL	, WARNING, ERROR, and CRITICAL
- *  Archive Log:
- *
- *  Overview: Enumeration to describe the severity level of events messages
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common;
 
 public enum EventSeverity {

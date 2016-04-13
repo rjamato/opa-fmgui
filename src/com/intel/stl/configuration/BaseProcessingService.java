@@ -25,42 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: BaseProcessingService.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/17 18:48:40  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/06/18 21:07:36  fernande
- *  Archive Log:    PR 128977 Application log needs to support multi-subnet. - Adding support for Logback's Mapped Diagnostic Context
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/04/30 17:27:53  fernande
- *  Archive Log:    Adding logging of caller's stack trace when a background task fails.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/04/29 14:26:10  fernande
- *  Archive Log:    Adding client stack trace to exceptions for supportability.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/04/03 16:10:28  fernande
- *  Archive Log:    Added the caller's stack trace to any task so that if it fails, you can track down the submitter of the task.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/27 20:39:59  fernande
- *  Archive Log:    Refactored AsyncProcessingService so that other processing services can be created easily from BaseProcessingService.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.configuration;
 
 import java.util.concurrent.Callable;

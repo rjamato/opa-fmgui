@@ -25,63 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: SMFailoverManager.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1  2015/08/27 19:35:15  fernande
- *  Archive Log:    PR 128703 - Fail over doesn't work on A0 Fabric. Fixes for several issues found during testing
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/08/19 19:29:36  fernande
- *  Archive Log:    PR 128703 - Fail over doesn't work on A0 Fabric. Command getPMConfig is unreliable to determine the availability of the PM; now we use getImageInfo and getPMConfig to verify the PM.
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/08/18 21:08:53  fernande
- *  Archive Log:    PR 128703 - Fail over doesn't work on A0 Fabric. Added check for a minimum number of connections available during failover
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/08/17 21:47:18  fernande
- *  Archive Log:    PR 128703 - Fail over doesn't work on A0 Fabric. Added port number in messages
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/08/17 18:49:07  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/08/14 21:51:55  fernande
- *  Archive Log:    PR 128703 - Fail over doesn't work on A0 Fabric. Fix for issues in the retry logic of SMFailoverManager
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/07/02 15:20:49  robertja
- *  Archive Log:    PR 128703 - Failover Manager using new session framework.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/06/18 20:57:12  fernande
- *  Archive Log:    PR 129034 Support secure FE. Improvements to framework in SMFailoverManager
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/06/16 16:37:42  fernande
- *  Archive Log:    PR 129034 Support secure FE. Fixing Klocwork issue
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/06/10 18:30:36  fernande
- *  Archive Log:    PR 129034 Support secure FE. Implemented basic failover manager working with the new adapter code
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/05/26 15:40:06  fernande
- *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/05/08 18:28:39  robertja
- *  Archive Log:    Further code clean-up for fail-over.  Added shutdown of working FailoverManagers on application close.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/04/09 22:49:21  jijunwan
- *  Archive Log:    a new FailoverManager based on the old one
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.fecdriver.dispatcher;
 
 import static com.intel.stl.common.STLMessages.STL64000_SM_FAILOVER_UNSUCCESSFUL;

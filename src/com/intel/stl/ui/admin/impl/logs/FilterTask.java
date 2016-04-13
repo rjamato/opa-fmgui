@@ -25,26 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: FilterTask.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1  2015/09/25 13:54:50  rjtierne
- *  Archive Log:    PR 130011 - Enhance SM Log Viewer to include Standard and Advanced requirements
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: SwingWorker task to filter text 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
 package com.intel.stl.ui.admin.impl.logs;
 
 import java.util.ArrayList;
@@ -58,6 +38,9 @@ import com.intel.stl.ui.admin.impl.SMLogModel;
 import com.intel.stl.ui.admin.view.logs.AbstractLogView;
 import com.intel.stl.ui.common.Util;
 
+/**
+ * SwingWorker task to filter text
+ */
 public class FilterTask extends SwingWorker<Void, Void> {
     private final SMLogController parent;
 

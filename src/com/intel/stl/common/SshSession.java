@@ -25,33 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: SshSession.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3  2015/08/17 21:42:07  jijunwan
- *  Archive Log:    PR 129853 - FM GUI fails to install on SLES12. Fixed klocwork issue on SSH utility
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/08/17 18:49:06  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/08/10 22:32:27  fernande
- *  Archive Log:    PR 129853 - FM GUI fails to install on SLES12. Adding SSH utility
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.common;
 
 import java.io.BufferedReader;

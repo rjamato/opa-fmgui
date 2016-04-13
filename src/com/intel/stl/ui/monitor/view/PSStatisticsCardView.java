@@ -25,45 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PSStatisticsCardView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/17 18:54:24  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/10/22 16:40:14  jijunwan
- *  Archive Log:    separated other ports viz for the ports not in a subnet
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/10/15 22:00:23  jijunwan
- *  Archive Log:    display other ports on UI
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/07/21 13:48:15  jijunwan
- *  Archive Log:    added # internal, external ports on performance page
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/05/09 19:49:03  rjtierne
- *  Archive Log:    Renamed getEventsPanel() to getPortsPanel()
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/09 19:27:45  rjtierne
- *  Archive Log:    Renamed from PerfSummaryStatisticsView and completely
- *  Archive Log:    changed after MVC Refactoring
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/08 21:11:03  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: View for the statistics card on the Performance Summary subpage
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.monitor.view;
 
 import java.awt.BorderLayout;
@@ -80,6 +41,9 @@ import com.intel.stl.ui.common.view.JCardView;
 import com.intel.stl.ui.model.FlowTypeViz;
 import com.intel.stl.ui.model.NodeTypeViz;
 
+/**
+ * View for the statistics card on the Performance Summary subpage
+ */
 public class PSStatisticsCardView extends JCardView<ICardListener> {
     private static final long serialVersionUID = -5447526254155197323L;
 

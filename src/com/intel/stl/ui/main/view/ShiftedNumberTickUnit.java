@@ -25,38 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: 
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3  2015/08/17 18:54:02  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/05/21 20:47:02  jijunwan
- *  Archive Log:    PR 128855 - Incorrect value conversion on flits
- *  Archive Log:    - added 1 fit = 8 byte to value conversion
- *  Archive Log:    - changed to use MB rather than MiB
- *  Archive Log:    - some code lean up
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/06/06 13:31:05  jypak
- *  Archive Log:    Performance-Performance subpage updates.
- *  Archive Log:    1. Synchronize y-axis(range axis) bound for a group of charts (packet, data).
- *  Archive Log:    2. Auto conversion of y-axis label title and tick label based on the max value of data in the series.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.main.view;
 
 import org.jfree.chart.axis.NumberTickUnit;

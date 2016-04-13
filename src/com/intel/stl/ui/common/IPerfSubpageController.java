@@ -25,39 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: IPerfSubpageController.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:54:12  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/10/21 16:32:25  fernande
- *  Archive Log:    Customization of Properties display (Show Options/Apply Options)
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/02 19:24:34  jijunwan
- *  Archive Log:    renamed FVTreeBuilder to tree.FVTreeManager, moved FVResourceNode and FVTreeModel  to package tree
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/06/27 22:22:21  jijunwan
- *  Archive Log:    added running indicator to Performance Subpages
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/01 15:42:22  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Extension of the IPageController interface for performance
- *  subpage controllers
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.common;
 
 import com.intel.stl.ui.monitor.PerformanceTreeController;

@@ -25,53 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: CableInfoController.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2016/02/09 20:23:08  jijunwan
- *  Archive Log:    PR 132575 - [PSC] Null pointer message in FM GUI
- *  Archive Log:
- *  Archive Log:    - some minor improvements
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/08/19 21:06:37  jijunwan
- *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
- *  Archive Log:    - adapt to latest FM code
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/08/17 18:53:41  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/07/17 15:42:03  rjtierne
- *  Archive Log:    PR 129549 - On connectivity table, clicking on cable info for an HFI results in an error
- *  Archive Log:    - Removed node parameter from updateModel() - no longer used
- *  Archive Log:    - Added lid and nodeType parameters to onCableInfoSelection() so the CategoryProcessingContext
- *  Archive Log:    can be created without the need for constructing an FVResourceNode
- *  Archive Log:    - Call new CategoryProcessingContext using parameter supplied lid and portNum
- *  Archive Log:    - Removed setLastNode() method - no longer used
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/07/14 12:24:16  rjtierne
- *  Archive Log:    PR 129355 - Ability to click on cables to get cable info
- *  Archive Log:    Added a .5 second delay between popup updates to eliminate the flicker
- *  Archive Log:    caused by updating between values of N/A and real data too quickly.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/07/13 21:58:41  rjtierne
- *  Archive Log:    PR 129355 - Ability to click on cables to get cable info
- *  Archive Log:    Initial Version - Controller for the Cable Info popup on the Connectivity Table
- *  Archive Log:
- *
- *  Overview: Controller for the Cable Info popup on the Connectivity Table
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.monitor;
 
 import static com.intel.stl.ui.model.DeviceProperty.CABLE_CC_BASE;
@@ -133,6 +86,9 @@ import com.intel.stl.ui.publisher.CancellableCall;
 import com.intel.stl.ui.publisher.ICallback;
 import com.intel.stl.ui.publisher.SingleTaskManager;
 
+/**
+ * Controller for the Cable Info popup on the Connectivity Table
+ */
 public class CableInfoPopupController implements ICableInfoListener {
 
     private final static Logger log =

@@ -25,40 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: RxDataRateItem.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3  2015/08/17 18:53:43  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/06/30 22:28:49  jijunwan
- *  Archive Log:    PR 129215 - Need short chart name to support pin capability
- *  Archive Log:    - introduced short name to performance items
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/06/25 20:42:13  jijunwan
- *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
- *  Archive Log:    - improved PerformanceItem to support port counters
- *  Archive Log:    - improved PerformanceItem to use generic ISource to describe data source
- *  Archive Log:    - improved PerformanceItem to use enum DataProviderName to describe data provider name
- *  Archive Log:    - improved PerformanceItem to support creating a copy of PerformanceItem
- *  Archive Log:    - improved TrendItem to share scale with other charts
- *  Archive Log:    - improved SimpleDataProvider to support hsitory data
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.performance.item;
 
 import com.intel.stl.api.performance.PortCountersBean;

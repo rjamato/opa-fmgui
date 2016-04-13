@@ -25,54 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: FVTableModel.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8  2015/08/17 18:54:12  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/03/10 22:46:15  jijunwan
- *  Archive Log:    code clean up
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/12/10 20:52:20  rjtierne
- *  Archive Log:    Support for new Setup Wizard
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/06/17 19:19:35  rjtierne
- *  Archive Log:    Added getter method to retrieve a table row entry
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/05/29 22:04:44  jijunwan
- *  Archive Log:    minor changes - added comments, added toString()
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/05/29 14:21:16  jijunwan
- *  Archive Log:    thread safe table model, added bound control on table model
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/05/28 22:19:33  jijunwan
- *  Archive Log:    synchronized table model
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/12 19:46:33  fernande
- *  Archive Log:    Initial version
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/09 21:02:41  rjtierne
- *  Archive Log:    Captured result from call to AddEntry() method
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/04 19:24:16  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Abstract model class to support a table
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common;
 
 import java.util.ArrayList;

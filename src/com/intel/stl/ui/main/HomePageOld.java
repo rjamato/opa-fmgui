@@ -24,35 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- * 
- *  Functional Group: Fabric Viewer Application
- * 
- *  File Name: HomePageOld.java
- * 
- *  Archive Source: $Source$
- * 
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.39  2015/08/17 18:53:38  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - changed frontend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.38  2015/08/11 17:37:23  jijunwan
- *  Archive Log: PR 126645 - Topology Page does not show correct data after port disable/enable event
- *  Archive Log: - improved to get distribution data with argument "refresh". When it's true, calculate distribution rather than get it from cache
- *  Archive Log:
- *  Archive Log: Revision 1.37  2015/06/10 19:58:49  jijunwan
- *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- * 
- *  Overview:
- * 
- *  @author: jijunwan
- * 
- ******************************************************************************/
 package com.intel.stl.ui.main;
 
 import static com.intel.stl.ui.common.PageWeight.MEDIUM;
@@ -99,8 +70,6 @@ import com.intel.stl.ui.publisher.subscriber.ImageInfoSubscriber;
 import com.intel.stl.ui.publisher.subscriber.SubscriberType;
 
 /**
- * @author jijunwan
- * 
  */
 public class HomePageOld implements IPageController {
     private TaskScheduler scheduler;

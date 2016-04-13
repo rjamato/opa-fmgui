@@ -25,42 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ImageInfoRecord.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/17 18:49:14  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/02/06 15:03:04  fernande
- *  Archive Log:    Database modifications to use a long as the id for a SubnetDescription and to support users per subnet.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/09/30 15:37:20  fernande
- *  Archive Log:    Changed hashCode methods to use generated code by Eclipse
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/12 19:58:38  fernande
- *  Archive Log:    We now save ImageInfo and GroupInfo to the database. As they are retrieved by the UI, they are buffered and then saved at certain thresholds.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/05 15:37:20  fernande
- *  Archive Log:    Changed DatabaseException into an unchecked exception. Then change error handling in the Datamanager so that certain FMExceptions (checked exceptions) bubble up to the API layer. Higher layers can then decide how to handle those exceptions. Any other Hibernate/HSQLDb/DAO exceptions are signaled as a DatabaseException (unchecked) to layers above the Datamanager.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/27 17:04:20  fernande
- *  Archive Log:    Database changes to add Notice and ImageInfo tables to the schema database
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.datamanager;
 
 import static javax.persistence.FetchType.LAZY;

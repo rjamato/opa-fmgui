@@ -25,60 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: Task.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.10  2015/08/17 18:54:08  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/02/10 23:11:54  jijunwan
- *  Archive Log:    1) changed task scheduler to support initial refresh rate
- *  Archive Log:    2) improved refresh rate update handling
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/02/02 15:25:28  rjtierne
- *  Archive Log:    Added new method getCallbackPosition() to check if a specific
- *  Archive Log:    callback is in the callback list
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/01/21 21:19:12  rjtierne
- *  Archive Log:    Removed individual refresh rates for task registration. Now using
- *  Archive Log:    refresh rate supplied by user input in preferences wizard.
- *  Archive Log:    Reinitialization of scheduler service not yet implemented.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/10/13 15:07:28  jijunwan
- *  Archive Log:    fixed synchronization issues on performance charts
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/08/12 21:05:06  jijunwan
- *  Archive Log:    1) added description to task
- *  Archive Log:    2) applied failure management to TaskScheduler
- *  Archive Log:    3) some code auto-reformat
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/05/29 22:04:43  jijunwan
- *  Archive Log:    minor changes - added comments, added toString()
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/05/16 15:43:59  jijunwan
- *  Archive Log:    added CustomStates to task scheduler
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/30 17:34:47  jijunwan
- *  Archive Log:    rename *CallBack to *Callback
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/16 15:16:13  jijunwan
- *  Archive Log:    added ApiBroker to schedule a task to repeatedly get data from a FEC driver
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.publisher;
 
 import java.util.ArrayList;

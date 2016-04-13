@@ -25,67 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: FullController.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.11  2015/08/17 18:53:49  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/06/30 22:31:42  jijunwan
- *  Archive Log:    PR 129215 - Need short chart name to support pin capability
- *  Archive Log:    - use short name as pin card title
- *  Archive Log:    - improved pin argument to include full name and provide data source description
- *  Archive Log:    - fixed improper full name issues on trend charts
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/06/25 20:50:03  jijunwan
- *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
- *  Archive Log:    - applied pin framework on dynamic cards that can have different data sources
- *  Archive Log:    - change to use port counter performance item
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/06/09 18:37:23  jijunwan
- *  Archive Log:    PR 129069 - Incorrect Help action
- *  Archive Log:    - moved help action from view to controller
- *  Archive Log:    - only enable help button when we have HelpID
- *  Archive Log:    - fixed incorrect HelpIDs
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/03/10 18:43:17  jypak
- *  Archive Log:    JavaHelp System introduced to enable online help.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/02/17 23:22:18  jijunwan
- *  Archive Log:    PR 127106 - Suggest to use same bucket range for Group Err Summary as shown in "opatop" command to plot performance graphs in FV
- *  Archive Log:     - changed error histogram chart to bar chart to show the new data ranges: 0-25%, 25-50%, 50-75%, 75-100% and 100+%
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/09/15 15:24:30  jijunwan
- *  Archive Log:    changed AppEventBus to 3rd party lib mbassador
- *  Archive Log:    some code reformat
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/07/22 18:41:42  jijunwan
- *  Archive Log:    added DataType support for chart view
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/07/21 17:03:05  jijunwan
- *  Archive Log:    moved ChartsView and ChartsCard to common package
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/16 21:38:05  jijunwan
- *  Archive Log:    added 3 type error counters
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/16 15:09:00  jijunwan
- *  Archive Log:    new framework for performance data visualization
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.performance;
 
 import java.util.ArrayList;

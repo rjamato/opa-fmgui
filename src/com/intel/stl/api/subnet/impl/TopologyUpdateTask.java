@@ -25,44 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: TopologyUpdateTask.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/17 18:48:53  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/12/11 18:33:59  fernande
- *  Archive Log:    Switch from log4j to slf4j+logback
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/07/03 21:35:54  fernande
- *  Archive Log:    Adding the CacheManager in support of APIs
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/06/23 15:15:15  fernande
- *  Archive Log:    Fix for switching subnets: tryConnect is now a transient connection.
- *  Archive Log:    Last accessed subnet is now saved to UserSettings
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/06/20 16:54:32  fernande
- *  Archive Log:    Added basic Entity Manager management to minimize creation of DAOs
- *  Archive Log:    Fixed bugs in database management
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/06/19 20:04:08  fernande
- *  Archive Log:    Added background update of database and redirected some APIs to use the database.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.api.subnet.impl;
 
 import java.util.List;

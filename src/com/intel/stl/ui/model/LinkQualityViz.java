@@ -25,55 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PortLinkModeViz.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8  2015/08/17 18:53:46  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/05/14 14:59:22  rjtierne
- *  Archive Log:    PR 128682 - Set link quality indicator to "Unknown" on port error
- *  Archive Log:    - Redefined UNKNOWN to show "Unknown" link quality description and icon instead of excellent
- *  Archive Log:    - Added RESERVED to indicate "Reserved" link quality received from FM
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/05/14 13:22:13  rjtierne
- *  Archive Log:    - Redefined UNKNOWN to show "Unknown" link quality description and icon instead of excellent
- *  Archive Log:    - Added RESERVED to indicate "Reserved" link quality received from FM
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/04/16 19:43:47  jijunwan
- *  Archive Log:    updated to handle a bug on DC firmware that provides value 7 not specified in spec, and the meaning of 7 is excellent
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/03/05 22:32:16  fisherma
- *  Archive Log:    Added LinkQuality icon to Performance -> Performance tab table.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/02/26 20:07:40  fisherma
- *  Archive Log:    Changes to display Link Quality data to port's Performance tab and switch/port configuration table.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/02/05 21:48:55  jijunwan
- *  Archive Log:    fixed NPE issues found by klocwork
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/01/11 18:27:29  jijunwan
- *  Archive Log:    PR 126371 - STL1 Spec inconsistencies - LinkQuality indicator
- *  Archive Log:    added LinkQuality, updated PortCounter data structure
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/18 21:31:22  fernande
- *  Archive Log:    Adding more properties for display
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.model;
 
 import java.util.EnumMap;

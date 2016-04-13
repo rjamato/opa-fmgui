@@ -25,39 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: SingleTaskManager.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:54:08  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/12/11 18:49:26  fernande
- *  Archive Log:    Switch from log4j to slf4j+logback
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/11/05 23:01:48  jijunwan
- *  Archive Log:    improved to support whether we want to cancel a task while it's running
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/11/05 16:34:09  jijunwan
- *  Archive Log:    added code to ignore CancellationException that is wrapped in ExecutionException
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/05 13:44:29  jijunwan
- *  Archive Log:    added a task manager that is able to cancel previous task to ensure only one task is running
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.publisher;
 
 import java.util.concurrent.CancellationException;

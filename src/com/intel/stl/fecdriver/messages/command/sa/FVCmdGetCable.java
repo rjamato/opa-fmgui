@@ -25,34 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: FVCmdGetCable.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8  2015/08/17 18:48:45  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/06/28 17:51:36  tmrimmer
- *  Archive Log:    PR 129390 - correct opainfo handling of cableinfo for down port without QSFP
- *  Archive Log:    PR 129390 - improve cableinfo internals and defines
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/04/22 18:52:34  jypak
- *  Archive Log:    Fix to check input type when there is no input.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.fecdriver.messages.command.sa;
 
 import com.intel.stl.api.subnet.CableRecordBean;

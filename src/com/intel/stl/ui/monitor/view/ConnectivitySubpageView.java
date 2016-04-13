@@ -25,121 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: StatisticsSubpageView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.26  2015/08/17 18:54:25  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.25  2015/08/05 04:04:48  jijunwan
- *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
- *  Archive Log:    - applied undo mechanism on Performance Page
- *  Archive Log:
- *  Archive Log:    Revision 1.24  2015/08/04 23:00:35  jijunwan
- *  Archive Log:    PR 129821 - connectivity table has no Link Width Down Grade data
- *  Archive Log:    - added related data to data table
- *  Archive Log:
- *  Archive Log:    Revision 1.23  2015/07/17 15:41:17  rjtierne
- *  Archive Log:    PR 129547 - Need to add Node type and lid to the Connectivity
- *  Archive Log:    - Removed constants NODE_GUID_COLUMN, PORT_COLUMN, and TYPE_COLUMN.  Now
- *  Archive Log:    using the ids from the ConnectivityTableColumns enumeration.
- *  Archive Log:    - In mouseListener for createTable(), ignoring IndexOutOfBoundsException from ConvertRowIndexToMode() when user clicks on the connectivity table below available rows.
- *  Archive Log:
- *  Archive Log:    Revision 1.22  2015/07/14 20:33:27  rjtierne
- *  Archive Log:    PR 129545 - Klocwork and FindBugs fixes
- *  Archive Log:    - Added static constant NODE_GUID_COLUMN for accessing Guid from connectivity table
- *  Archive Log:
- *  Archive Log:    Revision 1.21  2015/07/13 21:57:52  rjtierne
- *  Archive Log:    PR 129355 - Ability to click on cables to get cable info
- *  Archive Log:    - Added new cable info popup window to be displayed when column
- *  Archive Log:    selected from connectivity table
- *  Archive Log:    - Rendered new cable info icon
- *  Archive Log:    - Added mouse listener to respond to clicking on the "Cable Info" column of
- *  Archive Log:    the connectivity table and display a popup with cable information
- *  Archive Log:
- *  Archive Log:    Revision 1.20  2015/06/01 15:01:20  jypak
- *  Archive Log:    PR 128823 - Improve performance tables to include all portcounters fields.
- *  Archive Log:    All port counters fields added to performance table and connectivity table.
- *  Archive Log:
- *  Archive Log:    Revision 1.19  2015/05/14 15:03:25  rjtierne
- *  Archive Log:    PR 128682 - Set link quality indicator to "Unknown" on port error
- *  Archive Log:    Change cell renderer to display the link quality description as the tool tip instead of just the value
- *  Archive Log:
- *  Archive Log:    Revision 1.18  2015/05/14 13:22:38  rjtierne
- *  Archive Log:    Change cell renderer to display the link quality description as the tool tip instead of just the value
- *  Archive Log:
- *  Archive Log:    Revision 1.17  2015/04/08 19:45:16  rjtierne
- *  Archive Log:    PR 126844 - Can make Port counter names in UIs more concise.
- *  Archive Log:    Created new table header to override getToolTipText()
- *  Archive Log:
- *  Archive Log:    Revision 1.16  2015/04/08 16:38:04  jijunwan
- *  Archive Log:    PR 127994 - Slow Link icon in Connectivity Table overwritten by Link Quality Icon
- *  Archive Log:    -- create a panel with two labels when necessary to ensure we insert slock link icon
- *  Archive Log:    -- fixed a index bug happens when link quality column is hidden and we intend to find out its column index
- *  Archive Log:
- *  Archive Log:    Revision 1.15  2015/04/02 13:32:55  jypak
- *  Archive Log:    Klockwork: Front End Critical Without Unit Test. 47 open issues fixed. All of them are for null checks.
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2015/03/05 22:32:14  fisherma
- *  Archive Log:    Added LinkQuality icon to Performance -> Performance tab table.
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2015/02/26 20:25:38  fisherma
- *  Archive Log:    Removed comment and system.out.
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/02/26 20:07:38  fisherma
- *  Archive Log:    Changes to display Link Quality data to port's Performance tab and switch/port configuration table.
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/01/11 21:24:08  jijunwan
- *  Archive Log:    generic table view with table model
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2014/09/18 21:36:48  jijunwan
- *  Archive Log:    fixed a issue that incorrectly use portNum for rowIndex
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2014/09/18 21:03:27  jijunwan
- *  Archive Log:    Added link (jump to) capability to Connectivity tables and PortSummary table
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2014/08/26 15:15:26  jijunwan
- *  Archive Log:    added refresh function to all pages
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/07/22 19:31:23  jijunwan
- *  Archive Log:    changed table selection background color
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/07/03 14:08:12  rjtierne
- *  Archive Log:    Moved column-hiding code into separate filterColumns() method so
- *  Archive Log:    this functionality could be overridden
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/06/26 15:07:15  jijunwan
- *  Archive Log:    added inactive link icon
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/06/24 20:23:17  rjtierne
- *  Archive Log:    Renamed renderSlowLinks() to renderLinkState() and provided icon rendering
- *  Archive Log:    for normal speed links
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/06/17 19:24:31  rjtierne
- *  Archive Log:    Added logic to render the Connectivity table entries with an icon when
- *  Archive Log:    links are running slow
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/06/13 14:35:22  rjtierne
- *  Archive Log:    Connectivity table appearance update
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/06/12 21:39:38  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
-
- *
- *  Overview: View for the Connectivity subpage
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.monitor.view;
 
 import java.awt.BorderLayout;
@@ -188,6 +73,9 @@ import com.intel.stl.ui.model.LinkQualityViz;
 import com.intel.stl.ui.monitor.ConnectivityTableData;
 import com.intel.stl.ui.monitor.IPortSelectionListener;
 
+/**
+ * View for the Connectivity subpage
+ */
 public class ConnectivitySubpageView extends
         FVXTableView<ConnectivityTableModel> {
 

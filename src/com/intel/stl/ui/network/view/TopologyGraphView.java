@@ -25,53 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: TopologyPanel.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.9  2015/08/17 18:54:15  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/04/10 20:21:01  fernande
- *  Archive Log:    Changed TopologyView to be passed two background services (graphService and outlineService) which now reside in FabricController and can be properly shutdown when an error occurs.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/02/05 19:10:49  jijunwan
- *  Archive Log:    fixed NPE issues found by klocwork
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/12/11 18:48:38  fernande
- *  Archive Log:    Switch from log4j to slf4j+logback
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/11/17 17:31:51  jijunwan
- *  Archive Log:    improved to support turning on/off extra nav buttons. By default they are turned off.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/11/03 23:06:14  jijunwan
- *  Archive Log:    improvement on topology view - drawing graph on background
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/10/23 16:00:06  jijunwan
- *  Archive Log:    changed topology information display to use device property panels, and JSectionView
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/10/22 02:21:27  jijunwan
- *  Archive Log:    1) moved update tasks into task package
- *  Archive Log:    2) added topology summary panel
- *  Archive Log:    3) improved models to be able to calculate ports distribution, nodes not in fat tree etc.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/10/09 21:29:46  jijunwan
- *  Archive Log:    new Topology Viz
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.network.view;
 
 import java.awt.BorderLayout;

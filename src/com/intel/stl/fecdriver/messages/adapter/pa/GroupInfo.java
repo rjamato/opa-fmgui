@@ -24,37 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- * 
- *  Functional Group: Fabric Viewer Application
- * 
- *  File Name: GroupInfo.java
- * 
- *  Archive Source: $Source$
- * 
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.11  2015/10/08 16:20:37  fernande
- *  Archive Log: PR130760 - Update FV GUI to reflect Changes to vol1g1 spec introduced in DN 0507. Changed commands to match FM spec
- *  Archive Log:
- *  Archive Log: Revision 1.10  2015/08/17 18:49:17  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - change backend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.9  2015/07/02 20:27:49  fernande
- *  Archive Log: PR 129447 - Database size increases a lot over a short period of time. Moving Blobs to the database; arrays are now being saved to the database as collection tables.
- *  Archive Log:
- *  Archive Log: Revision 1.8  2015/06/10 19:36:29  jijunwan
- *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- * 
- *  Overview:
- * 
- *  @author: jijunwan
- * 
- ******************************************************************************/
 package com.intel.stl.fecdriver.messages.adapter.pa;
 
 import java.util.ArrayList;
@@ -152,8 +121,6 @@ import com.intel.stl.fecdriver.messages.adapter.SimpleDatagram;
  * #define STL_PM_ERR_BUCKETS ((100 / STL_PM_ERR_GRAN_PERCENT) + 1) // extra bucket is for those over threshold
  * 
  * </pre>
- * 
- * @author jijunwan
  * 
  */
 public class GroupInfo extends SimpleDatagram<GroupInfoBean> {

@@ -25,33 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: Test.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:48:48  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/01/11 20:04:29  jijunwan
- *  Archive Log:    updated to the latest FM as of 01/05/2015
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/11/24 14:38:26  jijunwan
- *  Archive Log:    fixed a bug in data parsing
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.fecdriver.messages.adapter.sa;
 
 import com.intel.stl.api.subnet.MFTRecordBean;
@@ -130,8 +103,6 @@ import com.intel.stl.fecdriver.messages.adapter.SimpleDatagram;
  * 
  * } PACK_SUFFIX STL_MULTICAST_FORWARDING_TABLE;
  * </pre>
- * 
- * @author jijunwan
  * 
  */
 public class MFTRecord extends SimpleDatagram<MFTRecordBean> {

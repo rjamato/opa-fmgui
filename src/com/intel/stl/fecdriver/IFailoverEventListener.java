@@ -25,44 +25,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: IFailoverListner.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4  2015/08/17 18:49:22  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/05/26 15:37:20  fernande
- *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/03/31 16:15:27  fernande
- *  Archive Log:    Failover support. Adding interfaces and implementations to display in the UI the failover progress.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/27 20:44:43  fernande
- *  Archive Log:    Added failover support interfaces
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/03/23 15:19:22  robertja
- *  Archive Log:    Correct file header for CVS.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: robertja
- *
- ******************************************************************************/
-
 package com.intel.stl.fecdriver;
 
 /**
- * @author robertja
- * 
  */
 public interface IFailoverEventListener extends IFailoverProgressListener {
     void onFailoverStart(ApplicationEvent event);

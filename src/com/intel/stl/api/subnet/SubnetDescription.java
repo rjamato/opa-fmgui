@@ -24,38 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- * 
- *  Functional Group: Fabric Viewer Application
- * 
- *  File Name: SubnetDescription.java
- * 
- *  Archive Source: $Source$
- * 
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.32  2015/11/18 23:51:19  rjtierne
- *  Archive Log: PR 130965 - ESM support on Log Viewer
- *  Archive Log: - Added copy constructor
- *  Archive Log:
- *  Archive Log: Revision 1.31  2015/08/17 18:48:38  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - change backend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.30  2015/06/11 17:44:50  fernande
- *  Archive Log: PR 129034 Support secure FE. Adding currentFEIndex to the toString output
- *  Archive Log:
- *  Archive Log: Revision 1.29  2015/06/10 19:36:30  jijunwan
- *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- * 
- *  Overview:
- * 
- *  @author: jijunwan
- * 
- ******************************************************************************/
 package com.intel.stl.api.subnet;
 
 import java.io.Serializable;
@@ -74,10 +42,7 @@ import com.intel.stl.api.IConnectionAssistant;
  * info will be identified as different subetnets
  * </ol>
  * 
- * @author jijunwan
- * 
  */
-
 public class SubnetDescription implements Serializable {
 
     private static final long serialVersionUID = 1L;

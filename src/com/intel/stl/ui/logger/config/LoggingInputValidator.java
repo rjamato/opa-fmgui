@@ -25,63 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: LoggingInputValidator.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4  2015/08/17 18:54:26  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/06/26 13:38:25  rjtierne
- *  Archive Log:    PR 128975 - Can not setup application log
- *  Archive Log:    - Before validating the information level, retrieve the root log level from the LoggingConfiguration
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/06/22 13:11:59  jypak
- *  Archive Log:    PR 128980 - Be able to search devices by name or lid.
- *  Archive Log:    New feature added to enable search devices by name, lid or node guid. The search results are displayed as a tree and when a result node from the tree is selected, original tree is expanded and the corresponding node is highlighted.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/06/10 19:24:07  rjtierne
- *  Archive Log:    PR 128975 - Can not setup application log
- *  Archive Log:    Moved from the wizards package to the new logger package with updates to accommodate
- *  Archive Log:    changes to the LoggingConfiguration in the back end
- *  Archive Log:    - LoggingWizardController renamed to LoggingConfigController
- *  Archive Log:    - LoggingWizardView renamed to LoggingConfigView
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/05/12 17:43:41  rjtierne
- *  Archive Log:    PR 128624 - Klocwork and FindBugs fixes for UI
- *  Archive Log:    In validateOutputFormat(), change the order of the if-conditions to check conversionPattern
- *  Archive Log:    for null before trying to dereference it.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/05/11 12:36:42  rjtierne
- *  Archive Log:    PR 128585 - Fix errors found by Klocwork and FindBugs
- *  Archive Log:    Use == to compare string to null instead of equals()
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/02 20:37:56  fernande
- *  Archive Log:    Fixing the SetupWizard so that it can define new subnets. Fixed also StackOverflowError exception when switching subnets.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/01/20 19:12:05  rjtierne
- *  Archive Log:    Now processing MaxNumFiles as a String instead of integer so blanks field can be detected
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/12/23 18:27:59  rjtierne
- *  Archive Log:    Added logic to make the input validator a singleton
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/12/19 18:51:39  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Custom input validator to check the validity of the inputs on the
- *  Logging Wizard view
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.logger.config;
 
 import java.awt.HeadlessException;
@@ -104,6 +47,10 @@ import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.Validator;
 import com.intel.stl.ui.model.LoggingThresholdViz;
 
+/**
+ * Custom input validator to check the validity of the inputs on the Logging
+ * Wizard view
+ */
 public class LoggingInputValidator {
 
     private final int OK = LoggingValidatorError.OK.getId();

@@ -25,51 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: AsyncTask.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.9  2015/08/17 18:48:40  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/06/18 21:07:36  fernande
- *  Archive Log:    PR 128977 Application log needs to support multi-subnet. - Adding support for Logback's Mapped Diagnostic Context
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/04/30 17:27:53  fernande
- *  Archive Log:    Adding logging of caller's stack trace when a background task fails.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/12/11 18:34:55  fernande
- *  Archive Log:    Switch from log4j to slf4j+logback
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/10/24 18:49:56  fernande
- *  Archive Log:    Initial batch of fixes for notice processing. Notice updates not working yet but need a stable environment for Bob.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/09/15 21:18:53  fernande
- *  Archive Log:    Adding unit test for PerformanceApi and fixes for some issues found.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/12 19:58:06  fernande
- *  Archive Log:    We now save ImageInfo and GroupInfo to the database. As they are retrieved by the UI, they are buffered and then saved at certain thresholds.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/03 21:34:19  fernande
- *  Archive Log:    Adding the CacheManager in support of APIs
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/06/19 20:05:24  fernande
- *  Archive Log:    Added background update of database and redirected some APIs to use the database.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.configuration;
 
 import java.util.Map;

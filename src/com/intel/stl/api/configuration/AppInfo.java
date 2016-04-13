@@ -25,52 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: AppInfo.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.9  2015/09/30 12:47:05  fisherma
- *  Archive Log:    PR 129357 - ability to hide inactive ports.
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/09/02 15:55:31  fernande
- *  Archive Log:    PR 130220 - FM GUI "about" window displays unmatched version and build #. Passing the OPA FM version thru the manifest.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/08/17 18:48:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/08/10 17:04:40  robertja
- *  Archive Log:    PR128974 - Email notification functionality.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/07/10 20:40:58  fernande
- *  Archive Log:    PR 129522 - Notice is not written to database due to topology not found. Added constants for use in UI
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/07/09 18:40:19  fernande
- *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Added method to expose application settings in the settings.xml file to higher levels in the app
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/03/30 22:28:49  jijunwan
- *  Archive Log:    1) improved AppInfo to include buildDate
- *  Archive Log:    2) fixed DBMgr to update AppInfo by buildId or BuildDate
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/02/17 19:34:08  fernande
- *  Archive Log:    Added a map of Properties to hold application wide information
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/11/07 22:06:17  fernande
- *  Archive Log:    Adding AppInfo to the API to retrieve version information
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.api.configuration;
 
 import java.io.Serializable;

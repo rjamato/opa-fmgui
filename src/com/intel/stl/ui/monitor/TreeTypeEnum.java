@@ -25,42 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: TreeTypeEnum.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:53:41  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/08/14 17:39:26  fernande
- *  Archive Log:    Closing the gap on device properties being displayed.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/04/24 18:32:50  rjtierne
- *  Archive Log:    Renamed  SUBNET_TREE to DEVICE_TYPE_TREE
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/23 13:45:37  jijunwan
- *  Archive Log:    improvement on TreeView
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/22 20:47:24  rjtierne
- *  Archive Log:    Relocated from common.view to monitor package
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/17 14:38:56  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Enumeration of tree types so the tree builder knows what kind
- *  of tree to build
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.monitor;
 
 import com.intel.stl.ui.common.STLConstants;

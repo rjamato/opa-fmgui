@@ -25,39 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PropertyItem.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:53:46  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/10/22 02:05:18  jijunwan
- *  Archive Log:    made property model more general
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/08/14 17:39:03  fernande
- *  Archive Log:    Closing the gap on device properties being displayed.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/08/04 21:19:44  fernande
- *  Archive Log:    Changes to make DeviceProperties more extensible and to be able to access properties by DeviceProperty key or by DeviceCategory key (group of properties)
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/22 21:54:21  fernande
- *  Archive Log:    Adding models to support device properties
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.model;
 
 public class PropertyItem<K extends IPropertyKey> {

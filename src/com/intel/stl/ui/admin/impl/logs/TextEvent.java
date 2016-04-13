@@ -25,29 +25,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: TextEvent.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1  2015/09/25 13:54:50  rjtierne
- *  Archive Log:    PR 130011 - Enhance SM Log Viewer to include Standard and Advanced requirements
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Resulting event created when a selection is made from a text area
- *  context menu
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.admin.impl.logs;
 
+/**
+ * Resulting event created when a selection is made from a text area context
+ * menu
+ */
 public class TextEvent {
 
     private TextEventType eventType;

@@ -26,32 +26,6 @@
  */
 
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ResourcePortView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3  2015/08/17 18:54:15  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/03 14:17:39  rjtierne
- *  Archive Log:    Added the connectivity table view to the topology port page panel
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/06/25 13:45:54  rjtierne
- *  Archive Log:    Initial Version - renamed from ResourceRouteView
- *  Archive Log:
- *
- *  Overview: Resource Port subpage view on the Topology page
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.network.view;
 
 import java.awt.GridBagConstraints;
@@ -61,6 +35,9 @@ import javax.swing.JPanel;
 
 import com.intel.stl.ui.monitor.view.ConnectivitySubpageView;
 
+/**
+ * Resource Port subpage view on the Topology page
+ */
 public class ResourcePortView extends JPanel {
     
     /**

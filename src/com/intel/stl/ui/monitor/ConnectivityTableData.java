@@ -25,76 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ConnectivityTableData.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.14  2016/02/16 22:16:05  jijunwan
- *  Archive Log:    PR 132888 - Include Num Lanes Down in port counters display
- *  Archive Log:
- *  Archive Log:    - added Num Lanes Down
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2015/11/02 23:54:33  jijunwan
- *  Archive Log:    PR 131396 - Incorrect Connectivity Table for a VF port
- *  Archive Log:    - changed model to display N/A when a value is not avaiable
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/08/17 18:53:40  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/08/04 23:00:34  jijunwan
- *  Archive Log:    PR 129821 - connectivity table has no Link Width Down Grade data
- *  Archive Log:    - added related data to data table
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/07/17 15:40:33  rjtierne
- *  Archive Log:    PR 129547 - Need to add Node type and lid to the Connectivity
- *  Archive Log:    - Added node type to the class attributes to be displayed in the connectivity table
- *  Archive Log:    - nodeLidValue was already available and just had to be used by ConnectivityTableModel#getValueAt()
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/07/13 21:57:00  rjtierne
- *  Archive Log:    PR 129355 - Ability to click on cables to get cable info
- *  Archive Log:    - Added the cableInfo attribute to the connectivity table data
- *  Archive Log:    - Changed deviceName to nodeName to reflect text on table displayed
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/06/01 15:01:17  jypak
- *  Archive Log:    PR 128823 - Improve performance tables to include all portcounters fields.
- *  Archive Log:    All port counters fields added to performance table and connectivity table.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/02/26 20:07:36  fisherma
- *  Archive Log:    Changes to display Link Quality data to port's Performance tab and switch/port configuration table.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/02/04 21:44:17  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/09/18 21:03:28  jijunwan
- *  Archive Log:    Added link (jump to) capability to Connectivity tables and PortSummary table
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/08/26 15:15:27  jijunwan
- *  Archive Log:    added refresh function to all pages
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/08/05 17:57:05  jijunwan
- *  Archive Log:    fixed issues on ConnectivityTable to update performance data properly
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/06/17 19:22:03  rjtierne
- *  Archive Log:    Added slowLinkState attribute to keep track of which links are running slow
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/06/12 21:36:45  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Data for the Connectivity table
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.monitor;
 
 import java.io.Serializable;
@@ -104,6 +34,9 @@ import com.intel.stl.api.StringUtils;
 import com.intel.stl.api.subnet.NodeType;
 import com.intel.stl.ui.common.STLConstants;
 
+/**
+ * Data for the Connectivity table
+ */
 public class ConnectivityTableData implements Serializable {
 
     /**

@@ -24,40 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- * 
- *  Functional Group: Fabric Viewer Application
- * 
- *  File Name: WorstNodesView.java
- * 
- *  Archive Source: $Source$
- * 
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.16  2015/08/17 18:54:02  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - changed frontend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.15  2015/08/07 19:00:23  jijunwan
- *  Archive Log: PR 129679 - Worst Nodes 'More...' button not working correctly
- *  Archive Log: - removed "more" button
- *  Archive Log: - improved to put nodes in a scroll pane so we needn't more button any more
- *  Archive Log:
- *  Archive Log: Revision 1.14  2015/06/25 20:24:57  jijunwan
- *  Archive Log: Bug 126755 - Pin Board functionality is not working in FV
- *  Archive Log: - applied pin framework on fabric viewer and simple 'static' cards
- *  Archive Log:
- *  Archive Log: Revision 1.13  2015/06/10 19:58:57  jijunwan
- *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- * 
- *  Overview:
- * 
- *  @author: jijunwan
- * 
- ******************************************************************************/
 package com.intel.stl.ui.main.view;
 
 import java.awt.Component;
@@ -94,8 +60,6 @@ import com.intel.stl.ui.event.JumpDestination;
 import com.intel.stl.ui.model.NodeScore;
 
 /**
- * @author jijunwan
- * 
  */
 public class WorstNodesView extends JCardView<IWorstNodesListener> implements
         ActionListener {

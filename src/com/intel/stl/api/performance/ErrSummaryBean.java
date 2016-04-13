@@ -25,35 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ErrSummaryBean.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/10/08 16:19:57  fernande
- *  Archive Log:    PR130760 - Update FV GUI to reflect Changes to vol1g1 spec introduced in DN 0507. Changed commands to match FM spec
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/08/17 18:48:41  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/04 21:37:53  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.api.performance;
 
 import java.io.Serializable;
@@ -61,8 +32,6 @@ import java.io.Serializable;
 import com.intel.stl.api.Utils;
 
 /**
- * @author jijunwan
- * 
  */
 public class ErrSummaryBean implements Serializable {
     private static final long serialVersionUID = 1L;

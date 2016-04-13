@@ -25,101 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: FVTreeModel.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.13  2015/12/03 17:15:52  jijunwan
- *  Archive Log:    PR 131865 - Klocwork Issue on TreeController
- *  Archive Log:    - fixed null pointer issues
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/10/23 19:19:11  jijunwan
- *  Archive Log:    PR 129357 - Be able to hide inactive ports
- *  Archive Log:    - improved to support both model tree and view tree
- *  Archive Log:    - change to always use view tree for interaction
- *  Archive Log:    - added helper method to transfer a TreePath to current view tree's TreePath
- *  Archive Log:    - improved to fire tree event with checking on whether the event is for the current view tree
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/10/15 21:20:59  jijunwan
- *  Archive Log:    catch exception on treeNodesRemoved
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/09/30 13:26:45  fisherma
- *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/09/08 14:59:54  jijunwan
- *  Archive Log:    PR 130277 - FM GUI Locked up due to [AWT-EventQueue-0] ERROR - Unsupported MTUSize 0x0d java.lang.IllegalArgumentException: Unsupported MTUSize 0x0d
- *  Archive Log:    - change to update tree on background thread and update rendering on EDT
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/08/17 18:54:19  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/08/05 03:18:19  jijunwan
- *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
- *  Archive Log:    - improved tree navigation to search a group node
- *  Archive Log:    - fixed issue on port navigation that use a port node as device node by mistake
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/07/15 19:05:39  fernande
- *  Archive Log:    PR 129199 - Checking copyright test as part of the build step. Fixed year appearing in copyright notice
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/06/05 16:45:29  jijunwan
- *  Archive Log:    PR 129089 - Link jumping doesn't keep context
- *  Archive Log:    - search in current tree and use current node as hint in node search
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/05/20 17:05:20  jijunwan
- *  Archive Log:    PR 128797 - Notice update failed to update related notes
- *  Archive Log:    - improved to fire tree update event at port level, so if we select a port that is under change, the port will still get selected and updated
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/02/04 21:44:20  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/09 13:28:29  jijunwan
- *  Archive Log:    fixed a bug on tree search
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/09/02 19:24:28  jijunwan
- *  Archive Log:    renamed FVTreeBuilder to tree.FVTreeManager, moved FVResourceNode and FVTreeModel  to package tree
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2014/09/02 19:03:00  jijunwan
- *  Archive Log:    tree update based on merge sort algorithm
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/08/26 14:30:36  jijunwan
- *  Archive Log:    improved to support TreeModelEvents
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/08/05 13:39:10  jijunwan
- *  Archive Log:    added #isTypeMatched to provide flexibility on node type comparison
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/07/11 20:32:28  fernande
- *  Archive Log:    Fixing getTreePathForPort to ignore PORT leaf since their id is the port number and it could be mistaken for a low value LID.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/07/11 19:26:54  fernande
- *  Archive Log:    Adding EventBus and linking UI elements to the Performance tab
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/07/07 18:23:18  jijunwan
- *  Archive Log:    minor adjustment - try next sibling first rather than previous
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/03 22:18:00  jijunwan
- *  Archive Log:    added search method to search a node by lid with a given reference node. Matched node that is closest to the reference node will be returned
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/22 20:47:24  rjtierne
- *  Archive Log:    Relocated from common.view to monitor package
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/17 14:37:42  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: This class provides an implementation of the TreeModel
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.monitor.tree;
 
 import java.util.ArrayList;
@@ -141,8 +46,8 @@ import com.intel.stl.ui.common.Util;
 import com.intel.stl.ui.monitor.TreeNodeType;
 
 /**
- * @author tierney
- * 
+ *
+ * This class provides an implementation of the TreeModel
  */
 public class FVTreeModel implements TreeModel, ITreeMonitor {
     private final static Logger log = LoggerFactory

@@ -25,60 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: GroupInfoRecord.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.12  2015/08/17 18:49:14  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/07/14 18:56:23  fernande
- *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Fixes for Klocwork issues
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/07/13 17:11:33  fernande
- *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Undoing additional column in database since we can use sweepTimestamp by adjusting time to Linux time
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/07/10 20:45:49  fernande
- *  Archive Log:    PR 129522 - Notice is not written to database due to topology not found. Moved FE Helpers to the session object and changed the order of initialization for the SubnetContext.
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/07/02 20:23:47  fernande
- *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Moving Blobs to the database; arrays are now being saved to the database as collection tables.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/02/12 20:20:22  jijunwan
- *  Archive Log:    changed back to use timestamp as part of id
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/02/12 19:30:01  jijunwan
- *  Archive Log:    introduced interface ITimestamped, and all timimg attributes implemented it, so we can easily know which attribute is associated with timestamp
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/02/06 15:03:04  fernande
- *  Archive Log:    Database modifications to use a long as the id for a SubnetDescription and to support users per subnet.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/03 05:36:38  jijunwan
- *  Archive Log:    fixed NPE issues found by klocwork
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/30 15:37:20  fernande
- *  Archive Log:    Changed hashCode methods to use generated code by Eclipse
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/12 19:58:38  fernande
- *  Archive Log:    We now save ImageInfo and GroupInfo to the database. As they are retrieved by the UI, they are buffered and then saved at certain thresholds.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/06/11 22:08:02  fernande
- *  Archive Log:    Changes to add more entities to database schema
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.datamanager;
 
 import static javax.persistence.FetchType.LAZY;

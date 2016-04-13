@@ -25,53 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: LoginPanel.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8  2015/11/18 23:55:00  rjtierne
- *  Archive Log:    PR 130965 - ESM support on Log Viewer
- *  Archive Log:    - Separated sections of component building so derived classes can change the order of the components.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/10/19 22:30:09  jijunwan
- *  Archive Log:    PR 131091 - On an unsuccessful Failover, the Admin | Applications doesn't show the login window
- *  Archive Log:    - show login panel when not initialized properly with corresponding message
- *  Archive Log:    - added feature to fully enable/disable a login panel
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/10/01 21:54:36  fernande
- *  Archive Log:    PR130409 - [Dell]: FMGUI Admin Console login fails when switch is configured without username and password. Removed restriction on user and password not empty
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/09/28 17:54:14  fisherma
- *  Archive Log:    PR 130425 - added cancel button to the Admin tab login page to allow user to cancel out of hung or slow ssh logins.  Cancel action terminates sftp connection and closes remote ssh session. This fix also addresses PR 130386 and 130390.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/08/17 18:53:52  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/08/17 17:47:30  jijunwan
- *  Archive Log:    PR 128973 - Deploy FM conf changes on all SMs
- *  Archive Log:    - improved LoginPanel to temporarily remove listener when we reset password
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/08/17 14:22:45  rjtierne
- *  Archive Log:    PR 128979 - SM Log display
- *  Archive Log:    This is the first version of the Log Viewer which displays select lines of text from the remote SM log file. Updates include searchable raw text from file, user-defined number of lines to display, refreshing end of file, and paging. This PR is now closed and further updates can be found by referencing PR 130011 - "Enhance SM Log Viewer to include Standard and Advanced requirements".
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/07/28 18:29:09  fisherma
- *  Archive Log:    PR 129219 - Admin page login dialog improvement
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fisherma
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.admin.view;
 
 import java.awt.Dimension;

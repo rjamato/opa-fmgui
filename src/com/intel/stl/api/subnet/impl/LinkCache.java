@@ -25,50 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: LinkCache.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7  2015/08/17 18:48:53  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/02/23 22:22:19  jijunwan
- *  Archive Log:    improved to include/exclude inactive nodes/links in query
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/02/04 21:37:54  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/09/05 15:35:53  fernande
- *  Archive Log:    Changed DatabaseException into an unchecked exception. Then change error handling in the Datamanager so that certain FMExceptions (checked exceptions) bubble up to the API layer. Higher layers can then decide how to handle those exceptions. Any other Hibernate/HSQLDb/DAO exceptions are signaled as a DatabaseException (unchecked) to layers above the Datamanager.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/08/12 20:27:41  jijunwan
- *  Archive Log:    1) changed specific xxxxNotFoundExceptions to SubnetDataNotFoundException or PerformanceDataNotFoundException
- *  Archive Log:    2) added throws SubnetException to ISubnetApi
- *  Archive Log:    3) added throws PerformanceException to IPerformanceApi
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/11 13:06:59  jypak
- *  Archive Log:    1. Added runtime, non runtime exceptions to be thrown for SubnetApi, ConfigApi, PerformanceApi.
- *  Archive Log:    2. Updated exception generating code due to Cache Manager related changes.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/03 21:35:54  fernande
- *  Archive Log:    Adding the CacheManager in support of APIs
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.api.subnet.impl;
 
 import java.util.List;

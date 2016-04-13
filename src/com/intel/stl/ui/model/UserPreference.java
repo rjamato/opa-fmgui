@@ -25,48 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: UserPreference.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7  2015/09/25 20:53:37  fernande
- *  Archive Log:    PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/09/14 19:04:33  jijunwan
- *  Archive Log:    PR 130229 - The text component of all editable combo boxes should provide validation of the input
- *  Archive Log:    - added exception check just in case
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/08/17 18:53:46  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/04/02 17:03:59  jypak
- *  Archive Log:    Null checks added.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/02/23 15:05:36  rjtierne
- *  Archive Log:    Changed getRefreshRateUnit() to change the property string to upper
- *  Archive Log:    case before getting the TimeUnit value
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/02/20 21:12:14  rjtierne
- *  Archive Log:    Fixed typo
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/02/10 23:11:55  jijunwan
- *  Archive Log:    1) changed task scheduler to support initial refresh rate
- *  Archive Log:    2) improved refresh rate update handling
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.model;
 
 import java.util.Properties;

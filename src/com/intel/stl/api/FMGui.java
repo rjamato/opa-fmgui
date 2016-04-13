@@ -25,54 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: FMGUI.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.10  2016/01/26 18:35:32  fernande
- *  Archive Log:    PR 132387 - [Dell]: FMGUI Fails to Open Due to Database Lock. The application was compacting the database on every application exit; changed the scheduling to compact the database after a purge of performance data is done; and to always display a splash screen when shutting down the application so the user gets feedback of the application shutdown process.
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/08/17 18:48:51  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/04/22 16:51:16  fernande
- *  Archive Log:    Reorganized the startup sequence so that the UI plugin could initialize its own CertsAssistant. This way, autoconnect subnets would require a password using the UI CertsAssistant instead of the default CertsAssistant.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/04/18 15:57:33  jijunwan
- *  Archive Log:    better exception handling
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/04/17 16:44:41  fernande
- *  Archive Log:    Changed AppContext to provide access to the ConfigurationApi, since it already resides there.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/04/16 21:09:29  jijunwan
- *  Archive Log:    added single app instance check
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/04/16 17:54:02  jijunwan
- *  Archive Log:    made setup wizard works within our app
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/04/15 20:27:02  fernande
- *  Archive Log:    Changes to defer creation of APIs until a subnet is chosen
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/14 17:10:20  fernande
- *  Archive Log:    Passed flag to indicate first run
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/12 19:20:23  fernande
- *  Archive Log:    Initial version
- *  Archive Log:
- *
- *  Overview:
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.api;
 
 import java.util.List;

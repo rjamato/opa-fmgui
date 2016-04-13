@@ -25,65 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: IntelTty.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.11  2015/08/17 18:54:27  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/07/01 22:00:38  jijunwan
- *  Archive Log:    PR 129442 - login failed with FileNotFoundException
- *  Archive Log:    - Changed all JSch creation on frontend to use this utility method
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/05/27 14:34:38  rjtierne
- *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
- *  Archive Log:    Stemming from a security problem with JPasswordField(), all password related
- *  Archive Log:    Strings have been changed to char[]
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/04/10 14:08:51  rjtierne
- *  Archive Log:    PR 126675 - User cannot execute commands on duplicate Console numbers beyond 10 consoles.
- *  Archive Log:    - Added null pointer protection to method close()
- *  Archive Log:    - Added closeChannel()
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/04/09 21:13:12  rjtierne
- *  Archive Log:    126675 - User cannot execute commands on duplicate Console numbers beyond 10 consoles.
- *  Archive Log:    - Added null pointer protection to method close()
- *  Archive Log:    - Added closeChannel()
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/10/29 21:43:41  rjtierne
- *  Archive Log:    Properly close input/output streams and throw InterruptIOException if end of
- *  Archive Log:    input stream is reached
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/10/28 22:22:23  rjtierne
- *  Archive Log:    Added remote host "history" to command dialog
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/10/13 14:55:51  rjtierne
- *  Archive Log:    Add JSch Logger for debugging, and add protection to output stream in write()
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/10/01 19:48:42  rjtierne
- *  Archive Log:    Remove print statements
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/23 20:10:49  rjtierne
- *  Archive Log:    Add exception handling for known dead terminal problem, need further resolution
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/09/23 19:46:16  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: This class implements the ITty interface and replaces the Gritty
- *  JSchTty class to provide more control over the connection
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.console;
 
 import java.awt.Dimension;
@@ -99,6 +40,10 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.wittams.gritty.Questioner;
 
+/**
+ * This class implements the ITty interface and replaces the Gritty JSchTty
+ * class to provide more control over the connection
+ */
 public class IntelTty implements ITty {
     private InputStream in = null;
 

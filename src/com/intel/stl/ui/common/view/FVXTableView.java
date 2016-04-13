@@ -25,49 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: FVXTableView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8  2015/08/17 18:53:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/04/08 19:43:40  rjtierne
- *  Archive Log:    Renamed mHeaderCol to mHeader
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/01/11 21:24:09  jijunwan
- *  Archive Log:    generic table view with table model
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/12/10 20:52:22  rjtierne
- *  Archive Log:    Support for new Setup Wizard
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/06/13 14:37:05  rjtierne
- *  Archive Log:    Added TableColumn attribute
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/06/05 17:41:47  jijunwan
- *  Archive Log:    removed unused import
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/05/29 03:57:19  jijunwan
- *  Archive Log:    performance table adjustment: sort by number, hide columns to save space
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/28 17:42:31  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: The FVXTableView class implements the view for a table using
- *  JXTable and JXHeader
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common.view;
 
 import java.awt.Component;

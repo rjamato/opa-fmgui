@@ -25,49 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: IProcess.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8  2015/08/17 18:54:10  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/07/17 20:48:26  jijunwan
- *  Archive Log:    PR 129594 - Apply new input verification on setup wizard
- *  Archive Log:    - introduced isEditValid to allow us check whether we have valid edit
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/03/31 17:48:28  rjtierne
- *  Archive Log:    Added/Implemented setConnectable()
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/02/20 21:13:23  rjtierne
- *  Archive Log:    Multinet Wizard: New instalment of the multinet wizard targeting synchronization of all sub-wizard data with selected subnet
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/13 21:31:51  rjtierne
- *  Archive Log:    Multinet Wizard
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/01/20 19:11:38  rjtierne
- *  Archive Log:    Changed onApply() to return a boolean to indicate success/failure
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/12/23 18:27:22  rjtierne
- *  Archive Log:    Added setDirty() to enable wizard controllers force the dirty state in the view when interacting with the status panel
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/12/10 21:31:05  rjtierne
- *  Archive Log:    New Setup Wizard based on framework
- *  Archive Log:
- *
- *  Overview: Interface for individual sub-wizard controllers
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.wizards.impl;
 
 import javax.swing.JComponent;

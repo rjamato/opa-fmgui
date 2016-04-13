@@ -25,138 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ConsoleTerminalController.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.31  2015/11/11 13:26:29  robertja
- *  Archive Log:    PR 130278 - Store console tab help pane state on a per-tab basis so that help info is restored when focus returns to a tab.
- *  Archive Log:
- *  Archive Log:    Revision 1.30  2015/10/09 13:40:19  rjtierne
- *  Archive Log:    PR 129027 - Need to handle customized command prompts when detecting commands on console
- *  Archive Log:    - Implementing new interface IConsole to store the console prompt and keep track of whether
- *  Archive Log:    a console has been initialized or not
- *  Archive Log:
- *  Archive Log:    Revision 1.29  2015/08/17 18:54:27  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.28  2015/07/01 22:00:38  jijunwan
- *  Archive Log:    PR 129442 - login failed with FileNotFoundException
- *  Archive Log:    - Changed all JSch creation on frontend to use this utility method
- *  Archive Log:
- *  Archive Log:    Revision 1.27  2015/06/25 11:54:56  jypak
- *  Archive Log:    PR 129073 - Add help action for Admin Page.
- *  Archive Log:    The help action is added to App, DG, VF,Console page and Console terminal. For now, a help ID and a content are being used as a place holder for each page. Once we get the help contents delivered by technical writer team, the HelpAction will be updated with correct help ID.
- *  Archive Log:
- *  Archive Log:    Revision 1.26  2015/06/08 17:47:22  rjtierne
- *  Archive Log:    PR 129116 - Replace "home made" BlockingQueue with Java's standard BlockingQueue
- *  Archive Log:    Replaced BlockingQueue with ArrayBlockingQueue available under the Concurrent library
- *  Archive Log:
- *  Archive Log:    Revision 1.25  2015/06/08 17:41:55  rjtierne
- *  Archive Log:    Replaced BlockingQueue with ArrayBlockingQueue available under the Concurrent library
- *  Archive Log:
- *  Archive Log:    Revision 1.24  2015/06/02 16:16:27  rjtierne
- *  Archive Log:    PR 128824 - Interactive Console only can monitor commands input from key typing
- *  Archive Log:    Passed the HelpController to IntelTerminalPanel
- *  Archive Log:
- *  Archive Log:    Revision 1.23  2015/05/27 14:34:06  rjtierne
- *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
- *  Archive Log:    Retrieved consoleLogin interface from consoleTerminalView to gain access to
- *  Archive Log:    login view to show/hide/display errors
- *  Archive Log:
- *  Archive Log:    Revision 1.22  2015/05/12 17:40:32  rjtierne
- *  Archive Log:    PR 128624 - Klocwork and FindBugs fixes for UI
- *  Archive Log:    No need to check initTty for NULL since it was already dereferenced before
- *  Archive Log:
- *  Archive Log:    Revision 1.21  2015/04/30 21:25:40  rjtierne
- *  Archive Log:    Set command to null when console is terminated to prevent blank
- *  Archive Log:    console after providing correct credentials after incorrect login.
- *  Archive Log:
- *  Archive Log:    Revision 1.20  2015/04/10 14:08:12  rjtierne
- *  Archive Log:    PR 126675 - User cannot execute commands on duplicate Console numbers beyond 10 consoles.
- *  Archive Log:    - Implemented isConsoleAllowed() to provide DispatchManager method access to view
- *  Archive Log:
- *  Archive Log:    Revision 1.19  2015/04/09 21:12:43  rjtierne
- *  Archive Log:    126675 - User cannot execute commands on duplicate Console numbers beyond 10 consoles.
- *  Archive Log:    - Implemented isConsoleAllowed() to provide DispatchManager method access to view
- *  Archive Log:
- *  Archive Log:    Revision 1.18  2015/04/03 21:06:25  jijunwan
- *  Archive Log:    Introduced canExit to IPageController, and canPageChange to IPageListener to allow us do some checking before we switch to another page. Fixed the following bugs
- *  Archive Log:    1) when we refresh, do not show login dialog if Admin is not the current page
- *  Archive Log:    2) confirm abandon if we switch from admin page to other pages and there is changes on the Admin page
- *  Archive Log:    3) confirm abandon in Admin page if we switch between Application, DeviceGroup and VirtualFabric
- *  Archive Log:    4) added null check to handle special cases
- *  Archive Log:
- *  Archive Log:    Revision 1.17  2014/12/04 22:49:10  jijunwan
- *  Archive Log:    limit cmd history to 32, remove history query cmd from cmd history
- *  Archive Log:
- *  Archive Log:    Revision 1.16  2014/10/29 19:49:09  rjtierne
- *  Archive Log:    When shutting down a console, only close session when the threads using
- *  Archive Log:    them have stopped
- *  Archive Log:
- *  Archive Log:    Revision 1.15  2014/10/28 22:22:23  rjtierne
- *  Archive Log:    Added remote host "history" to command dialog
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2014/10/24 14:36:11  rjtierne
- *  Archive Log:    Split up onLock() and onUnlock() functionality to provide authentication for console
- *  Archive Log:    unlock. Provide method to bring up the login dialog
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2014/10/21 14:05:13  rjtierne
- *  Archive Log:    Moved view components out of controller and into view. Referencing the
- *  Archive Log:    main window to center dialogs
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2014/10/20 20:38:54  rjtierne
- *  Archive Log:    Lock/Unlock console with authentication
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2014/10/13 14:54:19  rjtierne
- *  Archive Log:    Stop terminal when processingThread ends
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2014/10/09 13:04:06  fernande
- *  Archive Log:    Adding IContextAware interface to generalize setting up Context
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2014/10/07 19:55:25  rjtierne
- *  Archive Log:    Calling setTerminalCursor() instead of setCursor()
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2014/10/01 19:46:12  rjtierne
- *  Archive Log:    Provide help topic list to terminal view
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/09/23 19:47:00  rjtierne
- *  Archive Log:    Integration of Gritty for Java Console
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/09/09 14:20:55  rjtierne
- *  Archive Log:    Restructured code to accommodate new console login dialog
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/09/05 21:56:28  jijunwan
- *  Archive Log:    L&F adjustment on Console Views
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/09/04 21:11:32  rjtierne
- *  Archive Log:    Code restructuring to accommodate centralized login dialog
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/08/26 15:15:33  jijunwan
- *  Archive Log:    added refresh function to all pages
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/08/22 19:58:33  rjtierne
- *  Archive Log:    Added protection in setContext() to only access context if it's not null.
- *  Archive Log:    Protects against users accessing console before initialization is complete.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/22 19:53:57  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Controller for the ConsoleTerminalView which creates am SSH 
- *  connection to a remote system and provides the ability to send message
- *  and receive output on a terminal
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.console;
 
 import static com.intel.stl.ui.common.PageWeight.MEDIUM;
@@ -193,6 +61,11 @@ import com.wittams.gritty.StyleState;
 import com.wittams.gritty.TerminalWriter;
 import com.wittams.gritty.TtyChannel;
 
+/**
+ * Controller for the ConsoleTerminalView which creates am SSH connection to a
+ * remote system and provides the ability to send message and receive output on
+ * a terminal
+ */
 public class ConsoleTerminalController implements IConsoleListener, IConsole {
     // show last 32 history commands, and manipulate the history to omit the
     // command we used here

@@ -24,38 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: DatabaseManager.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.35  2016/01/26 18:40:57  fernande
- *  Archive Log: PR 132387 - [Dell]: FMGUI Fails to Open Due to Database Lock. Changed the AppComponent interface so that component can provide feedback to the UI.
- *  Archive Log:
- *  Archive Log: Revision 1.34  2015/08/17 18:49:14  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - change backend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.33  2015/07/09 18:53:05  fernande
- *  Archive Log: PR 129447 - Database size increases a lot over a short period of time. Added purge function to delete GroupInfo records older than a specified timestamp
- *  Archive Log:
- *  Archive Log: Revision 1.32  2015/06/10 19:36:33  jijunwan
- *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- *
- *  Overview:
- *
- *  @author:
- *
- ******************************************************************************/
-
 package com.intel.stl.datamanager;
 
 import java.util.EnumMap;

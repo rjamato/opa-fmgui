@@ -25,160 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ResourceLinkSubpageCard.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.17  2016/02/16 22:16:07  jijunwan
- *  Archive Log:    PR 132888 - Include Num Lanes Down in port counters display
- *  Archive Log:
- *  Archive Log:    - added Num Lanes Down
- *  Archive Log:
- *  Archive Log:    Revision 1.16  2015/11/02 23:56:52  jijunwan
- *  Archive Log:    PR 131396 - Incorrect Connectivity Table for a VF port
- *  Archive Log:    - adapted to the new connectivity table controller to support VF port
- *  Archive Log:
- *  Archive Log:    Revision 1.15  2015/08/18 14:36:09  jijunwan
- *  Archive Log:    PR 130033 - Fix critical issues found by Klocwork or FindBugs
- *  Archive Log:    - clean dead code
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2015/08/17 18:54:00  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2015/08/05 04:10:48  jijunwan
- *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
- *  Archive Log:    - applied undo mechanism
- *  Archive Log:    - fixed single link multiple ports issue to show each port pair as one link
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/07/22 15:40:41  jijunwan
- *  Archive Log:    PR 129355 - Ability to click on cables to get cable info
- *  Archive Log:    - fixed null pointer issue on route connectivity table
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/07/17 15:42:40  rjtierne
- *  Archive Log:    PR 129549 - On connectivity table, clicking on cable info for an HFI results in an error
- *  Archive Log:    In showNode(), removed call to setLastNode() in cableInfoPopupController - no longer used
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/07/13 21:58:05  rjtierne
- *  Archive Log:    PR 129355 - Ability to click on cables to get cable info
- *  Archive Log:    Methods showLinks() and showPath() now use the CableInfoPopupController,
- *  Archive Log:    therefore enabling the cable info functionality in the connectivity table
- *  Archive Log:    on the Topology page when a port (or link) is selected.
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/06/09 18:37:25  jijunwan
- *  Archive Log:    PR 129069 - Incorrect Help action
- *  Archive Log:    - moved help action from view to controller
- *  Archive Log:    - only enable help button when we have HelpID
- *  Archive Log:    - fixed incorrect HelpIDs
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/06/01 15:01:21  jypak
- *  Archive Log:    PR 128823 - Improve performance tables to include all portcounters fields.
- *  Archive Log:    All port counters fields added to performance table and connectivity table.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/04/08 19:44:34  rjtierne
- *  Archive Log:    Removed SYMBOL_ERRORS, TX_32BIT_WORDS, RX_32BIT_WORDS, and VL_15_DROPPED
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/03/10 18:43:14  jypak
- *  Archive Log:    JavaHelp System introduced to enable online help.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/02/05 19:10:50  jijunwan
- *  Archive Log:    fixed NPE issues found by klocwork
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/05 17:10:29  jijunwan
- *  Archive Log:    fixed NPE issues found by klocwork
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/02/04 21:44:19  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/01/30 18:00:07  jijunwan
- *  Archive Log:    PR 126650 - For a Switch Device Set selection, Detailed Information Panel does not display "overall summary" and "topology summary"
- *  Archive Log:     - fixed control logic issues
- *  Archive Log:     - fixed a HFI local port number issue
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/11/05 16:37:14  jijunwan
- *  Archive Log:    renamed ResoureLinkCard to ResourceLinkSection since it a section now
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/10/23 16:00:04  jijunwan
- *  Archive Log:    changed topology information display to use device property panels, and JSectionView
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/10/09 21:27:30  jijunwan
- *  Archive Log:    minor changes
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/10/09 12:37:03  fernande
- *  Archive Log:    Adding IContextAware interface to generalize context operations (setContext) and changes to the IProgressObserver interface
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/09/18 21:36:49  jijunwan
- *  Archive Log:    fixed a issue that incorrectly use portNum for rowIndex
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/18 21:03:25  jijunwan
- *  Archive Log:    Added link (jump to) capability to Connectivity tables and PortSummary table
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/15 15:24:29  jijunwan
- *  Archive Log:    changed AppEventBus to 3rd party lib mbassador
- *  Archive Log:    some code reformat
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/26 15:15:19  jijunwan
- *  Archive Log:    added refresh function to all pages
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2014/08/05 22:11:06  jijunwan
- *  Archive Log:    changed text Path to Route
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2014/08/05 17:59:45  jijunwan
- *  Archive Log:    ensure we update UI on EDT, changed to use SingleTaskManager to manager concurrent UI update tasks
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2014/08/05 13:46:23  jijunwan
- *  Archive Log:    new implementation on topology control that uses double models to avoid synchronization issues on model and view
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2014/07/23 18:35:27  rjtierne
- *  Archive Log:    Added addSubpage() method to add a subpage to the
- *  Archive Log:    list in the EDT. Invoked by both showLinks() and showPath()
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2014/07/23 18:28:02  rjtierne
- *  Archive Log:    Added clearSubpages() method to clear the subpages
- *  Archive Log:    list in the EDT. Invoked by both showLinks() and showPath()
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2014/07/23 18:02:22  rjtierne
- *  Archive Log:    Moved clearing of subpages in showPath() into the EDT
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/07/22 20:10:35  rjtierne
- *  Archive Log:    Rewrote showPath() method to display only one path per page
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/07/18 13:40:27  rjtierne
- *  Archive Log:    Added content to method showPath() to display a Connectivity
- *  Archive Log:    table listing the node/port information for each node along the path
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/07/11 19:29:01  fernande
- *  Archive Log:    Adding EventBus and linking UI elements to the Performance tab
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/07/11 13:16:28  jypak
- *  Archive Log:    Added runtime, non runtime exceptions handler for SubnetApi, ConfigApi, PerformanceApi.
- *  Archive Log:    As of now, all different exceptions are generally handled as 'Exception' but when we define how to handle differently for different exception, based on the error code, handler (catch block will be different). Also, we are thinking of centralized 'failure recovery' process to handle all exceptions in one place.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/07/10 21:23:05  rjtierne
- *  Archive Log:    Stacked abbreviated node names on link subpage tabs
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/10 15:44:04  rjtierne
- *  Archive Log:    In method showLinks(), customized the name/description of the link subpages
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/10 14:29:15  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Controller for the JCardView to display tabbed pages when links
- *  are selected on the topology graph
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.network;
 
 import java.util.ArrayList;
@@ -219,6 +65,10 @@ import com.intel.stl.ui.monitor.view.ConnectivitySubpageView;
 import com.intel.stl.ui.network.view.ResourceLinkSubpageView;
 import com.intel.stl.ui.network.view.ResourceLinkView;
 
+/**
+ * Controller for the JCardView to display tabbed pages when links are selected
+ * on the topology graph
+ */
 public class ResourceLinkSection
         extends ResourceSection<ResourceLinkSubpageView>
         implements IPortSelectionListener, IPageListener {

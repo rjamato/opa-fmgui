@@ -25,60 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: SafeNumberField.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7  2015/08/17 18:53:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/07/23 11:49:13  jypak
- *  Archive Log:    PR 129645 - Tree search enhancement.
- *  Archive Log:    Search progress bar, running icon and cancel capability are added.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/07/17 20:54:39  jijunwan
- *  Archive Log:    PR 129528 - input validation improvement
- *  Archive Log:    - changed typo in commit comment. The comment should be "change default number format to "###", so we need to support character ','"
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/07/17 20:32:15  jijunwan
- *  Archive Log:    PR 129528 - input validation improvement
- *  Archive Log:    - change default number format to "###", so we needn't to support character ','
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/07/16 21:22:53  jijunwan
- *  Archive Log:    PR 129528 - input validation improvement
- *  Archive Log:    - extended SafeTextField to apply rules in name check
- *  Archive Log:    - moved valid chars to UIConstants
- *  Archive Log:    - made FieldPair more generic and flexible
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/07/13 20:05:52  jijunwan
- *  Archive Log:    PR 129528 - input validation improvement
- *  Archive Log:    - added '%' as valid char for SafeTextFormatter since we may need it for percentage format
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/07/13 16:02:34  jijunwan
- *  Archive Log:    PR 129528 - input validation improvement
- *  Archive Log:    - added extended FormattedTextField that will
- *  Archive Log:    1) use AbstractFormatter to verify input
- *  Archive Log:    2) when we have invalid value
- *  Archive Log:    2.1) keep focus
- *  Archive Log:    2.2) change textfield to light red background color with red border
- *  Archive Log:    2.3) automatically show tooptip for invalid value
- *  Archive Log:    - added basic SafeTextField that will check text whether it's empty or not, whether it contain chars not supported
- *  Archive Log:    - added SafeNumberField that will check value range and valid chars
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common.view;
 
 import java.text.Format;

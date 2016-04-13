@@ -25,42 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PortLinkMode.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:48:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/07/16 16:33:33  jijunwan
- *  Archive Log:    PR 129228 - remove PortLTPCRCMode of Al
- *  Archive Log:    -  removed STL_PORT_LTP_CRC_MODE_ALL and STL_PORT_LINK_MODE_ALL_SUPPORTED
- *  Archive Log:    - changed to use STLConstants for string print out
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/01/21 22:51:00  jijunwan
- *  Archive Log:    improved to throw exception when we encounter unsupported value. This will help us identify problems when it happens.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/01/11 18:40:03  jijunwan
- *  Archive Log:    PR 126387 - SCMappingTableRecord PortLinkMode ambiguous
- *  Archive Log:    updated to the latest version stl_sa.h v1.92
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/18 21:28:32  fernande
- *  Archive Log:    Adding more properties for display
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.api.configuration;
 
 import java.util.Arrays;

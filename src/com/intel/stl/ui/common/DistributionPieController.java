@@ -25,42 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: DistributionPieController.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:54:12  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/05/09 14:17:20  jijunwan
- *  Archive Log:    moved JFreeChart to view side, controller side only take care dataset
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/05/08 19:25:40  jijunwan
- *  Archive Log:    MVC refactory
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/30 17:30:06  jijunwan
- *  Archive Log:    use Util.runInEDT
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/12 19:46:33  fernande
- *  Archive Log:    Initial version
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/01 20:40:17  jijunwan
- *  Archive Log:    introduced card. And refactoried to apply MVC patterns on UI widgets.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common;
 
 import java.awt.Color;

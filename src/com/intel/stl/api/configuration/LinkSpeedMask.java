@@ -25,56 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: LinkSpeedMask.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.10  2015/08/17 18:48:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/07/16 14:46:52  jijunwan
- *  Archive Log:    PR 129387 - linkspeed and width show as Nop
- *  Archive Log:    - handle special case for STL_LINK_SPEED_NOP
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/07/16 14:24:22  jijunwan
- *  Archive Log:    PR 129387 - linkspeed and width show as Nop
- *  Archive Log:    - change to show "None"
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/01/22 06:00:36  jijunwan
- *  Archive Log:    update to the new link speed defined in FM 308
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/01/21 22:55:45  jijunwan
- *  Archive Log:    fixed typo
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/01/21 22:51:00  jijunwan
- *  Archive Log:    improved to throw exception when we encounter unsupported value. This will help us identify problems when it happens.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/01/11 20:04:27  jijunwan
- *  Archive Log:    updated to the latest FM as of 01/05/2015
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/10/21 22:15:03  jijunwan
- *  Archive Log:    updated to match the latest STL spec
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/01 19:08:48  jijunwan
- *  Archive Log:    changed LinkSpeedMask to include speed, so we can use it to so some comparison
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/12 19:21:11  fernande
- *  Archive Log:    Initial version
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.api.configuration;
 
 import java.util.ArrayList;

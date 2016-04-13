@@ -25,40 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: DatasetDescription.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:53:46  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/17 23:29:05  jijunwan
- *  Archive Log:    minor change
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/02/17 23:22:17  jijunwan
- *  Archive Log:    PR 127106 - Suggest to use same bucket range for Group Err Summary as shown in "opatop" command to plot performance graphs in FV
- *  Archive Log:     - changed error histogram chart to bar chart to show the new data ranges: 0-25%, 25-50%, 50-75%, 75-100% and 100+%
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/22 19:11:01  jijunwan
- *  Archive Log:    fixed a bug
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/22 18:38:44  jijunwan
- *  Archive Log:    introduced DatasetDescription to support short name and full name (description) for a dataset
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.model;
 
 import org.jfree.data.general.Dataset;

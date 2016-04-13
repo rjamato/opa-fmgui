@@ -25,51 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ShowEdgesTask.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7  2015/11/24 16:49:00  rjtierne
- *  Archive Log:    PR 131720 - Code cleanup for PRQCode cleanup for PRQ
- *  Archive Log:    - In method getVFName(), changed error message for IllegalArgumentException to use the
- *  Archive Log:    new STLConstant K0808.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/11/02 23:56:54  jijunwan
- *  Archive Log:    PR 131396 - Incorrect Connectivity Table for a VF port
- *  Archive Log:    - adapted to the new connectivity table controller to support VF port
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/08/17 18:54:05  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/04/28 14:00:33  jijunwan
- *  Archive Log:    1) improved topology viz to use TopGraph copy for outline display. This will avoid graph and outline views share internal graph view that may cause sync issues.
- *  Archive Log:    2) added more debug info in log
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/04/10 20:20:32  fernande
- *  Archive Log:    Changed TopologyView to be passed two background services (graphService and outlineService) which now reside in FabricController and can be properly shutdown when an error occurs.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/11/03 23:06:13  jijunwan
- *  Archive Log:    improvement on topology view - drawing graph on background
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/10/22 02:21:25  jijunwan
- *  Archive Log:    1) moved update tasks into task package
- *  Archive Log:    2) added topology summary panel
- *  Archive Log:    3) improved models to be able to calculate ports distribution, nodes not in fat tree etc.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.network.task;
 
 import java.util.Collection;

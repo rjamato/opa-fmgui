@@ -25,66 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: CableInfoBean.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.13  2016/04/01 11:34:32  jypak
- *  Archive Log:    PR 130081 - Adapt FM GUI to use data structure STL_CABLE_INFO_FULL.
- *  Archive Log:    Updated to process each 64 bytes in two cable data from FM through CableInfoStd. Populating CableInfoBean and interpretation to QSFP both are executed by CableInfoStd.
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/09/15 13:31:31  jypak
- *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
- *  Archive Log:    Incorporated the FM changes (PR 129390) as of 8/28/15. These changes are mainly from IbPrint/stl_sma.c revision 1.163.
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/08/19 22:26:35  jijunwan
- *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
- *  Archive Log:    - correction on OM length calculation
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/08/19 21:02:55  jijunwan
- *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
- *  Archive Log:    - adapt to latest FM code
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/08/19 18:08:30  jypak
- *  Archive Log:    PR 129397 - gaps in cableinfo output and handling.
- *  Archive Log:    Updates for ID and OpticalWaveLength.
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/08/17 18:48:38  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/08/07 14:57:53  jypak
- *  Archive Log:    PR 129397 -gaps in cableinfo output and handling.
- *  Archive Log:    Updates on the formats of the cableinfo output and also new enums were defined for different output values.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/06/29 15:05:42  jypak
- *  Archive Log:    PR 129284 - Incorrect QSFP field name.
- *  Archive Log:    Field name fix has been implemented. Also, introduced a conversion to Date object to add flexibility to display date code.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/05/01 21:40:03  jijunwan
- *  Archive Log:    fixed minor issue found by FindBug
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/04/28 15:46:08  jypak
- *  Archive Log:    Updated to use Byte class rather than primitive type Byte to differentiate between valid data and 'no data'. The cable data are spread across two record entries, so, 'no data' for a field in CableInfoBean means that the data for the field is in the other record. Also, since we need to handle unsigned values, we cannot use NaN as -1.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/02/04 21:37:55  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *
- *  Overview: Cable Info Record from SA populated by the connect manager. QSFP interpreted.
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.api.subnet;
 
 import java.io.Serializable;
@@ -96,6 +36,10 @@ import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Cable Info Record from SA populated by the connect manager. QSFP
+ * interpreted.
+ */
 public class CableInfoBean implements Serializable {
     // we need to handle unsigned values
     private static final long serialVersionUID = 1L;

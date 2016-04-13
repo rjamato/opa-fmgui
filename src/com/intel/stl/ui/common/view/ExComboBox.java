@@ -25,41 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ExCombobox.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3  2015/09/21 21:40:32  jijunwan
- *  Archive Log:    PR 130229 - The text component of all editable combo boxes should provide validation of the input
- *  Archive Log:    - adapt to the new IntelComboBoxUI
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/08/17 18:53:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/30 14:28:23  jijunwan
- *  Archive Log:    created extended combobox model to support disabled items
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/27 18:40:02  jijunwan
- *  Archive Log:    moved extended JList and ComboBox to package common.view
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/02/13 23:05:37  jijunwan
- *  Archive Log:    PR 126911 - Even though HFI does not represent "Internal" data under opatop, FV still provides drop down for "Internal"
- *  Archive Log:     -- added a feature to be able to disable unsupported types
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common.view;
 
 import java.awt.Color;

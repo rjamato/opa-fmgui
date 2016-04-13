@@ -26,39 +26,6 @@
  */
 
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: IStateMonitor.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:54:08  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/05/19 22:08:53  jijunwan
- *  Archive Log:    moved filter from EventCalculator to StateSummary, so we can have better consistent result
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/05/16 15:17:14  jijunwan
- *  Archive Log:    Added filter capability to EventCalculator
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/05/08 19:03:24  jijunwan
- *  Archive Log:    backend support for states based on notices
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/06 15:20:24  jijunwan
- *  Archive Log:    added state and heal score calculation
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.publisher;
 
 import java.util.EnumMap;

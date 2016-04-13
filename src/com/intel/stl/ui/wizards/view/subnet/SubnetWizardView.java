@@ -25,127 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: LoggingWizardView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.30  2015/11/09 20:56:20  fernande
- *  Archive Log:    PR130852 - The 1st subnet in the Subnet Wizard displays "Abandon Changes" message when no changes are made. Added special listener for dirty state
- *  Archive Log:
- *  Archive Log:    Revision 1.29  2015/10/06 20:21:48  fernande
- *  Archive Log:    PR130749 - FM GUI virtual fabric information doesn't match opafm.xml file. Removed external access to textfield
- *  Archive Log:
- *  Archive Log:    Revision 1.28  2015/08/17 18:54:33  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.27  2015/07/22 19:12:15  jijunwan
- *  Archive Log:    PR 129647 - unremovable duplicate hosts in setup wizard
- *  Archive Log:    - fixed to only make the first one unremovable
- *  Archive Log:
- *  Archive Log:    Revision 1.26  2015/07/17 20:48:22  jijunwan
- *  Archive Log:    PR 129594 - Apply new input verification on setup wizard
- *  Archive Log:    - introduced isEditValid to allow us check whether we have valid edit
- *  Archive Log:
- *  Archive Log:    Revision 1.25  2015/05/01 21:29:13  jijunwan
- *  Archive Log:    changed to directly show exception(s)
- *  Archive Log:
- *  Archive Log:    Revision 1.24  2015/04/29 19:14:53  rjtierne
- *  Archive Log:    Don't update the model when running a connection test
- *  Archive Log:
- *  Archive Log:    Revision 1.23  2015/04/28 22:09:02  jijunwan
- *  Archive Log:    removed title argument from #showErrorMessage
- *  Archive Log:
- *  Archive Log:    Revision 1.22  2015/04/27 21:48:06  rjtierne
- *  Archive Log:    - Call setDirty() to enable the Apply & Reset buttons if the auto-connect button state changes
- *  Archive Log:    - PR 128358 - Fabric Viewer not Working:
- *  Archive Log:    In method update() catch IllegalArgumentException when calling getCurrentFE() and display error
- *  Archive Log:
- *  Archive Log:    Revision 1.21  2015/04/21 21:19:08  rjtierne
- *  Archive Log:    Set enable for Reset button in setDirty()
- *  Archive Log:
- *  Archive Log:    Revision 1.20  2015/04/07 20:17:42  jijunwan
- *  Archive Log:    second round wizard polishment
- *  Archive Log:
- *  Archive Log:    Revision 1.19  2015/04/06 22:53:48  jijunwan
- *  Archive Log:    first round wizard polishment
- *  Archive Log:
- *  Archive Log:    Revision 1.18  2015/04/03 14:44:37  rjtierne
- *  Archive Log:    Added showFileChooser() method to center file browser over the wizard window
- *  Archive Log:
- *  Archive Log:    Revision 1.17  2015/03/30 15:13:51  rjtierne
- *  Archive Log:    - Moved connection test panel to HostInfoPanel
- *  Archive Log:    - Updated panel backgrounds to use static variable
- *  Archive Log:
- *  Archive Log:    Revision 1.16  2015/03/25 17:56:57  rjtierne
- *  Archive Log:    Move JFileChooser to the subnet wizard view level so previously traversed
- *  Archive Log:    directory locations are remembered
- *  Archive Log:
- *  Archive Log:    Revision 1.15  2015/03/20 21:08:22  rjtierne
- *  Archive Log:    Changed user interface to support multiple backup hosts in a single subnet
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2015/03/16 17:47:13  fernande
- *  Archive Log:    STLConnection lifecycle support. STLConnections can now be reused and temporary connections are not cached and their socket is closed after they are logically closed. Changed SubnetDescription in support of failover to have a list of HostInfo objects instead of just info for one host.
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2015/03/11 15:26:42  rjtierne
- *  Archive Log:    Multinet Wizard: Removed title from titled border
- *  Archive Log:    Using text field creation methods in ComponentFactory with input verifiers
- *  Archive Log:    Added panel to test connection
- *  Archive Log:    Removed subnet name text field and replaced with references to the one in the MultinetWizardView
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/02/26 22:55:04  rjtierne
- *  Archive Log:    Restored AutoConnect
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/02/25 18:01:13  rjtierne
- *  Archive Log:    Added back the auto-connect feature
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/02/20 21:16:07  rjtierne
- *  Archive Log:    Multinet Wizard: New instalment of the multinet wizard targeting display of subnet specific data for all sub-wizards; using a unique model for each wizard
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/02/13 21:31:55  rjtierne
- *  Archive Log:    Multinet Wizard
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/02/09 22:00:05  jijunwan
- *  Archive Log:    temporary solution - treat new subnet name as intend to define a new subnet
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/02/06 15:13:43  fernande
- *  Archive Log:    Changes so that the Setup Wizard depends on the Subnet Manager for all subnet-related operations
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/01/20 19:14:32  rjtierne
- *  Archive Log:    Temporarily disabled button to test connectivity; subnets can be added without testing
- *  Archive Log:    the connection. Connection test will change to a checkbox in the future.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/01/11 21:48:19  jijunwan
- *  Archive Log:    setup wizard improvements
- *  Archive Log:    1) look and feel adjustment
- *  Archive Log:    2) secure FE support
- *  Archive Log:    3) apply wizard on current subnet
- *  Archive Log:    4) message display based on message type rather than directly specifying UI resources
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/12/19 19:48:37  rjtierne
- *  Archive Log:    Added array of Objects to showMessage()
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/12/11 20:01:08  rjtierne
- *  Archive Log:    Removed the disabling of Next/Apply buttons to make Wizard functional again
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/12/11 18:50:00  fernande
- *  Archive Log:    Switch from log4j to slf4j+logback
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/12/10 21:31:07  rjtierne
- *  Archive Log:    New Setup Wizard based on framework
- *  Archive Log:
- *
- *  Overview: View for the Subnet Wizard
- *
- *  @author: jypak, rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.wizards.view.subnet;
 
 // Java imports
@@ -196,6 +75,9 @@ import com.intel.stl.ui.wizards.view.IMultinetWizardView;
 import com.intel.stl.ui.wizards.view.IWizardView;
 import com.intel.stl.ui.wizards.view.MultinetWizardView;
 
+/**
+ * View for the Subnet Wizard
+ */
 public class SubnetWizardView extends AbstractTaskView implements ISubnetView,
         IHostInfoListener {
 

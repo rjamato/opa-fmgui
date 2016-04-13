@@ -25,50 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: FabricViewer
- *
- *  File Name: HealthHistoryCard.java
- *
- *  Archive Source: $Source$
- * 
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.24  2015/09/25 20:51:38  fernande
- *  Archive Log: PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
- *  Archive Log:
- *  Archive Log: Revision 1.23  2015/08/17 18:53:38  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - changed frontend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.22  2015/08/11 15:05:26  jijunwan
- *  Archive Log: PR 129917 - No update on event statistics
- *  Archive Log: - improved to maintain history length by time. The default length is 6 hrs
- *  Archive Log:
- *  Archive Log: Revision 1.21  2015/08/11 14:36:51  jijunwan
- *  Archive Log: PR 129917 - No update on event statistics
- *  Archive Log: - Apply event subscriber on HealthHistoryCard. It will update either by event or period updating.
- *  Archive Log: - Improved Health Trend chart to draw current data shape
- *  Archive Log: - Improved Health Trend view to show current value immediately
- *  Archive Log:
- *  Archive Log: Revision 1.20  2015/06/25 20:24:56  jijunwan
- *  Archive Log: Bug 126755 - Pin Board functionality is not working in FV
- *  Archive Log: - applied pin framework on fabric viewer and simple 'static' cards
- *  Archive Log:
- *  Archive Log: Revision 1.19  2015/06/09 18:37:27  jijunwan
- *  Archive Log: PR 129069 - Incorrect Help action
- *  Archive Log: - moved help action from view to controller
- *  Archive Log: - only enable help button when we have HelpID
- *  Archive Log: - fixed incorrect HelpIDs
- *  Archive Log:
- * 
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.main;
 
 import java.awt.Font;
@@ -95,8 +51,6 @@ import com.intel.stl.ui.main.view.HealthHistoryView;
 import com.intel.stl.ui.model.TimedScore;
 
 /**
- * @author jijunwan
- * 
  */
 public class HealthHistoryCard extends
         PinnableCardController<ICardListener, HealthHistoryView> {

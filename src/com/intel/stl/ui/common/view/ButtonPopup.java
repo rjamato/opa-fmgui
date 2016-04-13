@@ -25,40 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ButtonPopup.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:53:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/05/20 20:09:57  jijunwan
- *  Archive Log:    PR 128826 - Floating Popup menu
- *  Archive Log:    - listen to parent frame and hide a popup if its parent frame is going to moving, resizing etc.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/12/10 20:52:22  rjtierne
- *  Archive Log:    Support for new Setup Wizard
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/10/24 20:09:00  jijunwan
- *  Archive Log:    adjust popup panel's location to ensure it's not out of screen
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/10/21 16:33:19  fernande
- *  Archive Log:    Component used to display a popup window associated with a button
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common.view;
 
 import static java.awt.event.KeyEvent.VK_ESCAPE;

@@ -25,41 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ITty.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:54:27  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/04/10 14:09:07  rjtierne
- *  Archive Log:    PR 126675 - User cannot execute commands on duplicate Console numbers beyond 10 consoles.
- *  Archive Log:    Added method closeChannel() to the interface
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/04/09 21:13:23  rjtierne
- *  Archive Log:    126675 - User cannot execute commands on duplicate Console numbers beyond 10 consoles.
- *  Archive Log:    Added method closeChannel() to the interface
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/10/28 22:22:23  rjtierne
- *  Archive Log:    Added remote host "history" to command dialog
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/09/23 19:46:16  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Interface for the IntelTty class
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.console;
 
 import com.jcraft.jsch.Session;

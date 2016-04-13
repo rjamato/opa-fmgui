@@ -25,26 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: LogInitBean.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1  2015/11/18 23:50:12  rjtierne
- *  Archive Log:    PR 130965 - ESM support on Log Viewer
- *  Archive Log:    Initial Version - holds host login information
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.api.logs;
 
 import com.intel.stl.api.subnet.SubnetDescription;

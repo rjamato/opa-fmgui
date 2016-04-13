@@ -25,56 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: LongField.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7  2015/10/06 20:19:41  fernande
- *  Archive Log:    PR130749 - FM GUI virtual fabric information doesn't match opafm.xml file. A previous fix disabled the update of most fields used in the Admin configuration editor. Restored the updating capability in those fields
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/08/17 18:53:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/07/16 21:22:53  jijunwan
- *  Archive Log:    PR 129528 - input validation improvement
- *  Archive Log:    - extended SafeTextField to apply rules in name check
- *  Archive Log:    - moved valid chars to UIConstants
- *  Archive Log:    - made FieldPair more generic and flexible
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/07/14 17:02:38  jijunwan
- *  Archive Log:    PR 129541 - Should forbid save or deploy when there is invalid edit on management panel
- *  Archive Log:    - Introduce isEditValid for attribute renders
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/07/13 18:37:24  jijunwan
- *  Archive Log:    PR 129528 - input validation improvement
- *  Archive Log:    - updated generic classes to use the new text field
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/04/09 16:39:12  jijunwan
- *  Archive Log:    improved to support decimal for long value
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/27 15:49:24  jijunwan
- *  Archive Log:    changed LongField to more general HexField
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/03/10 22:47:08  jijunwan
- *  Archive Log:    init value for Long and GID fields
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/05 17:37:28  jijunwan
- *  Archive Log:    new common widgets
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common.view;
 
 import java.awt.GridBagConstraints;

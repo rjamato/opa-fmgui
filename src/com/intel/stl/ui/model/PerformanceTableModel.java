@@ -25,88 +25,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PerformanceTableModel.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.16  2016/02/16 22:16:06  jijunwan
- *  Archive Log:    PR 132888 - Include Num Lanes Down in port counters display
- *  Archive Log:
- *  Archive Log:    - added Num Lanes Down
- *  Archive Log:
- *  Archive Log:    Revision 1.15  2015/08/17 18:53:46  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2015/06/01 15:01:22  jypak
- *  Archive Log:    PR 128823 - Improve performance tables to include all portcounters fields.
- *  Archive Log:    All port counters fields added to performance table and connectivity table.
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2015/05/14 17:43:12  jijunwan
- *  Archive Log:    PR 127700 - Delta data on host performance display is accumulating
- *  Archive Log:    - corrected delta value calculation
- *  Archive Log:    - changed to display data/pkts rate rather than delta on chart and table
- *  Archive Log:    - updated chart unit to show rate
- *  Archive Log:    - renamed the following classes to reflect we are dealing with rate
- *  Archive Log:      DataChartRangeUpdater -> DataRateChartRangeUpdater
- *  Archive Log:      PacketChartRangeUpdater -> PacketRateChartRangeUpdater
- *  Archive Log:      DataChartScaleGroupManager -> DataRateChartScaleGroupManager
- *  Archive Log:      PacketChartScaleGroupManager -> PacketRateChartScaleGroupManager
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/04/08 19:44:51  rjtierne
- *  Archive Log:    PR 126844 - Can make Port counter names in UIs more concise.
- *  Archive Log:    Changed constants accessed to use fast fabric tool names
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/03/05 22:32:16  fisherma
- *  Archive Log:    Added LinkQuality icon to Performance -> Performance tab table.
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2014/12/10 20:52:23  rjtierne
- *  Archive Log:    Support for new Setup Wizard
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2014/09/18 20:57:40  jijunwan
- *  Archive Log:    removed dead code
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2014/06/05 17:34:59  jijunwan
- *  Archive Log:    integrate vFabric into performance pages
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/05/30 20:33:38  rjtierne
- *  Archive Log:    Fixed calls to get Tx/Rx Delta and Cumulative data and packets
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/05/29 14:21:17  jijunwan
- *  Archive Log:    thread safe table model, added bound control on table model
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/05/29 03:57:18  jijunwan
- *  Archive Log:    performance table adjustment: sort by number, hide columns to save space
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/05/28 22:19:34  jijunwan
- *  Archive Log:    synchronized table model
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/05/28 17:45:30  rjtierne
- *  Archive Log:    Catch exception in getValueAt() method when entry list is empty
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/05/23 19:15:57  rjtierne
- *  Archive Log:    Implemented getValueAt() method
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/21 14:44:06  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Model for the Performance table
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.model;
 
 import com.intel.stl.ui.common.FVTableModel;
 import com.intel.stl.ui.monitor.PerformanceTableData;
 
+/**
+ * Model for the Performance table
+ */
 public class PerformanceTableModel extends FVTableModel<PerformanceTableData> {
 
     /**

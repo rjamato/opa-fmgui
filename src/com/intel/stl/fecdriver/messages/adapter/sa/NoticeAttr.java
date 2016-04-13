@@ -25,39 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: NoticeAttr.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:48:48  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/01/11 20:04:29  jijunwan
- *  Archive Log:    updated to the latest FM as of 01/05/2015
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/08/22 21:38:47  fernande
- *  Archive Log:    Adding support for saving notices and imageinfos to the database
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/05/06 15:14:05  jijunwan
- *  Archive Log:    notice and trap implementation
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/16 15:07:32  jijunwan
- *  Archive Log:    added support to FE notice
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.fecdriver.messages.adapter.sa;
 
 import com.intel.stl.api.notice.GenericNoticeAttrBean;

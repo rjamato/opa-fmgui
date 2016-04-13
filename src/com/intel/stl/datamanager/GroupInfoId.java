@@ -25,45 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: GroupInfoId.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7  2015/08/17 18:49:14  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/02/12 20:20:22  jijunwan
- *  Archive Log:    changed back to use timestamp as part of id
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/02/12 19:30:01  jijunwan
- *  Archive Log:    introduced interface ITimestamped, and all timimg attributes implemented it, so we can easily know which attribute is associated with timestamp
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/09/30 15:37:20  fernande
- *  Archive Log:    Changed hashCode methods to use generated code by Eclipse
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/29 20:09:30  fernande
- *  Archive Log:    Fixing potential Hibernate issue where equals returns NullPointerException. Added test to make sure it works for all database records.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/05 15:37:20  fernande
- *  Archive Log:    Changed DatabaseException into an unchecked exception. Then change error handling in the Datamanager so that certain FMExceptions (checked exceptions) bubble up to the API layer. Higher layers can then decide how to handle those exceptions. Any other Hibernate/HSQLDb/DAO exceptions are signaled as a DatabaseException (unchecked) to layers above the Datamanager.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/06/11 22:08:02  fernande
- *  Archive Log:    Changes to add more entities to database schema
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.datamanager;
 
 import java.io.Serializable;

@@ -24,43 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: SAHelper.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.13  2016/02/09 20:23:17  jijunwan
- *  Archive Log: PR 132575 - [PSC] Null pointer message in FM GUI
- *  Archive Log:
- *  Archive Log: - some minor improvements
- *  Archive Log:
- *  Archive Log: Revision 1.12  2015/09/26 06:17:57  jijunwan
- *  Archive Log: 130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
- *  Archive Log: - added more log info
- *  Archive Log:
- *  Archive Log: Revision 1.11  2015/09/25 20:47:43  fernande
- *  Archive Log: PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
- *  Archive Log:
- *  Archive Log: Revision 1.10  2015/08/17 18:48:53  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - change backend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.9  2015/06/10 19:36:39  jijunwan
- *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- *
- *  Overview:
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
 package com.intel.stl.api.subnet.impl;
 
 import java.util.List;
@@ -111,8 +74,6 @@ import com.intel.stl.fecdriver.messages.command.sa.FVCmdGetTrace;
 import com.intel.stl.fecdriver.messages.command.sa.FVCmdGetVLArb;
 
 /**
- * @author jijunwan
- *
  */
 public class SAHelper extends FEHelper {
     private final static Logger log = LoggerFactory.getLogger(SAHelper.class);

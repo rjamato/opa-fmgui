@@ -25,66 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: NodeProperties.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7  2015/08/17 18:53:46  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/12/11 18:45:45  fernande
- *  Archive Log:    Switch from log4j to slf4j+logback
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/10/22 02:05:18  jijunwan
- *  Archive Log:    made property model more general
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/08/12 20:58:01  jijunwan
- *  Archive Log:    1) renamed HexUtils to StringUtils
- *  Archive Log:    2) added a method to StringUtils to get error message for an exception
- *  Archive Log:    3) changed all code to call StringUtils to get error message
- *  Archive Log:    4) some extra ode format change
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/08/05 18:39:04  jijunwan
- *  Archive Log:    renamed FI to HFI
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/06/05 18:32:51  jijunwan
- *  Archive Log:    changed Channel Adapter to Fabric Interface
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/22 18:32:10  jincoope
- *  Archive Log:    Moved from configuration package to this package
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/04/16 16:20:50  jijunwan
- *  Archive Log:    minor refactory
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/04/16 15:15:49  jijunwan
- *  Archive Log:    use HexUtils for hex string display
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/14 17:09:02  fernande
- *  Archive Log:    Fixed incorrect import
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/12 19:48:03  fernande
- *  Archive Log:    Initial version
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/09 19:51:30  jincoope
- *  Archive Log:    changed the name of this pack to all lower case
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/09 17:59:44  jincoope
- *  Archive Log:    Added for displaying properties
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jincoope
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.model;
 
 import java.util.List;

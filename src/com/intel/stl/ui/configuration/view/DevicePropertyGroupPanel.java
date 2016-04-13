@@ -25,60 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: DevicePropertyGroupPanel.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.9  2015/08/17 18:54:17  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/06/09 18:37:24  jijunwan
- *  Archive Log:    PR 129069 - Incorrect Help action
- *  Archive Log:    - moved help action from view to controller
- *  Archive Log:    - only enable help button when we have HelpID
- *  Archive Log:    - fixed incorrect HelpIDs
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/04/10 14:23:02  jijunwan
- *  Archive Log:    PR 127495 - Add LED indicator bit to STL_PORT_STATES
- *  Archive Log:    -- display LED Enabled in port properties
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/03/26 17:38:21  jypak
- *  Archive Log:    Online Help updates for additional panels.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/03/10 18:43:13  jypak
- *  Archive Log:    JavaHelp System introduced to enable online help.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/12/31 17:49:39  jypak
- *  Archive Log:    1. CableInfo updates (Moved the QSFP interpretation logic to backend etc.)
- *  Archive Log:    2. SC2SL updates.
- *  Archive Log:    3. SC2VLt updates.
- *  Archive Log:    4. SC3VLnt updates.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/11/19 07:13:28  jypak
- *  Archive Log:    HoQLife, VL Stall Count : property bar chart panel updates
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/11/13 00:36:47  jypak
- *  Archive Log:    MTU by VL bar chart panel updates.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/10/22 02:15:33  jijunwan
- *  Archive Log:    1) abstracted property related panels to general panels that can be reused at other places
- *  Archive Log:    2) introduced renderer into property panels to allow customizes property render
- *  Archive Log:    3) generalized property style to be able to apply on any ui component
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.configuration.view;
 
 import java.awt.Component;

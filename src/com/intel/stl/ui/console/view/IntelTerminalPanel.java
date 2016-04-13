@@ -25,62 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: IntelTerminalPanel.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.9  2015/11/16 18:44:46  jypak
- *  Archive Log:    PR 130970 - Console commands produced by arrow keys can't be detected if user changes prompt in session. JUnit updated not to use Swing.
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/11/11 13:26:28  robertja
- *  Archive Log:    PR 130278 - Store console tab help pane state on a per-tab basis so that help info is restored when focus returns to a tab.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/11/09 13:35:02  jypak
- *  Archive Log:    PR 130970 - Console commands produced by arrow keys can't be detected if user changes prompt in session. Check if a prompt is in a valid format and if not, don't pass anything to the help system.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/10/09 13:40:41  rjtierne
- *  Archive Log:    PR 129027 - Need to handle customized command prompts when detecting commands on console
- *  Archive Log:    - Overriding Gritty TermPanel#consumeRun() to identify what the customized prompt is and
- *  Archive Log:    store it in the controller. Then when a prompt and command string is received the command
- *  Archive Log:    is parsed and sent to the help system.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/08/17 18:54:14  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/06/02 16:38:19  rjtierne
- *  Archive Log:    PR 128824 - Interactive Console only can monitor commands input from key typing
- *  Archive Log:    Override TermPanel's StyledRunConsumer#consumeRun() to get access to buffer
- *  Archive Log:    used to display commands on the screen. Filtered input commands from buffer
- *  Archive Log:    and sent to Help System for topic look up and display.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/06/02 16:16:37  rjtierne
- *  Archive Log:    128824 - Interactive Console only can monitor commands input from key typing
- *  Archive Log:    Override TermPanel's StyledRunConsumer#consumeRun() to get access to buffer
- *  Archive Log:    used to display commands on the screen. Filtered input commands from buffer
- *  Archive Log:    and sent to Help System for topic look up and display.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/05/27 21:53:52  rjtierne
- *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
- *  Archive Log:    Checked for NULL intelKeyHandle in processKeyEvent to prevent NullPointerException
- *  Archive Log:    when the user clicks on the terminal and hits a key before loggin into a console
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/10/20 20:36:04  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.console.view;
 
 import java.awt.event.KeyEvent;

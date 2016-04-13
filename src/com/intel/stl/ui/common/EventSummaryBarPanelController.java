@@ -25,58 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: EventSummaryBarPanelController
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.10  2015/12/03 14:56:28  jypak
- *  Archive Log:    PR 131817 - FM GUI, the status Column to the right requires a header/title.
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/08/17 18:54:12  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/08/11 14:14:58  jijunwan
- *  Archive Log:    PR 129917 - No update on event statistics
- *  Archive Log:    - Apply event subscriber on EventSummaryBar and HomePage to periodically update. Both will update either by event or period updating.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/12/08 16:00:02  robertja
- *  Archive Log:    Set new context after removing any listeners to old context.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/10/28 15:10:20  robertja
- *  Archive Log:    Change Home page and Performance page status panel updates from poll-driven to event-driven.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/10/09 12:32:57  fernande
- *  Archive Log:    Adding IContextAware interface to generalize context operations (setContext).
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/05/19 22:08:51  jijunwan
- *  Archive Log:    moved filter from EventCalculator to StateSummary, so we can have better consistent result
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/05/16 04:30:39  jijunwan
- *  Archive Log:    Added code to deregister from task scheduler; Added Page Listener to listen enter or exit a (sub)page
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/05/14 21:43:20  jypak
- *  Archive Log:    Event Summary Table updates.
- *  Archive Log:    1. Replace EventMsgBean with EventDescription.
- *  Archive Log:    2. Update table contents with real data from Notice API.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/13 13:03:53  jypak
- *  Archive Log:    Event Summary Bar panel in pin board implementation.
- *  Archive Log:
- *
- *  Overview: A controller for the severity count summary panel (EventSummaryBarPanel) 
- *            that goes to pin board. 
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common;
 
 import static com.intel.stl.api.configuration.UserSettings.PROPERTY_TIMING_WINDOW;
@@ -98,6 +46,10 @@ import com.intel.stl.ui.publisher.TaskScheduler;
 import com.intel.stl.ui.publisher.subscriber.EventSubscriber;
 import com.intel.stl.ui.publisher.subscriber.SubscriberType;
 
+/**
+ * A controller for the severity count summary panel (EventSummaryBarPanel)
+ * that goes to pin board.
+ */
 public class EventSummaryBarPanelController implements IContextAware,
         IStateChangeListener {
 

@@ -25,29 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ChangeManager.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1  2015/10/26 20:19:12  jijunwan
- *  Archive Log:    PR 131169 - Unable to delete Device Groups created within the opafm.xml file
- *  Archive Log:    - introduced ChangeManager to maintain changes
- *  Archive Log:    - changed changes from set to list because when the changes depend on each other, the order does matter
- *  Archive Log:    - changed xxxManagement to use ChangeManager
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.api.management;
 
 import java.util.ArrayList;

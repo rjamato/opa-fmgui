@@ -25,41 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: HistoryQueryTask.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4  2015/08/17 18:54:08  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/03/02 15:28:07  jypak
- *  Archive Log:    History query has been done with current live image ID '0' which isn't correct. Updates here are:
- *  Archive Log:    1. Get the image ID from current image.
- *  Archive Log:    2. History queries are done with this image ID.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/02/12 19:40:04  jijunwan
- *  Archive Log:    short term PA support
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/02/10 21:25:59  jypak
- *  Archive Log:    1. Introduced SwingWorker for history query initialization for progress status updates.
- *  Archive Log:    2. Fixed the list of future for history query in TaskScheduler. Now it can have all the Future entries created.
- *  Archive Log:    3. When selecting history type, just cancel the history query not sheduled query.
- *  Archive Log:    4. The refresh rate is now from user settings not from the config api.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.publisher;
 
 import java.util.concurrent.Future;

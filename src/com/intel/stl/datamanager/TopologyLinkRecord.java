@@ -25,56 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: TopologyLinkRecord.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.10  2015/08/17 18:49:14  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/02/23 22:33:23  jijunwan
- *  Archive Log:    changed to use id and active state in hash code calculation so nodes/links with different active states are distinguished and new topology will be created in DB
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/02/23 22:28:01  jijunwan
- *  Archive Log:    added method #toString to help debug
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/02/04 21:37:57  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/09/30 15:37:20  fernande
- *  Archive Log:    Changed hashCode methods to use generated code by Eclipse
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/08/28 14:56:52  jypak
- *  Archive Log:    Notice Manager updates.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/08/26 15:01:18  jijunwan
- *  Archive Log:    changed port index to be byte to be consistent with port number
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/06/23 21:16:59  fernande
- *  Archive Log:    Removed embedded LinkRecordBean
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/06/19 20:06:28  fernande
- *  Archive Log:    Added background update of database and redirected some APIs to use the database.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/06/11 22:08:02  fernande
- *  Archive Log:    Changes to add more entities to database schema
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.datamanager;
 
 import static javax.persistence.FetchType.LAZY;

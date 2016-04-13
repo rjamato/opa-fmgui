@@ -24,59 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: Util.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.21  2016/03/02 18:27:30  jijunwan
- *  Archive Log: PR 133067 - Add a popup window that e-mail was sent successfully when "test" button is click
- *  Archive Log:
- *  Archive Log: - changed to disable button after we click test button
- *  Archive Log: - changed to show "sending email..." message when we are sending out a test email
- *  Archive Log: - changed to show "Test message sent out, please check your email account." after email sent out
- *  Archive Log: - change to recover message to normal text when there is a user action
- *  Archive Log: - added undo/redo capability to email address text area
- *  Archive Log:
- *  Archive Log: Revision 1.20  2016/01/28 21:38:05  jijunwan
- *  Archive Log: 132565 - Log Error or Warning message display on screen
- *  Archive Log:
- *  Archive Log: - changed to log more detailed info
- *  Archive Log:
- *  Archive Log: Revision 1.19  2015/11/16 18:44:49  jypak
- *  Archive Log: PR 130970 - Console commands produced by arrow keys can't be detected if user changes prompt in session. JUnit updated not to use Swing.
- *  Archive Log:
- *  Archive Log: Revision 1.18  2015/08/18 14:28:35  jijunwan
- *  Archive Log: PR 130033 - Fix critical issues found by Klocwork or FindBugs
- *  Archive Log: - DateFormat is not thread safe. Changed to create new DateFormat to avoid sharing it among different threads
- *  Archive Log:
- *  Archive Log: Revision 1.17  2015/08/17 18:54:12  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - changed frontend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.16  2015/07/28 18:29:10  fisherma
- *  Archive Log: PR 129219 - Admin page login dialog improvement
- *  Archive Log:
- *  Archive Log: Revision 1.15  2015/07/14 17:00:59  jijunwan
- *  Archive Log: PR 129541 - Should forbid save or deploy when there is invalid edit on management panel
- *  Archive Log: - removed unnecessary argument for warning message display
- *  Archive Log:
- *  Archive Log: Revision 1.14  2015/06/10 19:58:58  jijunwan
- *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- *
- *  Overview:
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
 package com.intel.stl.ui.common;
 
 import java.awt.Color;
@@ -118,8 +65,6 @@ import org.slf4j.LoggerFactory;
 import com.intel.stl.ui.common.view.DialogFactory;
 
 /**
- * @author jijunwan
- *
  */
 public class Util {
     private final static Logger log = LoggerFactory.getLogger(Util.class);

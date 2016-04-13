@@ -25,53 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: HistogramItem.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7  2015/08/17 18:53:43  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/06/30 22:28:49  jijunwan
- *  Archive Log:    PR 129215 - Need short chart name to support pin capability
- *  Archive Log:    - introduced short name to performance items
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/06/25 20:42:13  jijunwan
- *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
- *  Archive Log:    - improved PerformanceItem to support port counters
- *  Archive Log:    - improved PerformanceItem to use generic ISource to describe data source
- *  Archive Log:    - improved PerformanceItem to use enum DataProviderName to describe data provider name
- *  Archive Log:    - improved PerformanceItem to support creating a copy of PerformanceItem
- *  Archive Log:    - improved TrendItem to share scale with other charts
- *  Archive Log:    - improved SimpleDataProvider to support hsitory data
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/17 23:22:14  jijunwan
- *  Archive Log:    PR 127106 - Suggest to use same bucket range for Group Err Summary as shown in "opatop" command to plot performance graphs in FV
- *  Archive Log:     - changed error histogram chart to bar chart to show the new data ranges: 0-25%, 25-50%, 50-75%, 75-100% and 100+%
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/07/22 18:45:02  jijunwan
- *  Archive Log:    renamed description to fullName
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/22 18:38:38  jijunwan
- *  Archive Log:    introduced DatasetDescription to support short name and full name (description) for a dataset
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/16 15:08:56  jijunwan
- *  Archive Log:    new framework for performance data visualization
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.performance.item;
 
 import org.jfree.data.general.Dataset;

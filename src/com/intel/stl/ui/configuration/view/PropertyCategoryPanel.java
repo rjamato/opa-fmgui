@@ -25,59 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PropertyCategoryPanel.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.11  2015/08/17 18:54:17  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/02/02 16:26:55  jijunwan
- *  Archive Log:    improved property value label to be single line label with max width
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2014/10/22 02:15:33  jijunwan
- *  Archive Log:    1) abstracted property related panels to general panels that can be reused at other places
- *  Archive Log:    2) introduced renderer into property panels to allow customizes property render
- *  Archive Log:    3) generalized property style to be able to apply on any ui component
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2014/10/13 21:06:47  fernande
- *  Archive Log:    Changed GetDevicePropertiesTask to be driven by the PropertiesDisplayOptions in UserSettings instead of hard coded
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/10/09 13:04:36  fernande
- *  Archive Log:    Adding IContextAware interface to generalize setting up Context
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/09/04 19:56:45  jijunwan
- *  Archive Log:    minor L&F adjustments on property viz
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/09/04 16:54:25  jijunwan
- *  Archive Log:    added code to support changing property viz style through UI
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/08/22 16:52:29  fernande
- *  Archive Log:    Closing the gaps between properties and sa_query
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/08/14 17:37:51  fernande
- *  Archive Log:    Closing the gap on device properties being displayed.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/08/04 21:17:34  fernande
- *  Archive Log:    Changed to adjust to new DeviceProperties model
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/25 20:28:04  fernande
- *  Archive Log:    New property views
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.configuration.view;
 
 import java.awt.Component;

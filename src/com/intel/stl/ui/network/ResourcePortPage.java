@@ -25,110 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ResourcePortPage.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.25  2015/11/02 23:56:52  jijunwan
- *  Archive Log:    PR 131396 - Incorrect Connectivity Table for a VF port
- *  Archive Log:    - adapted to the new connectivity table controller to support VF port
- *  Archive Log:
- *  Archive Log:    Revision 1.24  2015/10/23 19:07:59  jijunwan
- *  Archive Log:    PR 129357 - Be able to hide inactive ports
- *  Archive Log:    - revert back to the old version without visible node support
- *  Archive Log:
- *  Archive Log:    Revision 1.23  2015/10/19 20:34:49  jijunwan
- *  Archive Log:    PR 131097 - Connectivity tab under Topology has no information.
- *  Archive Log:    - changed a sort of typo in the code
- *  Archive Log:
- *  Archive Log:    Revision 1.22  2015/09/30 13:26:46  fisherma
- *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
- *  Archive Log:
- *  Archive Log:    Revision 1.21  2015/08/17 18:54:00  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.20  2015/04/03 21:06:30  jijunwan
- *  Archive Log:    Introduced canExit to IPageController, and canPageChange to IPageListener to allow us do some checking before we switch to another page. Fixed the following bugs
- *  Archive Log:    1) when we refresh, do not show login dialog if Admin is not the current page
- *  Archive Log:    2) confirm abandon if we switch from admin page to other pages and there is changes on the Admin page
- *  Archive Log:    3) confirm abandon in Admin page if we switch between Application, DeviceGroup and VirtualFabric
- *  Archive Log:    4) added null check to handle special cases
- *  Archive Log:
- *  Archive Log:    Revision 1.19  2015/02/04 21:44:19  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *  Archive Log:    Revision 1.18  2015/01/29 21:32:04  jijunwan
- *  Archive Log:    improved the handle the special case - B2B topology
- *  Archive Log:
- *  Archive Log:    Revision 1.17  2014/11/17 17:15:24  jijunwan
- *  Archive Log:    hanged Port subpage's name to Connectivity
- *  Archive Log:
- *  Archive Log:    Revision 1.16  2014/10/23 16:00:04  jijunwan
- *  Archive Log:    changed topology information display to use device property panels, and JSectionView
- *  Archive Log:
- *  Archive Log:    Revision 1.15  2014/10/09 12:37:03  fernande
- *  Archive Log:    Adding IContextAware interface to generalize context operations (setContext) and changes to the IProgressObserver interface
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2014/08/26 15:15:19  jijunwan
- *  Archive Log:    added refresh function to all pages
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2014/08/05 18:39:05  jijunwan
- *  Archive Log:    renamed FI to HFI
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2014/08/05 17:59:45  jijunwan
- *  Archive Log:    ensure we update UI on EDT, changed to use SingleTaskManager to manager concurrent UI update tasks
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2014/07/29 15:46:06  rjtierne
- *  Archive Log:    Scheduled periodic Connectivity table updates
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2014/07/22 20:09:31  rjtierne
- *  Archive Log:    Implemented showPath() interface methods
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2014/07/18 13:41:21  rjtierne
- *  Archive Log:    Changed prototype for showPath() to accept a list of nodes to
- *  Archive Log:    match the interface
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2014/07/10 21:24:08  rjtierne
- *  Archive Log:    Added newly required interface methods
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/07/10 15:43:16  rjtierne
- *  Archive Log:    Added new interface method setDescription()
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/07/10 15:12:06  rjtierne
- *  Archive Log:    Pass null to setContext() in place of observer since it's not needed
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/07/10 14:36:44  rjtierne
- *  Archive Log:    Added new interface methods. Added end nodes to the connectivity table
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/07/08 20:26:06  rjtierne
- *  Archive Log:    Removed IProgressObserver from showNode(), added unimplemented
- *  Archive Log:    methods from interface
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/07/03 14:16:52  rjtierne
- *  Archive Log:    Created connectivity table controller and updated the table for the
- *  Archive Log:    topology port page
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/06/26 15:00:18  jijunwan
- *  Archive Log:    added progress indication to subnet initialization
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/06/25 13:28:14  rjtierne
- *  Archive Log:    Initial Version - renamed from ResourceRoutePage
- *  Archive Log:
- *
- *  Overview: Controller for the Port subpage on the Topology page
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.network;
 
 import static com.intel.stl.ui.common.PageWeight.MEDIUM;
@@ -154,6 +50,9 @@ import com.intel.stl.ui.monitor.tree.FVResourceNode;
 import com.intel.stl.ui.monitor.view.ConnectivitySubpageView;
 import com.intel.stl.ui.network.view.ResourcePortView;
 
+/**
+ * Controller for the Port subpage on the Topology page
+ */
 public class ResourcePortPage implements IResourceNodeSubpageController {
 
     private final ResourcePortView pageView;

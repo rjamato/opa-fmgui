@@ -25,35 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ConsoleHelpView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4  2015/11/11 13:26:31  robertja
- *  Archive Log:    PR 130278 - Store console tab help pane state on a per-tab basis so that help info is restored when focus returns to a tab.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/08/17 18:54:12  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/10/17 19:34:17  rjtierne
- *  Archive Log:    Added parser to navigate the help system based on user input
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/10/01 19:39:36  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Interface for the console help utility
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.common;
 
 import java.util.List;
@@ -61,8 +32,6 @@ import java.util.List;
 import javax.swing.JPanel;
 
 /**
- * @author rjtierne
- * 
  */
 public interface IHelp {
 

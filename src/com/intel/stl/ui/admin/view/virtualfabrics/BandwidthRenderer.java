@@ -25,43 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: BandWidthRenderer.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:54:01  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/07/16 21:26:32  jijunwan
- *  Archive Log:    PR 129528 - input validation improvement
- *  Archive Log:    - restrict numbers to be positive integer, i.e. dot and minus are invalid chars
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/07/13 18:43:50  jijunwan
- *  Archive Log:    PR 129528 - input validation improvement
- *  Archive Log:    - In VF config, Bandwidth need to be in format "#.##%" and the value should be in range (0, 1]
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/03/30 14:25:37  jijunwan
- *  Archive Log:    1) introduced IRendererModel to create renderer only we nee
- *  Archive Log:    2) removed #getName from IAttrRenderer to provide more flexibilities and let IRendererModel to take care which attribute should use which renderer, how to init it properly
- *  Archive Log:    3) improved to support repeatable and non-repeatable attributes. For non-repeatable attributes, we only can add once
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/27 15:47:46  jijunwan
- *  Archive Log:    first version of VirtualFabric UI
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.admin.view.virtualfabrics;
 
 import java.text.NumberFormat;

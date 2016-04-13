@@ -24,39 +24,9 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- * 
- *  Functional Group: Fabric Viewer Application
- * 
- *  File Name: Constants.java
- * 
- *  Archive Source: $Source$
- * 
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.6  2015/08/17 18:49:06  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - change backend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.5  2015/08/10 17:04:42  robertja
- *  Archive Log: PR128974 - Email notification functionality.
- *  Archive Log:
- *  Archive Log: Revision 1.4  2015/06/10 19:36:45  jijunwan
- *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- * 
- *  Overview:
- * 
- *  @author: jijunwan
- * 
- ******************************************************************************/
 package com.intel.stl.common;
 
 /**
- * @author jijunwan
- * 
  */
 public interface Constants {
     int PROTOCAL_VERSION = 0x80;
@@ -66,11 +36,9 @@ public interface Constants {
     byte IB_BASE_VERSION = 1;
 
     byte MCLASS_SUBN_ADM = 0x03; /* Subnet Administration class */
-
     byte MCLASS_PERF = 0x04; /* Performance Management class */
 
     byte MCLASS_VFI_PM = 0x32; /* PM VFI mclass value */
-
     int STL_MAD_BLOCK_SIZE = 2048;
 
     short MAD_STATUS_SUCCESS = 0x0000;

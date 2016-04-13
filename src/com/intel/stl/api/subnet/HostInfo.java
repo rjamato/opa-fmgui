@@ -25,58 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: HostInfo.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.11  2015/10/06 15:51:14  rjtierne
- *  Archive Log:    PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
- *  Archive Log:    - Updated toString() to include the new hostType attribute.
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/10/01 21:27:36  fernande
- *  Archive Log:    PR130409 - [Dell]: FMGUI Admin Console login fails when switch is configured without username and password. Added HostType to HostInfo bean
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/08/17 18:48:38  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/07/28 18:20:31  fisherma
- *  Archive Log:    PR 129219 - Admin page login dialog improvement.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/06/08 15:59:44  fernande
- *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Stabilizing the new FEAdapter code. Adding IConnectionAssistant field so that other layers can provide an assistant, otherwise it falls back to the DefaultConnectionAssistant.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/05/04 22:22:30  jijunwan
- *  Archive Log:    set CertsDescription to be transient by mistake. Change it back now, and make it to be Serializable since HostInfo is Serializable
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/05/01 21:40:40  jijunwan
- *  Archive Log:    fixed Serializable issue found by FindBug
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/04/08 15:17:11  fernande
- *  Archive Log:    Changes to allow for failover to work when the current (initial) FE is not available.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/03/30 15:09:27  rjtierne
- *  Archive Log:    Added constructor to allow CertsDescription to be passed
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/03/16 17:37:45  fernande
- *  Archive Log:    STLConnection lifecycle support. STLConnections can now be reused and temporary connections are not cached and their socket is closed after they are logically closed. Changed SubnetDescription in support of failover to have a list of HostInfo objects instead of just info for one host.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/09 13:51:30  fernande
- *  Archive Log:    Bean to hold host information for primary SM and backup SMs
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.api.subnet;
 
 import java.io.Serializable;

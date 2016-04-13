@@ -25,51 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: StringTextField.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/11/09 20:36:15  fernande
- *  Archive Log:    PR130852 - The 1st subnet in the Subnet Wizard displays "Abandon Changes" message when no changes are made. Added special listener for dirty state. Changes are not being commited to the value
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/09/25 13:57:48  rjtierne
- *  Archive Log:    PR 130011 - Enhance SM Log Viewer to include Standard and Advanced requirements
- *  Archive Log:    - Fixed typo
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/08/17 18:53:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/07/16 21:22:53  jijunwan
- *  Archive Log:    PR 129528 - input validation improvement
- *  Archive Log:    - extended SafeTextField to apply rules in name check
- *  Archive Log:    - moved valid chars to UIConstants
- *  Archive Log:    - made FieldPair more generic and flexible
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/07/13 16:02:34  jijunwan
- *  Archive Log:    PR 129528 - input validation improvement
- *  Archive Log:    - added extended FormattedTextField that will
- *  Archive Log:    1) use AbstractFormatter to verify input
- *  Archive Log:    2) when we have invalid value
- *  Archive Log:    2.1) keep focus
- *  Archive Log:    2.2) change textfield to light red background color with red border
- *  Archive Log:    2.3) automatically show tooptip for invalid value
- *  Archive Log:    - added basic SafeTextField that will check text whether it's empty or not, whether it contain chars not supported
- *  Archive Log:    - added SafeNumberField that will check value range and valid chars
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common.view;
 
 import java.text.ParseException;

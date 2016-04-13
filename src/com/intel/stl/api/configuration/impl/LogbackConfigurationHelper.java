@@ -25,59 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: LogbackConfigurationHelper.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.9  2015/08/17 18:48:56  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/06/26 13:37:20  rjtierne
- *  Archive Log:    PR 128975 - Can not setup application log
- *  Archive Log:    Now accesses the root logger level through the rootLogger in the LoggingConfiguration object.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/06/10 19:15:15  rjtierne
- *  Archive Log:    PR 128975 - Can not setup application log
- *  Archive Log:    - Add FecDriver to the list of internal logs
- *  Archive Log:    - Changed references of List<AppenderConfig> to LoggingConfiguration
- *  Archive Log:    - In getLoggingConfiguration(), initialized list of loggers and root log level
- *  Archive Log:    in the logging configuration
- *  Archive Log:    - In updateDocument(), set root logging level. This needs to be updated to also
- *  Archive Log:    update the list of loggers
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/05/12 17:37:17  rjtierne
- *  Archive Log:    PR 128623 - Klocwork and FindBugs fixes for backend
- *  Archive Log:    Add setter method used in unit testing for assigning new values to static variables
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/02/03 04:44:40  jijunwan
- *  Archive Log:    fixed NPE issues found by clocwork
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/01/08 22:41:18  fernande
- *  Archive Log:    Logback configuration support
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/12/17 21:40:46  fernande
- *  Archive Log:    Fix for saving settings.xml file
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/12/17 21:17:43  fernande
- *  Archive Log:    Backend changes to update log config.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/12/15 20:44:49  fernande
- *  Archive Log:    Initial changes to the logging configuration backend support for logback.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.api.configuration.impl;
 
 import static com.intel.stl.common.AppDataUtils.FM_GUI_DIR;

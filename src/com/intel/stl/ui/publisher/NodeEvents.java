@@ -25,45 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: NodeEvents.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/18 14:36:48  jijunwan
- *  Archive Log:    PR 130033 - Fix critical issues found by Klocwork or FindBugs
- *  Archive Log:    - made EventItem to be Serializable
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/08/17 18:54:08  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/08/07 19:11:41  jijunwan
- *  Archive Log:    PR 129775 - disable node not available on Worst Node Card
- *  Archive Log:    - improved to display event type
- *  Archive Log:    - improved to disable jumping buttons when event type is PORT_INACTIVE
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/05/19 22:08:53  jijunwan
- *  Archive Log:    moved filter from EventCalculator to StateSummary, so we can have better consistent result
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/05/08 19:03:24  jijunwan
- *  Archive Log:    backend support for states based on notices
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/06 20:25:16  jijunwan
- *  Archive Log:    moved NodeEvents one level up, so we can do unit test
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.publisher;
 
 import java.io.Serializable;

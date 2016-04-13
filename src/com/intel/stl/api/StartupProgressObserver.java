@@ -25,26 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: StartupProgressObserver.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1  2016/01/26 18:35:32  fernande
- *  Archive Log:    PR 132387 - [Dell]: FMGUI Fails to Open Due to Database Lock. The application was compacting the database on every application exit; changed the scheduling to compact the database after a purge of performance data is done; and to always display a splash screen when shutting down the application so the user gets feedback of the application shutdown process.
- *  Archive Log:
- *
- *  Overview:
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.api;
 
 public interface StartupProgressObserver {

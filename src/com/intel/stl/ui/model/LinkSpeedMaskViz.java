@@ -25,46 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: LinkSpeedMaskViz.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7  2015/08/17 18:53:46  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/07/16 14:24:23  jijunwan
- *  Archive Log:    PR 129387 - linkspeed and width show as Nop
- *  Archive Log:    - change to show "None"
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/01/22 06:02:28  jijunwan
- *  Archive Log:    update to the new link speed defined in FM 308
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/01/11 21:36:23  jijunwan
- *  Archive Log:    adapt to latest data structure changes on FM
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/10/22 01:19:41  jijunwan
- *  Archive Log:    updated to match the latest STL spec
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/29 13:48:52  fernande
- *  Archive Log:    Removed repetitive conversion from FE values to API enums
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/22 21:52:34  fernande
- *  Archive Log:    Refactoring PropertyStrings into individual enums
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.model;
 
 import java.util.EnumMap;

@@ -24,46 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: HSqlDbEngine.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.16  2016/01/26 18:45:42  fernande
- *  Archive Log: PR 132387 - [Dell]: FMGUI Fails to Open Due to Database Lock. Added compact option for the database on shutdown
- *  Archive Log:
- *  Archive Log: Revision 1.15  2015/08/17 18:49:34  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - change backend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.14  2015/07/09 19:45:00  fernande
- *  Archive Log: PR 129447 - Database size increases a lot over a short period of time. Deleted invalid file
- *  Archive Log:
- *  Archive Log: Revision 1.13  2015/07/07 23:29:50  jijunwan
- *  Archive Log: PR 129485 - Out of memory
- *  Archive Log: - changed to shutdown DB with compact
- *  Archive Log:
- *  Archive Log: Revision 1.12  2015/07/07 22:52:21  jijunwan
- *  Archive Log: PR 129485 - Out of memory
- *  Archive Log: - changed default table type to cached
- *  Archive Log:
- *  Archive Log: Revision 1.11  2015/06/10 19:36:50  jijunwan
- *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- *
- *  Overview:
- *
- *  @author: Fernando Fernandez
- *
- ******************************************************************************/
-
 package com.intel.stl.dbengine.impl;
 
 import static com.intel.stl.common.STLMessages.STL30006_SQLEXCEPTION;
@@ -99,8 +59,6 @@ import com.intel.stl.dbengine.DatabaseEngine;
 /**
  * This class is responsible for initializing, starting up and shutting down the
  * database under HyperSQL
- *
- * @author Fernando Fernandez
  *
  */
 public class HSqlDbEngine implements DatabaseEngine {

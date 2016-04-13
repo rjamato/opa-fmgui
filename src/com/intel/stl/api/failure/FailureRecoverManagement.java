@@ -25,41 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: FailureRecoverManagement.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:49:12  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/12/11 18:32:09  fernande
- *  Archive Log:    Switch from log4j to slf4j+logback
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/10/14 20:47:10  jijunwan
- *  Archive Log:    turned on debug
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/08/13 12:43:25  jijunwan
- *  Archive Log:    added sleep for blocked failure recovery
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/12 20:28:40  jijunwan
- *  Archive Log:    init version Failure Management
- *  Archive Log:
- *
- *  Overview: We intentionally do not put this class under package impl because
- *  we will reuse it from UI side which will ignore any classes under impl 
- *  package 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.api.failure;
 
 import java.util.HashMap;
@@ -81,6 +46,9 @@ import com.intel.stl.api.StringUtils;
  * several tries, it will call {@link ITaskFatal#onFatal()} to treat it as
  * unrecoverable failure.
  * 
+ *
+ * We intentionally do not put this class under package impl because we will
+ * reuse it from UI side which will ignore any classes under impl package
  */
 public class FailureRecoverManagement implements IFailureManagement {
     private final static Logger log = LoggerFactory

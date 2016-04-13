@@ -25,26 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ITextListener.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1  2015/09/25 13:55:25  rjtierne
- *  Archive Log:    PR 130011 - Enhance SM Log Viewer to include Standard and Advanced requirements
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Interface used to listen to events on a text area context menu
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.admin.impl.logs;
 
 public interface ITextMenuListener {

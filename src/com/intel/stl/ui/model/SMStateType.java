@@ -26,29 +26,6 @@
  */
 
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: SMStateType.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2  2015/08/17 18:53:46  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/08 20:19:46  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Enumeration for the Subnet Manager state type
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.model;
 
 import java.util.HashMap;

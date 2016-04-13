@@ -25,55 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: NoticeRecord.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.9  2015/08/17 18:49:14  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/02/06 15:03:04  fernande
- *  Archive Log:    Database modifications to use a long as the id for a SubnetDescription and to support users per subnet.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/10/24 18:50:22  fernande
- *  Archive Log:    Initial batch of fixes for notice processing. Notice updates not working yet but need a stable environment for Bob.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/09/30 15:37:20  fernande
- *  Archive Log:    Changed hashCode methods to use generated code by Eclipse
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/09/18 14:18:34  jypak
- *  Archive Log:    1. When  shutdown notice manager, remove it from the listener list of the STLConnection so that the blocking queue doesn't fill up.
- *  Archive Log:    2. Removed unncessary print out statements.
- *  Archive Log:    3. Port cache now has null check for memory cache.
- *  Archive Log:    4. For FE errors, still process the notice and set the NoticeStatus to FEERROR.
- *  Archive Log:    5. Junit updates for NoticeStatus.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/09/15 15:15:39  jypak
- *  Archive Log:    Notice Manager JUnit tests and relevant fixes.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/08/28 14:56:52  jypak
- *  Archive Log:    Notice Manager updates.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/08/27 17:04:40  fernande
- *  Archive Log:    Database changes to add Notice and ImageInfo tables to the schema database
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/22 21:39:58  fernande
- *  Archive Log:    Adding support for saving notices and imageinfos to the database
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.datamanager;
 
 import static javax.persistence.EnumType.STRING;

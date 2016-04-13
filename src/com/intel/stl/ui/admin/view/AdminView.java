@@ -25,46 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: AdminView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8  2015/08/17 18:53:52  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/08/17 17:46:44  jijunwan
- *  Archive Log:    PR 128973 - Deploy FM conf changes on all SMs
- *  Archive Log:    - improved AdminPage to support adding separator between tabs
- *  Archive Log:    - improved to use canExit to decide weather is able to switch to another tab or page
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/03/05 17:38:18  jijunwan
- *  Archive Log:    init version to support Application management
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/11/17 17:12:42  jijunwan
- *  Archive Log:    added Log to admin page
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/10/24 13:12:51  rjtierne
- *  Archive Log:    Setting views is already on EDT through mouse click event
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/10/07 21:50:03  jijunwan
- *  Archive Log:    L&F adjustment
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/10/07 19:53:07  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.admin.view;
 
 import java.awt.BorderLayout;

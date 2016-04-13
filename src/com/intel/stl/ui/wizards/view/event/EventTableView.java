@@ -25,84 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: EventRulesTable.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.13  2015/10/07 11:39:59  jypak
- *  Archive Log:    PR 130608 - Changes made to SC2VL mapping is not reflected in FM GUI's SC2SL Mapping Table.
- *  Archive Log:    Klocwork issues fixed.
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/10/02 12:51:37  rjtierne
- *  Archive Log:    PR 130509 - Missing ICON for Display_Message
- *  Archive Log:    - Simplified getTableCellRendererComponent() when adding e-mail/display message
- *  Archive Log:    icons to the action panel using EventRuleActionViz.
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/08/17 18:54:40  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/08/10 17:55:49  robertja
- *  Archive Log:    PR 128974 - Email notification functionality.
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/06/03 19:44:35  rjtierne
- *  Archive Log:    129043 - The Action column on the Event Wizard should be re-enabled for e-mail support
- *  Archive Log:    Added flag ACTION_COLUMN_ENABLE which can be set to true to make the Action column
- *  Archive Log:    on the Event Wizard visible.  This flag should only be enabled when the e-mail feature
- *  Archive Log:    is available.
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/04/21 21:18:32  rjtierne
- *  Archive Log:    In installEditors(), set Reset button to true when table combo box is selected
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/04/08 19:43:39  rjtierne
- *  Archive Log:    Renamed mHeaderCol to mHeader
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/04/03 16:00:56  rjtierne
- *  Archive Log:    PR 127089 - Missing option to configure Email Setting in Preferences under Configuration Setup Wizard. Temporarily removed the Action column from the Event wizard until e-mail/display message options are available and tested.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/03/30 15:12:50  rjtierne
- *  Archive Log:    Updated panel backgrounds to use static variable
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/20 21:16:06  rjtierne
- *  Archive Log:    Multinet Wizard: New instalment of the multinet wizard targeting display of subnet specific data for all sub-wizards; using a unique model for each wizard
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/02/13 21:31:52  rjtierne
- *  Archive Log:    Multinet Wizard
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/01/13 19:01:39  rjtierne
- *  Archive Log:    Removed warnings by specifying generic types.
- *  Archive Log:    Override getTableCellRendererComponent() in FVTableRenderer to set
- *  Archive Log:    tool tips on event wizard type and class fields
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/01/11 21:48:16  jijunwan
- *  Archive Log:    setup wizard improvements
- *  Archive Log:    1) look and feel adjustment
- *  Archive Log:    2) secure FE support
- *  Archive Log:    3) apply wizard on current subnet
- *  Archive Log:    4) message display based on message type rather than directly specifying UI resources
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/12/19 19:41:09  rjtierne
- *  Archive Log:    Added array of Objects to showMessage()
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/12/11 20:01:06  rjtierne
- *  Archive Log:    Removed the disabling of Next/Apply buttons to make Wizard functional again
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/12/10 21:31:10  rjtierne
- *  Archive Log:    New Setup Wizard based on framework
- *  Archive Log:
- *
- *  Overview: This class replaces the EventRulesPanel, in the Event Wizard, with
- *  a event rules table on a single panel.
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.wizards.view.event;
 
 import java.awt.BorderLayout;
@@ -149,6 +71,10 @@ import com.intel.stl.ui.wizards.view.IMultinetWizardView;
 import com.intel.stl.ui.wizards.view.IWizardView;
 import com.intel.stl.ui.wizards.view.MultinetWizardView;
 
+/**
+ * This class replaces the EventRulesPanel, in the Event Wizard, with a event
+ * rules table on a single panel.
+ */
 public class EventTableView extends FVXTableView<EventRulesTableModel> {
 
     private static final long serialVersionUID = 2521825791205609777L;

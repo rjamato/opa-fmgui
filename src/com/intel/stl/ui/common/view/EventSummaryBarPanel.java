@@ -25,62 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: EventSummaryBarPanel
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.12  2015/12/03 14:56:29  jypak
- *  Archive Log:    PR 131817 - FM GUI, the status Column to the right requires a header/title.
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/08/17 18:53:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/04/06 11:14:06  jypak
- *  Archive Log:    Klockwork: Front End Critical Without Unit Test. Open issues fixed.
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/04/02 13:32:58  jypak
- *  Archive Log:    Klockwork: Front End Critical Without Unit Test. 47 open issues fixed. All of them are for null checks.
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2014/12/11 18:44:57  fernande
- *  Archive Log:    Switch from log4j to slf4j+logback
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/07/21 16:28:36  jijunwan
- *  Archive Log:    integer format adjustment
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/05/28 17:25:41  jijunwan
- *  Archive Log:    color severity on event table, by default sort event table by time, by default show event table on home page, show text for enums
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/05/19 22:08:52  jijunwan
- *  Archive Log:    moved filter from EventCalculator to StateSummary, so we can have better consistent result
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/05/15 14:29:29  jijunwan
- *  Archive Log:    minor UI adjustment
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/05/15 12:17:50  jypak
- *  Archive Log:    Gap between count and name narrowed.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/05/14 21:43:23  jypak
- *  Archive Log:    Event Summary Table updates.
- *  Archive Log:    1. Replace EventMsgBean with EventDescription.
- *  Archive Log:    2. Update table contents with real data from Notice API.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/13 13:03:55  jypak
- *  Archive Log:    Event Summary Bar panel in pin board implementation.
- *  Archive Log:
- *
- *  Overview: Severity count summary panel (EventSummaryBarPanel) that goes to pin board. 
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common.view;
 
 import java.awt.BorderLayout;
@@ -108,6 +52,9 @@ import com.intel.stl.ui.common.UIConstants;
 import com.intel.stl.ui.common.UILabels;
 import com.intel.stl.ui.model.NoticeSeverityViz;
 
+/**
+ * Severity count summary panel (EventSummaryBarPanel) that goes to pin board.
+ */
 public class EventSummaryBarPanel extends JPanel {
 
     /**

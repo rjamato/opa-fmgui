@@ -24,65 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: STLMessages.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.52  2016/01/26 18:37:41  fernande
- *  Archive Log: PR 132387 - [Dell]: FMGUI Fails to Open Due to Database Lock. Added shutdown messages
- *  Archive Log:
- *  Archive Log: Revision 1.51  2015/11/18 23:51:33  rjtierne
- *  Archive Log: PR 130965 - ESM support on Log Viewer
- *  Archive Log: - Added STL50014_ESM_COMMAND_NOT_FOUND and STL50015_SESSION_CONNECTION_FAILURE
- *  Archive Log:
- *  Archive Log: Revision 1.50  2015/09/21 20:46:56  jijunwan
- *  Archive Log: PR 130542 - Confusion error message on fetching conf file
- *  Archive Log: - improved SftpException to include file path information
- *  Archive Log:
- *  Archive Log: Revision 1.49  2015/08/17 18:49:06  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - change backend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.48  2015/08/17 14:22:53  rjtierne
- *  Archive Log: PR 128979 - SM Log display
- *  Archive Log: This is the first version of the Log Viewer which displays select lines of text from the remote SM log file. Updates include searchable raw text from file, user-defined number of lines to display, refreshing end of file, and paging. This PR is now closed and further updates can be found by referencing PR 130011 - "Enhance SM Log Viewer to include Standard and Advanced requirements".
- *  Archive Log:
- *  Archive Log: Revision 1.47  2015/08/10 17:04:42  robertja
- *  Archive Log: PR128974 - Email notification functionality.
- *  Archive Log:
- *  Archive Log: Revision 1.46  2015/07/31 21:04:51  fernande
- *  Archive Log: PR 129631 - Ports table sometimes not getting performance related data. Translating a RequestCancelledException into a special PerformanceRequestCancelledException for UI consumption.
- *  Archive Log:
- *  Archive Log: Revision 1.45  2015/07/02 14:43:00  robertja
- *  Archive Log: PR 128703 - Messages for new failover states.
- *  Archive Log:
- *  Archive Log: Revision 1.44  2015/07/01 18:19:52  robertja
- *  Archive Log: PR128703 - Add messages for new failover states.
- *  Archive Log:
- *  Archive Log: Revision 1.43  2015/06/18 20:55:51  fernande
- *  Archive Log: PR 129034 Support secure FE. Improvements to framework in SMFailoverManager
- *  Archive Log:
- *  Archive Log: Revision 1.42  2015/06/11 17:47:11  fernande
- *  Archive Log: PR 129034 Support secure FE. Added message for SMRecordBean record not found condition.
- *  Archive Log:
- *  Archive Log: Revision 1.41  2015/06/10 19:36:45  jijunwan
- *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- *
- *  Overview:
- *
- *  @author: Fernando Fernandez
- *
- ******************************************************************************/
-
 package com.intel.stl.common;
 
 import java.text.MessageFormat;
@@ -102,8 +43,6 @@ import com.intel.stl.api.IMessage;
  * component STL30001-STL30999: Messages related to the Database Manager
  * component Add ranges as more components are added. Don't forget to add the
  * actual message in the messages.properties file.
- *
- * @author Fernando Fernandez
  *
  */
 public enum STLMessages implements IMessage {

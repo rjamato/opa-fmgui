@@ -25,39 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: VirtualFabricsPageController.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4  2015/10/21 15:06:55  jijunwan
- *  Archive Log:    PR 131077 - Virtual Fabrics list does not reflect enabled status per item in "list tile" of admin window
- *  Archive Log:    - Extended VF to use its own renderer for item panel
- *  Archive Log:    - Extended VF to update item panel when there is a change on enabled check box
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/08/17 18:53:54  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/06/25 11:54:55  jypak
- *  Archive Log:    PR 129073 - Add help action for Admin Page.
- *  Archive Log:    The help action is added to App, DG, VF,Console page and Console terminal. For now, a help ID and a content are being used as a place holder for each page. Once we get the help contents delivered by technical writer team, the HelpAction will be updated with correct help ID.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/27 15:47:47  jijunwan
- *  Archive Log:    first version of VirtualFabric UI
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.admin.impl.virtualfabrics;
 
 import java.awt.event.ActionEvent;

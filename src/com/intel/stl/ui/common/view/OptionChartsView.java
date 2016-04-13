@@ -25,62 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: OptionChartsView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.11  2015/08/17 18:53:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/08/06 13:18:08  jypak
- *  Archive Log:    PR 129707 - Device Types or Device Groups and All/Internal/External labels.
- *  Archive Log:    When disable irrelevant data types for different device types (All, HFI, SW etc.), set a default data type for the device type.
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/08/05 03:00:44  jijunwan
- *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
- *  Archive Log:    - applied undo mechanism on charts to track chart  change, jump event
- *  Archive Log:    - applied undo mechanism on chart section to track group change
- *  Archive Log:    - improved OptionChartsView to support undoable data type and history selection
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/03/27 18:40:02  jijunwan
- *  Archive Log:    moved extended JList and ComboBox to package common.view
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/03/18 16:00:19  jypak
- *  Archive Log:    The layout manager for toolbar that contains the button popups is changed to GridBagLayout. Also, changed initial button texts to be initial enum types.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/03/18 12:05:00  jypak
- *  Archive Log:    Changed from ListSelectionListener to MouseListener so that a mouse click of current selected item from the list at least hide the popup.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/03/17 15:56:17  jypak
- *  Archive Log:    DataType, HistoryType JComboBox have been replaced with button popup to save space.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/13 23:05:36  jijunwan
- *  Archive Log:    PR 126911 - Even though HFI does not represent "Internal" data under opatop, FV still provides drop down for "Internal"
- *  Archive Log:     -- added a feature to be able to disable unsupported types
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/02/03 21:12:36  jypak
- *  Archive Log:    Short Term PA history changes for Group Info only.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/05 21:52:31  jijunwan
- *  Archive Log:    improved IntelComboBoxUI to support editable Combo Box
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/22 18:41:41  jijunwan
- *  Archive Log:    added DataType support for chart view
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common.view;
 
 import java.awt.GridBagConstraints;

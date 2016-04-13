@@ -25,71 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: VFPortCounterSubscriber.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.12  2016/02/09 20:23:09  jijunwan
- *  Archive Log:    PR 132575 - [PSC] Null pointer message in FM GUI
- *  Archive Log:
- *  Archive Log:    - some minor improvements
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/08/17 18:53:39  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/04/14 14:42:49  jypak
- *  Archive Log:    Fix to avoid MAD request error for history query.
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/04/10 14:18:01  jypak
- *  Archive Log:    Use image ID of history data queried with offset -1 rather than current image ID. Using current image ID for history query doesn't work.
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/03/02 15:28:08  jypak
- *  Archive Log:    History query has been done with current live image ID '0' which isn't correct. Updates here are:
- *  Archive Log:    1. Get the image ID from current image.
- *  Archive Log:    2. History queries are done with this image ID.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/02/12 19:40:07  jijunwan
- *  Archive Log:    short term PA support
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/02/10 23:25:36  jijunwan
- *  Archive Log:    removed refresh rate on caller side since we should be able to directly get it from task scheduler
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/02/10 21:26:00  jypak
- *  Archive Log:    1. Introduced SwingWorker for history query initialization for progress status updates.
- *  Archive Log:    2. Fixed the list of future for history query in TaskScheduler. Now it can have all the Future entries created.
- *  Archive Log:    3. When selecting history type, just cancel the history query not sheduled query.
- *  Archive Log:    4. The refresh rate is now from user settings not from the config api.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/06 20:49:35  jypak
- *  Archive Log:    1. TaskScheduler changed to handle two threads.
- *  Archive Log:    2. All four(VFInfo, VFPortCounters, GroupInfo, PortCounters) attributes history query related updates.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/02/04 21:44:21  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/02/03 21:12:32  jypak
- *  Archive Log:    Short Term PA history changes for Group Info only.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/02/02 15:36:15  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Subscriber class to schedule tasks for collecting virtual fabric
- *  port counter beans
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.publisher.subscriber;
 
 import java.util.ArrayList;
@@ -112,6 +47,10 @@ import com.intel.stl.ui.publisher.HistoryQueryTask;
 import com.intel.stl.ui.publisher.ICallback;
 import com.intel.stl.ui.publisher.Task;
 
+/**
+ * Subscriber class to schedule tasks for collecting virtual fabric port
+ * counter beans
+ */
 public class VFPortCounterSubscriber extends Subscriber<VFPortCountersBean> {
 
     private static Logger log =

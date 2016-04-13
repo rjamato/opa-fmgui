@@ -25,48 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ICertDialog.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/17 18:48:51  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/05/26 15:32:08  fernande
- *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/04/03 16:16:28  fernande
- *  Archive Log:    Added getSSLEngine to the interface.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/03/24 15:07:49  fernande
- *  Archive Log:    Changes to cache KeyManagerFactories and TrustManagerFactories to avoid requests for password.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/03/19 16:52:17  fernande
- *  Archive Log:    Fix for the UI CertsAssistant which needs the SubnetDescription.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/01/11 20:56:32  jijunwan
- *  Archive Log:    support secure FE:
- *  Archive Log:    1) added secured STL Connection to communicate with FE
- *  Archive Log:    2) added cert assistant interface that supports certs conf, persistence and password prompt
- *  Archive Log:    3) added default cert assistant
- *  Archive Log:    4) improved Subnet conf to support secure FE
- *  Archive Log:
- *  Archive Log:    NOTE: the secured connection requires Java 1.7
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.api;
 
 import javax.net.ssl.KeyManagerFactory;

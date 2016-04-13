@@ -26,38 +26,6 @@
  */
 
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ResourceLinkView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:54:15  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/07/10 14:39:35  rjtierne
- *  Archive Log:    Changed view to accomodate a connectivity table
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/07/08 20:23:48  rjtierne
- *  Archive Log:    Dynamic panel creation using List instead of array
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/03 14:13:48  rjtierne
- *  Archive Log:    Added Link Statistics and Health panels
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/06/24 20:30:30  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Resource Link subpage view on the Topology page
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.network.view;
 
 import java.awt.GridBagConstraints;
@@ -67,6 +35,9 @@ import javax.swing.JPanel;
 
 import com.intel.stl.ui.monitor.view.ConnectivitySubpageView;
 
+/**
+ * Resource Link subpage view on the Topology page
+ */
 public class ResourceLinkView extends JPanel {
 
     /**

@@ -25,30 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: IStateChangeListener.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2  2015/08/17 18:54:09  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/10/28 15:10:22  robertja
- *  Archive Log:    Change Home page and Performance page status panel updates from poll-driven to event-driven.
- *  Archive Log:
- *
- *  Overview: Mechanism for taking action on state change.
- *
- *  @author: robertja
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.publisher;
 
 import com.intel.stl.ui.model.StateSummary;

@@ -25,65 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: IntelTerminalView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.12  2015/10/09 13:40:52  rjtierne
- *  Archive Log:    PR 129027 - Need to handle customized command prompts when detecting commands on console
- *  Archive Log:    - Pass the IConsole interface to the IntelTerminalPanel so it can identify the command prompt
- *  Archive Log:    and store it in the controller.
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/08/17 18:54:14  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/06/02 16:16:26  rjtierne
- *  Archive Log:    PR 128824 - Interactive Console only can monitor commands input from key typing
- *  Archive Log:    Passed the HelpController to IntelTerminalPanel
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2014/12/11 18:45:15  fernande
- *  Archive Log:    Switch from log4j to slf4j+logback
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2014/12/04 22:49:35  jijunwan
- *  Archive Log:    use constant
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/10/29 19:49:10  rjtierne
- *  Archive Log:    When shutting down a console, only close session when the threads using
- *  Archive Log:    them have stopped
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/10/22 15:43:59  rjtierne
- *  Archive Log:    Override key listener to parse commands entered on the console window to
- *  Archive Log:    facilitate help system navigation
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/10/20 20:36:49  rjtierne
- *  Archive Log:    Use new IntelTerminalPanel instead of TermPanel
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/10/13 14:57:44  rjtierne
- *  Archive Log:    No longer passing "this" to IntelEmulator
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/10/07 19:54:34  rjtierne
- *  Archive Log:    Changed method setCursor() to setTerminalCursor() to eliminate ambiguity with java.awt.Component.setCursor()
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/10/01 19:56:18  rjtierne
- *  Archive Log:    Help topic list initialization
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/09/23 19:46:17  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: This class holds the terminal panel and launches the Emulator
- *  task thread to process input
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.console.view;
 
 import java.awt.BorderLayout;
@@ -116,6 +57,10 @@ import com.wittams.gritty.TerminalWriter;
 import com.wittams.gritty.TtyChannel;
 import com.wittams.gritty.swing.ConnectedKeyHandler;
 
+/**
+ * This class holds the terminal panel and launches the Emulator task thread to
+ * process input
+ */
 public class IntelTerminalView extends JPanel {
 
     private static final Logger termLogger = LoggerFactory

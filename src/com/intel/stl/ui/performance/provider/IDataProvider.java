@@ -25,52 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: IDataProvider.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7  2015/08/17 18:54:06  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/06/25 20:42:14  jijunwan
- *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
- *  Archive Log:    - improved PerformanceItem to support port counters
- *  Archive Log:    - improved PerformanceItem to use generic ISource to describe data source
- *  Archive Log:    - improved PerformanceItem to use enum DataProviderName to describe data provider name
- *  Archive Log:    - improved PerformanceItem to support creating a copy of PerformanceItem
- *  Archive Log:    - improved TrendItem to share scale with other charts
- *  Archive Log:    - improved SimpleDataProvider to support hsitory data
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/02/03 21:12:34  jypak
- *  Archive Log:    Short Term PA history changes for Group Info only.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/09/09 18:26:06  jijunwan
- *  Archive Log:    1) introduced ISourceObserver to provide flexibility on dataset preparation when we change data sources
- *  Archive Log:    2) Applied ISourceObserver to fix the synchronization issue happens when we switch data sources
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/08/26 15:14:31  jijunwan
- *  Archive Log:    added refresh function to performance charts
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/17 16:25:37  jijunwan
- *  Archive Log:    improvement to support sleep mode so we can reduce FE traffic
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/16 15:08:58  jijunwan
- *  Archive Log:    new framework for performance data visualization
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.performance.provider;
 
 import com.intel.stl.ui.common.IProgressObserver;

@@ -25,49 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ResourceDetailView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7  2015/08/17 18:54:15  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/08/05 04:09:30  jijunwan
- *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
- *  Archive Log:    - applied undo mechanism on Topology Page
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/02/05 19:09:21  jijunwan
- *  Archive Log:    fixed a issue reported by klocwork that is actually not a problem
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/10/23 16:00:06  jijunwan
- *  Archive Log:    changed topology information display to use device property panels, and JSectionView
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/08/26 15:15:35  jijunwan
- *  Archive Log:    added refresh function to all pages
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/18 13:43:33  rjtierne
- *  Archive Log:    Added font style and insets to the Link/Path tabs
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/08 20:14:58  rjtierne
- *  Archive Log:    Renamed from ResourceDetailsView and now the view for the subpages
- *  Archive Log:    on the Topology page
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/06/24 20:30:30  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Subpage JCardView for the Topology page
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.network.view;
 
 import java.awt.BorderLayout;
@@ -89,6 +46,9 @@ import com.intel.stl.ui.common.view.JSectionView;
 import com.intel.stl.ui.main.view.IPageListener;
 import com.intel.stl.ui.network.IResourceNodeSubpageController;
 
+/**
+ * Subpage JCardView for the Topology page
+ */
 public class ResourceSubpageView extends JSectionView<ISectionListener>
         implements ChangeListener {
 

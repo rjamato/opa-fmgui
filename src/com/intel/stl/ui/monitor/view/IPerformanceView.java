@@ -26,47 +26,6 @@
  */
 
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: IPerformanceView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/17 18:54:25  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/09/02 19:24:32  jijunwan
- *  Archive Log:    renamed FVTreeBuilder to tree.FVTreeManager, moved FVResourceNode and FVTreeModel  to package tree
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/05/09 21:00:42  jijunwan
- *  Archive Log:    added property; fixed remembering last subpage issue; fixed position problem on IntelTabbedPane
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/05/02 16:35:53  rjtierne
- *  Archive Log:    Removed setContext() from the interface since the
- *  Archive Log:    context is only used by the controller
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/05/01 16:10:05  rjtierne
- *  Archive Log:    Added getMainPanel(), getView(), setNodeName(), and
- *  Archive Log:    setTabs() to the interface
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/22 20:52:26  rjtierne
- *  Archive Log:    Moved from common.view to monitor.view
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/17 14:38:34  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Interface for the test view
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.monitor.view;
 
 import java.util.List;

@@ -25,41 +25,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: NodeInfoBean.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7  2015/08/17 18:48:38  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/02/23 22:28:00  jijunwan
- *  Archive Log:    added method #toString to help debug
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/02/04 21:37:55  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *
- *  Overview: Node info from SA populated by the connect manager.
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.api.subnet;
 
 import java.io.Serializable;
 
 import com.intel.stl.api.Utils;
 
+/**
+ * Node info from SA populated by the connect manager.
+ */
 public class NodeInfoBean implements Serializable {
 
     private static final long serialVersionUID = 1L;

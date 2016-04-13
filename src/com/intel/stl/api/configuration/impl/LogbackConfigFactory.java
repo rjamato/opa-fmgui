@@ -25,44 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: LogBackConfigFactory.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/17 18:48:56  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/06/10 19:14:55  rjtierne
- *  Archive Log:    PR 128975 - Can not setup application log
- *  Archive Log:    - Parsed loggers and root level logger from config file and provided getter methods
- *  Archive Log:    - In rolling appender method updateNode(), only set logging threshold if not NULL
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/01/20 19:10:26  rjtierne
- *  Archive Log:    Change maxNumOfBackup to String type so blank strings can be detected in wizard
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/01/08 22:41:18  fernande
- *  Archive Log:    Logback configuration support
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/12/17 21:40:46  fernande
- *  Archive Log:    Fix for saving settings.xml file
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/12/17 21:17:43  fernande
- *  Archive Log:    Backend changes to update log config.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.api.configuration.impl;
 
 import static com.intel.stl.api.configuration.impl.SupportedAppenderType.CONSOLE_APPENDER;

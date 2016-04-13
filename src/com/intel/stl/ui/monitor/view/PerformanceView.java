@@ -25,38 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PerformanceView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.9  2015/08/17 18:54:24  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/02/24 14:23:23  jypak
- *  Archive Log:    1. Show Border, Alternating Rows control panel added to the PerformanceErrorsSection.
- *  Archive Log:    2. Undo change of Performance Chart Section title to "Performancefor port Performance subpage.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/05/28 22:21:57  jijunwan
- *  Archive Log:    added port preview to performance subpage
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/05/21 14:49:59  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: This class is the Performance "Node" and "Port" view.  The two
- *  views of this type are swapped on a CardLayout panel in the PerformanceSubpageView,
- *  depending on whether a node or port is selected.
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.monitor.view;
 
 import java.awt.BorderLayout;
@@ -72,6 +40,11 @@ import javax.swing.JSplitPane;
 
 import com.intel.stl.ui.common.view.JSectionView;
 
+/**
+ * This class is the Performance "Node" and "Port" view.  The two views of this
+ * type are swapped on a CardLayout panel in the PerformanceSubpageView,
+ * depending on whether a node or port is selected.
+ */
 public class PerformanceView extends JPanel {
 
     /**

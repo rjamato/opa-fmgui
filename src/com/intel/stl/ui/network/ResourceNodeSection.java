@@ -25,135 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ResourceDetailController.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.13  2016/03/01 17:11:04  jijunwan
- *  Archive Log:    PR 133064 - externally managed switch node description not updating
- *  Archive Log:    - changed to always reset title even if we are showing the same node
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/08/17 18:54:00  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/08/05 04:09:31  jijunwan
- *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
- *  Archive Log:    - applied undo mechanism on Topology Page
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/07/17 15:42:40  rjtierne
- *  Archive Log:    PR 129549 - On connectivity table, clicking on cable info for an HFI results in an error
- *  Archive Log:    In showNode(), removed call to setLastNode() in cableInfoPopupController - no longer used
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/07/13 21:58:15  rjtierne
- *  Archive Log:    PR 129355 - Ability to click on cables to get cable info
- *  Archive Log:    Now using the CableInfoPopupController as the port selection listener
- *  Archive Log:    for the ConnectivitySubpageView; enabling the cable info functionality
- *  Archive Log:    to be available when the cable info column of the connectivity table
- *  Archive Log:    is selected for a node.
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/06/09 18:37:25  jijunwan
- *  Archive Log:    PR 129069 - Incorrect Help action
- *  Archive Log:    - moved help action from view to controller
- *  Archive Log:    - only enable help button when we have HelpID
- *  Archive Log:    - fixed incorrect HelpIDs
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/06/01 15:01:21  jypak
- *  Archive Log:    PR 128823 - Improve performance tables to include all portcounters fields.
- *  Archive Log:    All port counters fields added to performance table and connectivity table.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/05/12 17:42:31  rjtierne
- *  Archive Log:    PR 128624 - Klocwork and FindBugs fixes for UI
- *  Archive Log:    In showNode(), use equals() to compare strings subpage.getName() and currentSubpageName.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/04/08 19:44:34  rjtierne
- *  Archive Log:    Removed SYMBOL_ERRORS, TX_32BIT_WORDS, RX_32BIT_WORDS, and VL_15_DROPPED
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/04/07 18:08:19  jypak
- *  Archive Log:    Online Help updates for additional panels.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/02/04 21:44:19  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/11/05 16:20:21  jijunwan
- *  Archive Log:    only re-initialize when we have changes
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/10/23 16:00:04  jijunwan
- *  Archive Log:    changed topology information display to use device property panels, and JSectionView
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/10/09 21:27:30  jijunwan
- *  Archive Log:    minor changes
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/10/09 12:37:03  fernande
- *  Archive Log:    Adding IContextAware interface to generalize context operations (setContext) and changes to the IProgressObserver interface
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/09/18 21:36:49  jijunwan
- *  Archive Log:    fixed a issue that incorrectly use portNum for rowIndex
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/18 21:03:25  jijunwan
- *  Archive Log:    Added link (jump to) capability to Connectivity tables and PortSummary table
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/15 15:24:29  jijunwan
- *  Archive Log:    changed AppEventBus to 3rd party lib mbassador
- *  Archive Log:    some code reformat
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/26 15:15:19  jijunwan
- *  Archive Log:    added refresh function to all pages
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2014/08/05 13:36:45  jijunwan
- *  Archive Log:    fixed typo isCanceled->isCanelled, added cancel interface
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/07/23 18:02:46  rjtierne
- *  Archive Log:    Created separate Node views for Switch and HFI to
- *  Archive Log:    accommodate different panels
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/07/18 14:00:20  rjtierne
- *  Archive Log:    Removed the Link page when a Switch or FI is selected from the
- *  Archive Log:    topology graph
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/07/18 13:41:52  rjtierne
- *  Archive Log:    Added content to method showPath() to display a Connectivity
- *  Archive Log:    table listing the node/port information for each node along the path
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/07/11 19:29:01  fernande
- *  Archive Log:    Adding EventBus and linking UI elements to the Performance tab
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/07/10 21:24:55  rjtierne
- *  Archive Log:    Calling showPath() on all applicable subpages
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/10 14:38:32  rjtierne
- *  Archive Log:    Added connectivity table to the Link subpage
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/08 20:12:56  rjtierne
- *  Archive Log:    Renamed from ResourceDetailsCard and now controlling the topology subpage card
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/07/03 14:11:44  rjtierne
- *  Archive Log:    Added observer. Added Connectivity table to topology Port page with column-hiding
- *  Archive Log:    tailored to this view
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/06/26 20:22:51  rjtierne
- *  Archive Log:    Made subpages a class attribute to make accessible for setting context
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/06/25 13:44:13  rjtierne
- *  Archive Log:    Changed Route page references to Port
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/06/24 20:30:31  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Controller for the subpages card on the Topology page
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.network;
 
 import java.util.Arrays;
@@ -188,6 +59,9 @@ import com.intel.stl.ui.network.view.ResourceSubpageView;
 
 import net.engio.mbassy.bus.MBassador;
 
+/**
+ * Controller for the subpages card on the Topology page
+ */
 public class ResourceNodeSection extends ResourceSection<ResourceSubpageView>
         implements IPortSelectionListener, IPageListener {
 

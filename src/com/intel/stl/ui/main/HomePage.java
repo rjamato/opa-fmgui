@@ -24,77 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: HomePage.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.64  2016/02/09 20:23:13  jijunwan
- *  Archive Log: PR 132575 - [PSC] Null pointer message in FM GUI
- *  Archive Log:
- *  Archive Log: - some minor improvements
- *  Archive Log:
- *  Archive Log: Revision 1.63  2015/10/15 21:16:03  jijunwan
- *  Archive Log: PR 131044 - Switch/HFI status can go beyond 100%
- *  Archive Log: - changed to use larger number of nodes
- *  Archive Log:
- *  Archive Log: Revision 1.62  2015/09/26 06:28:35  jijunwan
- *  Archive Log: 130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
- *  Archive Log: - changed to do a delayed refresh if there are changes on ImageInfo data
- *  Archive Log:
- *  Archive Log: Revision 1.61  2015/09/26 03:23:52  jijunwan
- *  Archive Log: PR 130522 - OtherPorts doesn't report a value
- *  Archive Log: - set isRefreshing back to false after we processed imageinfo
- *  Archive Log:
- *  Archive Log: Revision 1.60  2015/09/25 20:51:38  fernande
- *  Archive Log: PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
- *  Archive Log:
- *  Archive Log: Revision 1.59  2015/09/25 13:48:16  jijunwan
- *  Archive Log: changed to log rather than display error message
- *  Archive Log:
- *  Archive Log: Revision 1.58  2015/09/20 22:32:42  jijunwan
- *  Archive Log: PR 130522 - OtherPorts doesn't report a value
- *  Archive Log: - added back setting port distribution with data from SubnetApi
- *  Archive Log: - refresh port distribution calculation when there is a notice, or user manually clicking refresh button, or there is changes on ImageInfo's statistics numbers
- *  Archive Log:
- *  Archive Log: Revision 1.57  2015/08/31 22:01:42  jijunwan
- *  Archive Log: PR 130197 - Calculated fabric health above 100% when entire fabric is rebooted
- *  Archive Log: - changed to only use information from ImageInfo for calculation
- *  Archive Log:
- *  Archive Log: Revision 1.56  2015/08/17 18:53:38  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - changed frontend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.55  2015/08/11 17:37:23  jijunwan
- *  Archive Log: PR 126645 - Topology Page does not show correct data after port disable/enable event
- *  Archive Log: - improved to get distribution data with argument "refresh". When it's true, calculate distribution rather than get it from cache
- *  Archive Log:
- *  Archive Log: Revision 1.54  2015/08/11 14:15:00  jijunwan
- *  Archive Log: PR 129917 - No update on event statistics
- *  Archive Log: - Apply event subscriber on EventSummaryBar and HomePage to periodically update. Both will update either by event or period updating.
- *  Archive Log:
- *  Archive Log: Revision 1.53  2015/08/05 03:09:28  jijunwan
- *  Archive Log: PR 129359 - Need navigation feature to navigate within FM GUI
- *  Archive Log: - improved HomePage to set origin for jumping event
- *  Archive Log: - improved IDataTypeListener to include both old and new type to better support undo
- *  Archive Log: - improved IPageListener to use page name rather than page index, so we can support undo on link selection on Topology Page where links more than 5 are maintained in a drop down menu
- *  Archive Log:
- *  Archive Log: Revision 1.52  2015/06/10 19:58:49  jijunwan
- *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- *
- *  Overview:
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
 package com.intel.stl.ui.main;
 
 import static com.intel.stl.ui.common.PageWeight.MEDIUM;
@@ -144,8 +73,6 @@ import net.engio.mbassy.bus.MBassador;
 import net.engio.mbassy.listener.Handler;
 
 /**
- * @author jijunwan
- *
  */
 public class HomePage implements IPageController, IStateChangeListener {
     private static final Logger log = LoggerFactory.getLogger(HomePage.class);

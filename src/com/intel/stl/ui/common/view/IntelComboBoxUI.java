@@ -25,65 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: IntelComboBoxUI.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.13  2015/09/14 16:07:35  jijunwan
- *  Archive Log:    PR 130229 - The text component of all editable combo boxes should provide validation of the input
- *  Archive Log:    - fixed IntelComboBox border issues
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/08/19 15:48:10  jijunwan
- *  Archive Log:    PR 130058 - inconsistent look and feel on ComboBox
- *  Archive Log:    - added code to support set editor border
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/08/17 18:53:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/08/10 20:56:36  fisherma
- *  Archive Log:    Fixing border for Intel L&F ComboBox on Linux platforms.
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/06/12 20:51:32  fisherma
- *  Archive Log:    PR 129207 - removed references to SwingSet2 and DefaultLookup as they are internal proprietary API's and may be removed in a future release.
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/03/27 15:49:55  jijunwan
- *  Archive Log:    added border support
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/03/10 18:12:54  fisherma
- *  Archive Log:    Changed the background of the combo boxes to INTEL_WHITE.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/03/05 17:37:28  jijunwan
- *  Archive Log:    new common widgets
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/09/05 21:52:31  jijunwan
- *  Archive Log:    improved IntelComboBoxUI to support editable Combo Box
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/07/22 18:29:45  jijunwan
- *  Archive Log:    added tooltip support
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/05/19 22:12:32  jijunwan
- *  Archive Log:    look and feel adjustment on performance page
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/17 16:59:50  jijunwan
- *  Archive Log:    integrate SetupWizard into main frame
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/16 22:36:09  jijunwan
- *  Archive Log:    added Intel style combobox
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common.view;
 
 import java.awt.Color;

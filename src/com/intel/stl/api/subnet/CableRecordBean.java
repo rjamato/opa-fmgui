@@ -25,37 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: CableRecordBean.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4  2015/08/17 18:48:38  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/04/22 04:46:12  jijunwan
- *  Archive Log:    1) workaround code that use LE order for address/type filed in cable info
- *  Archive Log:    2) change command values back to the correct ones
- *  Archive Log:    3) fixed a typo in CableRecordBean#toString
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/02/04 21:37:55  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *
- *  Overview: Cable Record from SA populated by the connect manager.
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.api.subnet;
 
 /*
@@ -101,11 +70,13 @@ package com.intel.stl.api.subnet;
  * } PACK_SUFFIX STL_CABLE_INFO;
  * 
  */
-
 import java.io.Serializable;
 
 import com.intel.stl.api.Utils;
 
+/**
+ * Cable Record from SA populated by the connect manager.
+ */
 public class CableRecordBean implements Serializable {
 
     private static final long serialVersionUID = 1L;

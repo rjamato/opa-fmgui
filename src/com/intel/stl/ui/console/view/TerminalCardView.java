@@ -25,42 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: TerminalCardView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:54:14  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/04/03 21:06:28  jijunwan
- *  Archive Log:    Introduced canExit to IPageController, and canPageChange to IPageListener to allow us do some checking before we switch to another page. Fixed the following bugs
- *  Archive Log:    1) when we refresh, do not show login dialog if Admin is not the current page
- *  Archive Log:    2) confirm abandon if we switch from admin page to other pages and there is changes on the Admin page
- *  Archive Log:    3) confirm abandon in Admin page if we switch between Application, DeviceGroup and VirtualFabric
- *  Archive Log:    4) added null check to handle special cases
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/23 19:47:01  rjtierne
- *  Archive Log:    Integration of Gritty for Java Console
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/05 21:56:32  jijunwan
- *  Archive Log:    L&F adjustment on Console Views
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/22 19:53:59  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: JCard view on the ConsoleTerminalView containing the SSH terminal
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.console.view;
 
 import java.awt.BorderLayout;
@@ -78,6 +42,9 @@ import com.intel.stl.ui.common.view.ICardListener;
 import com.intel.stl.ui.common.view.JCardView;
 import com.intel.stl.ui.console.ConsoleDispatchManager;
 
+/**
+ * JCard view on the ConsoleTerminalView containing the SSH terminal
+ */
 public class TerminalCardView extends JCardView<ICardListener> {
     private static final long serialVersionUID = 4439143011519610809L;
 

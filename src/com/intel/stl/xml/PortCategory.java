@@ -25,58 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PortCategory.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.10  2015/08/17 18:49:16  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/02/06 00:26:58  jijunwan
- *  Archive Log:    added neighbor link down reason to match FM 325
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/01/11 23:09:53  jijunwan
- *  Archive Log:    adapt to latest data structure changes on FM
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/01/11 22:20:41  jijunwan
- *  Archive Log:    adapt to latest data structure changes on FM
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/01/05 19:25:02  jypak
- *  Archive Log:    Link Down Error Log updates
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/12/31 17:41:15  jypak
- *  Archive Log:    1. CableInfo updates (Moved the QSFP interpretation logic to backend etc.)
- *  Archive Log:    2. SC2SL updates.
- *  Archive Log:    3. SC2VLt updates.
- *  Archive Log:    4. SC3VLnt updates.
- *  Archive Log:    Some of the SubnetApi, CachedSubnetApi updates should be undone when the FE supports cable info, SC2SL, SC2VLt, SC2VLnt.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/12/18 16:25:49  jypak
- *  Archive Log:    Cable Info updates.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/11/19 07:13:37  jypak
- *  Archive Log:    HoQLife, VL Stall Count : property bar chart panel updates
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/11/13 00:36:54  jypak
- *  Archive Log:    MTU by VL bar chart panel updates.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/09/29 18:51:55  fernande
- *  Archive Log:    Adding UserOptions XML and  saving it to the database. Includes XML schema validation.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.xml;
 
 import javax.xml.bind.annotation.XmlEnum;

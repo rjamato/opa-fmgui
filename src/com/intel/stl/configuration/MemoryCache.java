@@ -25,57 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: MemoryCache.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4  2015/09/26 06:17:08  jijunwan
- *  Archive Log:    130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
- *  Archive Log:    - added reset to clear all caches and update DB topology
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/08/17 18:48:40  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/11/04 14:14:41  fernande
- *  Archive Log:    NoticeManager performance improvements. Notices are now processed in batches and database update is done in parallel with cache updates. Changes to the management of caches; if a cache is not ready, no updates for a notice are carried out.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/09/17 16:44:03  fernande
- *  Archive Log:    Refactored CacheManager to load caches according to what's defined in enums MemCacheType and DBCacheType, to make it more dynamic and more extensible. Changed code so that Exception caught during refreshCache is converted into a RuntimeException and it's rethrown every time getCachedObject is invoked. This to reflect that the caller has not much to do with the original error.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/08/28 14:56:50  jypak
- *  Archive Log:    Notice Manager updates.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/08/12 20:27:41  jijunwan
- *  Archive Log:    1) changed specific xxxxNotFoundExceptions to SubnetDataNotFoundException or PerformanceDataNotFoundException
- *  Archive Log:    2) added throws SubnetException to ISubnetApi
- *  Archive Log:    3) added throws PerformanceException to IPerformanceApi
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/08/12 13:10:23  fernande
- *  Archive Log:    Adding support for Notice processing
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/07/09 12:47:12  fernande
- *  Archive Log:    Saving the exception, if any, at the time the cache was refreshed
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/07 16:50:39  fernande
- *  Archive Log:    Changing WeakReferences to SoftReference and List to Map for NodeCache and PortCache
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/03 21:35:54  fernande
- *  Archive Log:    Adding the CacheManager in support of APIs
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.configuration;
 
 import static com.intel.stl.common.STLMessages.STL60006_EXCEPTION_REFRESHING_CACHE;

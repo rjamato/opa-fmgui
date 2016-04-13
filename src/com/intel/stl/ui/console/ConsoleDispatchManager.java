@@ -25,123 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ConsoleDispatchManager.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.27  2015/11/11 13:26:29  robertja
- *  Archive Log:    PR 130278 - Store console tab help pane state on a per-tab basis so that help info is restored when focus returns to a tab.
- *  Archive Log:
- *  Archive Log:    Revision 1.26  2015/09/08 21:46:27  jijunwan
- *  Archive Log:    PR 130330 - Windows FM GUI - Admin->Console - switching side tabs causes multiple consoles
- *  Archive Log:    - changed code to distinguish number of connected consoles and number of consoles
- *  Archive Log:    - changed ConsolePage to use number of consoles, so if we have an unconnected console, it doesn't create another new console.
- *  Archive Log:
- *  Archive Log:    Revision 1.25  2015/08/17 18:54:27  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.24  2015/05/27 14:33:56  rjtierne
- *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
- *  Archive Log:    Removed loginDialogView and implemented some reorganization to accommodate removal
- *  Archive Log:
- *  Archive Log:    Revision 1.23  2015/04/10 14:07:58  rjtierne
- *  Archive Log:    PR 126675 - User cannot execute commands on duplicate Console numbers beyond 10 consoles.
- *  Archive Log:    - Changed value in sessionMap to be AtomicInteger which keeps track of # channels in a session
- *  Archive Log:    - onConnectFail() now closes channel
- *  Archive Log:    - incrementSessionUsers() and decrementSessionUsers() now using thread safe AtomicInteger
- *  Archive Log:    - Added null pointer protection to closeSession()
- *  Archive Log:    - Added closeChannel() which is called in terminalStopped()
- *  Archive Log:    - Implemented isConsoleAllowed() enforce only 10 channels per session
- *  Archive Log:
- *  Archive Log:    Revision 1.22  2015/04/10 11:31:27  jypak
- *  Archive Log:    Klockwork critical issues fixed.
- *  Archive Log:
- *  Archive Log:    Revision 1.21  2015/04/09 21:12:20  rjtierne
- *  Archive Log:    126675 - User cannot execute commands on duplicate Console numbers beyond 10 consoles.
- *  Archive Log:    - Changed value in sessionMap to be AtomicInteger which keeps track of # channels in a session
- *  Archive Log:    - onConnectFail() now closes channel
- *  Archive Log:    - incrementSessionUsers() and decrementSessionUsers() now using thread safe AtomicInteger
- *  Archive Log:    - Added null pointer protection to closeSession()
- *  Archive Log:    - Added closeChannel() which is called in terminalStopped()
- *  Archive Log:    - Implemented isConsoleAllowed() enforce only 10 channels per session
- *  Archive Log:
- *  Archive Log:    Revision 1.20  2015/04/02 13:32:52  jypak
- *  Archive Log:    Klockwork: Front End Critical Without Unit Test. 47 open issues fixed. All of them are for null checks.
- *  Archive Log:
- *  Archive Log:    Revision 1.19  2015/03/16 17:47:40  fernande
- *  Archive Log:    STLConnection lifecycle support. STLConnections can now be reused and temporary connections are not cached and their socket is closed after they are logically closed. Changed SubnetDescription in support of failover to have a list of HostInfo objects instead of just info for one host.
- *  Archive Log:
- *  Archive Log:    Revision 1.18  2015/03/05 17:34:30  jijunwan
- *  Archive Log:    new constants and constant name change
- *  Archive Log:
- *  Archive Log:    Revision 1.17  2014/10/30 17:02:04  rjtierne
- *  Archive Log:    Use a ConcurrentHashMap to prevent ConcurrentModificationException on shutdown
- *  Archive Log:    when iterating through the map and removing consoles from the map
- *  Archive Log:
- *  Archive Log:    Revision 1.16  2014/10/29 19:49:09  rjtierne
- *  Archive Log:    When shutting down a console, only close session when the threads using
- *  Archive Log:    them have stopped
- *  Archive Log:
- *  Archive Log:    Revision 1.15  2014/10/29 14:18:02  rjtierne
- *  Archive Log:    Close session on connection failures
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2014/10/28 22:23:14  rjtierne
- *  Archive Log:    Corrected intermittent console hanging; still possible exception on session closure
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2014/10/24 14:35:47  rjtierne
- *  Archive Log:    Pass console id to login dialog in support of unlocking console. Make connection
- *  Archive Log:    failure errors more descriptive. Added onUnlockThread() to authenticate console unlock.
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2014/10/22 15:41:36  rjtierne
- *  Archive Log:    Added null pointer protection to method removeConsole()
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2014/10/21 14:04:32  rjtierne
- *  Archive Log:    Passing main window for reference when displaying dialogs
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2014/10/20 20:38:13  rjtierne
- *  Archive Log:    Name of constant STL80003 changed
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2014/10/13 14:53:52  rjtierne
- *  Archive Log:    Made cleanup more efficient and complete in removeConsole() and closeSession()
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2014/10/07 19:55:39  rjtierne
- *  Archive Log:    Moved session code into if-statement to eliminate potential null pointer access
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/10/01 19:43:57  rjtierne
- *  Archive Log:    Add code to clean up dead terminals and only kill sessions no longer in use
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/09/23 19:47:00  rjtierne
- *  Archive Log:    Integration of Gritty for Java Console
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/09/09 20:05:11  rjtierne
- *  Archive Log:    Restructured exception handling in SwingWorker
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/09/09 14:20:55  rjtierne
- *  Archive Log:    Restructured code to accommodate new console login dialog
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/05 21:56:28  jijunwan
- *  Archive Log:    L&F adjustment on Console Views
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/04 21:06:26  rjtierne
- *  Archive Log:    Now only showing connected consoles
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/22 19:53:57  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: This class listens for requests to create new consoles and 
- *  initialize their terminals, and to close running consoles
- *
- *  @author: rjtierne
- *
- *****************************************************************************/
 package com.intel.stl.ui.console;
 
 import java.util.Iterator;
@@ -163,6 +46,10 @@ import com.intel.stl.ui.main.view.IFabricView;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
+/**
+ * This class listens for requests to create new consoles and initialize their
+ * terminals, and to close running consoles
+ */
 public class ConsoleDispatchManager implements IConsoleEventListener {
 
     public final static int MAX_NUM_CONSOLES = 50;

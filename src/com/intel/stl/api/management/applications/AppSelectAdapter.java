@@ -25,43 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: SelectAdapter.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2  2015/08/17 18:48:58  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/16 22:00:57  jijunwan
- *  Archive Log:    changed package name from application to applications, and from devicegroup to devicegroups
- *  Archive Log:    Added #getType to ServiceID, MGID, LongNode and their subclasses,
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/13 20:56:59  jijunwan
- *  Archive Log:    minor  improvement on FM Application
- *  Archive Log:    Added support on FM DeviceGroup
- *  Archive Log:    put all constants used in xml file to XMLConstants
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/05 17:30:36  jijunwan
- *  Archive Log:    init version to support Application management
- *  Archive Log:    1) read/write opafm.xml from/to host with backup file support
- *  Archive Log:    2) Application parser
- *  Archive Log:    3) Add/remove and update Application
- *  Archive Log:    4) unique name, reference conflication check
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.api.management.applications;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;

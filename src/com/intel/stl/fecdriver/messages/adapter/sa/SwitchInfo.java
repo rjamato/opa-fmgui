@@ -24,35 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- * 
- *  Functional Group: Fabric Viewer Application
- * 
- *  File Name: SwitchInfo.java
- * 
- *  Archive Source: $Source$
- * 
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.11  2015/11/02 18:43:29  jijunwan
- *  Archive Log: PR 131379 - Adaptive Routing table Frequency and algorithm reporting incorrect information
- *  Archive Log: - fixed data parser code
- *  Archive Log:
- *  Archive Log: Revision 1.10  2015/08/17 18:48:48  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - change backend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.9  2015/06/10 19:36:40  jijunwan
- *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- * 
- *  Overview:
- * 
- *  @author: jijunwan
- * 
- ******************************************************************************/
 package com.intel.stl.fecdriver.messages.adapter.sa;
 
 import com.intel.stl.api.subnet.SAConstants;
@@ -60,8 +31,6 @@ import com.intel.stl.api.subnet.SwitchInfoBean;
 import com.intel.stl.fecdriver.messages.adapter.SimpleDatagram;
 
 /**
- * 
- * @author jijunwan ref: /ALL_EMB/IbAcess/Common/Inc/stl_sm.h v1.125
  * 
  *         <pre>
  * typedef struct {
@@ -166,7 +135,6 @@ import com.intel.stl.fecdriver.messages.adapter.SimpleDatagram;
  * 
  * </pre>
  */
-
 public class SwitchInfo extends SimpleDatagram<SwitchInfoBean> {
     public SwitchInfo() {
         super(84);

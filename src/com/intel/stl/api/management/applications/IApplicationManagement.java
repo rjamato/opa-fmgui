@@ -25,43 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: IApplicationManagement.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2  2015/08/17 18:48:58  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/08/17 17:33:07  jijunwan
- *  Archive Log:    PR 128973 - Deploy FM conf changes on all SMs
- *  Archive Log:    - fixed typo on interface name IApplicationManagement
- *  Archive Log:    - improved management to maintain changes and be able apply changes on another FM ocnf file
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/16 22:00:57  jijunwan
- *  Archive Log:    changed package name from application to applications, and from devicegroup to devicegroups
- *  Archive Log:    Added #getType to ServiceID, MGID, LongNode and their subclasses,
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/05 17:30:36  jijunwan
- *  Archive Log:    init version to support Application management
- *  Archive Log:    1) read/write opafm.xml from/to host with backup file support
- *  Archive Log:    2) Application parser
- *  Archive Log:    3) Add/remove and update Application
- *  Archive Log:    4) unique name, reference conflication check
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.api.management.applications;
 
 import java.util.List;

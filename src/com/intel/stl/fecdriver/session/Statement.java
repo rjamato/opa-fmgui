@@ -25,52 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: Statement.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8  2015/12/17 22:38:29  jijunwan
- *  Archive Log:    PR 131988 - Failover as I switch networks results in ERROR - Statement is closed to be dispalyed
- *  Archive Log:    - changed code to be silent on StatementClose on UI side
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/09/08 18:34:14  jijunwan
- *  Archive Log:    PR 130277 - FM GUI Locked up due to [AWT-EventQueue-0] ERROR - Unsupported MTUSize 0x0d java.lang.IllegalArgumentException: Unsupported MTUSize 0x0d
- *  Archive Log:    - moved isDev to FMGuiPlugin so both backend and frontend can access it
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/09/08 14:58:38  jijunwan
- *  Archive Log:    PR 130277 - FM GUI Locked up due to [AWT-EventQueue-0] ERROR - Unsupported MTUSize 0x0d java.lang.IllegalArgumentException: Unsupported MTUSize 0x0d
- *  Archive Log:    - moved isDev logic to backend
- *  Archive Log:    - when isDev, we try to check whether we are querying FE from EDT and print out stack trace
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/08/17 18:49:23  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/08/14 21:53:02  fernande
- *  Archive Log:    PR 128703 - Fail over doesn't work on A0 Fabric. Fix for issues in the retry logic of SMFailoverManager
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/06/16 15:57:52  fernande
- *  Archive Log:    PR 129034 Support secure FE. Changes to the IResponse interface to throw only checked IOExceptions
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/05/29 20:39:32  fernande
- *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Second wave of changes: the application can be switched between the old adapter and the new; moved out several initialization pieces out of objects constructor to allow subnet initialization with a UI in place; improved generics definitions for FV commands.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/05/26 15:41:45  fernande
- *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.fecdriver.session;
 
 import java.util.List;

@@ -25,49 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: DatabaseCall.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8  2015/08/17 18:49:14  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/04/29 14:26:32  fernande
- *  Archive Log:    Adding client stack trace to exceptions for supportability.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/09/05 15:37:20  fernande
- *  Archive Log:    Changed DatabaseException into an unchecked exception. Then change error handling in the Datamanager so that certain FMExceptions (checked exceptions) bubble up to the API layer. Higher layers can then decide how to handle those exceptions. Any other Hibernate/HSQLDb/DAO exceptions are signaled as a DatabaseException (unchecked) to layers above the Datamanager.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/06/30 17:01:03  fernande
- *  Archive Log:    Establishing overall exception handling strategy for the app
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/06/20 16:56:12  fernande
- *  Archive Log:    Added basic Entity Manager management to minimize creation of DAOs
- *  Archive Log:    Fixed bugs in database management
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/05/07 19:08:18  fernande
- *  Archive Log:    Changes to save Subnets and EventRules to database
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/30 16:10:44  fernande
- *  Archive Log:    Adding base class (DatabaseCall) to simplify database operation implementation
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/25 20:31:42  fernande
- *  Archive Log:    Added support for Hibernate
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.datamanager;
 
 import java.util.concurrent.Callable;

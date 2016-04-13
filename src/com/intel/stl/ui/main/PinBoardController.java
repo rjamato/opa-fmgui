@@ -25,55 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PinBoardController.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8  2015/08/17 18:53:38  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/07/24 22:23:43  jijunwan
- *  Archive Log:    PR 129643 - duplicate pin cards on refresh
- *  Archive Log:    - when we refresh we fresh current cards
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/07/22 17:39:15  jijunwan
- *  Archive Log:    PR 129643 - duplicate pin cards on refresh
- *  Archive Log:    - always clear before we initialize pin board. So not duplicate cards when we refresh.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/07/21 21:54:56  jijunwan
- *  Archive Log:    code clean up
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/07/15 17:55:39  jijunwan
- *  Archive Log:    PR 129548 - Error window popup has misspelling
- *  Archive Log:    - changed to clear pin providers when we close a subnet frame
- *  Archive Log:    - fixed typo
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/07/13 19:47:24  jijunwan
- *  Archive Log:    PR 129528 - input validation improvement
- *  Archive Log:    - some code cleanup
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/06/30 22:33:13  jijunwan
- *  Archive Log:    PR 129215 - Need short chart name to support pin capability
- *  Archive Log:    - fixed a internal minor issue happens when we failed to create context
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/06/25 15:34:22  jijunwan
- *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
- *  Archive Log:    - designed and implemented pin framework
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.main;
 
 import java.awt.Component;

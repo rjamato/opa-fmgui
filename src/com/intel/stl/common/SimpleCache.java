@@ -25,27 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: SimpleCache.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1  2015/09/08 15:56:05  jijunwan
- *  Archive Log:    PR 130326 - Performance enhancement on "large" fabric
- *  Archive Log:    - introduced a SimpleCache that is based on life time and size control
- *  Archive Log:
- *
- *  Overview: A simple LFU (Least-Frequently Used) based cache with life time control
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.common;
 
 import java.lang.ref.Reference;
@@ -56,6 +35,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+/**
+ * A simple LFU (Least-Frequently Used) based cache with life time control
+ */
 public class SimpleCache<K, V> {
     private static final String NAME = "cache_cleanup_thread-";
 

@@ -25,69 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: SMLogController.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.9  2015/11/24 15:35:58  rjtierne
- *  Archive Log:    PR 130965 : ESM Support on Log Viewer
- *  Archive Log:    - Moved HelpAction references to the view since it uses a view component
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/11/18 23:54:33  rjtierne
- *  Archive Log:    PR 130965 - ESM support on Log Viewer
- *  Archive Log:    - Now supports user configured login/logout feature
- *  Archive Log:    - Schedule commands on a SwingWorker to prevent UI lockup
- *  Archive Log:    - Keep track of last SshUserName used when in auto-config
- *  Archive Log:    - Install the new help button in the Help Broker
- *  Archive Log:    - Moved showLoginView() from view
- *  Archive Log:    - Additional refactoring of commanding by scheduling on SwingWorker
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/10/06 15:51:56  rjtierne
- *  Archive Log:    PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
- *  Archive Log:    - In method startLog(), when hostType is null or ESM, call onEsmHost()
- *  Archive Log:    - Added onEsmHost() to display a message on the Log Viewer indicating that it isn't supported and grey
- *  Archive Log:    out the log controls
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/09/29 15:31:22  rjtierne
- *  Archive Log:    PR 130332 - windows FM GUI - Admin-Logs - when logging in it displays error message about NULL log
- *  Archive Log:    - Implemented cancelLogin() to call stopLog() in SMLogController to stop the log if the cancel
- *  Archive Log:    button is clicked
- *  Archive Log:    - Clear password on error or when the cancel button is clicked
- *  Archive Log:    - Display error only when no log file can be found
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/09/28 17:54:18  fisherma
- *  Archive Log:    PR 130425 - added cancel button to the Admin tab login page to allow user to cancel out of hung or slow ssh logins.  Cancel action terminates sftp connection and closes remote ssh session. This fix also addresses PR 130386 and 130390.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/09/25 13:56:10  rjtierne
- *  Archive Log:    PR 130011 - Enhance SM Log Viewer to include Standard and Advanced requirements
- *  Archive Log:    - Implemented ITextMenuListener interface to handle actions brought on by menu selections
- *  Archive Log:    - Facilitate search and filter tasks
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/08/18 21:37:37  jijunwan
- *  Archive Log:    PR 128979 - SM Log display
- *  Archive Log:    - checked in Rick's code that treat search key as literal pattern string to handle special chars
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/08/17 18:54:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/08/17 14:22:41  rjtierne
- *  Archive Log:    PR 128979 - SM Log display
- *  Archive Log:    This is the first version of the Log Viewer which displays select lines of text from the remote SM log file. Updates include searchable raw text from file, user-defined number of lines to display, refreshing end of file, and paging. This PR is now closed and further updates can be found by referencing PR 130011 - "Enhance SM Log Viewer to include Standard and Advanced requirements".
- *  Archive Log:
- *
- *  Overview: Controller for the SM log view
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.admin.impl.logs;
 
 import java.util.ArrayList;
@@ -121,6 +58,9 @@ import com.intel.stl.ui.console.LoginBean;
 import com.intel.stl.ui.main.Context;
 import com.intel.stl.ui.model.LogErrorTypeViz;
 
+/**
+ * Controller for the SM log view
+ */
 public class SMLogController implements ILogController, ILogViewListener,
         ILogStateListener, ILoginListener, ITextMenuListener {
 

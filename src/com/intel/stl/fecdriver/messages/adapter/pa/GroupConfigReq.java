@@ -25,48 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: GroupConfig.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4  2015/08/17 18:49:17  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/01/13 22:00:10  jijunwan
- *  Archive Log:    PR 126408 - PM port group & VF name string termination unclear
- *  Archive Log:    1) changed to check length from a helper method in StringUtils to ensure consistent validation,
- *  Archive Log:    2) improved StringUtils to do more checkings
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/01/11 20:04:26  jijunwan
- *  Archive Log:    updated to the latest FM as of 01/05/2015
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/15 21:38:01  jijunwan
- *  Archive Log:    1) implemented the new GroupConfig and FocusPorts queries that use separated req and rsp data structure
- *  Archive Log:    2) adapter our drive and db code to the new data structure
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/16 16:48:30  jijunwan
- *  Archive Log:    made SAConstants and PAonstants acessible from UI
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/12 19:31:10  fernande
- *  Archive Log:    Initial version
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/01 21:37:08  jijunwan
- *  Archive Log:    Added PA attributes GroupConfig
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.fecdriver.messages.adapter.pa;
 
 import com.intel.stl.api.performance.GroupConfigReqBean;

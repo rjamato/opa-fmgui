@@ -25,39 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: XMLConstants.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4  2015/08/17 18:49:02  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/03/25 19:10:09  jijunwan
- *  Archive Log:    first version of VirtualFabric support
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/03/24 17:33:18  jijunwan
- *  Archive Log:    introduced IAttribute for attributes defined in xml file
- *  Archive Log:    changed all attributes for Appliation and DG to be an IAttribute
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/13 20:57:01  jijunwan
- *  Archive Log:    minor  improvement on FM Application
- *  Archive Log:    Added support on FM DeviceGroup
- *  Archive Log:    put all constants used in xml file to XMLConstants
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.api.management;
 
 public class XMLConstants {

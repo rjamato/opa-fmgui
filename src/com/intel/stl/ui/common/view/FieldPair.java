@@ -24,45 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- * 
- *  Functional Group: Fabric Viewer Application
- * 
- *  File Name: FieldPair.java
- * 
- *  Archive Source: $Source$
- * 
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.6  2015/08/17 18:53:36  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - changed frontend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.5  2015/08/17 17:44:44  jijunwan
- *  Archive Log: PR 128973 - Deploy FM conf changes on all SMs
- *  Archive Log: - improvement on FieldPair to support flexible label width
- *  Archive Log:
- *  Archive Log: Revision 1.4  2015/07/16 21:22:53  jijunwan
- *  Archive Log: PR 129528 - input validation improvement
- *  Archive Log: - extended SafeTextField to apply rules in name check
- *  Archive Log: - moved valid chars to UIConstants
- *  Archive Log: - made FieldPair more generic and flexible
- *  Archive Log:
- *  Archive Log: Revision 1.3  2015/07/13 18:37:24  jijunwan
- *  Archive Log: PR 129528 - input validation improvement
- *  Archive Log: - updated generic classes to use the new text field
- *  Archive Log:
- *  Archive Log: Revision 1.2  2015/06/10 19:58:51  jijunwan
- *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- * 
- *  Overview:
- * 
- *  @author: 
- * 
- ******************************************************************************/
 package com.intel.stl.ui.common.view;
 
 import java.awt.Component;

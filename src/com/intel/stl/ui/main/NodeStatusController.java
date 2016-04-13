@@ -25,48 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: NodeStatusController.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7  2015/08/17 18:53:38  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/06/25 20:24:56  jijunwan
- *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
- *  Archive Log:    - applied pin framework on fabric viewer and simple 'static' cards
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/04/06 18:55:54  jijunwan
- *  Archive Log:    PR 127211 - Null pointer exception on processStateSummary when FM GUI lost connection
- *  Archive Log:      fixed with null check plus displaying N/A when no SWs.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/04/02 13:32:54  jypak
- *  Archive Log:    Klockwork: Front End Critical Without Unit Test. 47 open issues fixed. All of them are for null checks.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/01/20 21:59:57  jijunwan
- *  Archive Log:    Bug 126599 - "Null Pointer Exception" on toggling between Pie and Bar chart under Status card
- *  Archive Log:    added null check and clear view when it's null
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/21 16:28:39  jijunwan
- *  Archive Log:    integer format adjustment
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/09 21:18:58  jijunwan
- *  Archive Log:    improved status visualization
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.main;
 
 import java.util.EnumMap;

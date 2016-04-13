@@ -25,34 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: EventRule.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.12  2015/08/17 18:48:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/02/04 21:37:59  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2014/12/10 20:32:41  rjtierne
- *  Archive Log:    Support for saving EventRules to UserSettings
- *  Archive Log:
- *
- *  Overview: Java bean for an Event Rule
- *
- *  @author: 
- *
- ******************************************************************************/
 package com.intel.stl.api.configuration;
 
 import java.io.Serializable;
@@ -64,6 +36,9 @@ import java.util.Vector;
 import com.intel.stl.api.notice.NoticeSeverity;
 import com.intel.stl.api.subnet.SubnetDescription;
 
+/**
+ * Java bean for an Event Rule
+ */
 public class EventRule implements Serializable {
 
     // For serialization purposes (pre-populated rules file);

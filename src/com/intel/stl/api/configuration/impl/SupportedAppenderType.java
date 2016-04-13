@@ -25,36 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: SupportedAppenderType.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2  2015/08/17 18:48:56  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/12/17 21:17:43  fernande
- *  Archive Log:    Backend changes to update log config.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/12/15 20:43:57  fernande
- *  Archive Log:    Initial changes to the logging configuration backend support for logback.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/13 18:31:47  fernande
- *  Archive Log:    Implemented saveLoggingConfiguration and getLoggingConfiguration
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.api.configuration.impl;
 
 public enum SupportedAppenderType {

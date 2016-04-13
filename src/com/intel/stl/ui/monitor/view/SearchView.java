@@ -25,61 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: SearchView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.9  2015/10/23 19:09:33  jijunwan
- *  Archive Log:    PR 129357 - Be able to hide inactive ports
- *  Archive Log:    - changed input argument to FVTreeModel rather than TreeModel
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/09/21 21:40:30  jijunwan
- *  Archive Log:    PR 130229 - The text component of all editable combo boxes should provide validation of the input
- *  Archive Log:    - adapt to the new IntelComboBoxUI
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/08/17 18:54:25  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/07/23 18:12:37  jijunwan
- *  Archive Log:    PR 129645 - Tree search enhancement
- *  Archive Log:    - display message when search is canceled or return empty result
- *  Archive Log:    - fixed an issue that hides result tree by mistake
- *  Archive Log:    - changed name search field to SafeTextField, so the name rules, such as cannot start with digit, do not apply here. We are doing text match in search, so any rules are unnecessary except the valid characters.
- *  Archive Log:    - fixed value setting issue when we change the search field's formatter
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/07/23 17:13:43  jypak
- *  Archive Log:    PR 129645 - Tree search enhancement.
- *  Archive Log:    Fixed to show result tree and progress bar when search is successful.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/07/23 11:49:09  jypak
- *  Archive Log:    PR 129645 - Tree search enhancement.
- *  Archive Log:    Search progress bar, running icon and cancel capability are added.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/07/16 21:24:31  jijunwan
- *  Archive Log:    PR 129528 - input validation improvement
- *  Archive Log:    - apply SafeNameField on Application, DG and VF names
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/07/13 19:42:25  jijunwan
- *  Archive Log:    PR 129528 - input validation improvement
- *  Archive Log:    - Changed to use formatted text field in tree search panel. The node description should follow name conversion, lid need to be positive integer, and guid string length shall be less than 18 with chars (0-9)(a-f,x)(A-F,X)
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/06/22 13:11:53  jypak
- *  Archive Log:    PR 128980 - Be able to search devices by name or lid.
- *  Archive Log:    New feature added to enable search devices by name, lid or node guid. The search results are displayed as a tree and when a result node from the tree is selected, original tree is expanded and the corresponding node is highlighted.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jypak
- *
- ******************************************************************************/
 package com.intel.stl.ui.monitor.view;
 
 import java.awt.BorderLayout;

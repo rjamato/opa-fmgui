@@ -25,122 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PerformanceTableView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.24  2016/02/16 22:16:08  jijunwan
- *  Archive Log:    PR 132888 - Include Num Lanes Down in port counters display
- *  Archive Log:
- *  Archive Log:    - added Num Lanes Down
- *  Archive Log:
- *  Archive Log:    Revision 1.23  2015/08/17 18:54:25  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.22  2015/08/05 04:04:48  jijunwan
- *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
- *  Archive Log:    - applied undo mechanism on Performance Page
- *  Archive Log:
- *  Archive Log:    Revision 1.21  2015/06/01 15:01:20  jypak
- *  Archive Log:    PR 128823 - Improve performance tables to include all portcounters fields.
- *  Archive Log:    All port counters fields added to performance table and connectivity table.
- *  Archive Log:
- *  Archive Log:    Revision 1.20  2015/05/28 15:29:21  jypak
- *  Archive Log:    PR 128873 - Add "Flits" in performance table for Data related columns.
- *  Archive Log:    Added "(MB)" to RcvData, XmitData column header.
- *  Archive Log:    Added "(MBps)" to data rates.
- *  Archive Log:    Added data in "Flits" or data rate in "(Flits/sec)" to tool tips.
- *  Archive Log:    Used the TableDataDescription to convert and format the data.
- *  Archive Log:
- *  Archive Log:    Revision 1.19  2015/05/14 17:43:09  jijunwan
- *  Archive Log:    PR 127700 - Delta data on host performance display is accumulating
- *  Archive Log:    - corrected delta value calculation
- *  Archive Log:    - changed to display data/pkts rate rather than delta on chart and table
- *  Archive Log:    - updated chart unit to show rate
- *  Archive Log:    - renamed the following classes to reflect we are dealing with rate
- *  Archive Log:      DataChartRangeUpdater -> DataRateChartRangeUpdater
- *  Archive Log:      PacketChartRangeUpdater -> PacketRateChartRangeUpdater
- *  Archive Log:      DataChartScaleGroupManager -> DataRateChartScaleGroupManager
- *  Archive Log:      PacketChartScaleGroupManager -> PacketRateChartScaleGroupManager
- *  Archive Log:
- *  Archive Log:    Revision 1.18  2015/05/14 14:44:38  rjtierne
- *  Archive Log:    PR 128682 - Set link quality indicator to "Unknown" on port error
- *  Archive Log:    On Performance Port Table, change cell renderer to display the link quality description as the tool tip
- *  Archive Log:    instead of just the value
- *  Archive Log:
- *  Archive Log:    Revision 1.17  2015/05/13 20:54:52  jijunwan
- *  Archive Log:    PR 128671 - Wrong data sorting on ports performance table
- *  Archive Log:    - removed the wrong sorter that overrides our value based sorter
- *  Archive Log:
- *  Archive Log:    Revision 1.16  2015/04/10 18:20:55  jypak
- *  Archive Log:    Fall back to previous way of displaying received/transmitted data in performance page(chart section, table section, counter (error) section).
- *  Archive Log:
- *  Archive Log:    Revision 1.15  2015/04/08 19:45:16  rjtierne
- *  Archive Log:    PR 126844 - Can make Port counter names in UIs more concise.
- *  Archive Log:    Created new table header to override getToolTipText()
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2015/04/07 14:38:29  jypak
- *  Archive Log:    PR 126998 - Received/Transmitted data counters for Device Node and Device ports should show in MB rather than Flits. Fixed by converting units to Byte/KB/MB/GB. Also, tool tips were added to show the units for each value.
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2015/04/01 19:57:33  jijunwan
- *  Archive Log:    format cleanup
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/03/05 22:32:14  fisherma
- *  Archive Log:    Added LinkQuality icon to Performance -> Performance tab table.
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/01/11 21:24:08  jijunwan
- *  Archive Log:    generic table view with table model
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2014/09/18 21:36:48  jijunwan
- *  Archive Log:    fixed a issue that incorrectly use portNum for rowIndex
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2014/09/18 21:03:27  jijunwan
- *  Archive Log:    Added link (jump to) capability to Connectivity tables and PortSummary table
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2014/06/02 19:55:17  rjtierne
- *  Archive Log:    Clean up table columns to hide
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/05/30 20:38:08  rjtierne
- *  Archive Log:    Temporarily hiding all table columns except for
- *  Archive Log:    Tx/Rx Data and Packets
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/05/29 22:06:41  jijunwan
- *  Archive Log:    support both delta and cumulative portCounters
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/05/29 03:57:17  jijunwan
- *  Archive Log:    performance table adjustment: sort by number, hide columns to save space
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/05/29 03:07:05  jijunwan
- *  Archive Log:    minor adjustment on performance subpage
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/05/28 22:21:57  jijunwan
- *  Archive Log:    added port preview to performance subpage
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/05/28 17:58:40  rjtierne
- *  Archive Log:    Set table to pack all columns
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/28 17:56:18  rjtierne
- *  Archive Log:    New Performance table view for JXTable
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/05/23 19:20:16  rjtierne
- *  Archive Log:    Added method updatePerformanceTable()
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/21 14:49:50  rjtierne
- *  Archive Log:    Initial Version
- *
- *  Overview: UI view for the performance table; extends abstract class FVTableView
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.monitor.view;
 
 import java.awt.Component;
@@ -180,6 +64,9 @@ import com.intel.stl.ui.monitor.IPortSelectionListener;
 import com.intel.stl.ui.monitor.PerformanceTableData;
 import com.intel.stl.ui.monitor.TableDataDescription;
 
+/**
+ * UI view for the performance table; extends abstract class FVTableView
+ */
 public class PerformanceXTableView extends FVXTableView<PerformanceTableModel> {
     /**
      * Serial Version UID

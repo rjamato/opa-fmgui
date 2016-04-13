@@ -25,38 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ConsoleHelpView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/11/11 13:26:30  robertja
- *  Archive Log:    PR 130278 - Store console tab help pane state on a per-tab basis so that help info is restored when focus returns to a tab.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/08/17 18:53:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/12/11 18:44:57  fernande
- *  Archive Log:    Switch from log4j to slf4j+logback
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/12/04 21:42:44  jijunwan
- *  Archive Log:    replace OHJ with JavaHelp
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/10/01 19:39:35  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: View for the console help utility
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.common.view;
 
 import java.awt.Color;
@@ -83,8 +51,8 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import com.intel.stl.ui.common.IHelp;
 
 /**
- * @author rjtierne
- * 
+ *
+ * View for the console help utility
  */
 public class HelpView extends JPanel {
     private static final long serialVersionUID = 6892075486378808599L;

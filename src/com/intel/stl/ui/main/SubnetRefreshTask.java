@@ -25,50 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: SubnetRefreshTask.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8  2015/12/17 21:51:11  jijunwan
- *  Archive Log:    PR 132124 - Newly created VF not displayed after reboot of SM
- *  Archive Log:    - improved the arch to do cache reset
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/09/26 06:27:35  jijunwan
- *  Archive Log:    130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
- *  Archive Log:    - changed to do a full refresh that includes DB data update
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/08/17 18:53:38  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/12/11 18:52:55  fernande
- *  Archive Log:    Switch from log4j to slf4j+logback
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/10/22 01:16:19  jijunwan
- *  Archive Log:    some simplifications on MVC framework
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/10/16 13:18:05  fernande
- *  Archive Log:    Changes to AbstractTask to support an onFinally method that is guaranteed to be called no matter what happens in the onTaskSuccess and onTaskFailure implementations for a task.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/10/13 21:07:16  fernande
- *  Archive Log:    Changed GetDevicePropertiesTask to be driven by the PropertiesDisplayOptions in UserSettings instead of hard coded
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/10/09 12:59:15  fernande
- *  Archive Log:    Changed the FabricController to use the UI framework and converted Swing workers into AbstractTasks to optimize the switching of contexts and the refreshing of pages. These processes still run under Swing workers, but now each setContext is run on its own Swing worker to improve performance. Also, changed the ProgressObserver mechanism to provide a more accurate progress.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.main;
 
 import static com.intel.stl.ui.main.FabricController.PROGRESS_NOTE_PROPERTY;

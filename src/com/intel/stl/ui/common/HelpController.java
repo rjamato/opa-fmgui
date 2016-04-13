@@ -25,53 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ConsoleHelpView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.10  2015/11/11 13:26:31  robertja
- *  Archive Log:    PR 130278 - Store console tab help pane state on a per-tab basis so that help info is restored when focus returns to a tab.
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/08/17 18:54:12  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/03/12 13:22:25  jypak
- *  Archive Log:    Updates to make the Console page's help set file available through fm-gui-consolehelp.jar.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/01/11 21:13:48  jijunwan
- *  Archive Log:    code clean up
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/12/10 20:59:42  jijunwan
- *  Archive Log:    fixed a parser issue
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/12/04 23:17:39  jijunwan
- *  Archive Log:    only list cmds in help list
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/12/04 21:42:45  jijunwan
- *  Archive Log:    replace OHJ with JavaHelp
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/10/17 19:34:17  rjtierne
- *  Archive Log:    Added parser to navigate the help system based on user input
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/10/08 19:05:25  jijunwan
- *  Archive Log:    improved to support both file and resource
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/10/01 19:39:36  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Controller for the console help utility
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.common;
 
 import java.net.URL;
@@ -90,8 +43,8 @@ import javax.help.Map.ID;
 import com.intel.stl.ui.common.view.HelpView;
 
 /**
- * @author rjtierne
- * 
+ *
+ * Controller for the console help utility
  */
 public class HelpController implements IHelp {
     public static final String TOC = "toc";

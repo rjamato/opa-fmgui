@@ -25,30 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PerErrorsCard.java
- *  
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8  2015/08/17 18:53:38  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/02/25 13:57:43  jypak
- *  Archive Log:    Correct comment header
- *  Archive Log:
- *
- *  Overview: Performance page's performance subpage errors section view.
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.main;
 
 import java.util.Collection;
@@ -62,6 +38,9 @@ import com.intel.stl.ui.framework.IAppEvent;
 import com.intel.stl.ui.main.view.PerfErrorsCardView;
 import com.intel.stl.ui.main.view.PerfErrorsItem;
 
+/**
+ * Performance page's performance subpage errors section view.
+ */
 public class PerfErrorsCard extends
         BaseCardController<ICardListener, PerfErrorsCardView> {
 

@@ -25,45 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ItemsPanel.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/10/21 15:06:58  jijunwan
- *  Archive Log:    PR 131077 - Virtual Fabrics list does not reflect enabled status per item in "list tile" of admin window
- *  Archive Log:    - Extended VF to use its own renderer for item panel
- *  Archive Log:    - Extended VF to update item panel when there is a change on enabled check box
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/08/17 18:53:52  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/05/14 17:19:47  jijunwan
- *  Archive Log:    PR 128697 - Handle empty list of items
- *  Archive Log:    - Added code to handle null item
- *  Archive Log:    - Added code to clean panel when it gets a null item
- *  Archive Log:    - Enable/disable buttons properly when we get an empty item list or null item
- *  Archive Log:    - Improved to handle item selection when the index is invalid, such as -1
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/03/10 22:45:37  jijunwan
- *  Archive Log:    improved to do and show validation before we save an application
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/05 17:38:18  jijunwan
- *  Archive Log:    init version to support Application management
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.admin.view;
 
 import java.awt.BorderLayout;

@@ -25,45 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ActionPanel.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7  2015/11/09 20:50:25  fernande
- *  Archive Log:    PR130231 - Cannot delete subnet from Wizard if subnet name is "Unknown Subnet". Fixed bug where the first time an action is set would not dirty the task
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/08/17 18:54:40  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/03/30 15:12:50  rjtierne
- *  Archive Log:    Updated panel backgrounds to use static variable
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/13 21:31:52  rjtierne
- *  Archive Log:    Multinet Wizard
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/01/13 19:01:25  rjtierne
- *  Archive Log:    Removed warnings by specifying generic types
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/12/23 18:36:59  rjtierne
- *  Archive Log:    Set dirty state in view when new selections are made on action list
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/12/10 21:31:10  rjtierne
- *  Archive Log:    New Setup Wizard based on framework
- *  Archive Log:
- *
- *  Overview: Popup panel for the action column of the Event Wizard table
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.wizards.view.event;
 
 import java.awt.BorderLayout;
@@ -97,6 +58,9 @@ import com.intel.stl.ui.wizards.model.event.EventRulesTableModel;
 import com.intel.stl.ui.wizards.view.IWizardView;
 import com.intel.stl.ui.wizards.view.MultinetWizardView;
 
+/**
+ * Popup panel for the action column of the Event Wizard table
+ */
 public class ActionPanel extends JPanel {
 
     private static final long serialVersionUID = -2996609094010046773L;
@@ -223,39 +187,6 @@ public class ActionPanel extends JPanel {
         this.eventWizardControlListener = eventWizardControlListener;
     }
 
-    /*******************************************************************************
-     * I N T E L C O R P O R A T I O N
-     * 
-     * Functional Group: Fabric Viewer Application
-     * 
-     * File Name: PopupPanel (Inner Class)
-     * 
-     * Archive Source: $Source:
-     * /cvs/vendor/intel/fmgui/client/src/main/java/com/
-     * intel/stl/ui/wizards/view/event/ActionPanel.java,v $
-     * 
-     * Archive Log: $Log$
-     * Archive Log: Revision 1.7  2015/11/09 20:50:25  fernande
-     * Archive Log: PR130231 - Cannot delete subnet from Wizard if subnet name is "Unknown Subnet". Fixed bug where the first time an action is set would not dirty the task
-     * Archive Log: Archive Log: Revision 1.6
-     * 2015/08/17 18:54:40 jijunwan Archive Log: PR 129983 - Need to change file
-     * header's copyright text to BSD license txt Archive Log: - changed
-     * frontend files' headers Archive Log: Archive Log: Revision 1.5 2015/03/30
-     * 15:12:50 rjtierne Archive Log: Updated panel backgrounds to use static
-     * variable Archive Log: Archive Log: Revision 1.4 2015/02/13 21:31:52
-     * rjtierne Archive Log: Multinet Wizard Archive Log: Archive Log: Revision
-     * 1.3 2015/01/13 19:01:25 rjtierne Archive Log: Removed warnings by
-     * specifying generic types Archive Log: Archive Log: Revision 1.2
-     * 2014/12/23 18:36:59 rjtierne Archive Log: Set dirty state in view when
-     * new selections are made on action list Archive Log: Archive Log: Revision
-     * 1.1 2014/12/10 21:31:10 rjtierne Archive Log: New Setup Wizard based on
-     * framework Archive Log:
-     * 
-     * Overview: Popup panel class
-     * 
-     * @author: rjtierne
-     * 
-     ******************************************************************************/
     class PopupPanel extends JPanel implements ListCellRenderer<JCheckBox> {
 
         private static final long serialVersionUID = 5009991107568106318L;

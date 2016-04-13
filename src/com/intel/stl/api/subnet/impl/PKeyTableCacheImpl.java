@@ -25,44 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PKeyTableCacheImpl.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/17 18:48:53  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/09/17 16:40:08  fernande
- *  Archive Log:    Refactored CacheManager to load caches according to what's defined in enums MemCacheType and DBCacheType, to make it more dynamic
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/09/17 13:17:34  jypak
- *  Archive Log:    Return boolean for each cache process notice operation to let CacheManager know whether it need to start the CopyTopologyTask.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/08/28 14:56:50  jypak
- *  Archive Log:    Notice Manager updates.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/08/12 20:27:41  jijunwan
- *  Archive Log:    1) changed specific xxxxNotFoundExceptions to SubnetDataNotFoundException or PerformanceDataNotFoundException
- *  Archive Log:    2) added throws SubnetException to ISubnetApi
- *  Archive Log:    3) added throws PerformanceException to IPerformanceApi
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/03 21:35:54  fernande
- *  Archive Log:    Adding the CacheManager in support of APIs
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.api.subnet.impl;
 
 import java.util.List;

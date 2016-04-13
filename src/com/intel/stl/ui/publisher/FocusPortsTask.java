@@ -25,49 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: FocusPortsTask.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7  2015/08/17 18:54:09  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/01/21 21:19:12  rjtierne
- *  Archive Log:    Removed individual refresh rates for task registration. Now using
- *  Archive Log:    refresh rate supplied by user input in preferences wizard.
- *  Archive Log:    Reinitialization of scheduler service not yet implemented.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/09/22 15:50:32  jijunwan
- *  Archive Log:    fixed a typo
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/08/12 21:05:06  jijunwan
- *  Archive Log:    1) added description to task
- *  Archive Log:    2) applied failure management to TaskScheduler
- *  Archive Log:    3) some code auto-reformat
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/06/05 17:17:19  jijunwan
- *  Archive Log:    added VF related tasks to TaskScheduler
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/16 16:52:29  jijunwan
- *  Archive Log:    reference to new accessible Selection and PAConstant
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/16 15:16:13  jijunwan
- *  Archive Log:    added ApiBroker to schedule a task to repeatedly get data from a FEC driver
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.publisher;
 
 import com.intel.stl.api.performance.PAConstants;

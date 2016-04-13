@@ -25,35 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: FabricViewer
- *
- *  File Name: JCard.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.9  2015/08/17 18:53:36  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - changed frontend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.8  2015/06/25 20:24:59  jijunwan
- *  Archive Log: Bug 126755 - Pin Board functionality is not working in FV
- *  Archive Log: - applied pin framework on fabric viewer and simple 'static' cards
- *  Archive Log:
- *  Archive Log: Revision 1.7  2015/06/10 21:07:22  jijunwan
- *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs
- *  Archive Log: - manual correction on files that our tool cannot  identify
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common.view;
 
 import java.awt.BasicStroke;
@@ -79,8 +50,6 @@ import com.intel.stl.ui.common.UIConstants;
 import com.intel.stl.ui.common.UIImages;
 
 /**
- * @author jijunwan
- * 
  */
 public abstract class JCardView<E extends ICardListener> extends JPanel {
     private static final long serialVersionUID = 381185145876115191L;

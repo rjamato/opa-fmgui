@@ -26,51 +26,6 @@
  */
 /*******************************************************************************
  *                       I N T E L   C O R P O R A T I O N
- * 
- *  Functional Group: Fabric Viewer Application
- * 
- *  File Name: GroupDAOImpl.java
- * 
- *  Archive Source: $Source$
- * 
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.26  2015/12/16 22:33:06  jijunwan
- *  Archive Log: PR 132110 - Klocwork issues
- *  Archive Log: - updated to be consistent with STL2 code
- *  Archive Log:
- *  Archive Log: Revision 1.25  2015/12/16 21:44:27  jijunwan
- *  Archive Log: PR 132110 - Klocwork issues
- *  Archive Log:
- *  Archive Log: Revision 1.24  2015/08/17 18:49:34  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - change backend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.23  2015/07/13 17:11:52  fernande
- *  Archive Log: PR 129447 - Database size increases a lot over a short period of time. Undoing additional column in database since we can use sweepTimestamp by adjusting time to Linux time
- *  Archive Log:
- *  Archive Log: Revision 1.22  2015/07/10 20:46:12  fernande
- *  Archive Log: PR 129522 - Notice is not written to database due to topology not found. Moved FE Helpers to the session object and changed the order of initialization for the SubnetContext.
- *  Archive Log:
- *  Archive Log: Revision 1.21  2015/07/09 18:54:15  fernande
- *  Archive Log: PR 129447 - Database size increases a lot over a short period of time. Added purge function to delete GroupInfo records older than a specified timestamp
- *  Archive Log:
- *  Archive Log: Revision 1.20  2015/07/02 20:27:05  fernande
- *  Archive Log: PR 129447 - Database size increases a lot over a short period of time. Moving Blobs to the database; arrays are now being saved to the database as collection tables.
- *  Archive Log:
- *  Archive Log: Revision 1.19  2015/06/10 19:36:50  jijunwan
- *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- * 
- *  Overview:
- * 
- *  @author: 
- * 
- ******************************************************************************/
-
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
  *	
  *  Functional Group: Fabric Viewer Application
  *
@@ -79,10 +34,7 @@
  *
  *  Overview: 
  *
- *  @author: jypak
- *
  ******************************************************************************/
-
 package com.intel.stl.dbengine.impl;
 
 import static com.intel.stl.common.STLMessages.STL30045_GROUP_CONFIG_NOT_FOUND;

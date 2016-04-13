@@ -25,50 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: IntelTabbedPaneUI.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.9  2015/08/17 18:53:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/04/30 20:56:53  jijunwan
- *  Archive Log:    added drawing focus border when it gets focus
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/05/09 21:13:42  jijunwan
- *  Archive Log:    minor performance tab look & feel adjustment
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/05/09 21:00:44  jijunwan
- *  Archive Log:    added property; fixed remembering last subpage issue; fixed position problem on IntelTabbedPane
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/05/08 19:25:43  jijunwan
- *  Archive Log:    MVC refactory
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/05/02 18:21:53  rjtierne
- *  Archive Log:    Instead of extending class to tweak attributes
- *  Archive Log:    provided new setter methods instead. Derived
- *  Archive Log:    class was removed
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/29 19:14:23  jijunwan
- *  Archive Log:    extended IntelTabbedPaneUI to support a control panel on top-right corner
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/16 15:11:34  jijunwan
- *  Archive Log:    added Intel style Tab and Button
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common.view;
 
 import java.awt.Color;

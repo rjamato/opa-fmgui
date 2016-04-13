@@ -25,38 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: WorstNodesPopup.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4  2015/08/17 18:54:02  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/08/07 19:11:43  jijunwan
- *  Archive Log:    PR 129775 - disable node not available on Worst Node Card
- *  Archive Log:    - improved to display event type
- *  Archive Log:    - improved to disable jumping buttons when event type is PORT_INACTIVE
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/10/23 16:33:21  jijunwan
- *  Archive Log:    minor change on timers - intend to improve timer behavior so the action will be cancelled event if it's already in EDT queue
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/09/18 15:00:48  jijunwan
- *  Archive Log:    Added popup window to WorstNode to support jumping to different destinations
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.main.view;
 
 import java.awt.BorderLayout;

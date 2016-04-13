@@ -25,32 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: SC2VLMTRecordBean.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.3  2015/08/17 18:48:38  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/02/04 21:37:55  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *
- *  Overview: SC2VL Mapping Record from SA populated by the connect manager.
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.api.subnet;
 
 /*
@@ -72,12 +46,14 @@ package com.intel.stl.api.subnet;
  *    
  * } PACK_SUFFIX STL_SC2VL_R_MAPPING_TABLE_RECORD;
  */
-
 import java.io.Serializable;
 import java.util.Arrays;
 
 import com.intel.stl.api.Utils;
 
+/**
+ * SC2VL Mapping Record from SA populated by the connect manager.
+ */
 public class SC2VLMTRecordBean implements Serializable {
 
     private static final long serialVersionUID = 1L;

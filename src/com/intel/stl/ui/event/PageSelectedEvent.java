@@ -25,34 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PageSelectedEvent.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2  2015/08/17 18:53:45  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/08/05 03:05:58  jijunwan
- *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
- *  Archive Log:    - improved JumpToEvent to use string for destination so we can support more pages
- *  Archive Log:    - improved NodeSelectionEvent to NodesSelectionEvent to support multiple nodes
- *  Archive Log:    - improved PortSelectionEvent to PortsSelectionEvent to support multiple ports
- *  Archive Log:    - added PageSelectionEvent to support jumping to a page, so we can support undo of jumping event
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.event;
 
 public class PageSelectedEvent extends JumpToEvent {

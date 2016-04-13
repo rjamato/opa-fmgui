@@ -25,104 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: LoginView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8  2015/11/18 23:58:30  rjtierne
- *  Archive Log:    PR 131589 - FM GUI: Console Error box too small for the error information
- *  Archive Log:    - Made status text area 2 lines and enabled line wrapping
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/10/01 21:54:59  fernande
- *  Archive Log:    PR130409 - [Dell]: FMGUI Admin Console login fails when switch is configured without username and password. Removed restriction on user and password not empty
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/09/08 21:21:58  jijunwan
- *  Archive Log:    PR 130329 - Windows FM GUI - Admin tab - Console sidetab - need space between login buttons
- *  Archive Log:    - adjusted insets to increase space between buttons
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/08/17 18:54:14  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/07/13 19:30:55  jijunwan
- *  Archive Log:    PR 129528 - input validation improvement
- *  Archive Log:    - In interactive console, the port number must be in range (0, 65535) and the password cannot be empty.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/07/01 22:01:09  jijunwan
- *  Archive Log:    PR 129442 - login failed with FileNotFoundException
- *  Archive Log:    - Improved ConsoleLoginView to use full message as tooltip text
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/05/27 21:52:54  rjtierne
- *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
- *  Archive Log:    - Renamed parentDocListener to loginListener
- *  Archive Log:    - Removed redundant call to setUI() from cboxHostName and cboxUserName which was
- *  Archive Log:    overwriting installed document listener
- *  Archive Log:    - Changed getUserName() and getHostName() to directly access editor text instead
- *  Archive Log:    of selected item, to get most updated text from JComboBox
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/05/27 14:35:03  rjtierne
- *  Archive Log:    128874 - Eliminate login dialog from admin console and integrate into panel
- *  Archive Log:    Initial Version - replaces LoginDialogView
- *  Archive Log:
- *  Archive Log:    Revision 1.15  2015/05/01 21:30:38  jijunwan
- *  Archive Log:    1) changed LoginView to DOCUMENT_MODAL
- *  Archive Log:    2) moved title border, and added title for the dialog
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2015/04/29 05:41:49  fisherma
- *  Archive Log:    Fixing incorrect user name being shown in the Login Dialog on "Unlock" button click.
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2015/04/09 21:14:32  rjtierne
- *  Archive Log:    Added key listener to password field to the user can hit <Enter> to launch a console
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/04/02 13:33:06  jypak
- *  Archive Log:    Klockwork: Front End Critical Without Unit Test. 47 open issues fixed. All of them are for null checks.
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/04/01 13:20:30  jijunwan
- *  Archive Log:    added null check
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2014/10/30 17:01:01  rjtierne
- *  Archive Log:    Clear the status text area when the Ok button is pressed
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2014/10/28 22:18:41  rjtierne
- *  Archive Log:    Put hideDialog() on the EDT to correct synch problem with setVisible()
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2014/10/24 14:37:10  rjtierne
- *  Archive Log:    Added new conditions to existing logic to accommodate dynamic dialog usage. The
- *  Archive Log:    login dialog is now displayed at console initialization and console unlock.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/10/07 19:54:17  rjtierne
- *  Archive Log:    Changed constructor input parameter "owner" type from Window to IFabricView
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/10/01 19:58:09  rjtierne
- *  Archive Log:    Added thread to initialize console. Added UI enhancement to snap mouse to OK button on dialog.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/09/23 21:18:22  rjtierne
- *  Archive Log:    Removed unecessary line of code
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/09/23 19:47:01  rjtierne
- *  Archive Log:    Integration of Gritty for Java Console
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/09 20:03:27  rjtierne
- *  Archive Log:    Added default login bean to console dialog to reduce typing
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/09 16:45:52  rjtierne
- *  Archive Log:    Added combo boxes for username and hostname
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/09/09 14:18:40  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Custom dialog view for logging into a remote host
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.console.view;
 
 import java.awt.Dimension;
@@ -157,6 +59,9 @@ import com.intel.stl.ui.console.IConsoleLogin;
 import com.intel.stl.ui.console.ITabListener;
 import com.intel.stl.ui.console.LoginBean;
 
+/**
+ * Custom dialog view for logging into a remote host
+ */
 public class ConsoleLoginView extends JPanel implements IConsoleLogin {
 
     private static final long serialVersionUID = -8589239292130514515L;

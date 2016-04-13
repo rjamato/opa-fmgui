@@ -25,26 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ConsolePromptType.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1  2015/11/09 13:35:01  jypak
- *  Archive Log:    PR 130970 - Console commands produced by arrow keys can't be detected if user changes prompt in session. Check if a prompt is in a valid format and if not, don't pass anything to the help system.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common;
 
 public enum ConsolePromptType {

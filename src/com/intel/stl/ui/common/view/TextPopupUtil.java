@@ -25,26 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: TextPopupUtil.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.1  2015/09/25 13:54:49  rjtierne
- *  Archive Log:    PR 130011 - Enhance SM Log Viewer to include Standard and Advanced requirements
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Utility class to create a context popup menu for a text component.
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.common.view;
 
 import java.util.List;
@@ -55,6 +35,9 @@ import javax.swing.JPopupMenu;
 
 import com.intel.stl.ui.admin.impl.logs.TextEventType;
 
+/**
+ * Utility class to create a context popup menu for a text component.
+ */
 public class TextPopupUtil {
 
     public static JPopupMenu createPopupMenu(ITextMenuAction actionCreator) {

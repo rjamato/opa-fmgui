@@ -25,42 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: CableInfoPopupView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4  2015/08/17 18:54:25  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/07/17 15:42:28  rjtierne
- *  Archive Log:    PR 129549 - On connectivity table, clicking on cable info for an HFI results in an error
- *  Archive Log:    - Retrieve the values for node type and lid from the table model and pass them to
- *  Archive Log:    onCableInfoSelection() so they can be used in the construction of the CategoryProcessingContext.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/07/14 20:33:17  rjtierne
- *  Archive Log:    PR 129545 - Klocwork and FindBugs fixes
- *  Archive Log:    - In onCableInfoSelection(), fix null pointer dereference where null comes
- *  Archive Log:    from constant when calling model.getValue() at to get port value.
- *  Archive Log:    - Also added constants column values for getting GUID and PORT
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/07/13 21:57:39  rjtierne
- *  Archive Log:    PR 129355 - Ability to click on cables to get cable info
- *  Archive Log:    InitialVersion - View to hold the Cable Info popup for the connectivity table
- *  Archive Log:
- *
- *  Overview: View to hold the Cable Info popup for the connectivity table
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.monitor.view;
 
 import java.awt.Component;
@@ -92,6 +56,9 @@ import com.intel.stl.ui.model.DevicePropertyGroup;
 import com.intel.stl.ui.model.PropertySet;
 import com.intel.stl.ui.monitor.ICableInfoListener;
 
+/**
+ * View to hold the Cable Info popup for the connectivity table
+ */
 public class CableInfoPopupView {
 
     protected ICableInfoListener cableInfoListener;

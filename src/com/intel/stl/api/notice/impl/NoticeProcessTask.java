@@ -25,71 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: NoticeSaveTask.java
- *  
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.22  2015/12/15 20:50:19  jijunwan
- *  Archive Log:    PR 132071 - Error on initial CLI launch of FM GUI in RHEL 7.1
- *  Archive Log:    - added code to check table exist to avoid querying a unexisted table.
- *  Archive Log:    - removed warning on FE_CONNECTION related notices because they are expected
- *  Archive Log:
- *  Archive Log:    Revision 1.21  2015/09/26 06:17:56  jijunwan
- *  Archive Log:    130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
- *  Archive Log:    - added more log info
- *  Archive Log:
- *  Archive Log:    Revision 1.20  2015/08/17 18:49:13  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.19  2015/07/19 20:54:50  jijunwan
- *  Archive Log:    PR 126645 - Topology Page does not show correct data after port disable/enable event
- *  Archive Log:    - fixed sync issue on DB update and cached node distribution
- *  Archive Log:
- *  Archive Log:    Revision 1.18  2015/06/08 15:57:53  fernande
- *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Stabilizing the new FEAdapter code. Fixing null condition where noticeWrappers are accessed by the NoticeManager and it's null
- *  Archive Log:
- *  Archive Log:    Revision 1.17  2015/05/19 19:07:17  jijunwan
- *  Archive Log:    PR 128797 - Notice update failed to update related notes
- *  Archive Log:    - created a new class NoticeWrapper to store information about related nodes, and then pass this infor to EventDescription that will allow UI to upate related nodes
- *  Archive Log:
- *  Archive Log:    Revision 1.16  2015/05/01 21:37:41  jijunwan
- *  Archive Log:    fixed typo found by FindBug
- *  Archive Log:
- *  Archive Log:    Revision 1.15  2015/04/06 21:14:13  fernande
- *  Archive Log:    Improving the handling of connection errors. When a connection error occurs, the request for PMConfig shouldn't wait but throw an exception, and this exception should not prevent the notices from being processed
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2015/04/06 11:04:54  jypak
- *  Archive Log:    Klockwork: Back End Critical Without Unit Test. Open issues fixed.
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2015/03/16 14:31:43  jijunwan
- *  Archive Log:    renamed DevieGroup to DefaultDeviceGroup because it's an enum of default DGs, plus we need to use DeviceGroup for the DG definition used in opafm.xml
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/02/23 22:40:40  jijunwan
- *  Archive Log:    PR 126610 - Subnet summary under Home page does not show correct data after port disable/enable event
- *  Archive Log:     - changed to user trap data to identify source node
- *  Archive Log:     - improved to distinguish active and inactive nodes/links
- *  Archive Log:     - improved to include related nodes before and after a notice
- *  Archive Log:     - improved to wait PM until it has updated data after a notice
- *  Archive Log:     - other improvement that update cache properly
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/02/06 20:44:02  jypak
- *  Archive Log:    Header comments fixed for archive log to be updated.
- *  Archive Log:
- *
- *  Overview: Process notices based on FM query. Update each caches and then
- *  update the notices in database according to the response for the process.
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.api.notice.impl;
 
 import java.util.ArrayList;
@@ -121,6 +56,10 @@ import com.intel.stl.datamanager.DatabaseManager;
 import com.intel.stl.datamanager.NoticeStatus;
 import com.intel.stl.fecdriver.messages.adapter.sa.trap.TrapDetail;
 
+/**
+ * Process notices based on FM query. Update each caches and then update the
+ * notices in database according to the response for the process.
+ */
 public class NoticeProcessTask extends AsyncTask<Future<Boolean>> {
     private static Logger log = LoggerFactory
             .getLogger(NoticeProcessTask.class);

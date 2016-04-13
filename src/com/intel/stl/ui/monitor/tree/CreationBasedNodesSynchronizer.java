@@ -25,61 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: DeviceTypeNodesUpdater.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.10  2015/10/23 19:07:57  jijunwan
- *  Archive Log:    PR 129357 - Be able to hide inactive ports
- *  Archive Log:    - revert back to the old version without visible node support
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/09/30 13:26:45  fisherma
- *  Archive Log:    PR 129357 - ability to hide inactive ports.  Also fixes PR 129689 - Connectivity table exhibits inconsistent behavior on Performance and Topology pages
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/08/17 18:54:19  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/05/20 17:05:20  jijunwan
- *  Archive Log:    PR 128797 - Notice update failed to update related notes
- *  Archive Log:    - improved to fire tree update event at port level, so if we select a port that is under change, the port will still get selected and updated
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/02/05 21:21:44  jijunwan
- *  Archive Log:    fixed NPE issues found by klocwork
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/02/04 21:44:20  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/10/09 21:24:52  jijunwan
- *  Archive Log:    improvement on TreeNodeType:
- *  Archive Log:    1) Added icon to TreeNodeType
- *  Archive Log:    2) Rename PORT to ACTIVE_PORT
- *  Archive Log:    3) Removed NODE
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/03 18:10:26  jijunwan
- *  Archive Log:    new Tree Updaters
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/02 19:24:28  jijunwan
- *  Archive Log:    renamed FVTreeBuilder to tree.FVTreeManager, moved FVResourceNode and FVTreeModel  to package tree
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/09/02 19:02:59  jijunwan
- *  Archive Log:    tree update based on merge sort algorithm
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.monitor.tree;
 
 import java.util.HashMap;

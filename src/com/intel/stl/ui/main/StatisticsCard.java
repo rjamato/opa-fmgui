@@ -25,41 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: FabricViewer
- *
- *  File Name: StatisticsController.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.24  2016/02/11 16:02:41  jijunwan
- *  Archive Log: PR 132821 - confusion text on ports statistic
- *  Archive Log:
- *  Archive Log: - improved text
- *  Archive Log:
- *  Archive Log: Revision 1.23  2015/11/02 23:57:30  jijunwan
- *  Archive Log: Fixed -1 numSwitchLinks issue on b2b topology
- *  Archive Log:
- *  Archive Log: Revision 1.22  2015/08/17 18:53:38  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - changed frontend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.21  2015/06/09 18:37:27  jijunwan
- *  Archive Log: PR 129069 - Incorrect Help action
- *  Archive Log: - moved help action from view to controller
- *  Archive Log: - only enable help button when we have HelpID
- *  Archive Log: - fixed incorrect HelpIDs
- *  Archive Log:
- *
- *  Overview:
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.main;
 
 import java.awt.event.ActionEvent;
@@ -84,8 +49,6 @@ import com.intel.stl.ui.model.NodeTypeViz;
 import net.engio.mbassy.bus.MBassador;
 
 /**
- * @author jijunwan
- *
  */
 public class StatisticsCard
         extends BaseCardController<ICardListener, StatisticsView> {

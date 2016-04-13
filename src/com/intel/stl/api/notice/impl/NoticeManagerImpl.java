@@ -25,67 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: NoticeManagerImpl.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.26  2015/08/17 18:49:13  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.25  2015/07/20 17:18:52  jijunwan
- *  Archive Log:    PR 126645 - Topology Page does not show correct data after port disable/enable event
- *  Archive Log:    - improved to notify UI after DB task is done
- *  Archive Log:
- *  Archive Log:    Revision 1.24  2015/07/19 20:54:50  jijunwan
- *  Archive Log:    PR 126645 - Topology Page does not show correct data after port disable/enable event
- *  Archive Log:    - fixed sync issue on DB update and cached node distribution
- *  Archive Log:
- *  Archive Log:    Revision 1.23  2015/07/10 20:43:33  fernande
- *  Archive Log:    PR 129522 - Notice is not written to database due to topology not found. Moved FE Helpers to the session object and changed the order of initialization for the SubnetContext.
- *  Archive Log:
- *  Archive Log:    Revision 1.22  2015/05/29 20:34:19  fernande
- *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. Second wave of changes: the application can be switched between the old adapter and the new; moved out several initialization pieces out of objects constructor to allow subnet initialization with a UI in place; improved generics definitions for FV commands.
- *  Archive Log:
- *  Archive Log:    Revision 1.21  2015/05/26 15:34:02  fernande
- *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
- *  Archive Log:
- *  Archive Log:    Revision 1.20  2015/05/19 19:07:17  jijunwan
- *  Archive Log:    PR 128797 - Notice update failed to update related notes
- *  Archive Log:    - created a new class NoticeWrapper to store information about related nodes, and then pass this infor to EventDescription that will allow UI to upate related nodes
- *  Archive Log:
- *  Archive Log:    Revision 1.19  2015/04/27 21:45:53  rjtierne
- *  Archive Log:    - Added topologyUpdateTask() to the processingService if exception is thrown due to
- *  Archive Log:    missing topology from the database.
- *  Archive Log:    - Updated constructor to accept the SAHelper so it can be passed to TopologyUpdateTask()
- *  Archive Log:    when trying to process notices without a topology in the database.
- *  Archive Log:    - Put notice processing code into a new method processNotices() and invoked when
- *  Archive Log:    topology is in the database or after a topology update if it's missing.
- *  Archive Log:
- *  Archive Log:    Revision 1.18  2015/03/27 20:35:06  fernande
- *  Archive Log:    Changed to use the interface IConnection instead of the concrete implementation
- *  Archive Log:
- *  Archive Log:    Revision 1.17  2015/03/19 13:47:37  jijunwan
- *  Archive Log:    catch exception
- *  Archive Log:
- *  Archive Log:    Revision 1.16  2015/03/10 18:43:09  jypak
- *  Archive Log:    JavaHelp System introduced to enable online help.
- *  Archive Log:
- *  
- *  Overview: A daemon thread to wait for notices from FE and start a process to
- *  save the notices to database. Even before start waiting, 
- *  initialize 'incomplete' notices in database to be 'complete'.
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.api.notice.impl;
 
 import java.util.List;
@@ -112,6 +51,11 @@ import com.intel.stl.configuration.ResultHandler;
 import com.intel.stl.configuration.SerialProcessingService;
 import com.intel.stl.datamanager.DatabaseManager;
 
+/**
+ * A daemon thread to wait for notices from FE and start a process to save the
+ * notices to database. Even before start waiting, initialize 'incomplete'
+ * notices in database to be 'complete'.
+ */
 public class NoticeManagerImpl implements INoticeManager,
         IEventListener<NoticeBean>, Runnable {
     private static Logger log = LoggerFactory

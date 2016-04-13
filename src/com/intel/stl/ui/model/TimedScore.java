@@ -25,40 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: TimedScore.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/09/25 20:53:37  fernande
- *  Archive Log:    PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/08/17 18:53:46  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/10/02 21:26:13  jijunwan
- *  Archive Log:    fixed issued found by FindBugs
- *  Archive Log:    Some auto-reformate
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/09 21:18:56  jijunwan
- *  Archive Log:    improved status visualization
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/08 19:03:23  jijunwan
- *  Archive Log:    backend support for states based on notices
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.model;
 
 import java.awt.Color;

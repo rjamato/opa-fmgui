@@ -25,116 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PortProperties.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.21  2015/12/16 22:33:05  jijunwan
- *  Archive Log:    PR 132110 - Klocwork issues
- *  Archive Log:    - updated to be consistent with STL2 code
- *  Archive Log:
- *  Archive Log:    Revision 1.20  2015/12/16 21:44:24  jijunwan
- *  Archive Log:    PR 132110 - Klocwork issues
- *  Archive Log:
- *  Archive Log:    Revision 1.19  2015/08/17 18:53:46  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.18  2015/08/04 23:00:32  jijunwan
- *  Archive Log:    PR 129821 - connectivity table has no Link Width Down Grade data
- *  Archive Log:    - added related data to data table
- *  Archive Log:
- *  Archive Log:    Revision 1.17  2015/02/05 21:21:47  jijunwan
- *  Archive Log:    fixed NPE issues found by klocwork
- *  Archive Log:
- *  Archive Log:    Revision 1.16  2015/02/04 21:44:16  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *  Archive Log:    Revision 1.15  2015/01/23 20:15:18  jijunwan
- *  Archive Log:    PR 126673 - "Unsupported VL Cap(0X08)" for all Switch ports other than Switch port 0
- *  Archive Log:    STL is using VL Cap as a number rather than an enum. Removed VL Cap related IB enum, and represent Cap as as a byte number
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2015/01/13 20:18:47  jijunwan
- *  Archive Log:    method name change
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2015/01/13 18:22:36  jijunwan
- *  Archive Log:    support UniversalDiagCode and VendorDiagCode
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2014/10/22 02:05:18  jijunwan
- *  Archive Log:    made property model more general
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2014/08/22 16:51:26  fernande
- *  Archive Log:    Closing the gaps between properties and sa_query
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2014/08/12 20:58:01  jijunwan
- *  Archive Log:    1) renamed HexUtils to StringUtils
- *  Archive Log:    2) added a method to StringUtils to get error message for an exception
- *  Archive Log:    3) changed all code to call StringUtils to get error message
- *  Archive Log:    4) some extra ode format change
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2014/08/05 18:39:04  jijunwan
- *  Archive Log:    renamed FI to HFI
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2014/07/29 13:48:52  fernande
- *  Archive Log:    Removed repetitive conversion from FE values to API enums
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/07/22 21:54:21  fernande
- *  Archive Log:    Adding models to support device properties
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/07/01 19:10:14  jijunwan
- *  Archive Log:    used the new method on LinkSpeedMask
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/06/16 21:02:41  jijunwan
- *  Archive Log:    code clean up
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/06/11 22:15:37  jijunwan
- *  Archive Log:    added more info about Link To in property subpage
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/06/05 18:32:51  jijunwan
- *  Archive Log:    changed Channel Adapter to Fabric Interface
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/05/23 14:29:25  jijunwan
- *  Archive Log:    handling unsigned short attributes that we will be treated as numbers
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/22 18:32:10  jincoope
- *  Archive Log:    Moved from configuration package to this package
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/04/16 16:20:50  jijunwan
- *  Archive Log:    minor refactory
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/04/16 15:15:49  jijunwan
- *  Archive Log:    use HexUtils for hex string display
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/16 15:06:06  fernande
- *  Archive Log:    Fixed wrong import
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/12 19:48:03  fernande
- *  Archive Log:    Initial version
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/10 12:52:24  jincoope
- *  Archive Log:    Attribute names start with lower case
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/09 19:51:30  jincoope
- *  Archive Log:    changed the name of this pack to all lower case
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/09 17:59:44  jincoope
- *  Archive Log:    Added for displaying properties
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jincoope
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.model;
 
 import static com.intel.stl.ui.common.STLConstants.K0388_OR;
@@ -158,8 +48,6 @@ import com.intel.stl.ui.common.STLConstants;
 
 /**
  * @deprecated use {@link com.intel.stl.ui.model.DevicePropertyCategory}
- * @author jincoope
- * 
  */
 @Deprecated
 public class PortProperties extends NodeProperties {

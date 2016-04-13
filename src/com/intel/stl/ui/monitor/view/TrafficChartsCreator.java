@@ -25,53 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: TrafficChartsCreator.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7  2015/08/17 18:54:25  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/05/14 17:43:09  jijunwan
- *  Archive Log:    PR 127700 - Delta data on host performance display is accumulating
- *  Archive Log:    - corrected delta value calculation
- *  Archive Log:    - changed to display data/pkts rate rather than delta on chart and table
- *  Archive Log:    - updated chart unit to show rate
- *  Archive Log:    - renamed the following classes to reflect we are dealing with rate
- *  Archive Log:      DataChartRangeUpdater -> DataRateChartRangeUpdater
- *  Archive Log:      PacketChartRangeUpdater -> PacketRateChartRangeUpdater
- *  Archive Log:      DataChartScaleGroupManager -> DataRateChartScaleGroupManager
- *  Archive Log:      PacketChartScaleGroupManager -> PacketRateChartScaleGroupManager
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/02/18 17:30:45  jypak
- *  Archive Log:    PR 126999 Graph names are changed to include 'Delta' in the middle of the names. Also, added tool tips to the title label, so when a user hover the mouse to the title (for combo box selection of charts, hover on the label values), the explanation about the charts pops up.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/10/02 22:16:58  jijunwan
- *  Archive Log:    fixed string comparison issues
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/07/22 18:39:43  jijunwan
- *  Archive Log:    moved IChartCreator to common package
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/05/29 03:07:05  jijunwan
- *  Archive Log:    minor adjustment on performance subpage
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/09 14:17:17  jijunwan
- *  Archive Log:    moved JFreeChart to view side, controller side only take care dataset
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.monitor.view;
 
 import org.jfree.chart.JFreeChart;

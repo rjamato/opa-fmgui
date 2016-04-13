@@ -25,46 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: EventProcesser.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.7  2015/08/17 18:53:35  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/08/05 02:55:30  jijunwan
- *  Archive Log:    PR 129359 - Need navigation feature to navigate within FM GUI
- *  Archive Log:    - fixed EventProcesser to ignore empty events array so it doesn't cause unexpected UI update
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/11/05 23:00:25  jijunwan
- *  Archive Log:    improved UI update event to batch mode so we can efficiently process multiple notices
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/10/21 16:31:04  fernande
- *  Archive Log:    Renaming clearup() method name to cleanup() to be consistent with other implementations.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/26 20:34:02  jijunwan
- *  Archive Log:    improvement on event processors
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/02 18:32:31  jijunwan
- *  Archive Log:    continue on exceptions
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/26 15:04:38  jijunwan
- *  Archive Log:    notice listeners on UI side
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.alert;
 
 import java.util.ArrayList;

@@ -25,39 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: UtilStatsObserver.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:54:20  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/07/02 20:33:54  fernande
- *  Archive Log:    PR 129447 - Database size increases a lot over a short period of time. Moving Blobs to the database; arrays are now being saved to the database as collection tables.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/08/05 13:37:35  jijunwan
- *  Archive Log:    added null check
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/21 17:30:42  jijunwan
- *  Archive Log:    renamed IDataObserver.Type to DataType, and put it under model package
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/16 15:08:59  jijunwan
- *  Archive Log:    new framework for performance data visualization
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.performance.observer;
 
 import java.util.List;

@@ -25,68 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ConnectivityTableColumns.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.11  2016/02/16 22:16:06  jijunwan
- *  Archive Log:    PR 132888 - Include Num Lanes Down in port counters display
- *  Archive Log:
- *  Archive Log:    - added Num Lanes Down
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/11/02 20:26:15  jijunwan
- *  Archive Log:    PR 131384 - Incorrect label name on port counter panel
- *  Archive Log:    - renamed constant RX_CUMULATIVE_DATA to RX_CUMULATIVE_DATA_MB, and TX_CUMULATIVE_DATA to TX_CUMULATIVE_DATA_MB
- *  Archive Log:    - introduced new constants for RvcData and XmitData and applied them on port counters panel
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/08/28 16:34:05  jijunwan
- *  Archive Log:    PR 129821 - connectivity table has no Link Width Down Grade data
- *  Archive Log:    - updated tooltip text
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/08/17 18:53:46  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/08/04 23:00:32  jijunwan
- *  Archive Log:    PR 129821 - connectivity table has no Link Width Down Grade data
- *  Archive Log:    - added related data to data table
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/07/17 15:39:49  rjtierne
- *  Archive Log:    PR 129547 - Need to add Node type and lid to the Connectivity
- *  Archive Log:    Added NODE_LID and NODE_TYPE columns and renumbered ids to remain in synch
- *  Archive Log:    with the order the columns are displayed in the Connectivity table
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/07/13 21:56:07  rjtierne
- *  Archive Log:    PR 129355 - Ability to click on cables to get cable info
- *  Archive Log:    - Added CABLE_INFO column
- *  Archive Log:    - Renumbered enumeration to stay in since with column ordering on view
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/06/01 15:01:22  jypak
- *  Archive Log:    PR 128823 - Improve performance tables to include all portcounters fields.
- *  Archive Log:    All port counters fields added to performance table and connectivity table.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/04/08 19:44:01  rjtierne
- *  Archive Log:    PR 126844 - Can make Port counter names in UIs more concise.
- *  Archive Log:    Added a tool tip field to the enumeration using fast fabric tool names
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/02/26 20:07:39  fisherma
- *  Archive Log:    Changes to display Link Quality data to port's Performance tab and switch/port configuration table.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/06/12 21:31:44  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Enum for the Connectivity table columns
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.model;
 
 import com.intel.stl.ui.common.STLConstants;

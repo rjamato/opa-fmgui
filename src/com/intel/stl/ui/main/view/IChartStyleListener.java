@@ -26,33 +26,6 @@
  */
 
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: INodeStatesListener.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2  2015/08/17 18:54:02  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/09 21:18:59  jijunwan
- *  Archive Log:    improved status visualization
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/08 19:25:38  jijunwan
- *  Archive Log:    MVC refactory
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.main.view;
 
 import com.intel.stl.ui.common.view.ICardListener;

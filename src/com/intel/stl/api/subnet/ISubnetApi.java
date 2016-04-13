@@ -25,45 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ISubnetApi.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.25  2015/09/26 06:17:07  jijunwan
- *  Archive Log:    130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
- *  Archive Log:    - added reset to clear all caches and update DB topology
- *  Archive Log:
- *  Archive Log:    Revision 1.24  2015/09/25 20:47:18  fernande
- *  Archive Log:    PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
- *  Archive Log:
- *  Archive Log:    Revision 1.23  2015/08/17 18:48:38  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.22  2015/08/11 17:37:21  jijunwan
- *  Archive Log:    PR 126645 - Topology Page does not show correct data after port disable/enable event
- *  Archive Log:    - improved to get distribution data with argument "refresh". When it's true, calculate distribution rather than get it from cache
- *  Archive Log:
- *  Archive Log:    Revision 1.21  2015/05/26 15:35:11  fernande
- *  Archive Log:    PR 128897 - STLAdapter worker thread is in a continuous loop, even when there are no requests to service. A new FEAdapter is being added to handle requests through SubnetRequestDispatchers, which manage state for each connection to a subnet.
- *  Archive Log:
- *  Archive Log:    Revision 1.20  2015/04/21 17:45:53  jypak
- *  Archive Log:    Header comments fixed.
- *  Archive Log:
- *  
- *  Overview: 
- *  
- *  Reference: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
 package com.intel.stl.api.subnet;
 
 import java.util.EnumMap;

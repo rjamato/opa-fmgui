@@ -25,48 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: LogView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/11/18 23:55:39  rjtierne
- *  Archive Log:    PR 130965 - ESM support on Log Viewer
- *  Archive Log:    - Override the moveToText() method which was made abstract in AbstractLogView
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/10/06 15:53:29  rjtierne
- *  Archive Log:    PR 130390 - Windows FM GUI - Admin tab->Logs side-tab - unable to login to switch SM for log access
- *  Archive Log:    - Added setEsmView() to grey out the main Log Viewer text area and increase the font for the error message
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/10/01 21:56:08  fernande
- *  Archive Log:    PR130409 - [Dell]: FMGUI Admin Console login fails when switch is configured without username and password. Fix for Klocwork issue
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/09/25 13:56:40  rjtierne
- *  Archive Log:    PR 130011 - Enhance SM Log Viewer to include Standard and Advanced requirements
- *  Archive Log:    - Added context menu to the main text area
- *  Archive Log:    - Registered text menu listener
- *  Archive Log:    - Revised method highlightText() to display error dialog on failed searches but not filtered searches
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/08/17 18:54:07  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/08/17 14:22:38  rjtierne
- *  Archive Log:    PR 128979 - SM Log display
- *  Archive Log:    This is the first version of the Log Viewer which displays select lines of text from the remote SM log file. Updates include searchable raw text from file, user-defined number of lines to display, refreshing end of file, and paging. This PR is now closed and further updates can be found by referencing PR 130011 - "Enhance SM Log Viewer to include Standard and Advanced requirements".
- *  Archive Log:
- *
- *  Overview: The main component of the log page that displays the log text
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.admin.view.logs;
 
 import java.awt.Component;
@@ -93,6 +51,9 @@ import com.intel.stl.ui.common.UIConstants;
 import com.intel.stl.ui.common.UILabels;
 import com.intel.stl.ui.common.Util;
 
+/**
+ * The main component of the log page that displays the log text
+ */
 public class SMLogView extends AbstractLogView {
 
     private static final long serialVersionUID = -2959984172557178645L;

@@ -25,42 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ConsoleTabView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/17 18:54:14  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/04/09 21:13:58  rjtierne
- *  Archive Log:    Put call to closeConsole() in a separate thread to fix synchronization problem with closing consoles too fast
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/10/01 19:51:16  rjtierne
- *  Archive Log:    Provide console tab view with console id so the listener terminates the correct console
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/09 18:23:39  jijunwan
- *  Archive Log:    only show command on tab
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/05 21:56:32  jijunwan
- *  Archive Log:    L&F adjustment on Console Views
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/22 19:53:59  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: View for the tab on a console subpage tabbed pane to house
- *  the labels for user name, command name, and close button
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.console.view;
 
 import java.awt.Font;
@@ -81,6 +45,10 @@ import com.intel.stl.ui.common.view.ComponentFactory;
 import com.intel.stl.ui.console.IConsoleListener;
 import com.intel.stl.ui.console.ITabListener;
 
+/**
+ * View for the tab on a console subpage tabbed pane to house the labels for
+ * user name, command name, and close button
+ */
 public class ConsoleTabView extends JPanel {
 
     private static final long serialVersionUID = -4025941288575285019L;

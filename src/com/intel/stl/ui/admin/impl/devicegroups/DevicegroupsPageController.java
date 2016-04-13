@@ -25,41 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: DevicegroupsPageController.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:54:21  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/06/25 11:55:07  jypak
- *  Archive Log:    PR 129073 - Add help action for Admin Page.
- *  Archive Log:    The help action is added to App, DG, VF,Console page and Console terminal. For now, a help ID and a content are being used as a place holder for each page. Once we get the help contents delivered by technical writer team, the HelpAction will be updated with correct help ID.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/03/27 15:47:51  jijunwan
- *  Archive Log:    first version of VirtualFabric UI
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/03/24 17:46:10  jijunwan
- *  Archive Log:    init version of DeviceGroup editor
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/16 22:08:18  jijunwan
- *  Archive Log:    added device group visualization on UI
- *  Archive Log:    some refactory to make the conf framework to be more general
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.admin.impl.devicegroups;
 
 import java.util.ArrayList;

@@ -25,50 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: EventBusProcessor.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8  2015/08/17 18:53:35  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/11/05 23:00:25  jijunwan
- *  Archive Log:    improved UI update event to batch mode so we can efficiently process multiple notices
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/10/21 16:31:04  fernande
- *  Archive Log:    Renaming clearup() method name to cleanup() to be consistent with other implementations.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/10/03 15:34:50  jijunwan
- *  Archive Log:    minor improvement
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/10/02 21:26:16  jijunwan
- *  Archive Log:    fixed issued found by FindBugs
- *  Archive Log:    Some auto-reformate
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/26 20:34:02  jijunwan
- *  Archive Log:    improvement on event processors
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/15 15:24:25  jijunwan
- *  Archive Log:    changed AppEventBus to 3rd party lib mbassador
- *  Archive Log:    some code reformat
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/08/26 15:04:38  jijunwan
- *  Archive Log:    notice listeners on UI side
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.alert;
 
 import java.util.Collection;

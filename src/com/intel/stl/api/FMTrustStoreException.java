@@ -25,36 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: KeyStoreException.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.2  2015/08/17 18:48:51  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/01/11 20:56:32  jijunwan
- *  Archive Log:    support secure FE:
- *  Archive Log:    1) added secured STL Connection to communicate with FE
- *  Archive Log:    2) added cert assistant interface that supports certs conf, persistence and password prompt
- *  Archive Log:    3) added default cert assistant
- *  Archive Log:    4) improved Subnet conf to support secure FE
- *  Archive Log:
- *  Archive Log:    NOTE: the secured connection requires Java 1.7
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.api;
 
 public class FMTrustStoreException extends FMException {

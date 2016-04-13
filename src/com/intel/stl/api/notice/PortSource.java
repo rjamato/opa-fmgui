@@ -25,46 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PortSource.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/17 18:48:43  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/07/19 21:14:22  jijunwan
- *  Archive Log:    PR 129578 - Event table entries dont obviously correspond to log file
- *  Archive Log:    - added event to log file at info level
- *  Archive Log:    - improved toString for EventDescription and PortSource
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/04 21:38:03  jijunwan
- *  Archive Log:    impoved to handle unsigned values
- *  Archive Log:     - we promote to a "bigger" data type
- *  Archive Log:     - port numbers are now short
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/11/05 23:43:47  jijunwan
- *  Archive Log:    forgot to check in changes on backend
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/05/08 18:59:21  jijunwan
- *  Archive Log:    added Notice Simulator to simulate notices from FM
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/05/06 15:14:03  jijunwan
- *  Archive Log:    notice and trap implementation
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.api.notice;
 
 import com.intel.stl.api.subnet.NodeType;

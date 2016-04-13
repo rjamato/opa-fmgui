@@ -25,72 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *  
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: NodeRenderer.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.14  2015/08/17 18:54:24  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2015/07/15 19:05:59  fernande
- *  Archive Log:    PR 129199 - Checking copyright test as part of the build step. Fixed year appearing in copyright notice
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2014/12/11 18:46:33  fernande
- *  Archive Log:    Switch from log4j to slf4j+logback
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2014/10/09 21:24:50  jijunwan
- *  Archive Log:    improvement on TreeNodeType:
- *  Archive Log:    1) Added icon to TreeNodeType
- *  Archive Log:    2) Rename PORT to ACTIVE_PORT
- *  Archive Log:    3) Removed NODE
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2014/09/02 19:24:32  jijunwan
- *  Archive Log:    renamed FVTreeBuilder to tree.FVTreeManager, moved FVResourceNode and FVTreeModel  to package tree
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2014/08/05 18:39:08  jijunwan
- *  Archive Log:    renamed FI to HFI
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2014/07/09 21:17:35  jijunwan
- *  Archive Log:    renamed CA_ICON to FI_ICON, CA_GROUP_ICON to FI_GROUP_ICON
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/06/24 20:23:32  rjtierne
- *  Archive Log:    Changed HCA to HFI
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/06/05 17:34:11  jijunwan
- *  Archive Log:    added vFabric into Tree View
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/05/18 22:50:35  rjtierne
- *  Archive Log:    No longer using specific group types to render groups;
- *  Archive Log:    using DEVICE_GROUP only.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/05/15 18:47:45  rjtierne
- *  Archive Log:    Updated renderer to accommodate new device groups
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/04/24 18:33:46  rjtierne
- *  Archive Log:    Added icons for HCA and Switch groups
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/04/23 19:55:25  rjtierne
- *  Archive Log:    Handled new INACTIVE_PORT case
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/22 20:52:26  rjtierne
- *  Archive Log:    Moved from common.view to monitor.view
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/17 14:37:58  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: This class renders tree nodes with select Intel approved icons
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.monitor.view;
 
 import java.awt.Component;
@@ -104,8 +38,8 @@ import org.slf4j.LoggerFactory;
 import com.intel.stl.ui.monitor.tree.FVResourceNode;
 
 /**
- * @author tierney
- * 
+ *
+ * This class renders tree nodes with select Intel approved icons
  */
 public class NodeRenderer extends DefaultTreeCellRenderer {
 

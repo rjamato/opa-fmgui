@@ -25,49 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: DevicegroupsEditorPanel.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/08/17 18:54:22  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/05/14 17:19:45  jijunwan
- *  Archive Log:    PR 128697 - Handle empty list of items
- *  Archive Log:    - Added code to handle null item
- *  Archive Log:    - Added code to clean panel when it gets a null item
- *  Archive Log:    - Enable/disable buttons properly when we get an empty item list or null item
- *  Archive Log:    - Improved to handle item selection when the index is invalid, such as -1
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/04/06 11:14:10  jypak
- *  Archive Log:    Klockwork: Front End Critical Without Unit Test. Open issues fixed.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/03/30 14:25:38  jijunwan
- *  Archive Log:    1) introduced IRendererModel to create renderer only we nee
- *  Archive Log:    2) removed #getName from IAttrRenderer to provide more flexibilities and let IRendererModel to take care which attribute should use which renderer, how to init it properly
- *  Archive Log:    3) improved to support repeatable and non-repeatable attributes. For non-repeatable attributes, we only can add once
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/03/24 17:46:09  jijunwan
- *  Archive Log:    init version of DeviceGroup editor
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/03/16 22:08:14  jijunwan
- *  Archive Log:    added device group visualization on UI
- *  Archive Log:    some refactory to make the conf framework to be more general
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.admin.view.devicegroups;
 
 import java.awt.Cursor;

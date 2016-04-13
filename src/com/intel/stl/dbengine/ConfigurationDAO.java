@@ -25,55 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: ConfigurationDAO.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.10  2015/08/17 18:48:35  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/02/11 21:11:00  fernande
- *  Archive Log:    Adding support to remove a subnet (logical delete) from the database.
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/02/06 15:04:21  fernande
- *  Archive Log:    Database modifications to use a long as the id for a SubnetDescription and to support users per subnet.
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2014/09/05 15:38:44  fernande
- *  Archive Log:    Changed DatabaseException into an unchecked exception. Then change error handling in the Datamanager so that certain FMExceptions (checked exceptions) bubble up to the API layer. Higher layers can then decide how to handle those exceptions. Any other Hibernate/HSQLDb/DAO exceptions are signaled as a DatabaseException (unchecked) to layers above the Datamanager.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2014/06/20 16:57:41  fernande
- *  Archive Log:    Added basic Entity Manager management to minimize creation of DAOs
- *  Archive Log:    Fixed bugs in database management
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/06/19 20:08:07  fernande
- *  Archive Log:    Added background update of database and redirected some APIs to use the database.
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/06/11 22:09:00  fernande
- *  Archive Log:    Changes to add more entities to database schema
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/05/07 21:51:05  fernande
- *  Archive Log:    Implement saveRules()
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/05/07 19:10:38  fernande
- *  Archive Log:    Changes to save Subnets and EventRules to database
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/04/30 16:15:10  fernande
- *  Archive Log:    Implementing DAOs to persist EventRule and SubnetDescription
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.dbengine;
 
 import java.util.List;

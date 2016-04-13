@@ -25,34 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: NoticeSaveTask.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/09/26 06:17:56  jijunwan
- *  Archive Log:    130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
- *  Archive Log:    - added more log info
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/08/17 18:49:13  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/06 20:44:02  jypak
- *  Archive Log:    Header comments fixed for archive log to be updated.
- *  Archive Log:
- *
- *  Overview: Save notices for a subnet from FE to database.  
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.api.notice.impl;
 
 import org.slf4j.Logger;
@@ -62,6 +34,9 @@ import com.intel.stl.api.notice.NoticeBean;
 import com.intel.stl.configuration.AsyncTask;
 import com.intel.stl.datamanager.DatabaseManager;
 
+/**
+ * Save notices for a subnet from FE to database.
+ */
 public class NoticeSaveTask extends AsyncTask<Void> {
     private static Logger log = LoggerFactory.getLogger(NoticeSaveTask.class);
 

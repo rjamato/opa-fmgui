@@ -25,63 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: UserSettings.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.12  2015/09/25 20:46:48  fernande
- *  Archive Log:    PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/08/17 18:48:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/08/12 19:22:13  fisherma
- *  Archive Log:    Store/retrieve SMTP settings in/from SECTION_PREFERENCE properties.
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/08/10 17:04:40  robertja
- *  Archive Log:    PR128974 - Email notification functionality.
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/06/25 21:02:09  jijunwan
- *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
- *  Archive Log:    - added a section name for pin information persistence
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/02/20 21:10:41  rjtierne
- *  Archive Log:    Fixed typo: Changed SECTION_PREFERENE to SECTION_PREFERENCE
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/02/10 23:04:57  jijunwan
- *  Archive Log:    changed name from "performance" to "preference"
- *  Archive Log:    added exception for unknown names
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/01/15 19:07:14  rjtierne
- *  Archive Log:    Added new performance section and associated properties:
- *  Archive Log:    refresh rate, refresh rate units, timing window, and # worst nodes
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/12/10 20:32:42  rjtierne
- *  Archive Log:    Support for saving EventRules to UserSettings
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/11/11 18:02:06  fernande
- *  Archive Log:    Support for generic preferences: a new node (Preferences) in the UserOptions XML now allows to define groups of preferences (Section) and key/value pairs (Entry) that are stored in Properties objects are runtime.
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/29 18:53:56  fernande
- *  Archive Log:    Changing UserSettings to support Properties Display options
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/06/19 20:00:50  fernande
- *  Archive Log:    Added background update of database and redirected some APIs to use the database.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.api.configuration;
 
 import java.io.Serializable;

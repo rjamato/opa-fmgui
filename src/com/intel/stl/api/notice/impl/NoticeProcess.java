@@ -25,30 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: NoticeProcess.java
- *  
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:49:13  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/06 20:44:02  jypak
- *  Archive Log:    Header comments fixed for archive log to be updated.
- *  Archive Log:
- *
- *  Overview: Notice wrapper class.
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.api.notice.impl;
 
 import java.io.Serializable;
@@ -60,6 +36,9 @@ import com.intel.stl.api.subnet.LinkRecordBean;
 import com.intel.stl.api.subnet.NodeRecordBean;
 import com.intel.stl.api.subnet.PortRecordBean;
 
+/**
+ * Notice wrapper class.
+ */
 public class NoticeProcess implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -25,46 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PinCardView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:53:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/06/30 22:32:22  jijunwan
- *  Archive Log:    PR 129215 - Need short chart name to support pin capability
- *  Archive Log:    - improved pin card to show short name as title, and full name as title tool tip text
- *  Archive Log:    - improved pin card to display data source in a title box
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/06/25 21:43:09  jijunwan
- *  Archive Log:    PR 129217 - Cannot adjust pin card height
- *  Archive Log:    - added comments
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/06/25 21:33:41  jijunwan
- *  Archive Log:    Bug 129217 - Cannot adjust pin card height
- *  Archive Log:    - improved to allow adjust pin card height
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/06/25 15:34:21  jijunwan
- *  Archive Log:    Bug 126755 - Pin Board functionality is not working in FV
- *  Archive Log:    - designed and implemented pin framework
- *  Archive Log:
- *
- *  Overview: A decoration to any UI component to make it work on a PinBoard. 
- *  This class adds tittle, controller buttons (up, down and close) and an 
- *  information button that displays detailed information about the pin.  
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common.view;
 
 import java.awt.BorderLayout;
@@ -102,6 +62,11 @@ import com.intel.stl.ui.common.STLConstants;
 import com.intel.stl.ui.common.UIConstants;
 import com.intel.stl.ui.common.UIImages;
 
+/**
+ * A decoration to any UI component to make it work on a PinBoard. This class
+ * adds tittle, controller buttons (up, down and close) and an information
+ * button that displays detailed information about the pin.
+ */
 public class DecoratedPinCardView extends JPanel implements MouseListener,
         MouseMotionListener {
     private static final long serialVersionUID = -6977548379083364984L;

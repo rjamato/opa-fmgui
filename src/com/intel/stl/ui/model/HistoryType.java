@@ -25,36 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: HistoryType.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:53:46  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/03/12 19:29:04  jypak
- *  Archive Log:    When JComboBox.setRenderer is invoked, if an enum is the combo box item, the default labels displayed for the combo box list are the returned results of the default toString method of the enum which are the enum types. The toString is overridden to display consistent name for HistoryType.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/02/12 19:40:06  jijunwan
- *  Archive Log:    short term PA support
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/02/04 12:14:48  jypak
- *  Archive Log:    Incorrect comment header. Archive history rows were added.
- *  Archive Log:
- *  
- *  Overview: 
- *
- *  @author: jypak
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.model;
 
 import com.intel.stl.ui.common.STLConstants;

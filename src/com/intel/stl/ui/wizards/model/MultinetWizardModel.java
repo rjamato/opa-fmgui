@@ -25,47 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: MultinetWizardModel.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.6  2015/11/09 20:46:37  fernande
- *  Archive Log:    PR130231 - Cannot delete subnet from Wizard if subnet name is "Unknown Subnet". Fixed bug with listeners.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/08/17 18:53:53  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/04/02 13:32:56  jypak
- *  Archive Log:    Klockwork: Front End Critical Without Unit Test. 47 open issues fixed. All of them are for null checks.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/02/25 17:59:52  rjtierne
- *  Archive Log:    - Implemented subnet deletion
- *  Archive Log:    - Using new WizardType enumeration to specify model to update to improve efficiency
- *  Archive Log:    - Simplified method onClose()
- *  Archive Log:    - Standardized warning dialogue into one showWarningDialog()
- *  Archive Log:    - Added null pointer protection
- *  Archive Log:    - Removed button redundancy in maps
- *  Archive Log:    - Using current subnet to select the correct subnet sub-wizards to display
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/02/20 21:15:15  rjtierne
- *  Archive Log:    Multinet Wizard: Data models for all wizards for data storage and display
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/02/13 21:29:15  rjtierne
- *  Archive Log:    Multinet Wizard: Initial Version
- *  Archive Log:
- *
- *  Overview: Top model use to store the sub-wizard models and update their views
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
 package com.intel.stl.ui.wizards.model;
 
 import java.util.ArrayList;
@@ -78,6 +37,9 @@ import com.intel.stl.ui.wizards.model.event.EventsModel;
 import com.intel.stl.ui.wizards.model.preferences.PreferencesModel;
 import com.intel.stl.ui.wizards.model.subnet.SubnetModel;
 
+/**
+ * Top model use to store the sub-wizard models and update their views
+ */
 public class MultinetWizardModel implements IWizardModel {
 
     private SubnetModel subnetModel;

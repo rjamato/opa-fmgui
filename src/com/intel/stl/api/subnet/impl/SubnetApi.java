@@ -24,58 +24,6 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- * 
- *  Functional Group: Fabric Viewer Application
- * 
- *  File Name: SubnetApi.java
- * 
- *  Archive Source: $Source$
- * 
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.47  2015/12/17 21:51:08  jijunwan
- *  Archive Log: PR 132124 - Newly created VF not displayed after reboot of SM
- *  Archive Log: - improved the arch to do cache reset
- *  Archive Log:
- *  Archive Log: Revision 1.46  2015/09/26 06:17:06  jijunwan
- *  Archive Log: 130487 - FM GUI: Topology refresh required after enabling Fabric Simulator
- *  Archive Log: - added reset to clear all caches and update DB topology
- *  Archive Log:
- *  Archive Log: Revision 1.45  2015/09/25 20:47:43  fernande
- *  Archive Log: PR129920 - revisit health score calculation. Changed formula to include several factors (or attributes) within the calculation as well as user-defined weights (for now are hard coded).
- *  Archive Log:
- *  Archive Log: Revision 1.44  2015/08/17 18:48:53  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - change backend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.43  2015/08/11 17:37:19  jijunwan
- *  Archive Log: PR 126645 - Topology Page does not show correct data after port disable/enable event
- *  Archive Log: - improved to get distribution data with argument "refresh". When it's true, calculate distribution rather than get it from cache
- *  Archive Log:
- *  Archive Log: Revision 1.42  2015/07/30 19:30:27  fernande
- *  Archive Log: PR 129592 - removing a subnet a user is monitoring cause internal DB exception. Added flag to SubnetContext indicating the subnet has been deleted. If the flag is set, no saving of subnet information occurs.
- *  Archive Log:
- *  Archive Log: Revision 1.41  2015/07/10 20:45:03  fernande
- *  Archive Log: PR 129522 - Notice is not written to database due to topology not found. Moved FE Helpers to the session object and changed the order of initialization for the SubnetContext.
- *  Archive Log:
- *  Archive Log: Revision 1.40  2015/07/09 18:51:02  fernande
- *  Archive Log: PR 129447 - Database size increases a lot over a short period of time. Added method to expose application settings in the settings.xml file to higher levels in the app
- *  Archive Log:
- *  Archive Log: Revision 1.39  2015/06/11 17:46:13  fernande
- *  Archive Log: PR 129034 Support secure FE. NPE when getSMs returns a null; included check and changed misleading message
- *  Archive Log:
- *  Archive Log: Revision 1.38  2015/06/10 19:36:39  jijunwan
- *  Archive Log: PR 129153 - Some old files have no proper file header. They cannot record change logs.
- *  Archive Log: - wrote a tool to check and insert file header
- *  Archive Log: - applied on backend files
- *  Archive Log:
- * 
- *  Overview:
- * 
- *  @author: jijunwan
- * 
- ******************************************************************************/
 package com.intel.stl.api.subnet.impl;
 
 import java.util.EnumMap;
@@ -111,8 +59,6 @@ import com.intel.stl.configuration.CacheManager;
 import com.intel.stl.fecdriver.messages.adapter.sa.GID;
 
 /**
- * @author jijunwan
- * 
  */
 public class SubnetApi implements ISubnetApi {
     private static Logger log = LoggerFactory.getLogger(SubnetApi.class);

@@ -25,121 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PreferencesWizardView.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.24  2016/03/02 18:27:33  jijunwan
- *  Archive Log:    PR 133067 - Add a popup window that e-mail was sent successfully when "test" button is click
- *  Archive Log:
- *  Archive Log:    - changed to disable button after we click test button
- *  Archive Log:    - changed to show "sending email..." message when we are sending out a test email
- *  Archive Log:    - changed to show "Test message sent out, please check your email account." after email sent out
- *  Archive Log:    - change to recover message to normal text when there is a user action
- *  Archive Log:    - added undo/redo capability to email address text area
- *  Archive Log:
- *  Archive Log:    Revision 1.23  2015/12/09 16:06:07  jijunwan
- *  Archive Log:    PR 131944 - If "# Worst Nodes" is <10 or >100, there is a Entry Validation warning for the Refresh Rate
- *  Archive Log:
- *  Archive Log:    - added value range to "# Worst Nodes" text field
- *  Archive Log:
- *  Archive Log:    Revision 1.22  2015/11/09 20:51:57  fernande
- *  Archive Log:    PR130852 - The 1st subnet in the Subnet Wizard displays "Abandon Changes" message when no changes are made. Added special listener for dirty state
- *  Archive Log:
- *  Archive Log:    Revision 1.21  2015/09/14 19:04:34  jijunwan
- *  Archive Log:    PR 130229 - The text component of all editable combo boxes should provide validation of the input
- *  Archive Log:    - added exception check just in case
- *  Archive Log:
- *  Archive Log:    Revision 1.20  2015/09/14 16:06:58  jijunwan
- *  Archive Log:    PR 130229 - The text component of all editable combo boxes should provide validation of the input
- *  Archive Log:    - apply FormattedComboBoxEditor on ComponentFactory and PreferenceWizard
- *  Archive Log:
- *  Archive Log:    Revision 1.19  2015/09/01 12:56:16  rjtierne
- *  Archive Log:    PR 130174 - Inconsistent checking for blank subnet "Name" field in wizard
- *  Archive Log:    - On subnet creation, set the default subnet name to match the subnet button.
- *  Archive Log:    Then there is no possibility to move to the next wizard with a blank subnet name.
- *  Archive Log:    Since all fields are populated, if a field is made blank, the Next/Apply button is
- *  Archive Log:    disabled. If any field is invalid, then clicking on Next/Apply results in an error message.
- *  Archive Log:    - Changed cboxRefreshRateUnits to be non-editable
- *  Archive Log:
- *  Archive Log:    Revision 1.18  2015/08/17 18:53:48  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.17  2015/08/12 20:41:55  fisherma
- *  Archive Log:    PR 129747 - Time Window failed when updating recommended value in Time Window.  Updated the validation and upper limit on the time property.
- *  Archive Log:
- *  Archive Log:    Revision 1.16  2015/08/12 19:28:13  fisherma
- *  Archive Log:    Store/retrieve SMTP settings in/from SECTION_PREFERENCE properties.  Cleanup unused interface.
- *  Archive Log:
- *  Archive Log:    Revision 1.15  2015/08/10 22:25:05  fisherma
- *  Archive Log:    PR 128974 - Email notification functionality.  Updated layout in the preferences tab.  Added strings to localization file.
- *  Archive Log:
- *  Archive Log:    Revision 1.14  2015/08/10 17:55:48  robertja
- *  Archive Log:    PR 128974 - Email notification functionality.
- *  Archive Log:
- *  Archive Log:    Revision 1.13  2015/07/17 20:48:27  jijunwan
- *  Archive Log:    PR 129594 - Apply new input verification on setup wizard
- *  Archive Log:    - introduced isEditValid to allow us check whether we have valid edit
- *  Archive Log:
- *  Archive Log:    Revision 1.12  2015/05/11 12:37:44  rjtierne
- *  Archive Log:    PR 128585 - Fix errors found by Klocwork and FindBugs
- *  Archive Log:    - Added new method addDocumentListeners() which provides null pointer protection
- *  Archive Log:    to the view form fields.
- *  Archive Log:    - Invoked addDocumentListeners() in both constructors.
- *  Archive Log:
- *  Archive Log:    Revision 1.11  2015/04/21 21:18:41  rjtierne
- *  Archive Log:    Fixed document listeners on form fields so the Apply and Reset buttons are enabled only
- *  Archive Log:    when the fields change.
- *  Archive Log:
- *  Archive Log:    Revision 1.10  2015/03/30 15:12:49  rjtierne
- *  Archive Log:    Updated panel backgrounds to use static variable
- *  Archive Log:
- *  Archive Log:    Revision 1.9  2015/03/11 15:26:25  rjtierne
- *  Archive Log:    Multinet Wizard: Removed title from titled border
- *  Archive Log:    Using text field creation methods in ComponentFactory with input verifiers
- *  Archive Log:    Removed print statements
- *  Archive Log:
- *  Archive Log:    Revision 1.8  2015/02/27 15:34:28  rjtierne
- *  Archive Log:    Fixed preferences model/view sync issue when creating new subnet
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/02/23 15:06:53  rjtierne
- *  Archive Log:    Replaced hard coded string constants with STLConstants
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/02/20 21:16:09  rjtierne
- *  Archive Log:    Multinet Wizard: New instalment of the multinet wizard targeting display of subnet specific data for all sub-wizards; using a unique model for each wizard
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2015/02/13 21:31:56  rjtierne
- *  Archive Log:    Multinet Wizard
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/02/10 23:18:05  jijunwan
- *  Archive Log:    changed to store refreshRate rather than refreshRateinSeconds, store TimeUnit by name rather than ordinary
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2015/01/20 19:14:20  rjtierne
- *  Archive Log:    Moved all computational logic to controller; view only deals with String values.
- *  Archive Log:    Corrected document listeners for wizard fields
- *  Archive Log:    Minor L&F changes
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2015/01/15 19:09:45  rjtierne
- *  Archive Log:    Create fields for refresh rate, refresh rate units, timing window, and # worst nodes.
- *  Archive Log:    Store user-entered values in user settings for storage in database
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2015/01/13 19:01:51  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: View for the User Preferences Wizard
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.wizards.view.preferences;
 
 import static com.intel.stl.api.configuration.UserSettings.PROPERTY_MAIL_RECIPIENTS;
@@ -198,6 +83,9 @@ import com.intel.stl.ui.wizards.view.IMultinetWizardView;
 import com.intel.stl.ui.wizards.view.IWizardView;
 import com.intel.stl.ui.wizards.view.MultinetWizardView;
 
+/**
+ * View for the User Preferences Wizard
+ */
 public class PreferencesWizardView extends AbstractTaskView
         implements IPreferencesView {
 

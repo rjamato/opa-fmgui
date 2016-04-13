@@ -25,38 +25,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: FabricViewer
- *
- *  File Name: ISection.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log: $Log$
- *  Archive Log: Revision 1.5  2015/08/17 18:54:12  jijunwan
- *  Archive Log: PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log: - changed frontend files' headers
- *  Archive Log:
- *  Archive Log: Revision 1.4  2015/06/10 21:07:16  jijunwan
- *  Archive Log: PR 129120 - Some old files have no proper file header. They cannot record change logs
- *  Archive Log: - manual correction on files that our tool cannot  identify
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: jijunwan
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.common;
 
 import com.intel.stl.ui.common.view.JSectionView;
 
 /**
- * @author jijunwan
- * 
  */
 public interface ISectionController<E extends JSectionView<?>> {
     E getView();

@@ -25,39 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PropertyGroup.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.5  2015/08/17 18:48:36  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2015/05/01 21:34:29  jijunwan
- *  Archive Log:    fixed Serializable issue found by FindBug
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/10/21 22:15:50  jijunwan
- *  Archive Log:    added #hashcode and #equals just in case we may need them
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/10/21 13:37:41  fernande
- *  Archive Log:    Adding displayed= attribute to the group tag in UserOptions XML
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/09/29 18:53:56  fernande
- *  Archive Log:    Changing UserSettings to support Properties Display options
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.api.configuration;
 
 import java.io.Serializable;

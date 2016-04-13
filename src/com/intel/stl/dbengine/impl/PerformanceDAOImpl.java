@@ -25,48 +25,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: PerformanceDAOImpl.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.8  2015/08/17 18:49:34  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - change backend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.7  2015/07/30 13:17:11  fernande
- *  Archive Log:    PR 129437 - ImageInfo save issue. The code now updates a previously saved ImageInfo record.
- *  Archive Log:
- *  Archive Log:    Revision 1.6  2015/02/06 15:04:47  fernande
- *  Archive Log:    Database modifications to use a long as the id for a SubnetDescription and to support users per subnet.
- *  Archive Log:
- *  Archive Log:    Revision 1.5  2014/12/11 18:36:41  fernande
- *  Archive Log:    Switch from log4j to slf4j+logback
- *  Archive Log:
- *  Archive Log:    Revision 1.4  2014/11/04 14:21:57  fernande
- *  Archive Log:    NoticeManager improvements. Added new methods in support of batch processing of notices and removed methods not used anymore because they were used for individual updates. Improved BaseDAO so that the DatabaseContext is available from within a DAO and therefore other DAOs are available within a DAO.
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/09/18 20:50:35  fernande
- *  Archive Log:    Enabling GroupInfo saving after fixing issues in the application
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/09/15 21:19:32  fernande
- *  Archive Log:    Adding unit test for PerformanceApi and fixes for some issues found.
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/09/12 20:01:12  fernande
- *  Archive Log:    We now save ImageInfo and GroupInfo to the database. As they are retrieved by the UI, they are buffered and then saved at certain thresholds.
- *  Archive Log:
- *
- *  Overview: 
- *
- *  @author: fernande
- *
- ******************************************************************************/
-
 package com.intel.stl.dbengine.impl;
 
 import static com.intel.stl.common.STLMessages.STL30069_NO_IMAGEINFO;

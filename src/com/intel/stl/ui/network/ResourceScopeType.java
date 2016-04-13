@@ -26,38 +26,6 @@
  */
 
 
-/*******************************************************************************
- *                       I N T E L   C O R P O R A T I O N
- *	
- *  Functional Group: Fabric Viewer Application
- *
- *  File Name: SelectionEnum.java
- *
- *  Archive Source: $Source$
- *
- *  Archive Log:    $Log$
- *  Archive Log:    Revision 1.4  2015/08/17 18:54:00  jijunwan
- *  Archive Log:    PR 129983 - Need to change file header's copyright text to BSD license txt
- *  Archive Log:    - changed frontend files' headers
- *  Archive Log:
- *  Archive Log:    Revision 1.3  2014/07/18 13:41:34  rjtierne
- *  Archive Log:    Added new enumeration type PATH
- *  Archive Log:
- *  Archive Log:    Revision 1.2  2014/07/10 14:37:02  rjtierne
- *  Archive Log:    Added new LINK type
- *  Archive Log:
- *  Archive Log:    Revision 1.1  2014/07/08 20:19:44  rjtierne
- *  Archive Log:    Initial Version
- *  Archive Log:
- *
- *  Overview: Enumeration for the type of card layout to be displayed on the
- *  topology page depending on whether or not a component has been selected
- *  from the graph
- *
- *  @author: rjtierne
- *
- ******************************************************************************/
-
 package com.intel.stl.ui.network;
 
 public enum ResourceScopeType {
