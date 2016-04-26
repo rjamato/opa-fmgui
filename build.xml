@@ -3,7 +3,7 @@
 	<property name="target" value="target"/>
     <property name="resources" value="resources"/>
 	<property name="lib" value="lib"/>
-    <property name="fmgui.app.jar" value="fmgui.jar"/>
+    <property name="fmgui.app.jar" value="opa-fmgui.jar"/>
     <property environment="env"/>
 	<path id="source.compile.path">
 		<fileset dir="${lib}">
